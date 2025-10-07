@@ -158,6 +158,8 @@ For each suggestion, provide a brief (1 sentence) justification. Return the sugg
   };
 
   if (!data.hasAnimalIngredients) {
+    console.log('Non-animal product view - imageData:', imageData ? 'present' : 'missing', 'onReanalyze:', onReanalyze ? 'present' : 'missing');
+    
     return (
       <div className="p-4 glass-card rounded-2xl animate-fade-in">
         <h1 className="text-3xl font-bold mb-6 text-center text-white">Analysis</h1>
@@ -172,7 +174,7 @@ For each suggestion, provide a brief (1 sentence) justification. Return the sugg
             As such, it is outside the scope of this animal welfare assessment.
           </p>
         </div>
-        {imageData && onReanalyze && (
+        {imageData && onReanalyze ? (
           <Dialog open={challengeOpen} onOpenChange={setChallengeOpen}>
             <DialogTrigger asChild>
               <Button 
@@ -227,9 +229,11 @@ For each suggestion, provide a brief (1 sentence) justification. Return the sugg
               </div>
             </DialogContent>
           </Dialog>
+        ) : (
+          <p className="text-xs text-gray-500 text-center mt-4">Debug: imageData={imageData ? 'yes' : 'no'} onReanalyze={onReanalyze ? 'yes' : 'no'}</p>
         )}
 
-        <Button 
+        <Button
           onClick={onNewScan}
           className="w-full mt-8 bg-gray-700 hover:bg-gray-600 text-white font-bold"
         >
