@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Card } from "@/components/ui/card";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface AnalysisData {
   productName?: { value: string; confidence: string };
@@ -38,6 +39,28 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [isReanalyzing, setIsReanalyzing] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
+
+  // Save scan to history if user is logged in
+  useEffect(() => {
+    const saveScan = async () => {
+      if (!user || !data) return;
+
+      try {
+        await supabase.from('scans').insert([{
+          user_id: user.id,
+          product_name: data.productName?.value || 'Unknown',
+          welfare_category: data.welfareConcerns?.value?.substring(0, 100) || '',
+          analysis_result: data as any,
+          image_url: imageData,
+        }]);
+      } catch (error) {
+        console.error('Failed to save scan:', error);
+      }
+    };
+
+    saveScan();
+  }, [user, data, imageData]);
 
   const getConfidenceMeter = (confidence?: string) => {
     const level = (confidence || 'Low').toLowerCase();

@@ -1,12 +1,29 @@
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { User } from "lucide-react";
 
 interface HomeScreenProps {
   onStartScan: () => void;
 }
 
 const HomeScreen = ({ onStartScan }: HomeScreenProps) => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
   return (
     <div className="flex flex-col min-h-screen text-center">
+      <div className="absolute top-4 right-4">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate(user ? '/profile' : '/auth')}
+        >
+          <User className="mr-2 h-4 w-4" />
+          {user ? 'Profile' : 'Sign In'}
+        </Button>
+      </div>
+      
       <div className="flex-grow flex flex-col items-center justify-center px-4">
         <header className="mb-8">
           <h1 className="text-5xl font-bold text-white">Welfare</h1>
