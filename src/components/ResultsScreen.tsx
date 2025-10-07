@@ -274,8 +274,8 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
             <div className="text-center">
               <span className="text-base text-white font-semibold">
                 {sliderValue[0] === 1 ? "Prioritize Big Welfare Gains" :
-                 sliderValue[0] === 2 ? "Moderate Harm Reduction" :
-                 sliderValue[0] === 3 ? "Strong Harm Reduction" :
+                 sliderValue[0] === 2 ? "Strong Welfare Standards" :
+                 sliderValue[0] === 3 ? "Minimal Animal Suffering" :
                  sliderValue[0] === 4 ? "Minimal Animal Use" :
                  "Aim for Zero Animal Harm"}
               </span>
@@ -293,11 +293,11 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
               <span>Plant-Based/Cultured Only</span>
             </div>
             <p className="text-xs text-gray-400 text-center">
-              {sliderValue[0] === 1 && "Get the same product from animals raised under high-welfare conditions."}
-              {sliderValue[0] === 2 && "Products that minimize suffering in intensive systems."}
-              {sliderValue[0] === 3 && "Products meeting multiple high-welfare criteria."}
-              {sliderValue[0] === 4 && "Hybrid products with minimal animal content."}
-              {sliderValue[0] === 5 && "Plant-based, cultured, or synthetic alternatives only."}
+              {sliderValue[0] === 1 && "Same type of product but from animals raised under high-welfare conditions."}
+              {sliderValue[0] === 2 && "Certified or verifiably higher-welfare animal products meeting multiple criteria."}
+              {sliderValue[0] === 3 && "Hybrid or blended options that reduce overall welfare impact."}
+              {sliderValue[0] === 4 && "Mostly plant-based options with only trace animal ingredients."}
+              {sliderValue[0] === 5 && "Fully animal-free products (plant-based, cultured, or synthetic)."}
             </p>
           </div>
         </div>
