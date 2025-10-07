@@ -22,21 +22,32 @@ serve(async (req) => {
     let prompt = `You are an AI assistant specializing in animal welfare analysis. Your task is to analyze the provided product image and provide a structured JSON response. 
 
 **Instructions:**
-1. Identify the product name from the image.
+1. Identify the product name and brand from the image.
 2. Determine if it contains animal-derived ingredients.
 3. If it contains animal-derived ingredients:
    - List them.
-   - Infer the likely production system.
+   - Infer the likely production system with detailed brand-specific information.
    - Provide potential welfare concerns.
    - Estimate data confidence for each field (Low, Medium, High).
 4. If it does NOT contain animal-derived ingredients, only return the product name and set hasAnimalIngredients to false.
+
+**IMPORTANT - Production System Field:**
+When you identify a known brand or product line:
+- Research and include specific welfare certifications (e.g., "USDA Organic", "Certified Humane", "Animal Welfare Approved")
+- Explain what those certifications mean in practice (e.g., "USDA Organic implies some welfare standards but focuses more on organic feed and avoiding synthetic pesticides rather than guaranteeing high animal welfare")
+- Note any limitations or gaps in available welfare information (e.g., "specific detailed information about pasture access is not readily available")
+- Mention if the product is raised without antibiotics or growth hormones
+- Provide context about industry-standard practices if brand-specific information is limited
+- Be informative but honest about what is and isn't known
+
+Example: "Kirkland Signature Organic Ground Beef meets certain animal welfare standards by being USDA Organic and raised without antibiotics or growth hormones, but specific detailed information about its animal welfare practices, such as pasture access, is not readily available. While 'USDA Organic' implies some welfare standards, it doesn't guarantee high animal welfare, focusing more on organic feed and avoiding synthetic pesticides."
 
 **JSON Schema:**
 {
   "productName": {"value": "string", "confidence": "Low|Medium|High"},
   "hasAnimalIngredients": true|false,
   "animalIngredients": {"value": "string", "confidence": "Low|Medium|High"},
-  "productionSystem": {"value": "string", "confidence": "Low|Medium|High", "assumption": "string (optional)"},
+  "productionSystem": {"value": "string (detailed, multi-sentence description)", "confidence": "Low|Medium|High", "assumption": "string (optional)"},
   "welfareConcerns": {"value": "string (multi-line allowed)", "confidence": "Low|Medium|High"},
   "disclaimer": "This is a Preliminary AI Estimate and has not been scientifically validated by the Welfare Footprint Institute."
 }
