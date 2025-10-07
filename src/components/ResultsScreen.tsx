@@ -171,14 +171,14 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
             </DialogTrigger>
             <DialogContent className="glass-card max-w-md">
               <DialogHeader>
-                <DialogTitle className="text-xl font-bold text-white">Provide Additional Information</DialogTitle>
+                <DialogTitle className="text-xl font-bold text-white">Challenge or Clarify Analysis</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="ingredients" className="text-gray-300">Additional Ingredients</Label>
+                  <Label htmlFor="ingredients" className="text-gray-300">Missed Ingredients</Label>
                   <Textarea
                     id="ingredients"
-                    placeholder="Enter any ingredients you see that may have been missed..."
+                    placeholder="Any animal-derived ingredients that may have been missed..."
                     value={additionalIngredients}
                     onChange={(e) => setAdditionalIngredients(e.target.value)}
                     className="mt-2 bg-gray-800 border-gray-700 text-white"
@@ -186,10 +186,10 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
                   />
                 </div>
                 <div>
-                  <Label htmlFor="description" className="text-gray-300">Additional Description</Label>
+                  <Label htmlFor="description" className="text-gray-300">Production Method or Other Context</Label>
                   <Textarea
                     id="description"
-                    placeholder="Provide any additional context about the product..."
+                    placeholder="E.g., 'pasture-raised', 'cage-free', certifications, farming practices, or any other welfare-relevant information..."
                     value={additionalDescription}
                     onChange={(e) => setAdditionalDescription(e.target.value)}
                     className="mt-2 bg-gray-800 border-gray-700 text-white"
@@ -384,14 +384,14 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
             </DialogTrigger>
             <DialogContent className="glass-card max-w-md">
               <DialogHeader>
-                <DialogTitle className="text-xl font-bold text-white">Provide Additional Information</DialogTitle>
+                <DialogTitle className="text-xl font-bold text-white">Challenge or Clarify Analysis</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="ingredients-full" className="text-gray-300">Additional Ingredients</Label>
+                  <Label htmlFor="ingredients-full" className="text-gray-300">Missed Ingredients</Label>
                   <Textarea
                     id="ingredients-full"
-                    placeholder="Enter any ingredients you see that may have been missed..."
+                    placeholder="Any animal-derived ingredients that may have been missed..."
                     value={additionalIngredients}
                     onChange={(e) => setAdditionalIngredients(e.target.value)}
                     className="mt-2 bg-gray-800 border-gray-700 text-white"
@@ -399,10 +399,10 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
                   />
                 </div>
                 <div>
-                  <Label htmlFor="description-full" className="text-gray-300">Additional Description</Label>
+                  <Label htmlFor="description-full" className="text-gray-300">Production Method or Other Context</Label>
                   <Textarea
                     id="description-full"
-                    placeholder="Provide any additional context about the product..."
+                    placeholder="E.g., 'pasture-raised', 'cage-free', certifications, farming practices, or any other welfare-relevant information..."
                     value={additionalDescription}
                     onChange={(e) => setAdditionalDescription(e.target.value)}
                     className="mt-2 bg-gray-800 border-gray-700 text-white"
