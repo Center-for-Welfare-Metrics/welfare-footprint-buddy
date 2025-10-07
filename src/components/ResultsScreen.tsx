@@ -167,9 +167,9 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
               </Button>
             </DialogTrigger>
             <DialogContent className="glass-card max-w-md">
-              <DialogHeader>
-                <DialogTitle className="text-xl font-bold text-white">Challenge or Clarify Analysis</DialogTitle>
-              </DialogHeader>
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold text-white">Have more info? share it here</DialogTitle>
+            </DialogHeader>
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="info" className="text-gray-300">Have info on how this product was made? Add details like certifications or farming practices to help refine the welfare results</Label>

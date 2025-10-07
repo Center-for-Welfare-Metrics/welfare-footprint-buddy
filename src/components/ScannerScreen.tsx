@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 interface ScannerScreenProps {
   onBack: () => void;
@@ -12,6 +14,7 @@ interface ScannerScreenProps {
 const ScannerScreen = ({ onBack, onAnalysisComplete }: ScannerScreenProps) => {
   const [imagePreview, setImagePreview] = useState<string>("");
   const [imageData, setImageData] = useState<{ base64: string; mimeType: string } | null>(null);
+  const [additionalInfo, setAdditionalInfo] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -45,7 +48,7 @@ const ScannerScreen = ({ onBack, onAnalysisComplete }: ScannerScreenProps) => {
     setIsLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke('analyze-image', {
-        body: { imageData }
+        body: { imageData, additionalInfo }
       });
 
       if (error) throw error;
@@ -100,6 +103,22 @@ const ScannerScreen = ({ onBack, onAnalysisComplete }: ScannerScreenProps) => {
           className="hidden" 
           onChange={handleImageChange}
         />
+        
+        {imagePreview && (
+          <div className="mb-6 space-y-2">
+            <Label htmlFor="additional-info" className="text-sm text-gray-300">
+              Have more info? share it here
+            </Label>
+            <Textarea
+              id="additional-info"
+              placeholder="Add details like certifications or farming practices to help refine the welfare results"
+              value={additionalInfo}
+              onChange={(e) => setAdditionalInfo(e.target.value)}
+              className="min-h-[100px] bg-gray-800/50 border-gray-600 text-white"
+            />
+          </div>
+        )}
+        
         <Button 
           onClick={handleAnalyze}
           disabled={!imageData || isLoading}
