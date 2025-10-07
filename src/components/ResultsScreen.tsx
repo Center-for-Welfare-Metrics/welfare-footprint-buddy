@@ -33,7 +33,7 @@ interface ResultsScreenProps {
 const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScreenProps) => {
   const [ethicalSwaps, setEthicalSwaps] = useState<any[]>([]);
   const [isLoadingSwaps, setIsLoadingSwaps] = useState(false);
-  const [sliderValue, setSliderValue] = useState([1]); // Default to "Prioritize Big Welfare Gains"
+  const [sliderValue, setSliderValue] = useState([3]); // Default to "Minimal Animal Suffering"
   const [challengeOpen, setChallengeOpen] = useState(false);
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [isReanalyzing, setIsReanalyzing] = useState(false);
