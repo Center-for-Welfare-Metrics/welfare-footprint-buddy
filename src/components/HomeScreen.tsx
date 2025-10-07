@@ -30,8 +30,7 @@ const HomeScreen = ({ onStartScan }: HomeScreenProps) => {
 Thanks for helping us test the Welfare Footprint App.
 
 Future versions will use the Welfare Footprint Framework™;
-this one uses general animal welfare knowledge to trial the technology.
-Please keep it confidential — do not share or discuss outside this group.`}
+this one uses general animal welfare knowledge to trial the technology.`}
         </p>
       </footer>
     </div>
