@@ -6,6 +6,8 @@ import { Loader2, HelpCircle, AlertCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import { Card } from "@/components/ui/card";
 
 interface AnalysisData {
   productName?: { value: string; confidence: string };
@@ -29,9 +31,9 @@ interface ResultsScreenProps {
 }
 
 const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScreenProps) => {
-  const [ethicalSwaps, setEthicalSwaps] = useState<Suggestion[]>([]);
+  const [ethicalSwaps, setEthicalSwaps] = useState<any[]>([]);
   const [isLoadingSwaps, setIsLoadingSwaps] = useState(false);
-  const [sliderValue, setSliderValue] = useState(50);
+  const [sliderValue, setSliderValue] = useState([1]); // Default to "Prioritize Big Welfare Gains"
   const [challengeOpen, setChallengeOpen] = useState(false);
   const [additionalIngredients, setAdditionalIngredients] = useState("");
   const [additionalDescription, setAdditionalDescription] = useState("");
@@ -58,31 +60,25 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
     );
   };
 
-  const handleEthicalSwap = async (ethicalLensValue?: number) => {
+  const handleEthicalSwap = async () => {
     const productName = data.productName?.value;
-    if (!productName) return;
+    const animalIngredients = data.animalIngredients?.value;
+    if (!productName || !animalIngredients) return;
 
     setIsLoadingSwaps(true);
     try {
-      const lensValue = ethicalLensValue ?? sliderValue;
-      const ethicalContext = lensValue > 50 
-        ? "Prioritize eliminating all animal harm (aim for plant-based or zero animal suffering alternatives)"
-        : "Prioritize the biggest welfare improvements (focus on reducing intense suffering even if some animal use continues)";
-      
-      const prompt = `Based on the product "${productName}", suggest 3-4 categories of alternative products that generally have better animal welfare outcomes. 
-      
-Ethical lens context: ${ethicalContext}
-
-For each suggestion, provide a brief (1 sentence) justification. Return the suggestions as a JSON array of objects, like [{"suggestion": "string", "reason": "string"}].`;
-      
-      const { data: result, error } = await supabase.functions.invoke('generate-text', {
-        body: { prompt }
+      const { data: result, error } = await supabase.functions.invoke('suggest-ethical-swap', {
+        body: { 
+          productName,
+          animalIngredients,
+          ethicalLens: sliderValue[0]
+        }
       });
 
       if (error) throw error;
 
-      const suggestions = JSON.parse(result.candidates[0].content.parts[0].text);
-      setEthicalSwaps(suggestions);
+      const parsedResult = JSON.parse(result.candidates[0].content.parts[0].text);
+      setEthicalSwaps([parsedResult]);
     } catch (error) {
       toast({
         title: "Failed to load suggestions",
@@ -95,10 +91,10 @@ For each suggestion, provide a brief (1 sentence) justification. Return the sugg
   };
 
   useEffect(() => {
-    if (ethicalSwaps.length === 0) return;
+    if (ethicalSwaps.length === 0 || !data.hasAnimalIngredients) return;
 
     const debounceTimer = setTimeout(() => {
-      handleEthicalSwap(sliderValue);
+      handleEthicalSwap();
     }, 500);
 
     return () => clearTimeout(debounceTimer);
@@ -144,18 +140,6 @@ For each suggestion, provide a brief (1 sentence) justification. Return the sugg
     }
   };
 
-  const renderSwaps = () => {
-    return (
-      <div className="space-y-3">
-        {ethicalSwaps.map((swap, idx) => (
-          <div key={idx} className="p-3 bg-gray-800 rounded-lg">
-            <p className="font-semibold text-emerald-300">{swap.suggestion}</p>
-            <p className="text-xs text-gray-400">{swap.reason}</p>
-          </div>
-        ))}
-      </div>
-    );
-  };
 
   if (!data.hasAnimalIngredients) {
     console.log('Non-animal product view - imageData:', imageData ? 'present' : 'missing', 'onReanalyze:', onReanalyze ? 'present' : 'missing');
@@ -283,28 +267,44 @@ For each suggestion, provide a brief (1 sentence) justification. Return the sugg
         </div>
 
         <div className="border-b border-gray-700 pb-4">
-          <h3 className="font-bold text-emerald-400 mb-2">Ethical Lens ⚖️</h3>
-          <p className="text-xs text-gray-400 mb-2">Adjust to re-rank suggestions based on your ethical priorities.</p>
-          <input 
-            type="range" 
-            min="0" 
-            max="100" 
-            value={sliderValue}
-            onChange={(e) => setSliderValue(Number(e.target.value))}
-            className="w-full"
-          />
-          <div className="flex justify-between text-xs text-gray-400 mt-1">
-            <span>Prioritize Big Welfare Gains</span>
-            <span>Aim for Zero Animal Harm</span>
+          <div className="space-y-4 bg-gray-800/50 p-4 rounded-lg">
+            <div className="flex justify-between items-center">
+              <Label className="text-sm font-medium text-emerald-400">Ethical Lens ⚖️</Label>
+              <span className="text-xs text-gray-300 font-medium">
+                {sliderValue[0] === 1 ? "Prioritize Big Welfare Gains" :
+                 sliderValue[0] === 2 ? "Moderate Harm Reduction" :
+                 sliderValue[0] === 3 ? "Strong Harm Reduction" :
+                 sliderValue[0] === 4 ? "Minimal Animal Use" :
+                 "Aim for Zero Animal Harm"}
+              </span>
+            </div>
+            <Slider
+              value={sliderValue}
+              onValueChange={setSliderValue}
+              max={5}
+              min={1}
+              step={1}
+              className="w-full"
+            />
+            <div className="flex justify-between text-xs text-gray-400">
+              <span>Same Product, High Welfare</span>
+              <span>Plant-Based/Cultured Only</span>
+            </div>
+            <p className="text-xs text-gray-400 mt-2">
+              {sliderValue[0] === 1 && "Get the same product from animals raised under high-welfare conditions."}
+              {sliderValue[0] === 2 && "Products that minimize suffering in intensive systems."}
+              {sliderValue[0] === 3 && "Products meeting multiple high-welfare criteria."}
+              {sliderValue[0] === 4 && "Hybrid products with minimal animal content."}
+              {sliderValue[0] === 5 && "Plant-based, cultured, or synthetic alternatives only."}
+            </p>
           </div>
         </div>
 
         <div className="pb-3">
-          <h3 className="font-bold text-emerald-400 mb-2">Ethical Swap Suggestions</h3>
           <div>
             {ethicalSwaps.length === 0 ? (
               <Button 
-                onClick={() => handleEthicalSwap()}
+                onClick={handleEthicalSwap}
                 disabled={isLoadingSwaps}
                 className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
               >
@@ -318,7 +318,45 @@ For each suggestion, provide a brief (1 sentence) justification. Return the sugg
                 )}
               </Button>
             ) : (
-              renderSwaps()
+              <div className="space-y-3">
+                <h3 className="font-semibold text-emerald-400">
+                  {ethicalSwaps[0]?.ethicalLensPosition || "Suggested Alternatives"}
+                </h3>
+                {ethicalSwaps[0]?.generalNote && (
+                  <p className="text-xs text-gray-400 italic border-l-2 border-emerald-500/50 pl-3 py-2">
+                    {ethicalSwaps[0].generalNote}
+                  </p>
+                )}
+                <div className="space-y-3">
+                  {ethicalSwaps[0]?.suggestions?.map((swap: any, index: number) => (
+                    <Card key={index} className="p-4 bg-gray-800 border-gray-700">
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-start gap-2">
+                          <h4 className="font-semibold text-sm text-white">{swap.name}</h4>
+                          <span className={`text-xs px-2 py-1 rounded whitespace-nowrap ${
+                            swap.confidence === 'High' ? 'bg-emerald-900/50 text-emerald-300' :
+                            swap.confidence === 'Medium' ? 'bg-yellow-900/50 text-yellow-300' :
+                            'bg-gray-700 text-gray-300'
+                          }`}>
+                            {swap.confidence} Confidence
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-300">{swap.description}</p>
+                        <div className="text-xs space-y-1">
+                          <p className="text-gray-400">
+                            <span className="font-medium text-emerald-400">Reasoning:</span> {swap.reasoning}
+                          </p>
+                          {swap.availability && (
+                            <p className="text-gray-400">
+                              <span className="font-medium text-emerald-400">Availability:</span> {swap.availability}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
         </div>
