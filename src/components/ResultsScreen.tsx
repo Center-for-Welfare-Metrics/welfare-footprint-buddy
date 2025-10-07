@@ -1,0 +1,239 @@
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { Loader2, HelpCircle } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+
+interface AnalysisData {
+  productName?: { value: string; confidence: string };
+  hasAnimalIngredients: boolean;
+  animalIngredients?: { value: string; confidence: string };
+  productionSystem?: { value: string; confidence: string; assumption?: string };
+  welfareConcerns?: { value: string; confidence: string };
+  disclaimer?: string;
+}
+
+interface Suggestion {
+  suggestion: string;
+  reason: string;
+}
+
+interface ResultsScreenProps {
+  data: AnalysisData;
+  onNewScan: () => void;
+}
+
+const ResultsScreen = ({ data, onNewScan }: ResultsScreenProps) => {
+  const [ethicalSwaps, setEthicalSwaps] = useState<Suggestion[]>([]);
+  const [isLoadingSwaps, setIsLoadingSwaps] = useState(false);
+  const [sliderValue, setSliderValue] = useState(50);
+  const { toast } = useToast();
+
+  const getConfidenceMeter = (confidence?: string) => {
+    const level = (confidence || 'Low').toLowerCase();
+    let width = 'w-1/3';
+    let color = 'bg-red-500';
+    
+    if (level === 'medium') {
+      width = 'w-2/3';
+      color = 'bg-yellow-500';
+    } else if (level === 'high') {
+      width = 'w-full';
+      color = 'bg-emerald-500';
+    }
+    
+    return (
+      <div className="w-full bg-gray-700 rounded-full h-1.5" title={`Data Confidence: ${confidence}`}>
+        <div className={`${color} ${width} h-1.5 rounded-full`}></div>
+      </div>
+    );
+  };
+
+  const handleEthicalSwap = async () => {
+    const productName = data.productName?.value;
+    if (!productName) return;
+
+    setIsLoadingSwaps(true);
+    try {
+      const prompt = `Based on the product "${productName}", suggest 3-4 categories of alternative products that generally have better animal welfare outcomes. For each suggestion, provide a brief (1 sentence) justification. Return the suggestions as a JSON array of objects, like [{"suggestion": "string", "reason": "string"}].`;
+      
+      const { data: result, error } = await supabase.functions.invoke('generate-text', {
+        body: { prompt }
+      });
+
+      if (error) throw error;
+
+      const suggestions = JSON.parse(result.candidates[0].content.parts[0].text);
+      setEthicalSwaps(suggestions);
+    } catch (error) {
+      toast({
+        title: "Failed to load suggestions",
+        description: error instanceof Error ? error.message : "An error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingSwaps(false);
+    }
+  };
+
+  const renderSwaps = () => {
+    const displaySwaps = sliderValue > 50 ? [...ethicalSwaps].reverse() : ethicalSwaps;
+    
+    return (
+      <div className="space-y-3">
+        {displaySwaps.map((swap, idx) => (
+          <div key={idx} className="p-3 bg-gray-800 rounded-lg">
+            <p className="font-semibold text-emerald-300">{swap.suggestion}</p>
+            <p className="text-xs text-gray-400">{swap.reason}</p>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  if (!data.hasAnimalIngredients) {
+    return (
+      <div className="p-4 glass-card rounded-2xl animate-fade-in">
+        <h1 className="text-3xl font-bold mb-6 text-center text-white">Analysis</h1>
+        <div className="text-center p-8">
+          <h3 className="font-bold text-2xl text-emerald-400 mb-2">
+            {data.productName?.value || 'Product Analysis'}
+          </h3>
+          <p className="text-gray-300">
+            This product does not appear to contain animal-derived ingredients.
+          </p>
+          <p className="text-gray-400 text-sm mt-4">
+            As such, it is outside the scope of this animal welfare assessment.
+          </p>
+        </div>
+        <Button 
+          onClick={onNewScan}
+          className="w-full mt-8 bg-gray-700 hover:bg-gray-600 text-white font-bold"
+        >
+          Scan New Item
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-4 glass-card rounded-2xl animate-fade-in">
+      <h1 className="text-3xl font-bold mb-6 text-center text-white">Analysis</h1>
+      <div className="space-y-4">
+        <div className="border-b border-gray-700 pb-3">
+          <div className="flex justify-between items-center mb-1">
+            <h3 className="font-bold text-emerald-400">Product</h3>
+            <div className="w-1/3">{getConfidenceMeter(data.productName?.confidence)}</div>
+          </div>
+          <p className="text-gray-300">{data.productName?.value || 'N/A'}</p>
+        </div>
+
+        <div className="border-b border-gray-700 pb-3">
+          <div className="flex justify-between items-center mb-1">
+            <h3 className="font-bold text-emerald-400">Animal-Derived Ingredients</h3>
+            <div className="w-1/3">{getConfidenceMeter(data.animalIngredients?.confidence)}</div>
+          </div>
+          <p className="text-gray-300">{data.animalIngredients?.value || 'N/A'}</p>
+        </div>
+
+        <div className="border-b border-gray-700 pb-3">
+          <div className="flex justify-between items-center mb-1">
+            <h3 className="font-bold text-emerald-400">Production System</h3>
+            <div className="w-1/3">{getConfidenceMeter(data.productionSystem?.confidence)}</div>
+          </div>
+          <p className="text-gray-300">{data.productionSystem?.value || 'N/A'}</p>
+          {data.productionSystem?.assumption && (
+            <p className="text-xs text-gray-400 mt-2 italic">{data.productionSystem.assumption}</p>
+          )}
+        </div>
+
+        <div className="border-b border-gray-700 pb-3">
+          <div className="flex justify-between items-center mb-1">
+            <h3 className="font-bold text-emerald-400">Potential Welfare Concerns</h3>
+            <div className="w-1/3">{getConfidenceMeter(data.welfareConcerns?.confidence)}</div>
+          </div>
+          <p className="text-gray-300 whitespace-pre-wrap">{data.welfareConcerns?.value || 'N/A'}</p>
+        </div>
+
+        <div className="border-b border-gray-700 pb-4">
+          <h3 className="font-bold text-emerald-400 mb-2">Ethical Lens ⚖️</h3>
+          <p className="text-xs text-gray-400 mb-2">Adjust to re-rank suggestions based on your ethical priorities.</p>
+          <input 
+            type="range" 
+            min="0" 
+            max="100" 
+            value={sliderValue}
+            onChange={(e) => setSliderValue(Number(e.target.value))}
+            className="w-full"
+          />
+          <div className="flex justify-between text-xs text-gray-400 mt-1">
+            <span>Prioritize Big Welfare Gains</span>
+            <span>Aim for Zero Animal Harm</span>
+          </div>
+        </div>
+
+        <div className="pb-3">
+          <h3 className="font-bold text-emerald-400 mb-2">Ethical Swap Suggestions</h3>
+          <div>
+            {ethicalSwaps.length === 0 ? (
+              <Button 
+                onClick={handleEthicalSwap}
+                disabled={isLoadingSwaps}
+                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
+              >
+                {isLoadingSwaps ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Finding Swaps...
+                  </>
+                ) : (
+                  <>Suggest Alternatives ✨</>
+                )}
+              </Button>
+            ) : (
+              renderSwaps()
+            )}
+          </div>
+        </div>
+
+        <div className="p-3 bg-yellow-900/30 border border-yellow-500/30 text-yellow-300 rounded-lg">
+          <h3 className="font-bold">Disclaimer</h3>
+          <p className="text-xs">
+            {data.disclaimer || 'This is a Preliminary AI Estimate and has not been scientifically validated by the Welfare Footprint Institute.'}
+          </p>
+        </div>
+      </div>
+
+      <Button 
+        onClick={onNewScan}
+        className="w-full mt-8 bg-gray-700 hover:bg-gray-600 text-white font-bold"
+      >
+        Scan New Item
+      </Button>
+
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button 
+            className="fixed bottom-4 right-4 bg-gray-700 hover:bg-gray-600 text-white w-12 h-12 rounded-full shadow-lg z-10"
+          >
+            <HelpCircle className="h-5 w-5" />
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="glass-card max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-white">How to Use This App</DialogTitle>
+          </DialogHeader>
+          <div className="text-gray-300 space-y-4 text-sm">
+            <p><strong>1. Scan a Product:</strong> Use the 'Start Scan' button to upload an image of a food product.</p>
+            <p><strong>2. View Analysis:</strong> The app will provide an AI-powered preliminary analysis of the product's potential animal welfare impact.</p>
+            <p><strong>3. Ethical Lens ⚖️:</strong> On the results screen, use the slider to weigh the importance of intense vs. prolonged suffering. This will re-rank the 'Ethical Swap Suggestions' based on your values.</p>
+            <p><strong>4. Knowledge Gaps 🗺️:</strong> Look for the 'Data Confidence' meters. These show how much scientific data is available for each part of the analysis. Low scores highlight where more research is needed!</p>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default ResultsScreen;
