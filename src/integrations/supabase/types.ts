@@ -14,7 +14,150 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      favorites: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          product_category: string | null
+          product_name: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          product_category?: string | null
+          product_name: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          product_category?: string | null
+          product_name?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favorites_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      scans: {
+        Row: {
+          analysis_result: Json | null
+          created_at: string
+          id: string
+          image_url: string | null
+          product_name: string | null
+          user_id: string
+          welfare_category: string | null
+        }
+        Insert: {
+          analysis_result?: Json | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          product_name?: string | null
+          user_id: string
+          welfare_category?: string | null
+        }
+        Update: {
+          analysis_result?: Json | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          product_name?: string | null
+          user_id?: string
+          welfare_category?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scans_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_preferences: {
+        Row: {
+          anonymous_usage: boolean | null
+          created_at: string
+          ethical_lens: string | null
+          id: string
+          notifications_enabled: boolean | null
+          preferred_language: string | null
+          preferred_region: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          anonymous_usage?: boolean | null
+          created_at?: string
+          ethical_lens?: string | null
+          id?: string
+          notifications_enabled?: boolean | null
+          preferred_language?: string | null
+          preferred_region?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          anonymous_usage?: boolean | null
+          created_at?: string
+          ethical_lens?: string | null
+          id?: string
+          notifications_enabled?: boolean | null
+          preferred_language?: string | null
+          preferred_region?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
