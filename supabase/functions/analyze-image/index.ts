@@ -71,7 +71,15 @@ Analyze the image and return ONLY valid JSON matching this schema.`;
 
     // Add additional context if provided by user
     if (additionalInfo) {
-      prompt += `\n\nADDITIONAL INFORMATION PROVIDED BY USER: ${additionalInfo}\n\nPlease incorporate this additional information into your analysis and update the confidence levels accordingly.`;
+      prompt += `\n\n**CRITICAL - USER-PROVIDED INFORMATION:** 
+The user has provided the following verified information: ${additionalInfo}
+
+When incorporating this information:
+- Treat user-provided details as FACTS, not speculation
+- Use "High" confidence for fields directly addressed by the user's information
+- Remove speculative language (like "likely", "possibly", "appears to be") for facts the user has confirmed
+- State the information definitively (e.g., "Beef, Cheese (cow's milk)" NOT "Meat (likely beef or pork), Cheese (likely cow's milk)")
+- Only use speculative language for aspects NOT covered by the user's information`;
     }
 
     const requestBody = {
