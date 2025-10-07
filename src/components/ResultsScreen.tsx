@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -50,13 +50,22 @@ const ResultsScreen = ({ data, onNewScan }: ResultsScreenProps) => {
     );
   };
 
-  const handleEthicalSwap = async () => {
+  const handleEthicalSwap = async (ethicalLensValue?: number) => {
     const productName = data.productName?.value;
     if (!productName) return;
 
     setIsLoadingSwaps(true);
     try {
-      const prompt = `Based on the product "${productName}", suggest 3-4 categories of alternative products that generally have better animal welfare outcomes. For each suggestion, provide a brief (1 sentence) justification. Return the suggestions as a JSON array of objects, like [{"suggestion": "string", "reason": "string"}].`;
+      const lensValue = ethicalLensValue ?? sliderValue;
+      const ethicalContext = lensValue > 50 
+        ? "Prioritize eliminating all animal harm (aim for plant-based or zero animal suffering alternatives)"
+        : "Prioritize the biggest welfare improvements (focus on reducing intense suffering even if some animal use continues)";
+      
+      const prompt = `Based on the product "${productName}", suggest 3-4 categories of alternative products that generally have better animal welfare outcomes. 
+      
+Ethical lens context: ${ethicalContext}
+
+For each suggestion, provide a brief (1 sentence) justification. Return the suggestions as a JSON array of objects, like [{"suggestion": "string", "reason": "string"}].`;
       
       const { data: result, error } = await supabase.functions.invoke('generate-text', {
         body: { prompt }
@@ -77,12 +86,20 @@ const ResultsScreen = ({ data, onNewScan }: ResultsScreenProps) => {
     }
   };
 
+  useEffect(() => {
+    if (ethicalSwaps.length === 0) return;
+
+    const debounceTimer = setTimeout(() => {
+      handleEthicalSwap(sliderValue);
+    }, 500);
+
+    return () => clearTimeout(debounceTimer);
+  }, [sliderValue]);
+
   const renderSwaps = () => {
-    const displaySwaps = sliderValue > 50 ? [...ethicalSwaps].reverse() : ethicalSwaps;
-    
     return (
       <div className="space-y-3">
-        {displaySwaps.map((swap, idx) => (
+        {ethicalSwaps.map((swap, idx) => (
           <div key={idx} className="p-3 bg-gray-800 rounded-lg">
             <p className="font-semibold text-emerald-300">{swap.suggestion}</p>
             <p className="text-xs text-gray-400">{swap.reason}</p>
@@ -178,7 +195,7 @@ const ResultsScreen = ({ data, onNewScan }: ResultsScreenProps) => {
           <div>
             {ethicalSwaps.length === 0 ? (
               <Button 
-                onClick={handleEthicalSwap}
+                onClick={() => handleEthicalSwap()}
                 disabled={isLoadingSwaps}
                 className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
               >
