@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { Separator } from '@/components/ui/separator';
+import { useTranslation } from 'react-i18next';
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -16,6 +17,7 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const { signUp, signIn, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,23 +58,23 @@ const Auth = () => {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">
-            {isLogin ? 'Welcome Back' : 'Create Account'}
+            {isLogin ? t('auth.welcomeBack') : t('auth.createAccount')}
           </CardTitle>
           <CardDescription className="text-center">
             {isLogin
-              ? 'Sign in to access your scan history and preferences'
-              : 'Join to save your scans and personalize your experience'}
+              ? t('auth.signInDescription')
+              : t('auth.signUpDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
               <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
+                <Label htmlFor="fullName">{t('auth.fullName')}</Label>
                 <Input
                   id="fullName"
                   type="text"
-                  placeholder="Your name"
+                  placeholder={t('auth.yourName')}
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required={!isLogin}
@@ -80,22 +82,22 @@ const Auth = () => {
               </div>
             )}
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('auth.email')}</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder={t('auth.emailPlaceholder')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t('auth.password')}</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="••••••••"
+                placeholder={t('auth.passwordPlaceholder')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -103,14 +105,14 @@ const Auth = () => {
               />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Loading...' : isLogin ? 'Sign In' : 'Sign Up'}
+              {loading ? t('common.loading') : isLogin ? t('common.signIn') : t('common.signUp')}
             </Button>
           </form>
 
           <div className="relative">
             <Separator />
             <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
-              or continue with
+              {t('auth.orContinueWith')}
             </span>
           </div>
 
@@ -138,7 +140,7 @@ const Auth = () => {
                 fill="#EA4335"
               />
             </svg>
-            Google
+            {t('auth.google')}
           </Button>
 
           <div className="text-center">
@@ -149,8 +151,8 @@ const Auth = () => {
               onClick={() => setIsLogin(!isLogin)}
             >
               {isLogin
-                ? "Don't have an account? Sign up"
-                : 'Already have an account? Sign in'}
+                ? t('auth.noAccount')
+                : t('auth.hasAccount')}
             </Button>
           </div>
 
@@ -161,7 +163,7 @@ const Auth = () => {
               className="text-sm"
               onClick={() => navigate('/')}
             >
-              Continue as Guest
+              {t('home.continueAsGuest')}
             </Button>
           </div>
         </CardContent>

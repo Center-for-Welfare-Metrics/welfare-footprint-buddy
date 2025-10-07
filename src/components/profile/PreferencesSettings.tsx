@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 interface Preferences {
   ethical_lens: string;
@@ -24,6 +25,7 @@ const PreferencesSettings = ({ userId }: PreferencesSettingsProps) => {
     preferred_region: '',
   });
   const [loading, setLoading] = useState(false);
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     loadPreferences();
@@ -59,9 +61,13 @@ const PreferencesSettings = ({ userId }: PreferencesSettingsProps) => {
         .eq('user_id', userId);
 
       if (error) throw error;
-      toast.success('Preferences saved');
+      
+      // Update i18n language
+      i18n.changeLanguage(preferences.preferred_language);
+      
+      toast.success(t('preferences.preferencesSaved'));
     } catch (error: any) {
-      toast.error('Failed to save preferences');
+      toast.error(t('preferences.failedToSave'));
     } finally {
       setLoading(false);
     }
@@ -70,14 +76,14 @@ const PreferencesSettings = ({ userId }: PreferencesSettingsProps) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Your Preferences</CardTitle>
+        <CardTitle>{t('preferences.title')}</CardTitle>
         <CardDescription>
-          Customize your experience with personalized settings
+          {t('preferences.description')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="ethical-lens">Ethical Lens ⚖️</Label>
+          <Label htmlFor="ethical-lens">{t('preferences.ethicalLens')}</Label>
           <Select
             value={preferences.ethical_lens}
             onValueChange={(value) =>
@@ -88,15 +94,15 @@ const PreferencesSettings = ({ userId }: PreferencesSettingsProps) => {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="strict">Strict - High welfare only</SelectItem>
-              <SelectItem value="balanced">Balanced - Moderate standards</SelectItem>
-              <SelectItem value="lenient">Lenient - Basic welfare</SelectItem>
+              <SelectItem value="strict">{t('preferences.ethicalLens_strict')}</SelectItem>
+              <SelectItem value="balanced">{t('preferences.ethicalLens_balanced')}</SelectItem>
+              <SelectItem value="lenient">{t('preferences.ethicalLens_lenient')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="language">Preferred Language</Label>
+          <Label htmlFor="language">{t('preferences.preferredLanguage')}</Label>
           <Select
             value={preferences.preferred_language}
             onValueChange={(value) =>
@@ -116,10 +122,10 @@ const PreferencesSettings = ({ userId }: PreferencesSettingsProps) => {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="region">Preferred Region</Label>
+          <Label htmlFor="region">{t('preferences.preferredRegion')}</Label>
           <Input
             id="region"
-            placeholder="e.g., North America, Europe"
+            placeholder={t('preferences.regionPlaceholder')}
             value={preferences.preferred_region}
             onChange={(e) =>
               setPreferences({ ...preferences, preferred_region: e.target.value })
@@ -128,7 +134,7 @@ const PreferencesSettings = ({ userId }: PreferencesSettingsProps) => {
         </div>
 
         <Button onClick={handleSave} disabled={loading}>
-          {loading ? 'Saving...' : 'Save Preferences'}
+          {loading ? t('common.saving') : t('preferences.savePreferences')}
         </Button>
       </CardContent>
     </Card>
