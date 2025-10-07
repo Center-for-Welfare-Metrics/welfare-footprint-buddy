@@ -49,7 +49,7 @@ Example: "Kirkland Signature Organic Ground Beef meets certain animal welfare st
   "animalIngredients": {"value": "string", "confidence": "Low|Medium|High"},
   "productionSystem": {"value": "string (detailed, multi-sentence description)", "confidence": "Low|Medium|High", "assumption": "string (optional)"},
   "welfareConcerns": {"value": "string (multi-line allowed)", "confidence": "Low|Medium|High"},
-  "disclaimer": "This is a Preliminary AI Estimate and has not been scientifically validated by the Welfare Footprint Institute."
+  "disclaimer": "This analysis was generated using AI and may contain errors or inaccuracies. It is a preliminary estimate and has not been scientifically validated by the Welfare Footprint Institute. Please verify information independently before making decisions."
 }
 
 Analyze the image and return ONLY valid JSON matching this schema.`;
