@@ -268,9 +268,11 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
 
         <div className="border-b border-gray-700 pb-4">
           <div className="space-y-4 bg-gray-800/50 p-4 rounded-lg">
-            <div className="flex justify-between items-center">
+            <div className="flex justify-start items-center">
               <Label className="text-sm font-medium text-emerald-400">Ethical Lens ⚖️</Label>
-              <span className="text-xs text-gray-300 font-medium">
+            </div>
+            <div className="text-center">
+              <span className="text-base text-white font-semibold">
                 {sliderValue[0] === 1 ? "Prioritize Big Welfare Gains" :
                  sliderValue[0] === 2 ? "Moderate Harm Reduction" :
                  sliderValue[0] === 3 ? "Strong Harm Reduction" :
@@ -290,7 +292,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
               <span>Same Product, High Welfare</span>
               <span>Plant-Based/Cultured Only</span>
             </div>
-            <p className="text-xs text-gray-400 mt-2">
+            <p className="text-xs text-gray-400 text-center">
               {sliderValue[0] === 1 && "Get the same product from animals raised under high-welfare conditions."}
               {sliderValue[0] === 2 && "Products that minimize suffering in intensive systems."}
               {sliderValue[0] === 3 && "Products meeting multiple high-welfare criteria."}
