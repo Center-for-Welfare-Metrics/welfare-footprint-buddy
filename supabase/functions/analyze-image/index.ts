@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { imageData, additionalIngredients, additionalDescription } = await req.json();
+    const { imageData, additionalInfo } = await req.json();
     const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
 
     if (!GEMINI_API_KEY) {
@@ -70,15 +70,8 @@ Example: "Kirkland Signature Organic Ground Beef meets certain animal welfare st
 Analyze the image and return ONLY valid JSON matching this schema.`;
 
     // Add additional context if provided by user
-    if (additionalIngredients || additionalDescription) {
-      prompt += `\n\nADDITIONAL INFORMATION PROVIDED BY USER:`;
-      if (additionalIngredients) {
-        prompt += `\nAdditional Ingredients: ${additionalIngredients}`;
-      }
-      if (additionalDescription) {
-        prompt += `\nAdditional Description: ${additionalDescription}`;
-      }
-      prompt += `\n\nPlease incorporate this additional information into your analysis and update the confidence levels accordingly.`;
+    if (additionalInfo) {
+      prompt += `\n\nADDITIONAL INFORMATION PROVIDED BY USER: ${additionalInfo}\n\nPlease incorporate this additional information into your analysis and update the confidence levels accordingly.`;
     }
 
     const requestBody = {

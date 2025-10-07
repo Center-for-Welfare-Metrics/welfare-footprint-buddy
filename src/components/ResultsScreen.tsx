@@ -35,8 +35,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
   const [isLoadingSwaps, setIsLoadingSwaps] = useState(false);
   const [sliderValue, setSliderValue] = useState([1]); // Default to "Prioritize Big Welfare Gains"
   const [challengeOpen, setChallengeOpen] = useState(false);
-  const [additionalIngredients, setAdditionalIngredients] = useState("");
-  const [additionalDescription, setAdditionalDescription] = useState("");
+  const [additionalInfo, setAdditionalInfo] = useState("");
   const [isReanalyzing, setIsReanalyzing] = useState(false);
   const { toast } = useToast();
 
@@ -111,8 +110,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
       const { data: result, error } = await supabase.functions.invoke('analyze-image', {
         body: { 
           imageData: parsedImageData,
-          additionalIngredients: additionalIngredients.trim() || undefined,
-          additionalDescription: additionalDescription.trim() || undefined
+          additionalInfo: additionalInfo.trim() || undefined
         }
       });
 
@@ -123,8 +121,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
       
       onReanalyze(parsedData);
       setChallengeOpen(false);
-      setAdditionalIngredients("");
-      setAdditionalDescription("");
+      setAdditionalInfo("");
       toast({
         title: "Re-analysis Complete",
         description: "The product has been re-analyzed with your additional information.",
@@ -175,30 +172,19 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
               </DialogHeader>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="ingredients" className="text-gray-300">Missed Ingredients</Label>
+                  <Label htmlFor="info" className="text-gray-300">Have info on how this product was made? Add details like certifications or farming practices to help refine the welfare results</Label>
                   <Textarea
-                    id="ingredients"
-                    placeholder="Any animal-derived ingredients that may have been missed..."
-                    value={additionalIngredients}
-                    onChange={(e) => setAdditionalIngredients(e.target.value)}
+                    id="info"
+                    placeholder="E.g., 'pasture-raised', 'cage-free', specific ingredients, certifications, or any other welfare-relevant information..."
+                    value={additionalInfo}
+                    onChange={(e) => setAdditionalInfo(e.target.value)}
                     className="mt-2 bg-gray-800 border-gray-700 text-white"
-                    rows={3}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="description" className="text-gray-300">Production Method or Other Context</Label>
-                  <Textarea
-                    id="description"
-                    placeholder="E.g., 'pasture-raised', 'cage-free', certifications, farming practices, or any other welfare-relevant information..."
-                    value={additionalDescription}
-                    onChange={(e) => setAdditionalDescription(e.target.value)}
-                    className="mt-2 bg-gray-800 border-gray-700 text-white"
-                    rows={3}
+                    rows={5}
                   />
                 </div>
                 <Button 
                   onClick={handleChallengeAnalysis}
-                  disabled={isReanalyzing || (!additionalIngredients.trim() && !additionalDescription.trim())}
+                  disabled={isReanalyzing || !additionalInfo.trim()}
                   className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
                 >
                   {isReanalyzing ? (
@@ -388,30 +374,19 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
               </DialogHeader>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="ingredients-full" className="text-gray-300">Missed Ingredients</Label>
+                  <Label htmlFor="info-full" className="text-gray-300">Have info on how this product was made? Add details like certifications or farming practices to help refine the welfare results</Label>
                   <Textarea
-                    id="ingredients-full"
-                    placeholder="Any animal-derived ingredients that may have been missed..."
-                    value={additionalIngredients}
-                    onChange={(e) => setAdditionalIngredients(e.target.value)}
+                    id="info-full"
+                    placeholder="E.g., 'pasture-raised', 'cage-free', specific ingredients, certifications, or any other welfare-relevant information..."
+                    value={additionalInfo}
+                    onChange={(e) => setAdditionalInfo(e.target.value)}
                     className="mt-2 bg-gray-800 border-gray-700 text-white"
-                    rows={3}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="description-full" className="text-gray-300">Production Method or Other Context</Label>
-                  <Textarea
-                    id="description-full"
-                    placeholder="E.g., 'pasture-raised', 'cage-free', certifications, farming practices, or any other welfare-relevant information..."
-                    value={additionalDescription}
-                    onChange={(e) => setAdditionalDescription(e.target.value)}
-                    className="mt-2 bg-gray-800 border-gray-700 text-white"
-                    rows={3}
+                    rows={5}
                   />
                 </div>
                 <Button 
                   onClick={handleChallengeAnalysis}
-                  disabled={isReanalyzing || (!additionalIngredients.trim() && !additionalDescription.trim())}
+                  disabled={isReanalyzing || !additionalInfo.trim()}
                   className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
                 >
                   {isReanalyzing ? (
