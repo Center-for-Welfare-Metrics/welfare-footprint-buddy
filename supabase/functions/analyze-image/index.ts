@@ -27,16 +27,31 @@ serve(async (req) => {
 3. If it contains animal-derived ingredients:
    - List them.
    - Infer the likely production system with detailed brand-specific information.
-   - Provide potential welfare concerns.
+   - Provide potential welfare concerns STRICTLY LIMITED TO ANIMAL WELFARE (sentience, suffering, living conditions, physical/mental well-being of the animals).
    - Estimate data confidence for each field (Low, Medium, High).
 4. If it does NOT contain animal-derived ingredients, only return the product name and set hasAnimalIngredients to false.
+
+**CRITICAL - Animal Welfare Focus:**
+ONLY discuss animal welfare concerns related to:
+- Physical suffering (pain, injury, disease, mutilations)
+- Mental suffering (stress, fear, frustration, boredom)
+- Living conditions (confinement, crowding, barren environments)
+- Natural behaviors (ability to express species-typical behaviors)
+- Slaughter and handling practices
+- Selective breeding effects on animal health
+
+DO NOT INCLUDE:
+- Environmental concerns (habitat destruction, pollution, deforestation)
+- Sustainability issues (carbon footprint, water usage)
+- Human health concerns (antibiotics resistance, food safety)
+- Ecological impacts (biodiversity, ecosystem disruption)
 
 **IMPORTANT - Production System Field:**
 When you identify a known brand or product line:
 - Research and include specific welfare certifications (e.g., "USDA Organic", "Certified Humane", "Animal Welfare Approved")
-- Explain what those certifications mean in practice (e.g., "USDA Organic implies some welfare standards but focuses more on organic feed and avoiding synthetic pesticides rather than guaranteeing high animal welfare")
+- Explain what those certifications mean in practice FOR ANIMAL WELFARE SPECIFICALLY (e.g., "USDA Organic implies some welfare standards but focuses more on organic feed and avoiding synthetic pesticides rather than guaranteeing high animal welfare")
 - Note any limitations or gaps in available welfare information (e.g., "specific detailed information about pasture access is not readily available")
-- Mention if the product is raised without antibiotics or growth hormones
+- Mention welfare-relevant factors like use of antibiotics or growth hormones (only as they relate to animal health and welfare)
 - Provide context about industry-standard practices if brand-specific information is limited
 - Be informative but honest about what is and isn't known
 
@@ -48,7 +63,7 @@ Example: "Kirkland Signature Organic Ground Beef meets certain animal welfare st
   "hasAnimalIngredients": true|false,
   "animalIngredients": {"value": "string", "confidence": "Low|Medium|High"},
   "productionSystem": {"value": "string (detailed, multi-sentence description)", "confidence": "Low|Medium|High", "assumption": "string (optional)"},
-  "welfareConcerns": {"value": "string (multi-line allowed)", "confidence": "Low|Medium|High"},
+  "welfareConcerns": {"value": "string (multi-line allowed, ANIMAL WELFARE ONLY)", "confidence": "Low|Medium|High"},
   "disclaimer": "This analysis was generated using AI and may contain errors or inaccuracies. It is a preliminary estimate and has not been scientifically validated by the Welfare Footprint Institute. Please verify information independently before making decisions."
 }
 
