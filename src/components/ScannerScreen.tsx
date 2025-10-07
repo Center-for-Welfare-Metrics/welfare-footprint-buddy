@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 interface ScannerScreenProps {
   onBack: () => void;
-  onAnalysisComplete: (data: any) => void;
+  onAnalysisComplete: (data: any, imageData: string) => void;
 }
 
 const ScannerScreen = ({ onBack, onAnalysisComplete }: ScannerScreenProps) => {
@@ -52,7 +52,9 @@ const ScannerScreen = ({ onBack, onAnalysisComplete }: ScannerScreenProps) => {
 
       if (data?.candidates?.[0]?.content?.parts[0]?.text) {
         const analysisJson = JSON.parse(data.candidates[0].content.parts[0].text);
-        onAnalysisComplete(analysisJson);
+        // Convert the imageData to the format expected by ResultsScreen
+        const imageDataString = JSON.stringify(imageData);
+        onAnalysisComplete(analysisJson, imageDataString);
       } else {
         throw new Error('Unexpected response format from AI.');
       }

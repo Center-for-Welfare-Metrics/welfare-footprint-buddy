@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, HelpCircle } from "lucide-react";
+import { Loader2, HelpCircle, AlertCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 interface AnalysisData {
   productName?: { value: string; confidence: string };
@@ -22,12 +24,18 @@ interface Suggestion {
 interface ResultsScreenProps {
   data: AnalysisData;
   onNewScan: () => void;
+  imageData?: string;
+  onReanalyze?: (newData: AnalysisData) => void;
 }
 
-const ResultsScreen = ({ data, onNewScan }: ResultsScreenProps) => {
+const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScreenProps) => {
   const [ethicalSwaps, setEthicalSwaps] = useState<Suggestion[]>([]);
   const [isLoadingSwaps, setIsLoadingSwaps] = useState(false);
   const [sliderValue, setSliderValue] = useState(50);
+  const [challengeOpen, setChallengeOpen] = useState(false);
+  const [additionalIngredients, setAdditionalIngredients] = useState("");
+  const [additionalDescription, setAdditionalDescription] = useState("");
+  const [isReanalyzing, setIsReanalyzing] = useState(false);
   const { toast } = useToast();
 
   const getConfidenceMeter = (confidence?: string) => {
@@ -96,6 +104,46 @@ For each suggestion, provide a brief (1 sentence) justification. Return the sugg
     return () => clearTimeout(debounceTimer);
   }, [sliderValue]);
 
+  const handleChallengeAnalysis = async () => {
+    if (!imageData || !onReanalyze) return;
+
+    setIsReanalyzing(true);
+    try {
+      // Parse the imageData string back to object
+      const parsedImageData = JSON.parse(imageData);
+      
+      const { data: result, error } = await supabase.functions.invoke('analyze-image', {
+        body: { 
+          imageData: parsedImageData,
+          additionalIngredients: additionalIngredients.trim() || undefined,
+          additionalDescription: additionalDescription.trim() || undefined
+        }
+      });
+
+      if (error) throw error;
+
+      const analysisData = result.candidates[0].content.parts[0].text;
+      const parsedData = JSON.parse(analysisData.replace(/```json\n?|\n?```/g, ''));
+      
+      onReanalyze(parsedData);
+      setChallengeOpen(false);
+      setAdditionalIngredients("");
+      setAdditionalDescription("");
+      toast({
+        title: "Re-analysis Complete",
+        description: "The product has been re-analyzed with your additional information.",
+      });
+    } catch (error) {
+      toast({
+        title: "Re-analysis Failed",
+        description: error instanceof Error ? error.message : "An error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setIsReanalyzing(false);
+    }
+  };
+
   const renderSwaps = () => {
     return (
       <div className="space-y-3">
@@ -124,6 +172,63 @@ For each suggestion, provide a brief (1 sentence) justification. Return the sugg
             As such, it is outside the scope of this animal welfare assessment.
           </p>
         </div>
+        {imageData && onReanalyze && (
+          <Dialog open={challengeOpen} onOpenChange={setChallengeOpen}>
+            <DialogTrigger asChild>
+              <Button 
+                variant="outline"
+                className="w-full mt-4 border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/10"
+              >
+                <AlertCircle className="mr-2 h-4 w-4" />
+                Challenge Analysis
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="glass-card max-w-md">
+              <DialogHeader>
+                <DialogTitle className="text-xl font-bold text-white">Provide Additional Information</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="ingredients" className="text-gray-300">Additional Ingredients</Label>
+                  <Textarea
+                    id="ingredients"
+                    placeholder="Enter any ingredients you see that may have been missed..."
+                    value={additionalIngredients}
+                    onChange={(e) => setAdditionalIngredients(e.target.value)}
+                    className="mt-2 bg-gray-800 border-gray-700 text-white"
+                    rows={3}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="description" className="text-gray-300">Additional Description</Label>
+                  <Textarea
+                    id="description"
+                    placeholder="Provide any additional context about the product..."
+                    value={additionalDescription}
+                    onChange={(e) => setAdditionalDescription(e.target.value)}
+                    className="mt-2 bg-gray-800 border-gray-700 text-white"
+                    rows={3}
+                  />
+                </div>
+                <Button 
+                  onClick={handleChallengeAnalysis}
+                  disabled={isReanalyzing || (!additionalIngredients.trim() && !additionalDescription.trim())}
+                  className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
+                >
+                  {isReanalyzing ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Re-analyzing...
+                    </>
+                  ) : (
+                    "Re-analyze Product"
+                  )}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+
         <Button 
           onClick={onNewScan}
           className="w-full mt-8 bg-gray-700 hover:bg-gray-600 text-white font-bold"
@@ -222,12 +327,69 @@ For each suggestion, provide a brief (1 sentence) justification. Return the sugg
         </div>
       </div>
 
-      <Button 
-        onClick={onNewScan}
-        className="w-full mt-8 bg-gray-700 hover:bg-gray-600 text-white font-bold"
-      >
-        Scan New Item
-      </Button>
+        {imageData && onReanalyze && (
+          <Dialog open={challengeOpen} onOpenChange={setChallengeOpen}>
+            <DialogTrigger asChild>
+              <Button 
+                variant="outline"
+                className="w-full mt-4 border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/10"
+              >
+                <AlertCircle className="mr-2 h-4 w-4" />
+                Challenge Analysis
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="glass-card max-w-md">
+              <DialogHeader>
+                <DialogTitle className="text-xl font-bold text-white">Provide Additional Information</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="ingredients-full" className="text-gray-300">Additional Ingredients</Label>
+                  <Textarea
+                    id="ingredients-full"
+                    placeholder="Enter any ingredients you see that may have been missed..."
+                    value={additionalIngredients}
+                    onChange={(e) => setAdditionalIngredients(e.target.value)}
+                    className="mt-2 bg-gray-800 border-gray-700 text-white"
+                    rows={3}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="description-full" className="text-gray-300">Additional Description</Label>
+                  <Textarea
+                    id="description-full"
+                    placeholder="Provide any additional context about the product..."
+                    value={additionalDescription}
+                    onChange={(e) => setAdditionalDescription(e.target.value)}
+                    className="mt-2 bg-gray-800 border-gray-700 text-white"
+                    rows={3}
+                  />
+                </div>
+                <Button 
+                  onClick={handleChallengeAnalysis}
+                  disabled={isReanalyzing || (!additionalIngredients.trim() && !additionalDescription.trim())}
+                  className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
+                >
+                  {isReanalyzing ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Re-analyzing...
+                    </>
+                  ) : (
+                    "Re-analyze Product"
+                  )}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
+
+        <Button 
+          onClick={onNewScan}
+          className="w-full mt-8 bg-gray-700 hover:bg-gray-600 text-white font-bold"
+        >
+          Scan New Item
+        </Button>
 
       <Dialog>
         <DialogTrigger asChild>

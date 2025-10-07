@@ -8,12 +8,18 @@ type Screen = 'home' | 'scanner' | 'results';
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState<Screen>('home');
   const [analysisData, setAnalysisData] = useState<any>(null);
+  const [scannedImageData, setScannedImageData] = useState<string>("");
 
   const handleStartScan = () => setCurrentScreen('scanner');
   const handleBack = () => setCurrentScreen('home');
-  const handleAnalysisComplete = (data: any) => {
+  const handleAnalysisComplete = (data: any, imageData: string) => {
     setAnalysisData(data);
+    setScannedImageData(imageData);
     setCurrentScreen('results');
+  };
+
+  const handleReanalyze = (newData: any) => {
+    setAnalysisData(newData);
   };
   const handleNewScan = () => {
     setAnalysisData(null);
@@ -27,7 +33,12 @@ const Index = () => {
         <ScannerScreen onBack={handleBack} onAnalysisComplete={handleAnalysisComplete} />
       )}
       {currentScreen === 'results' && analysisData && (
-        <ResultsScreen data={analysisData} onNewScan={handleNewScan} />
+        <ResultsScreen 
+          data={analysisData} 
+          onNewScan={handleNewScan}
+          imageData={scannedImageData}
+          onReanalyze={handleReanalyze}
+        />
       )}
     </div>
   );

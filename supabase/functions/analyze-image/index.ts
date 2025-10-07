@@ -12,14 +12,14 @@ serve(async (req) => {
   }
 
   try {
-    const { imageData } = await req.json();
+    const { imageData, additionalIngredients, additionalDescription } = await req.json();
     const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
 
     if (!GEMINI_API_KEY) {
       throw new Error('GEMINI_API_KEY is not configured');
     }
 
-    const prompt = `You are an AI assistant specializing in animal welfare analysis. Your task is to analyze the provided product image and provide a structured JSON response. 
+    let prompt = `You are an AI assistant specializing in animal welfare analysis. Your task is to analyze the provided product image and provide a structured JSON response. 
 
 **Instructions:**
 1. Identify the product name from the image.
@@ -42,6 +42,18 @@ serve(async (req) => {
 }
 
 Analyze the image and return ONLY valid JSON matching this schema.`;
+
+    // Add additional context if provided by user
+    if (additionalIngredients || additionalDescription) {
+      prompt += `\n\nADDITIONAL INFORMATION PROVIDED BY USER:`;
+      if (additionalIngredients) {
+        prompt += `\nAdditional Ingredients: ${additionalIngredients}`;
+      }
+      if (additionalDescription) {
+        prompt += `\nAdditional Description: ${additionalDescription}`;
+      }
+      prompt += `\n\nPlease incorporate this additional information into your analysis and update the confidence levels accordingly.`;
+    }
 
     const requestBody = {
       contents: [{
