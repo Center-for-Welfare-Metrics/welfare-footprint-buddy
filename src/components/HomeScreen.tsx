@@ -3,6 +3,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { User } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import LanguageSelector from "@/components/LanguageSelector";
 
 interface HomeScreenProps {
   onStartScan: () => void;
@@ -15,7 +16,8 @@ const HomeScreen = ({ onStartScan }: HomeScreenProps) => {
 
   return (
     <div className="flex flex-col min-h-screen text-center">
-      <div className="absolute top-4 right-4">
+      <div className="absolute top-4 right-4 flex items-center gap-2">
+        <LanguageSelector />
         <Button
           variant="ghost"
           size="sm"
