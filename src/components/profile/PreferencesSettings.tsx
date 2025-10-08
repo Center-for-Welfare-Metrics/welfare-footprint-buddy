@@ -117,6 +117,11 @@ const PreferencesSettings = ({ userId }: PreferencesSettingsProps) => {
               <SelectItem value="es">Español</SelectItem>
               <SelectItem value="fr">Français</SelectItem>
               <SelectItem value="de">Deutsch</SelectItem>
+              <SelectItem value="pt">Português</SelectItem>
+              <SelectItem value="zh">中文</SelectItem>
+              <SelectItem value="hi">हिन्दी</SelectItem>
+              <SelectItem value="ar">العربية</SelectItem>
+              <SelectItem value="ru">Русский</SelectItem>
             </SelectContent>
           </Select>
         </div>
