@@ -13,6 +13,7 @@ import { useAuth } from "@/contexts/AuthContext";
 interface AnalysisData {
   productName?: { value: string; confidence: string };
   hasAnimalIngredients: boolean;
+  isFood?: boolean;
   animalIngredients?: { value: string; confidence: string };
   productionSystem?: { value: string; confidence: string; assumption?: string };
   welfareConcerns?: { value: string; confidence: string };
@@ -177,6 +178,11 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
           <p className="text-gray-400 text-sm mt-4">
             As such, it is outside the scope of this animal welfare assessment.
           </p>
+          {data.isFood && (
+            <p className="text-emerald-300 text-base font-medium mt-6">
+              The good news? If it's food, it's already a welfare-friendly choice!
+            </p>
+          )}
         </div>
         {imageData && onReanalyze ? (
           <Dialog open={challengeOpen} onOpenChange={setChallengeOpen}>

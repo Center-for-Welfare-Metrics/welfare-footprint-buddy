@@ -61,6 +61,7 @@ Example: "Kirkland Signature Organic Ground Beef meets certain animal welfare st
 {
   "productName": {"value": "string", "confidence": "Low|Medium|High"},
   "hasAnimalIngredients": true|false,
+  "isFood": true|false,
   "animalIngredients": {"value": "string", "confidence": "Low|Medium|High"},
   "productionSystem": {"value": "string (detailed, multi-sentence description)", "confidence": "Low|Medium|High", "assumption": "string (optional)"},
   "welfareConcerns": {"value": "string (multi-line allowed, ANIMAL WELFARE ONLY)", "confidence": "Low|Medium|High"},
