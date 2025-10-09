@@ -314,7 +314,11 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
               <span 
                 className="text-xs font-medium italic transition-colors duration-300"
                 style={{
-                  color: `hsl(${180 - (sliderValue[0] - 1) * 45}, 70%, 60%)`
+                  color: sliderValue[0] === 1 ? '#FF6B9D' :
+                         sliderValue[0] === 2 ? '#E677B8' :
+                         sliderValue[0] === 3 ? '#C084FC' :
+                         sliderValue[0] === 4 ? '#90B5FB' :
+                         '#60A5FA'
                 }}
               >
                 {sliderValue[0] === 1 ? "Prioritize Big Welfare Gains" :
@@ -325,6 +329,32 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
               </span>
             </div>
             <div className="relative">
+              <style>{`
+                .ethical-lens-slider [role="slider"] {
+                  background-color: ${
+                    sliderValue[0] === 1 ? '#FF6B9D' :
+                    sliderValue[0] === 2 ? '#E677B8' :
+                    sliderValue[0] === 3 ? '#C084FC' :
+                    sliderValue[0] === 4 ? '#90B5FB' :
+                    '#60A5FA'
+                  } !important;
+                  border-color: ${
+                    sliderValue[0] === 1 ? '#FF6B9D' :
+                    sliderValue[0] === 2 ? '#E677B8' :
+                    sliderValue[0] === 3 ? '#C084FC' :
+                    sliderValue[0] === 4 ? '#90B5FB' :
+                    '#60A5FA'
+                  } !important;
+                  box-shadow: 0 0 20px ${
+                    sliderValue[0] === 1 ? '#FF6B9D' :
+                    sliderValue[0] === 2 ? '#E677B8' :
+                    sliderValue[0] === 3 ? '#C084FC' :
+                    sliderValue[0] === 4 ? '#90B5FB' :
+                    '#60A5FA'
+                  }80 !important;
+                  transition: all 0.3s ease;
+                }
+              `}</style>
               <Slider
                 value={sliderValue}
                 onValueChange={setSliderValue}
@@ -336,12 +366,12 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
             </div>
             <div className="flex justify-between text-xs font-medium -mx-2">
               <div className="flex flex-col items-start">
-                <span className="text-lg mb-1 text-amber-400">←</span>
-                <span className="text-amber-400">Same Product, High Welfare</span>
+                <span className="text-lg mb-1" style={{ color: '#FF6B9D' }}>←</span>
+                <span style={{ color: '#FF6B9D' }}>Same Product, High Welfare</span>
               </div>
               <div className="flex flex-col items-end">
-                <span className="text-lg mb-1 text-emerald-400">→</span>
-                <span className="text-right text-emerald-400">Plant-Based/Cultured Only</span>
+                <span className="text-lg mb-1" style={{ color: '#60A5FA' }}>→</span>
+                <span className="text-right" style={{ color: '#60A5FA' }}>Plant-Based/Cultured Only</span>
               </div>
             </div>
             <p className="text-xs text-gray-400 text-center">
