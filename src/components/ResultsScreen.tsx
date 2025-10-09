@@ -42,7 +42,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
   const [isReanalyzing, setIsReanalyzing] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
 
   // Save scan to history if user is logged in
   useEffect(() => {
@@ -151,13 +151,13 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
       setChallengeOpen(false);
       setAdditionalInfo("");
       toast({
-        title: "Re-analysis Complete",
-        description: "The product has been re-analyzed with your additional information.",
+        title: t('results.reanalysisComplete'),
+        description: t('results.reanalysisCompleteDesc'),
       });
     } catch (error) {
       toast({
-        title: "Re-analysis Failed",
-        description: error instanceof Error ? error.message : "An error occurred",
+        title: t('results.reanalysisFailed'),
+        description: error instanceof Error ? error.message : t('results.failedToLoad'),
         variant: "destructive",
       });
     } finally {
@@ -169,14 +169,14 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
   if (data.isFood === false) {
     return (
       <div className="p-4 glass-card rounded-2xl animate-fade-in">
-        <h1 className="text-3xl font-bold mb-6 text-center text-white">Analysis</h1>
+        <h1 className="text-3xl font-bold mb-6 text-center text-white">{t('results.analysis')}</h1>
         <div className="text-center p-8">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-500/20 flex items-center justify-center">
             <AlertCircle className="w-8 h-8 text-amber-400" />
           </div>
-          <h3 className="font-bold text-2xl text-amber-400 mb-4">Not a Food Product</h3>
+          <h3 className="font-bold text-2xl text-amber-400 mb-4">{t('results.notFoodProduct')}</h3>
           <p className="text-gray-300 text-lg">
-            This image doesn't seem to contain food or a recognizable product. Please upload a photo of a food item or packaged product so I can analyze its welfare footprint.
+            {t('results.notFoodDescription')}
           </p>
         </div>
 
@@ -184,7 +184,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
           onClick={onNewScan}
           className="w-full mt-8 bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
         >
-          Upload Food Product
+          {t('scanner.uploadImage')}
         </Button>
       </div>
     );
@@ -195,20 +195,20 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
     
     return (
       <div className="p-4 glass-card rounded-2xl animate-fade-in">
-        <h1 className="text-3xl font-bold mb-6 text-center text-white">Analysis</h1>
+        <h1 className="text-3xl font-bold mb-6 text-center text-white">{t('results.analysis')}</h1>
         <div className="text-center p-8">
           <h3 className="font-bold text-2xl text-emerald-400 mb-2">
-            {data.productName?.value || 'Product Analysis'}
+            {data.productName?.value || t('results.productAnalysis')}
           </h3>
           <p className="text-gray-300">
-            This product does not appear to contain animal-derived ingredients.
+            {t('results.noAnimalIngredients')}
           </p>
           <p className="text-gray-400 text-sm mt-4">
-            As such, it is outside the scope of this animal welfare assessment.
+            {t('results.outOfScope')}
           </p>
           {data.isFood && (
             <p className="text-emerald-300 text-base font-medium mt-6">
-              The good news? If it's food, it's already a welfare-friendly choice!
+              {t('results.welfareFriendly')}
             </p>
           )}
         </div>
@@ -220,19 +220,19 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
                 className="w-full mt-4 border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/10"
               >
                 <AlertCircle className="mr-2 h-4 w-4" />
-                Challenge Analysis
+                {t('results.challengeAnalysis')}
               </Button>
             </DialogTrigger>
             <DialogContent className="glass-card max-w-md">
             <DialogHeader>
-              <DialogTitle className="text-xl font-bold text-white">Have more info? share it here</DialogTitle>
+              <DialogTitle className="text-xl font-bold text-white">{t('results.challengeTitle')}</DialogTitle>
             </DialogHeader>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="info" className="text-gray-300">Have info on how this product was made? Add details like certifications or farming practices to help refine the welfare results</Label>
+                  <Label htmlFor="info" className="text-gray-300">{t('results.challengeDescription')}</Label>
                   <Textarea
                     id="info"
-                    placeholder="E.g., 'pasture-raised', 'cage-free', specific ingredients, certifications, or any other welfare-relevant information..."
+                    placeholder={t('results.challengePlaceholder')}
                     value={additionalInfo}
                     onChange={(e) => setAdditionalInfo(e.target.value)}
                     className="mt-2 bg-gray-800 border-gray-700 text-white"
@@ -247,10 +247,10 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
                   {isReanalyzing ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Re-analyzing...
+                      {t('results.reanalyzing')}
                     </>
                   ) : (
-                    "Re-analyze Product"
+                    t('results.reanalyzeProduct')
                   )}
                 </Button>
               </div>
@@ -264,7 +264,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
           onClick={onNewScan}
           className="w-full mt-8 bg-gray-700 hover:bg-gray-600 text-white font-bold"
         >
-          Scan New Item
+          {t('scanner.scanNew')}
         </Button>
       </div>
     );
@@ -272,21 +272,21 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
 
   return (
     <div className="p-4 glass-card rounded-2xl animate-fade-in">
-      <h1 className="text-3xl font-bold mb-6 text-center text-white">Analysis</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center text-white">{t('results.analysis')}</h1>
       <div className="space-y-4">
         <div className="border-b border-gray-700 pb-3">
-          <h3 className="font-bold text-emerald-400 mb-1">Product</h3>
+          <h3 className="font-bold text-emerald-400 mb-1">{t('results.product')}</h3>
           <p className="text-gray-300">{data.productName?.value || 'N/A'}</p>
         </div>
 
         <div className="border-b border-gray-700 pb-3">
-          <h3 className="font-bold text-emerald-400 mb-1">Animal-Derived Ingredients</h3>
+          <h3 className="font-bold text-emerald-400 mb-1">{t('results.animalIngredients')}</h3>
           <p className="text-gray-300">{data.animalIngredients?.value || 'N/A'}</p>
         </div>
 
         <div className="border-b border-gray-700 pb-3">
           <div className="flex justify-between items-center mb-1">
-            <h3 className="font-bold text-emerald-400">Production System</h3>
+            <h3 className="font-bold text-emerald-400">{t('results.productionSystem')}</h3>
             <div className="w-1/3">{getConfidenceMeter(data.productionSystem?.confidence)}</div>
           </div>
           <p className="text-gray-300">{data.productionSystem?.value || 'N/A'}</p>
@@ -297,7 +297,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
 
         <div className="border-b border-gray-700 pb-3">
           <div className="flex justify-between items-center mb-1">
-            <h3 className="font-bold text-emerald-400">Potential Welfare Concerns</h3>
+            <h3 className="font-bold text-emerald-400">{t('results.welfareConcerns')}</h3>
             <div className="w-1/3">{getConfidenceMeter(data.welfareConcerns?.confidence)}</div>
           </div>
           <p className="text-gray-300 whitespace-pre-wrap">{data.welfareConcerns?.value || 'N/A'}</p>
@@ -306,7 +306,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
         <div className="border-b border-gray-700 pb-4">
           <div className="space-y-4 bg-gray-800/50 p-4 rounded-lg">
             <div className="flex justify-start items-center">
-              <Label className="text-sm font-medium text-emerald-400">Ethical Lens ⚖️</Label>
+              <Label className="text-sm font-medium text-emerald-400">{t('ethicalLens.title')}</Label>
             </div>
             <div className="text-center">
               <span 
@@ -319,11 +319,11 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
                          '#60A5FA'
                 }}
               >
-                {sliderValue[0] === 1 ? "Prioritize Big Welfare Gains" :
-                 sliderValue[0] === 2 ? "Strong Welfare Standards" :
-                 sliderValue[0] === 3 ? "Minimal Animal Suffering" :
-                 sliderValue[0] === 4 ? "Minimal Animal Use" :
-                 "Aim for Zero Animal Harm"}
+                {sliderValue[0] === 1 ? t('ethicalLens.level1') :
+                 sliderValue[0] === 2 ? t('ethicalLens.level2') :
+                 sliderValue[0] === 3 ? t('ethicalLens.level3') :
+                 sliderValue[0] === 4 ? t('ethicalLens.level4') :
+                 t('ethicalLens.level5')}
               </span>
             </div>
             <div className="relative">
@@ -365,11 +365,11 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
             <div className="flex justify-between text-xs font-medium -mx-2">
               <div className="flex flex-col items-start">
                 <span className="text-lg mb-1" style={{ color: '#FF6B9D' }}>←</span>
-                <span style={{ color: '#FF6B9D' }}>Same Product, High Welfare</span>
+                <span style={{ color: '#FF6B9D' }}>{t('ethicalLens.rangeStart')}</span>
               </div>
               <div className="flex flex-col items-end">
                 <span className="text-lg mb-1" style={{ color: '#60A5FA' }}>→</span>
-                <span className="text-right" style={{ color: '#60A5FA' }}>Plant-Based/Cultured Only</span>
+                <span className="text-right" style={{ color: '#60A5FA' }}>{t('ethicalLens.rangeEnd')}</span>
               </div>
             </div>
             <p 
@@ -382,11 +382,11 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
                        '#60A5FA'
               }}
             >
-              {sliderValue[0] === 1 && "Same type of product but from animals raised under high-welfare conditions."}
-              {sliderValue[0] === 2 && "Certified or verifiably higher-welfare animal products meeting multiple criteria."}
-              {sliderValue[0] === 3 && "Hybrid or blended options that reduce overall welfare impact."}
-              {sliderValue[0] === 4 && "Mostly plant-based options with only trace animal ingredients."}
-              {sliderValue[0] === 5 && "Fully animal-free products (plant-based, cultured, or synthetic)."}
+              {sliderValue[0] === 1 && t('ethicalLens.desc1')}
+              {sliderValue[0] === 2 && t('ethicalLens.desc2')}
+              {sliderValue[0] === 3 && t('ethicalLens.desc3')}
+              {sliderValue[0] === 4 && t('ethicalLens.desc4')}
+              {sliderValue[0] === 5 && t('ethicalLens.desc5')}
             </p>
           </div>
         </div>
@@ -409,16 +409,16 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
                 {isLoadingSwaps ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Finding Swaps...
+                    {t('results.findingSwaps')}
                   </>
                 ) : (
-                  <>Suggest Alternatives ✨</>
+                  <>{t('results.suggestAlternatives')}</>
                 )}
               </Button>
             ) : (
               <div className="space-y-3">
                 <h3 className="font-semibold text-emerald-400">
-                  {ethicalSwaps[0]?.ethicalLensPosition || "Suggested Alternatives"}
+                  {ethicalSwaps[0]?.ethicalLensPosition || t('results.suggestedAlternatives')}
                 </h3>
                 {ethicalSwaps[0]?.generalNote && (
                   <p className="text-xs text-gray-400 italic border-l-2 border-emerald-500/50 pl-3 py-2">
@@ -436,17 +436,17 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
                             swap.confidence === 'Medium' ? 'bg-yellow-900/50 text-yellow-300' :
                             'bg-gray-700 text-gray-300'
                           }`}>
-                            {swap.confidence} Confidence
+                            {swap.confidence} {t('results.confidence')}
                           </span>
                         </div>
                         <p className="text-sm text-gray-300">{swap.description}</p>
                         <div className="text-xs space-y-1">
                           <p className="text-gray-400">
-                            <span className="font-medium text-emerald-400">Reasoning:</span> {swap.reasoning}
+                            <span className="font-medium text-emerald-400">{t('results.reasoning')}</span> {swap.reasoning}
                           </p>
                           {swap.availability && (
                             <p className="text-gray-400">
-                              <span className="font-medium text-emerald-400">Availability:</span> {swap.availability}
+                              <span className="font-medium text-emerald-400">{t('results.availability')}</span> {swap.availability}
                             </p>
                           )}
                         </div>
@@ -460,9 +460,9 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
         </div>
 
         <div className="p-3 bg-gray-800/50 border border-gray-700 text-gray-300 rounded-lg">
-          <h3 className="font-bold">Disclaimer</h3>
+          <h3 className="font-bold">{t('results.disclaimer')}</h3>
           <p className="text-xs">
-            {data.disclaimer || 'This is a Preliminary AI Estimate and has not been scientifically validated by the Welfare Footprint Institute.'}
+            {data.disclaimer || t('results.defaultDisclaimer')}
           </p>
         </div>
       </div>
@@ -475,19 +475,19 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
                 className="w-full mt-4 border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/10"
               >
                 <AlertCircle className="mr-2 h-4 w-4" />
-                Challenge Analysis
+                {t('results.challengeAnalysis')}
               </Button>
             </DialogTrigger>
             <DialogContent className="glass-card max-w-md">
               <DialogHeader>
-                <DialogTitle className="text-xl font-bold text-white">Challenge or Clarify Analysis</DialogTitle>
+                <DialogTitle className="text-xl font-bold text-white">{t('results.challengeAnalysis')}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="info-full" className="text-gray-300">Have info on how this product was made? Add details like certifications or farming practices to help refine the welfare results</Label>
+                  <Label htmlFor="info-full" className="text-gray-300">{t('results.challengeDescription')}</Label>
                   <Textarea
                     id="info-full"
-                    placeholder="E.g., 'pasture-raised', 'cage-free', specific ingredients, certifications, or any other welfare-relevant information..."
+                    placeholder={t('results.challengePlaceholder')}
                     value={additionalInfo}
                     onChange={(e) => setAdditionalInfo(e.target.value)}
                     className="mt-2 bg-gray-800 border-gray-700 text-white"
@@ -502,10 +502,10 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
                   {isReanalyzing ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Re-analyzing...
+                      {t('results.reanalyzing')}
                     </>
                   ) : (
-                    "Re-analyze Product"
+                    t('results.reanalyzeProduct')
                   )}
                 </Button>
               </div>
@@ -517,7 +517,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
           onClick={onNewScan}
           className="w-full mt-8 bg-gray-700 hover:bg-gray-600 text-white font-bold"
         >
-          Scan New Item
+          {t('scanner.scanNew')}
         </Button>
 
       <Dialog>

@@ -19,7 +19,7 @@ const ScannerScreen = ({ onBack, onAnalysisComplete }: ScannerScreenProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -40,8 +40,8 @@ const ScannerScreen = ({ onBack, onAnalysisComplete }: ScannerScreenProps) => {
   const handleAnalyze = async () => {
     if (!imageData) {
       toast({
-        title: "No image selected",
-        description: "Please select an image first.",
+        title: t('scanner.analysisFailed'),
+        description: t('results.failedToLoad'),
         variant: "destructive",
       });
       return;
@@ -65,8 +65,8 @@ const ScannerScreen = ({ onBack, onAnalysisComplete }: ScannerScreenProps) => {
       }
     } catch (error) {
       toast({
-        title: "Analysis failed",
-        description: error instanceof Error ? error.message : "An error occurred",
+        title: t('scanner.analysisFailed'),
+        description: error instanceof Error ? error.message : t('results.failedToLoad'),
         variant: "destructive",
       });
     } finally {
@@ -80,9 +80,9 @@ const ScannerScreen = ({ onBack, onAnalysisComplete }: ScannerScreenProps) => {
         onClick={onBack}
         className="self-start text-emerald-400 hover:underline mb-6"
       >
-        ← Back
+        ← {t('common.back')}
       </button>
-      <h2 className="text-3xl font-bold mb-6 text-white">Upload Product Image</h2>
+      <h2 className="text-3xl font-bold mb-6 text-white">{t('scanner.uploadImage')}</h2>
       <div className="w-full max-w-md glass-card rounded-2xl p-6">
         <div 
           onClick={() => fileInputRef.current?.click()}
@@ -95,7 +95,7 @@ const ScannerScreen = ({ onBack, onAnalysisComplete }: ScannerScreenProps) => {
               className="h-full w-full object-contain rounded-lg" 
             />
           ) : (
-            <span className="text-gray-400">Tap to upload</span>
+            <span className="text-gray-400">{t('scanner.takePhoto')}</span>
           )}
         </div>
         <input 
@@ -109,11 +109,11 @@ const ScannerScreen = ({ onBack, onAnalysisComplete }: ScannerScreenProps) => {
         {imagePreview && (
           <div className="mb-6 space-y-2">
             <Label htmlFor="additional-info" className="text-sm text-gray-300">
-              Have more info? share it here
+              {t('results.challengeTitle')}
             </Label>
             <Textarea
               id="additional-info"
-              placeholder="Add details like certifications or farming practices to help refine the welfare results"
+              placeholder={t('results.challengeDescription')}
               value={additionalInfo}
               onChange={(e) => setAdditionalInfo(e.target.value)}
               className="min-h-[100px] bg-gray-800/50 border-gray-600 text-white"
@@ -129,10 +129,10 @@ const ScannerScreen = ({ onBack, onAnalysisComplete }: ScannerScreenProps) => {
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Analyzing...
+              {t('scanner.analyzing')}
             </>
           ) : (
-            "Analyze"
+            t('scanner.title')
           )}
         </Button>
       </div>

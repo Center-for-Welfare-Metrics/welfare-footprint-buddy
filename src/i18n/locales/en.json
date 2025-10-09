@@ -107,7 +107,8 @@
   },
   "scanner": {
     "title": "Scan Product",
-    "takePhoto": "Take Photo",
+    "uploadImage": "Upload Product Image",
+    "takePhoto": "Tap to upload",
     "uploadImage": "Upload Image",
     "analyzing": "Analyzing...",
     "analysisFailed": "Analysis failed",
@@ -116,6 +117,7 @@
   "results": {
     "analysis": "Analysis",
     "product": "Product",
+    "productAnalysis": "Product Analysis",
     "animalIngredients": "Animal-Derived Ingredients",
     "productionSystem": "Production System",
     "welfareConcerns": "Potential Welfare Concerns",
@@ -123,6 +125,9 @@
     "defaultDisclaimer": "This is a Preliminary AI Estimate and has not been scientifically validated by the Welfare Footprint Institute.",
     "noAnimalIngredients": "This product does not appear to contain animal-derived ingredients.",
     "outOfScope": "As such, it is outside the scope of this animal welfare assessment.",
+    "welfareFriendly": "The good news? If it's food, it's already a welfare-friendly choice!",
+    "notFoodProduct": "Not a Food Product",
+    "notFoodDescription": "This image doesn't seem to contain food or a recognizable product. Please upload a photo of a food item or packaged product so I can analyze its welfare footprint.",
     "challengeAnalysis": "Challenge Analysis",
     "suggestAlternatives": "Suggest Alternatives ✨",
     "findingSwaps": "Finding Swaps...",
