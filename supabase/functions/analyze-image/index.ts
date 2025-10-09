@@ -35,8 +35,11 @@ serve(async (req) => {
     
     let prompt = `You are an AI assistant specializing in animal welfare analysis. Your task is to analyze the provided product image and provide a structured JSON response.
 
-**CRITICAL - OUTPUT LANGUAGE:**
-You MUST respond in ${outputLanguage}. ALL text fields in your JSON response must be written in ${outputLanguage}, including productName, animalIngredients, productionSystem, welfareConcerns, and disclaimer.
+**CRITICAL - ANALYSIS AND LANGUAGE SEPARATION:**
+STEP 1: First, analyze the image content ACCURATELY and OBJECTIVELY, regardless of language. Identify what the product actually is, what ingredients it contains, and read any visible text on labels.
+STEP 2: Then, translate your findings into ${outputLanguage} for the JSON response.
+
+IMPORTANT: The language setting (${outputLanguage}) affects ONLY the output text, NOT your ability to recognize and identify the product. You must identify the product correctly based on visual content, regardless of what language the output will be in.
 
 **Instructions:**
 1. FIRST, determine if the image contains food or a food product. If it does NOT contain food (e.g., landscape, person, non-edible object), set isFood to false and return early.
