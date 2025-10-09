@@ -271,18 +271,12 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
       <h1 className="text-3xl font-bold mb-6 text-center text-white">Analysis</h1>
       <div className="space-y-4">
         <div className="border-b border-gray-700 pb-3">
-          <div className="flex justify-between items-center mb-1">
-            <h3 className="font-bold text-emerald-400">Product</h3>
-            <div className="w-1/3">{getConfidenceMeter(data.productName?.confidence)}</div>
-          </div>
+          <h3 className="font-bold text-emerald-400 mb-1">Product</h3>
           <p className="text-gray-300">{data.productName?.value || 'N/A'}</p>
         </div>
 
         <div className="border-b border-gray-700 pb-3">
-          <div className="flex justify-between items-center mb-1">
-            <h3 className="font-bold text-emerald-400">Animal-Derived Ingredients</h3>
-            <div className="w-1/3">{getConfidenceMeter(data.animalIngredients?.confidence)}</div>
-          </div>
+          <h3 className="font-bold text-emerald-400 mb-1">Animal-Derived Ingredients</h3>
           <p className="text-gray-300">{data.animalIngredients?.value || 'N/A'}</p>
         </div>
 
