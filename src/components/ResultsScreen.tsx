@@ -311,7 +311,12 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
               <Label className="text-sm font-medium text-emerald-400">Ethical Lens ⚖️</Label>
             </div>
             <div className="text-center">
-              <span className="text-xs text-emerald-400 font-medium italic">
+              <span 
+                className="text-xs font-medium italic transition-colors duration-300"
+                style={{
+                  color: `hsl(${180 - (sliderValue[0] - 1) * 45}, 70%, 60%)`
+                }}
+              >
                 {sliderValue[0] === 1 ? "Prioritize Big Welfare Gains" :
                  sliderValue[0] === 2 ? "Strong Welfare Standards" :
                  sliderValue[0] === 3 ? "Minimal Animal Suffering" :
@@ -319,22 +324,24 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
                  "Aim for Zero Animal Harm"}
               </span>
             </div>
-            <Slider
-              value={sliderValue}
-              onValueChange={setSliderValue}
-              max={5}
-              min={1}
-              step={1}
-              className="w-full"
-            />
-            <div className="flex justify-between text-xs text-emerald-400 font-medium -mx-2">
+            <div className="relative">
+              <Slider
+                value={sliderValue}
+                onValueChange={setSliderValue}
+                max={5}
+                min={1}
+                step={1}
+                className="w-full ethical-lens-slider"
+              />
+            </div>
+            <div className="flex justify-between text-xs font-medium -mx-2">
               <div className="flex flex-col items-start">
-                <span className="text-lg mb-1">←</span>
-                <span>Same Product, High Welfare</span>
+                <span className="text-lg mb-1 text-amber-400">←</span>
+                <span className="text-amber-400">Same Product, High Welfare</span>
               </div>
               <div className="flex flex-col items-end">
-                <span className="text-lg mb-1">→</span>
-                <span className="text-right">Plant-Based/Cultured Only</span>
+                <span className="text-lg mb-1 text-emerald-400">→</span>
+                <span className="text-right text-emerald-400">Plant-Based/Cultured Only</span>
               </div>
             </div>
             <p className="text-xs text-gray-400 text-center">

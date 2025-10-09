@@ -92,6 +92,14 @@ All colors MUST be HSL.
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
+
+  .ethical-lens-slider [role="slider"] {
+    @apply transition-colors duration-300;
+  }
+
+  .ethical-lens-slider [data-orientation="horizontal"] > span:first-child {
+    background: linear-gradient(to right, hsl(35, 100%, 60%), hsl(45, 90%, 55%), hsl(80, 70%, 50%), hsl(120, 60%, 50%), hsl(160, 70%, 45%));
+  }
 }
 
 @layer base {
