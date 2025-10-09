@@ -327,9 +327,9 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
               step={1}
               className="w-full"
             />
-            <div className="flex justify-between text-xs text-gray-400">
+            <div className="flex justify-between text-xs text-emerald-400 font-medium -mx-2">
               <span>Same Product, High Welfare</span>
-              <span>Plant-Based/Cultured Only</span>
+              <span className="text-right">Plant-Based/Cultured Only</span>
             </div>
             <p className="text-xs text-gray-400 text-center">
               {sliderValue[0] === 1 && "Same type of product but from animals raised under high-welfare conditions."}
