@@ -5,6 +5,7 @@ import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { useTranslation } from "react-i18next";
 
 interface ScannerScreenProps {
   onBack: () => void;
@@ -18,6 +19,7 @@ const ScannerScreen = ({ onBack, onAnalysisComplete }: ScannerScreenProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const { i18n } = useTranslation();
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -48,7 +50,7 @@ const ScannerScreen = ({ onBack, onAnalysisComplete }: ScannerScreenProps) => {
     setIsLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke('analyze-image', {
-        body: { imageData, additionalInfo }
+        body: { imageData, additionalInfo, language: i18n.language }
       });
 
       if (error) throw error;

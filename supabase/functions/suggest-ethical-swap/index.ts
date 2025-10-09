@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { productName, animalIngredients, ethicalLens } = await req.json();
+    const { productName, animalIngredients, ethicalLens, language = 'en' } = await req.json();
     const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
 
     if (!GEMINI_API_KEY) {
@@ -84,7 +84,24 @@ Always include confidence level (High/Medium/Low) and brief reasoning summary.`
 
     const selectedLens = lensDescriptions[ethicalLens as keyof typeof lensDescriptions];
 
+    const languageNames: Record<string, string> = {
+      'en': 'English',
+      'es': 'Spanish',
+      'fr': 'French',
+      'de': 'German',
+      'pt': 'Portuguese',
+      'zh': 'Chinese',
+      'hi': 'Hindi',
+      'ar': 'Arabic',
+      'ru': 'Russian'
+    };
+    
+    const outputLanguage = languageNames[language] || 'English';
+
     const prompt = `You are an AI assistant specializing in animal welfare and ethical food alternatives.
+
+**CRITICAL - OUTPUT LANGUAGE:**
+You MUST respond in ${outputLanguage}. ALL text fields in your JSON response must be written in ${outputLanguage}, including ethicalLensPosition, suggestions (name, description, reasoning, availability), and generalNote.
 
 PRODUCT DETAILS:
 - Product Name: ${productName}

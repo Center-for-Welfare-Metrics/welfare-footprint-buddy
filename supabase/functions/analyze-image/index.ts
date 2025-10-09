@@ -12,14 +12,31 @@ serve(async (req) => {
   }
 
   try {
-    const { imageData, additionalInfo } = await req.json();
+    const { imageData, additionalInfo, language = 'en' } = await req.json();
     const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
 
     if (!GEMINI_API_KEY) {
       throw new Error('GEMINI_API_KEY is not configured');
     }
 
-    let prompt = `You are an AI assistant specializing in animal welfare analysis. Your task is to analyze the provided product image and provide a structured JSON response. 
+    const languageNames: Record<string, string> = {
+      'en': 'English',
+      'es': 'Spanish',
+      'fr': 'French',
+      'de': 'German',
+      'pt': 'Portuguese',
+      'zh': 'Chinese',
+      'hi': 'Hindi',
+      'ar': 'Arabic',
+      'ru': 'Russian'
+    };
+    
+    const outputLanguage = languageNames[language] || 'English';
+    
+    let prompt = `You are an AI assistant specializing in animal welfare analysis. Your task is to analyze the provided product image and provide a structured JSON response.
+
+**CRITICAL - OUTPUT LANGUAGE:**
+You MUST respond in ${outputLanguage}. ALL text fields in your JSON response must be written in ${outputLanguage}, including productName, animalIngredients, productionSystem, welfareConcerns, and disclaimer.
 
 **Instructions:**
 1. FIRST, determine if the image contains food or a food product. If it does NOT contain food (e.g., landscape, person, non-edible object), set isFood to false and return early.

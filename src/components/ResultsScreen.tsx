@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Card } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTranslation } from "react-i18next";
 
 interface AnalysisData {
   productName?: { value: string; confidence: string };
@@ -41,6 +42,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
   const [isReanalyzing, setIsReanalyzing] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
+  const { i18n } = useTranslation();
 
   // Save scan to history if user is logged in
   useEffect(() => {
@@ -94,7 +96,8 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
         body: { 
           productName,
           animalIngredients,
-          ethicalLens: sliderValue[0]
+          ethicalLens: sliderValue[0],
+          language: i18n.language
         }
       });
 
@@ -134,7 +137,8 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
       const { data: result, error } = await supabase.functions.invoke('analyze-image', {
         body: { 
           imageData: parsedImageData,
-          additionalInfo: additionalInfo.trim() || undefined
+          additionalInfo: additionalInfo.trim() || undefined,
+          language: i18n.language
         }
       });
 
