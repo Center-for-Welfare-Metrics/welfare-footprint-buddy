@@ -374,7 +374,16 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
                 <span className="text-right" style={{ color: '#60A5FA' }}>Plant-Based/Cultured Only</span>
               </div>
             </div>
-            <p className="text-xs text-gray-400 text-center">
+            <p 
+              className="text-xs text-center font-medium transition-colors duration-300"
+              style={{
+                color: sliderValue[0] === 1 ? '#FF6B9D' :
+                       sliderValue[0] === 2 ? '#E677B8' :
+                       sliderValue[0] === 3 ? '#C084FC' :
+                       sliderValue[0] === 4 ? '#90B5FB' :
+                       '#60A5FA'
+              }}
+            >
               {sliderValue[0] === 1 && "Same type of product but from animals raised under high-welfare conditions."}
               {sliderValue[0] === 2 && "Certified or verifiably higher-welfare animal products meeting multiple criteria."}
               {sliderValue[0] === 3 && "Hybrid or blended options that reduce overall welfare impact."}
@@ -390,7 +399,14 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
               <Button 
                 onClick={handleEthicalSwap}
                 disabled={isLoadingSwaps}
-                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
+                className="w-full text-white font-bold transition-all duration-300"
+                style={{
+                  backgroundColor: sliderValue[0] === 1 ? '#FF6B9D' :
+                                   sliderValue[0] === 2 ? '#E677B8' :
+                                   sliderValue[0] === 3 ? '#C084FC' :
+                                   sliderValue[0] === 4 ? '#90B5FB' :
+                                   '#60A5FA'
+                }}
               >
                 {isLoadingSwaps ? (
                   <>
