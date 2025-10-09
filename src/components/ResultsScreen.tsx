@@ -311,7 +311,11 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
               <Label className="text-sm font-medium text-emerald-400">Ethical Lens ⚖️</Label>
             </div>
             <div className="text-center">
-              <span className="text-base text-white font-semibold">
+              <span className={`text-base font-semibold ${
+                sliderValue[0] === 5 
+                  ? "text-xs text-emerald-400 font-medium italic" 
+                  : "text-white"
+              }`}>
                 {sliderValue[0] === 1 ? "Prioritize Big Welfare Gains" :
                  sliderValue[0] === 2 ? "Strong Welfare Standards" :
                  sliderValue[0] === 3 ? "Minimal Animal Suffering" :
