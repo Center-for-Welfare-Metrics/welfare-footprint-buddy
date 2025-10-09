@@ -161,6 +161,30 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
     }
   };
 
+  // Check if the image doesn't contain food first
+  if (data.isFood === false) {
+    return (
+      <div className="p-4 glass-card rounded-2xl animate-fade-in">
+        <h1 className="text-3xl font-bold mb-6 text-center text-white">Analysis</h1>
+        <div className="text-center p-8">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-500/20 flex items-center justify-center">
+            <AlertCircle className="w-8 h-8 text-amber-400" />
+          </div>
+          <h3 className="font-bold text-2xl text-amber-400 mb-4">Not a Food Product</h3>
+          <p className="text-gray-300 text-lg">
+            This image doesn't seem to contain food or a recognizable product. Please upload a photo of a food item or packaged product so I can analyze its welfare footprint.
+          </p>
+        </div>
+
+        <Button
+          onClick={onNewScan}
+          className="w-full mt-8 bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
+        >
+          Upload Food Product
+        </Button>
+      </div>
+    );
+  }
 
   if (!data.hasAnimalIngredients) {
     console.log('Non-animal product view - imageData:', imageData ? 'present' : 'missing', 'onReanalyze:', onReanalyze ? 'present' : 'missing');

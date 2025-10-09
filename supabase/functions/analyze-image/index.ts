@@ -22,14 +22,16 @@ serve(async (req) => {
     let prompt = `You are an AI assistant specializing in animal welfare analysis. Your task is to analyze the provided product image and provide a structured JSON response. 
 
 **Instructions:**
-1. Identify the product name and brand from the image.
-2. Determine if it contains animal-derived ingredients.
-3. If it contains animal-derived ingredients:
+1. FIRST, determine if the image contains food or a food product. If it does NOT contain food (e.g., landscape, person, non-edible object), set isFood to false and return early.
+2. Identify the product name and brand from the image.
+3. Determine if it contains animal-derived ingredients.
+4. If it contains animal-derived ingredients:
    - List them.
    - Infer the likely production system with detailed brand-specific information.
    - Provide potential welfare concerns STRICTLY LIMITED TO ANIMAL WELFARE (sentience, suffering, living conditions, physical/mental well-being of the animals).
    - Estimate data confidence for each field (Low, Medium, High).
-4. If it does NOT contain animal-derived ingredients, only return the product name and set hasAnimalIngredients to false.
+5. If it does NOT contain animal-derived ingredients, only return the product name, set hasAnimalIngredients to false, and set isFood to true.
+6. If the image does NOT contain food at all, set isFood to false, hasAnimalIngredients to false, and you may set productName to describe what the image shows (e.g., "Landscape photo", "Person", "Non-food object").
 
 **CRITICAL - Animal Welfare Focus:**
 ONLY discuss animal welfare concerns related to:
