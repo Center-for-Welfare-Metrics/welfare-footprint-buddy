@@ -455,7 +455,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
           </div>
         </div>
 
-        <div className="p-3 bg-yellow-900/30 border border-yellow-500/30 text-yellow-300 rounded-lg">
+        <div className="p-3 bg-gray-800/50 border border-gray-700 text-gray-300 rounded-lg">
           <h3 className="font-bold">Disclaimer</h3>
           <p className="text-xs">
             {data.disclaimer || 'This is a Preliminary AI Estimate and has not been scientifically validated by the Welfare Footprint Institute.'}
