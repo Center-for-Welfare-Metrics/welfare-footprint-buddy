@@ -144,9 +144,53 @@ When incorporating this information:
     }
 
     // Parse the AI response
-    const text = aiResponse.data?.text;
+    const text = aiResponse.data?.text?.trim();
     if (!text) {
-      throw new Error('No text response from AI');
+      console.error('No text response from AI');
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: { message: 'No text response from AI' },
+          rawOutput: text 
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+
+    // Clean the AI output by removing markdown code blocks
+    let cleanedText = text;
+    try {
+      cleanedText = text.replace(/```(json)?/gi, '').trim();
+      
+      // Validate it's valid JSON by parsing it
+      JSON.parse(cleanedText);
+      
+      console.log('AI output successfully cleaned and validated');
+    } catch (parseError) {
+      console.error('JSON parse error:', parseError);
+      console.error('Raw AI output:', text);
+      console.error('Cleaned output:', cleanedText);
+      
+      // Don't save invalid responses to cache - they would be useless
+      // Skip cache write by not calling any cache service methods here
+      
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: { 
+            message: 'JSON Parse error: Invalid AI response',
+            details: parseError instanceof Error ? parseError.message : 'Unknown error'
+          },
+          rawOutput: text 
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
     }
 
     // Return in the original format expected by the frontend
@@ -154,7 +198,7 @@ When incorporating this information:
       candidates: [{
         content: {
           parts: [{
-            text: text
+            text: cleanedText
           }]
         }
       }]
