@@ -10,6 +10,7 @@ import { Slider } from "@/components/ui/slider";
 import { Card } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "react-i18next";
+import { appConfig } from "@/config/app.config";
 
 interface AnalysisData {
   productName?: { value: string; confidence: string };
@@ -37,7 +38,7 @@ interface ResultsScreenProps {
 const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems }: ResultsScreenProps) => {
   const [ethicalSwaps, setEthicalSwaps] = useState<any[]>([]);
   const [isLoadingSwaps, setIsLoadingSwaps] = useState(false);
-  const [sliderValue, setSliderValue] = useState([3]); // Default to "Minimal Animal Suffering"
+  const [sliderValue, setSliderValue] = useState<number[]>([appConfig.ethicalLens.defaultValue]);
   const [challengeOpen, setChallengeOpen] = useState(false);
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [isReanalyzing, setIsReanalyzing] = useState(false);
@@ -67,16 +68,18 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems 
   }, [user, data, imageData]);
 
   const getConfidenceMeter = (confidence?: string) => {
-    const level = (confidence || 'Low').toLowerCase();
-    let width = 'w-1/3';
-    let color = 'bg-red-500';
+    const level = (confidence || appConfig.ai.confidenceThresholds.low).toLowerCase();
+    const config = appConfig.confidenceMeter.levels;
+    
+    let width = config.low.width;
+    let color = config.low.color;
     
     if (level === 'medium') {
-      width = 'w-2/3';
-      color = 'bg-yellow-500';
+      width = config.medium.width;
+      color = config.medium.color;
     } else if (level === 'high') {
-      width = 'w-full';
-      color = 'bg-emerald-500';
+      width = config.high.width;
+      color = config.high.color;
     }
     
     return (
@@ -122,7 +125,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems 
 
     const debounceTimer = setTimeout(() => {
       handleEthicalSwap();
-    }, 500);
+    }, appConfig.ai.suggestionDebounceMs);
 
     return () => clearTimeout(debounceTimer);
   }, [sliderValue]);
