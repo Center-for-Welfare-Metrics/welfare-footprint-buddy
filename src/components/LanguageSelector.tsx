@@ -19,7 +19,7 @@ const LanguageSelector = () => {
 
   return (
     <Select value={i18n.language} onValueChange={(value) => i18n.changeLanguage(value)}>
-      <SelectTrigger className="w-[140px] h-9">
+      <SelectTrigger className="w-auto h-9 border-0 shadow-none">
         <Languages className="mr-2 h-4 w-4" />
         <SelectValue />
       </SelectTrigger>
