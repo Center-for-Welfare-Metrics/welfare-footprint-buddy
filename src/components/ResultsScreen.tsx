@@ -459,7 +459,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
           </div>
         </div>
 
-        <div className="p-3 bg-gray-800/50 border border-gray-700 text-gray-300 rounded-lg">
+        <div className="p-3 bg-gray-800/50 border border-gray-700 text-gray-300 rounded-lg text-center">
           <h3 className="font-bold">{t('results.disclaimer')}</h3>
           <p className="text-xs">
             {data.disclaimer || t('results.defaultDisclaimer')}
