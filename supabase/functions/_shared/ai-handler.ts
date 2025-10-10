@@ -1,9 +1,11 @@
 /**
- * AI Handler - Model-Agnostic AI Provider Interface
+ * AI Handler - Model-Agnostic AI Provider Interface with Caching
  * 
  * This module provides a unified interface for interacting with various AI providers
- * while maintaining model independence and consistent error handling.
+ * while maintaining model independence, consistent error handling, and intelligent caching.
  */
+
+import { CacheService, CacheOptions, CacheStrategy } from './cache-service.ts';
 
 // ============= Type Definitions =============
 
@@ -17,6 +19,7 @@ export interface AIRequest {
   temperature?: number;
   maxTokens?: number;
   timeout?: number;
+  cache?: CacheStrategy; // 'prefer' | 'bypass' | 'only'
 }
 
 export interface AIResponse {
@@ -32,6 +35,8 @@ export interface AIResponse {
     model: string;
     tokensUsed?: number;
     latencyMs: number;
+    cacheHit?: boolean;
+    cacheKey?: string;
   };
 }
 
@@ -50,6 +55,7 @@ export const AI_ERROR_CODES = {
   RATE_LIMIT: 'RATE_LIMIT',
   AUTHENTICATION: 'AUTHENTICATION',
   NETWORK: 'NETWORK',
+  CACHE_ONLY_MISS: 'CACHE_ONLY_MISS',
   UNKNOWN: 'UNKNOWN',
 };
 
@@ -60,6 +66,14 @@ export type AIErrorCode = typeof AI_ERROR_CODES[keyof typeof AI_ERROR_CODES];
 export class AIHandler {
   private providers: Map<string, AIProvider> = new Map();
   private defaultProvider: string = 'gemini';
+  private cacheService?: CacheService;
+
+  /**
+   * Initialize cache service
+   */
+  initializeCache(supabaseUrl: string, supabaseKey: string): void {
+    this.cacheService = new CacheService(supabaseUrl, supabaseKey);
+  }
 
   /**
    * Register an AI provider
@@ -79,11 +93,16 @@ export class AIHandler {
   }
 
   /**
-   * Main analyze method - orchestrates AI calls with error handling
+   * Main analyze method - orchestrates AI calls with caching and error handling
    */
-  async analyze(request: AIRequest, providerName?: string): Promise<AIResponse> {
+  async analyze(
+    request: AIRequest,
+    cacheOptions?: CacheOptions,
+    providerName?: string
+  ): Promise<AIResponse> {
     const startTime = Date.now();
     const provider = providerName || this.defaultProvider;
+    const cacheStrategy = request.cache || 'prefer';
 
     // Pre-validation
     const validationError = this.validateRequest(request);
@@ -135,6 +154,60 @@ export class AIHandler {
       };
     }
 
+    // Attempt cache lookup (if enabled and cacheService initialized)
+    let cacheKey: string | undefined;
+    let cacheHit = false;
+    
+    if (this.cacheService && cacheOptions && cacheStrategy !== 'bypass') {
+      try {
+        cacheKey = await this.cacheService.generateCacheKey(request, cacheOptions);
+        const cacheResult = await this.cacheService.checkCache(cacheKey);
+        
+        if (cacheResult.hit && cacheResult.response) {
+          console.log('Cache HIT:', cacheKey.substring(0, 16) + '...');
+          cacheHit = true;
+          
+          // Record cache hit metrics
+          await this.cacheService.recordMetrics(
+            cacheResult.response,
+            cacheOptions.mode,
+            true,
+            cacheKey
+          );
+          
+          return {
+            ...cacheResult.response,
+            metadata: {
+              ...cacheResult.response.metadata,
+              cacheHit: true,
+              cacheKey,
+              latencyMs: Date.now() - startTime, // Include cache lookup time
+            },
+          };
+        } else if (cacheStrategy === 'only') {
+          // Cache-only mode and miss = error
+          return {
+            success: false,
+            error: {
+              code: AI_ERROR_CODES.CACHE_ONLY_MISS,
+              message: 'Cache miss in cache-only mode',
+            },
+            metadata: {
+              provider,
+              model: 'N/A',
+              latencyMs: Date.now() - startTime,
+              cacheHit: false,
+              cacheKey,
+            },
+          };
+        }
+        
+        console.log('Cache MISS:', cacheKey.substring(0, 16) + '...');
+      } catch (error) {
+        console.error('Cache lookup error (continuing without cache):', error);
+      }
+    }
+
     // Set timeout
     const timeout = request.timeout || 30000; // 30 seconds default
     const timeoutPromise = new Promise<AIResponse>((_, reject) => {
@@ -149,6 +222,8 @@ export class AIHandler {
             provider,
             model: 'N/A',
             latencyMs: timeout,
+            cacheHit: false,
+            cacheKey,
           },
         });
       }, timeout);
@@ -161,13 +236,33 @@ export class AIHandler {
         timeoutPromise,
       ]) as AIResponse;
 
-      return {
+      const finalResponse = {
         ...response,
         metadata: {
           ...response.metadata,
           latencyMs: Date.now() - startTime,
+          cacheHit: false,
+          cacheKey,
         },
       };
+
+      // Save to cache (background, non-blocking)
+      if (this.cacheService && cacheOptions && cacheKey && response.success) {
+        this.cacheService.saveToCache(cacheKey, finalResponse, cacheOptions)
+          .catch(err => console.error('Background cache save error:', err));
+      }
+
+      // Record metrics (background, non-blocking)
+      if (this.cacheService && cacheOptions) {
+        this.cacheService.recordMetrics(
+          finalResponse,
+          cacheOptions.mode,
+          false,
+          cacheKey
+        ).catch(err => console.error('Background metrics error:', err));
+      }
+
+      return finalResponse;
     } catch (error: any) {
       // Handle timeout errors
       if (error.error?.code === AI_ERROR_CODES.TIMEOUT) {
@@ -186,6 +281,8 @@ export class AIHandler {
           provider,
           model: 'N/A',
           latencyMs: Date.now() - startTime,
+          cacheHit: false,
+          cacheKey,
         },
       };
     }
@@ -217,6 +314,7 @@ export class AIHandler {
  */
 export async function callAI(
   request: AIRequest,
+  cacheOptions?: CacheOptions,
   provider?: string
 ): Promise<AIResponse> {
   // This will be initialized by each edge function with registered providers
@@ -237,5 +335,5 @@ export async function callAI(
     };
   }
 
-  return handler.analyze(request, provider);
+  return handler.analyze(request, cacheOptions, provider);
 }

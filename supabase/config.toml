@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.generate-text]
 verify_jwt = false
+
+[functions.admin-cache-control]
+verify_jwt = false

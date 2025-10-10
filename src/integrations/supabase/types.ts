@@ -14,6 +14,150 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_metrics_daily_rollup: {
+        Row: {
+          avg_latency_ms: number | null
+          cache_hits: number
+          cache_misses: number
+          created_at: string | null
+          date: string
+          estimated_cost_usd: number | null
+          hit_rate: number | null
+          id: string
+          model: string
+          operation: string
+          p95_latency_ms: number | null
+          p99_latency_ms: number | null
+          provider: string
+          total_requests: number
+          total_tokens: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          avg_latency_ms?: number | null
+          cache_hits?: number
+          cache_misses?: number
+          created_at?: string | null
+          date: string
+          estimated_cost_usd?: number | null
+          hit_rate?: number | null
+          id?: string
+          model: string
+          operation: string
+          p95_latency_ms?: number | null
+          p99_latency_ms?: number | null
+          provider: string
+          total_requests?: number
+          total_tokens?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          avg_latency_ms?: number | null
+          cache_hits?: number
+          cache_misses?: number
+          created_at?: string | null
+          date?: string
+          estimated_cost_usd?: number | null
+          hit_rate?: number | null
+          id?: string
+          model?: string
+          operation?: string
+          p95_latency_ms?: number | null
+          p99_latency_ms?: number | null
+          provider?: string
+          total_requests?: number
+          total_tokens?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      ai_response_cache: {
+        Row: {
+          content_hash: string
+          created_at: string | null
+          expires_at: string | null
+          hit_count: number | null
+          id: string
+          last_accessed_at: string | null
+          latency_ms: number
+          model: string
+          prompt_template_id: string
+          prompt_version: string
+          provider: string
+          response_data: Json
+          tokens_used: number | null
+        }
+        Insert: {
+          content_hash: string
+          created_at?: string | null
+          expires_at?: string | null
+          hit_count?: number | null
+          id?: string
+          last_accessed_at?: string | null
+          latency_ms: number
+          model: string
+          prompt_template_id: string
+          prompt_version: string
+          provider: string
+          response_data: Json
+          tokens_used?: number | null
+        }
+        Update: {
+          content_hash?: string
+          created_at?: string | null
+          expires_at?: string | null
+          hit_count?: number | null
+          id?: string
+          last_accessed_at?: string | null
+          latency_ms?: number
+          model?: string
+          prompt_template_id?: string
+          prompt_version?: string
+          provider?: string
+          response_data?: Json
+          tokens_used?: number | null
+        }
+        Relationships: []
+      }
+      ai_usage_metrics: {
+        Row: {
+          cache_hit: boolean | null
+          cache_key_hash: string | null
+          estimated_cost_usd: number | null
+          id: string
+          latency_ms: number
+          model: string
+          operation: string
+          provider: string
+          timestamp: string | null
+          tokens_used: number | null
+        }
+        Insert: {
+          cache_hit?: boolean | null
+          cache_key_hash?: string | null
+          estimated_cost_usd?: number | null
+          id?: string
+          latency_ms: number
+          model: string
+          operation: string
+          provider: string
+          timestamp?: string | null
+          tokens_used?: number | null
+        }
+        Update: {
+          cache_hit?: boolean | null
+          cache_key_hash?: string | null
+          estimated_cost_usd?: number | null
+          id?: string
+          latency_ms?: number
+          model?: string
+          operation?: string
+          provider?: string
+          timestamp?: string | null
+          tokens_used?: number | null
+        }
+        Relationships: []
+      }
       favorites: {
         Row: {
           created_at: string
@@ -163,6 +307,34 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_flush_all_cache: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      admin_invalidate_by_key: {
+        Args: { key: string }
+        Returns: boolean
+      }
+      admin_invalidate_by_model: {
+        Args: { model_name: string }
+        Returns: number
+      }
+      admin_invalidate_by_prompt: {
+        Args: { template_id: string; version?: string }
+        Returns: number
+      }
+      aggregate_daily_metrics: {
+        Args: { target_date?: string }
+        Returns: undefined
+      }
+      cleanup_expired_cache: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      cleanup_old_metrics: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
       delete_old_scans: {
         Args: Record<PropertyKey, never>
         Returns: undefined

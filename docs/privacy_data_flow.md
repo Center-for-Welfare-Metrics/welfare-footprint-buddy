@@ -341,7 +341,34 @@ As a user, you have the right to:
 
 ---
 
-## 10. Future Privacy Enhancements
+
+## 10. AI Response Cache (Privacy-Safe)
+
+**Added**: 2025-10-10
+
+The app uses a **content-based caching system** to reduce AI costs and improve performance.
+
+### What is Cached?
+- AI analysis responses for product images
+- Cache key: SHA-256 hash (prompt + image hash + mode + language family)
+- **NOT cached**: User IDs, emails, or any personally identifiable information
+
+### Privacy Guarantees
+✅ **No PII**: Cache keys are irreversible one-way hashes  
+✅ **Global cache**: Same product = same response for ALL users (user-agnostic)  
+✅ **Auto-expiration**: 7-day TTL, automatic cleanup  
+✅ **Service-role only**: No client-side access to cache data  
+
+### User Impact
+- **Faster responses**: Cached results return in <100ms vs ~2-3 seconds
+- **Cost savings**: Reduced AI API calls benefit all users
+- **No action needed**: Cache is privacy-safe by design
+
+For technical details, see [Cost & Performance Documentation](/docs/cost_and_performance.md).
+
+---
+
+## 11. Future Privacy Enhancements
 
 **Planned Features**:
 - [ ] **Export Data**: Download all scans as JSON (GDPR portability)
@@ -352,7 +379,7 @@ As a user, you have the right to:
 
 ---
 
-## 11. Contact & Questions
+## 12. Contact & Questions
 
 For privacy-related questions or requests:
 - **Email**: [Your privacy contact email]
@@ -365,11 +392,12 @@ For privacy-related questions or requests:
 
 | Date | Change | Reason |
 |------|--------|--------|
+| 2025-10-10 | Added AI response cache privacy section | Transparency for new caching system |
+| 2025-10-10 | Updated retention to 30 days + auto-cleanup | Data minimization |
+| 2025-10-10 | Added "Clear History" feature | User control |
 | 2025-01-XX | Initial documentation | Compliance & transparency |
-| 2025-01-XX | Added 30-day auto-cleanup | Data minimization |
-| 2025-01-XX | Added "Clear History" feature | User control |
 
 ---
 
-**Last Updated**: [Current Date]
-**Document Version**: 1.0
+**Last Updated**: 2025-10-10  
+**Document Version**: 1.2

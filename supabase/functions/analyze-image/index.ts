@@ -3,16 +3,36 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { loadAndProcessPrompt } from "../_shared/prompt-loader.ts";
 import { AIHandler, callAI } from '../_shared/ai-handler.ts';
 import { GeminiProvider } from '../_shared/providers/gemini.ts';
+import type { CacheOptions } from '../_shared/cache-service.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Prompt versions (update these when prompts change to auto-invalidate cache)
+const PROMPT_VERSIONS = {
+  detect_items: 'v1.0',
+  analyze_focused_item: 'v1.0',
+  analyze_product: 'v1.0',
+};
+
 // Initialize AI Handler once
 const initAIHandler = (apiKey: string) => {
   if (!(globalThis as any).__aiHandler) {
     const handler = new AIHandler();
+    
+    // Initialize cache service
+    const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
+    const SUPABASE_SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    
+    if (SUPABASE_URL && SUPABASE_SERVICE_KEY) {
+      handler.initializeCache(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+      console.log('Cache service initialized');
+    } else {
+      console.warn('Cache service not initialized (missing env vars)');
+    }
+    
     const geminiProvider = new GeminiProvider(apiKey);
     handler.registerProvider(geminiProvider);
     handler.setDefaultProvider('gemini');
@@ -99,13 +119,24 @@ When incorporating this information:
       }
     }
 
-    // Call AI using the new handler
+    // Prepare cache options
+    const cacheOptions: CacheOptions = {
+      strategy: 'prefer', // Can be overridden to 'bypass' for debugging
+      promptTemplateId: mode === 'detect' ? 'detect_items' : 
+                        (mode === 'analyze' && focusItem ? 'analyze_focused_item' : 'analyze_product'),
+      promptVersion: mode === 'detect' ? PROMPT_VERSIONS.detect_items : 
+                     (mode === 'analyze' && focusItem ? PROMPT_VERSIONS.analyze_focused_item : PROMPT_VERSIONS.analyze_product),
+      mode,
+      focusItem: focusItem || undefined,
+    };
+
+    // Call AI using the new handler with caching
     const aiResponse = await callAI({
       prompt,
       imageData,
       language,
       timeout: 30000,
-    });
+    }, cacheOptions);
 
     if (!aiResponse.success) {
       console.error('AI Handler error:', aiResponse.error);
@@ -132,8 +163,15 @@ When incorporating this information:
     console.log('Analysis completed successfully via AI Handler');
     console.log('Metadata:', aiResponse.metadata);
 
+    // Add cache header for observability
+    const cacheHeader = aiResponse.metadata.cacheHit ? 'HIT' : 'MISS';
+
     return new Response(JSON.stringify(data), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { 
+        ...corsHeaders, 
+        'Content-Type': 'application/json',
+        'X-Cache': cacheHeader, // Observability header
+      },
     });
 
   } catch (error) {
