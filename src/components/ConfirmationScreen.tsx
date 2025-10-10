@@ -55,7 +55,7 @@ const ConfirmationScreen = ({
       {/* Instruction Message */}
       <div className="glass-card rounded-2xl p-6 mb-6 w-full border-2 border-emerald-500/30">
         <p className="text-gray-200 text-center mb-4">
-          {t('confirmation.instructionMessage')}
+          {t('confirmation.instructionMessageGeneric')}
         </p>
         
         {/* AI Interpretation */}

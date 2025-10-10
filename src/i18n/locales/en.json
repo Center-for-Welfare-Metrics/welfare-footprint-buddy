@@ -166,6 +166,7 @@
   "confirmation": {
     "title": "Challenge Results",
     "instructionMessage": "Before I list the ingredients, please confirm or adjust what I found in the image. If it looks correct, just press Continue to move on.",
+    "instructionMessageGeneric": "Please confirm or adjust what I found in the image. If it looks correct, just press Continue to move on.",
     "continue": "✅ Continue",
     "edit": "✏️ Edit / Add Details",
     "submitEdit": "Submit Changes",
