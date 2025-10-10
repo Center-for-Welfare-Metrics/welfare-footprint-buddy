@@ -69,6 +69,7 @@ WHEN NO FOOD IS PRESENT:
 If the image contains ONLY non-food elements (living animals, people, landscapes, buildings, furniture, etc.), you MUST:
 - Return an empty items array: "items": []
 - In the summary, clearly state: "No food products were detected in this image. The image shows [describe what is actually in the image, e.g., 'a landscape', 'a pet', 'furniture']."
+- DO NOT use the phrase "food-related item" or "food item" to describe non-food objects
 - DO NOT suggest that food might be present but not visible
 - DO NOT mention animal-derived ingredients unless actual food products are visible
 
