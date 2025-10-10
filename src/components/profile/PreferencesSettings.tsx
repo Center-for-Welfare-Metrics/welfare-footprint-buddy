@@ -74,16 +74,16 @@ const PreferencesSettings = ({ userId }: PreferencesSettingsProps) => {
   };
 
   return (
-    <Card>
+    <Card className="bg-card border-border">
       <CardHeader>
-        <CardTitle>{t('preferences.title')}</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-foreground">{t('preferences.title')}</CardTitle>
+        <CardDescription className="text-muted-foreground">
           {t('preferences.description')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="ethical-lens">{t('preferences.ethicalLens')}</Label>
+          <Label htmlFor="ethical-lens" className="text-foreground">{t('preferences.ethicalLens')}</Label>
           <Select
             value={preferences.ethical_lens}
             onValueChange={(value) =>
@@ -102,7 +102,7 @@ const PreferencesSettings = ({ userId }: PreferencesSettingsProps) => {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="language">{t('preferences.preferredLanguage')}</Label>
+          <Label htmlFor="language" className="text-foreground">{t('preferences.preferredLanguage')}</Label>
           <Select
             value={preferences.preferred_language}
             onValueChange={(value) =>
@@ -127,7 +127,7 @@ const PreferencesSettings = ({ userId }: PreferencesSettingsProps) => {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="region">{t('preferences.preferredRegion')}</Label>
+          <Label htmlFor="region" className="text-foreground">{t('preferences.preferredRegion')}</Label>
           <Input
             id="region"
             placeholder={t('preferences.regionPlaceholder')}
@@ -138,7 +138,7 @@ const PreferencesSettings = ({ userId }: PreferencesSettingsProps) => {
           />
         </div>
 
-        <Button onClick={handleSave} disabled={loading}>
+        <Button onClick={handleSave} disabled={loading} variant="secondary" className="text-foreground">
           {loading ? t('common.saving') : t('preferences.savePreferences')}
         </Button>
       </CardContent>

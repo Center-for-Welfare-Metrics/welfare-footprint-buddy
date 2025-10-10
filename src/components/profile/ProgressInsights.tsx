@@ -62,10 +62,10 @@ const ProgressInsights = ({ userId }: ProgressInsightsProps) => {
   }
 
   return (
-    <Card>
+    <Card className="bg-card border-border">
       <CardHeader>
-        <CardTitle>Your Progress & Insights</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-foreground">Your Progress & Insights</CardTitle>
+        <CardDescription className="text-muted-foreground">
           Summary of your scanned products and welfare awareness
         </CardDescription>
       </CardHeader>
@@ -82,21 +82,21 @@ const ProgressInsights = ({ userId }: ProgressInsightsProps) => {
             </div>
 
             <div className="grid grid-cols-3 gap-4">
-              <div className="text-center p-4 border rounded-lg">
+              <div className="text-center p-4 border border-border rounded-lg bg-muted/50">
                 <p className="text-2xl font-bold text-green-500">{stats.high}</p>
                 <p className="text-sm text-muted-foreground">High Welfare</p>
               </div>
-              <div className="text-center p-4 border rounded-lg">
+              <div className="text-center p-4 border border-border rounded-lg bg-muted/50">
                 <p className="text-2xl font-bold text-yellow-500">{stats.moderate}</p>
                 <p className="text-sm text-muted-foreground">Moderate</p>
               </div>
-              <div className="text-center p-4 border rounded-lg">
+              <div className="text-center p-4 border border-border rounded-lg bg-muted/50">
                 <p className="text-2xl font-bold text-red-500">{stats.low}</p>
                 <p className="text-sm text-muted-foreground">Low Welfare</p>
               </div>
             </div>
 
-            <div className="pt-4 border-t">
+            <div className="pt-4 border-t border-border">
               <p className="text-sm text-muted-foreground">
                 {stats.high > stats.low
                   ? "🎉 Great job! You're choosing more high-welfare products."

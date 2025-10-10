@@ -99,10 +99,10 @@ const PrivacyControls = ({ userId }: PrivacyControlsProps) => {
   };
 
   return (
-    <Card>
+    <Card className="bg-card border-border">
       <CardHeader>
-        <CardTitle>Privacy & Data Controls</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-foreground">Privacy & Data Controls</CardTitle>
+        <CardDescription className="text-muted-foreground">
           Manage your privacy settings and data
         </CardDescription>
       </CardHeader>
@@ -110,9 +110,9 @@ const PrivacyControls = ({ userId }: PrivacyControlsProps) => {
         {/* Data Retention Info */}
         <div className="rounded-lg border border-border bg-muted/50 p-4">
           <div className="flex items-start gap-3">
-            <Info className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+            <Info className="h-5 w-5 text-muted-foreground mt-0.5 flex-shrink-0" />
             <div className="space-y-1 text-sm">
-              <p className="font-medium">Data Retention Policy</p>
+              <p className="font-medium text-foreground">Data Retention Policy</p>
               <p className="text-muted-foreground">
                 Your scan history is automatically deleted after 30 days. You can manually clear it anytime below.
               </p>
@@ -123,14 +123,14 @@ const PrivacyControls = ({ userId }: PrivacyControlsProps) => {
         {/* Clear History */}
         <div className="space-y-3">
           <div className="space-y-1">
-            <Label>Scan History</Label>
+            <Label className="text-foreground">Scan History</Label>
             <p className="text-sm text-muted-foreground">
               Permanently delete all your saved scans and analysis results
             </p>
           </div>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="outline" className="w-full sm:w-auto" disabled={clearingHistory}>
+              <Button variant="secondary" className="w-full sm:w-auto" disabled={clearingHistory}>
                 <Trash2 className="h-4 w-4 mr-2" />
                 {clearingHistory ? 'Clearing...' : 'Clear History'}
               </Button>
@@ -153,10 +153,10 @@ const PrivacyControls = ({ userId }: PrivacyControlsProps) => {
         </div>
 
         {/* Privacy Toggles */}
-        <div className="space-y-4 pt-4 border-t">
+        <div className="space-y-4 pt-4 border-t border-border">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label htmlFor="anonymous">Anonymous Usage</Label>
+              <Label htmlFor="anonymous" className="text-foreground">Anonymous Usage</Label>
               <p className="text-sm text-muted-foreground">
                 Hide your identity from analytics
               </p>
@@ -173,7 +173,7 @@ const PrivacyControls = ({ userId }: PrivacyControlsProps) => {
 
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label htmlFor="notifications">Notifications</Label>
+              <Label htmlFor="notifications" className="text-foreground">Notifications</Label>
               <p className="text-sm text-muted-foreground">
                 Receive updates about new features
               </p>
@@ -190,7 +190,7 @@ const PrivacyControls = ({ userId }: PrivacyControlsProps) => {
         </div>
 
         {/* Delete Account */}
-        <div className="pt-6 border-t">
+        <div className="pt-6 border-t border-border">
           <div className="space-y-4">
             <div>
               <h4 className="font-medium mb-2 text-destructive">Danger Zone</h4>

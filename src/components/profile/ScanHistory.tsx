@@ -72,12 +72,12 @@ const ScanHistory = ({ userId }: ScanHistoryProps) => {
   }
 
   return (
-    <Card>
+    <Card className="bg-card border-border">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>Scan History</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-foreground">Scan History</CardTitle>
+            <CardDescription className="text-muted-foreground">
               {scans.length} scan{scans.length !== 1 ? 's' : ''} total
             </CardDescription>
           </div>
@@ -99,15 +99,15 @@ const ScanHistory = ({ userId }: ScanHistoryProps) => {
             {scans.map((scan) => (
               <div
                 key={scan.id}
-                className="flex items-center justify-between p-4 border rounded-lg"
+                className="flex items-center justify-between p-4 border border-border rounded-lg bg-muted/50"
               >
                 <div className="flex-1">
-                  <h4 className="font-medium">{scan.product_name || 'Unknown Product'}</h4>
+                  <h4 className="font-medium text-foreground">{scan.product_name || 'Unknown Product'}</h4>
                   <p className="text-sm text-muted-foreground">
                     {format(new Date(scan.created_at), 'PPp')}
                   </p>
                   {scan.welfare_category && (
-                    <span className="inline-block mt-2 px-2 py-1 text-xs rounded-full bg-muted">
+                    <span className="inline-block mt-2 px-2 py-1 text-xs rounded-full bg-muted text-muted-foreground">
                       {scan.welfare_category}
                     </span>
                   )}
@@ -116,6 +116,7 @@ const ScanHistory = ({ userId }: ScanHistoryProps) => {
                   variant="ghost"
                   size="sm"
                   onClick={() => handleDelete(scan.id)}
+                  className="text-muted-foreground hover:text-foreground"
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>

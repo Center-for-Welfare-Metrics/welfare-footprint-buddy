@@ -76,25 +76,25 @@ const Profile = () => {
   if (!user) return null;
 
   return (
-    <div className="container mx-auto p-4 max-w-4xl">
+    <div className="container mx-auto p-4 max-w-4xl min-h-screen">
       <div className="mb-6 flex items-center justify-between">
-        <Button variant="ghost" onClick={() => navigate('/')}>
+        <Button variant="ghost" onClick={() => navigate('/')} className="text-muted-foreground hover:text-foreground">
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Home
         </Button>
-        <Button variant="outline" onClick={handleSignOut}>
+        <Button variant="ghost" onClick={handleSignOut} className="text-muted-foreground hover:text-foreground">
           <LogOut className="mr-2 h-4 w-4" />
           Sign Out
         </Button>
       </div>
 
-      <Card className="mb-6">
+      <Card className="mb-6 bg-card border-border">
         <CardHeader>
-          <CardTitle>Your Profile</CardTitle>
-          <CardDescription>{user.email}</CardDescription>
+          <CardTitle className="text-foreground">Your Profile</CardTitle>
+          <CardDescription className="text-muted-foreground">{user.email}</CardDescription>
         </CardHeader>
         <CardContent className="flex gap-2">
-          <Button variant="outline" onClick={handleExportData} disabled={loading}>
+          <Button variant="secondary" onClick={handleExportData} disabled={loading} className="text-foreground">
             <Download className="mr-2 h-4 w-4" />
             Export My Data
           </Button>
@@ -102,11 +102,11 @@ const Profile = () => {
       </Card>
 
       <Tabs defaultValue="scans" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="scans">Scan History</TabsTrigger>
-          <TabsTrigger value="insights">Insights</TabsTrigger>
-          <TabsTrigger value="preferences">Preferences</TabsTrigger>
-          <TabsTrigger value="privacy">Privacy</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-4 bg-muted">
+          <TabsTrigger value="scans" className="text-muted-foreground data-[state=active]:text-foreground">Scan History</TabsTrigger>
+          <TabsTrigger value="insights" className="text-muted-foreground data-[state=active]:text-foreground">Insights</TabsTrigger>
+          <TabsTrigger value="preferences" className="text-muted-foreground data-[state=active]:text-foreground">Preferences</TabsTrigger>
+          <TabsTrigger value="privacy" className="text-muted-foreground data-[state=active]:text-foreground">Privacy</TabsTrigger>
         </TabsList>
 
         <TabsContent value="scans">
