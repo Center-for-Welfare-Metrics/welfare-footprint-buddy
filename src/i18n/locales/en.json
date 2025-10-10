@@ -197,5 +197,17 @@
     "desc5": "Fully animal-free products (plant-based, cultured, or synthetic).",
     "rangeStart": "Same Product, High Welfare",
     "rangeEnd": "Plant-Based/Cultured Only"
+  },
+  "about": {
+    "title": "About the Welfare Footprint App",
+    "intro": "This app helps you explore the hidden welfare impact behind everyday products — how animals likely lived, suffered, or thrived to make them possible.",
+    "projectDescription": "It is part of the Welfare Footprint Project, which aims to translate complex animal welfare data into clear, time-based measures of Pain and Pleasure using the Welfare Footprint Framework (WFF).",
+    "disclaimerTitle": "Disclaimer",
+    "disclaimerText1": "The results shown here are based on AI-assisted reasoning using prompts designed by the Welfare Footprint Institute. They do not yet represent official Welfare Footprint Framework (WFF) metrics.",
+    "disclaimerText2": "While these analyses often make biological and ethical sense, they are intended for informative and educational purposes only. As validated data become available, the app will begin displaying quantified results in terms of Cumulative Pain and Cumulative Pleasure — the core measures of the WFF.",
+    "disclaimerText3": "Your constructive feedback helps us improve and bring the science closer to everyday decisions.",
+    "developedBy": "Developed by",
+    "organizations": "Welfare Footprint Institute & Center for Welfare Metrics",
+    "website": "www.welfarefootprint.org"
   }
 }

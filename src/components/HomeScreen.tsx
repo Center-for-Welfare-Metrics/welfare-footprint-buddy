@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { User } from "lucide-react";
+import { User, Info } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import LanguageSelector from "@/components/LanguageSelector";
 
@@ -45,10 +45,19 @@ const HomeScreen = ({ onStartScan }: HomeScreenProps) => {
           </Button>
         </main>
       </div>
-      <footer className="w-full py-4 px-4">
+      <footer className="w-full py-4 px-4 space-y-3">
         <p className="text-xs text-gray-500 whitespace-pre-line">
           {t('home.footer')}
         </p>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate('/about')}
+          className="text-emerald-400/70 hover:text-emerald-400"
+        >
+          <Info className="mr-2 h-4 w-4" />
+          About this App
+        </Button>
       </footer>
     </div>
   );
