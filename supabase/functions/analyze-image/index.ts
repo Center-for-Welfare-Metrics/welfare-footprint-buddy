@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { loadAndProcessPrompt } from "../_shared/prompt-loader.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -12,13 +13,14 @@ serve(async (req) => {
   }
 
   try {
-    const { imageData, additionalInfo, language = 'en', mode = 'detect', focusItem } = await req.json();
+    const { imageData, additionalInfo, language = 'en', mode = 'detect', focusItem, userCorrection } = await req.json();
     const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
 
     if (!GEMINI_API_KEY) {
       throw new Error('GEMINI_API_KEY is not configured');
     }
 
+    // Map language codes to full language names
     const languageNames: Record<string, string> = {
       'en': 'English',
       'es': 'Spanish',
@@ -33,116 +35,25 @@ serve(async (req) => {
     
     const outputLanguage = languageNames[language] || 'English';
     
+    // Load the appropriate prompt based on mode
     let prompt = '';
     
     if (mode === 'detect') {
       // Multi-item detection mode
-      prompt = `You are an AI assistant specializing in detecting food products in images. Your task is to identify ALL distinct food items or packaged products in the image.
-
-**CRITICAL - ANALYSIS AND LANGUAGE SEPARATION:**
-STEP 1: First, analyze the image content ACCURATELY and OBJECTIVELY, regardless of language. Identify what products are actually present, what ingredients they contain, and read any visible text on labels.
-STEP 2: Then, translate your findings into ${outputLanguage} for the JSON response.
-
-**Instructions:**
-1. Carefully examine the image and identify EACH distinct food item or packaged product.
-2. For EACH item detected:
-   - Provide a clear name/description
-   - Determine if it likely contains animal-derived ingredients
-   - Provide brief reasoning for your conclusion
-   - Use OCR to read visible labels and check for animal product keywords (yogurt, cheese, milk, cream, butter, egg, chicken, beef, pork, ham, bacon, fish, etc.) in ANY language
-3. If you detect multiple items, list them ALL separately.
-4. If only one item is present, still return it in an array with a single element.
-
-**JSON Schema:**
-{
-  "items": [
-    {
-      "name": "string (product name or description)",
-      "likelyHasAnimalIngredients": true|false,
-      "reasoning": "string (brief explanation of why you think it does or doesn't contain animal ingredients)",
-      "confidence": "Low|Medium|High"
-    }
-  ],
-  "summary": "string (overall summary, e.g., 'This image contains both plant-based and animal-derived foods. I will analyze the animal-derived items.' or 'This image contains a single product.')"
-}
-
-Analyze the image and return ONLY valid JSON matching this schema.`;
-    } else {
-      // Detailed analysis mode for a specific item
-      prompt = `You are an AI assistant specializing in animal welfare analysis. Your task is to analyze the provided product image focusing SPECIFICALLY on: "${focusItem}".
-
-**CRITICAL - FOCUS ON SPECIFIC ITEM:**
-The image may contain multiple products, but you must ONLY analyze: "${focusItem}"
-Ignore any other products visible in the image.
-
-**CRITICAL - ANALYSIS AND LANGUAGE SEPARATION:**
-STEP 1: First, analyze the image content ACCURATELY and OBJECTIVELY, regardless of language. Identify what the product actually is, what ingredients it contains, and read any visible text on labels.
-STEP 2: Then, translate your findings into ${outputLanguage} for the JSON response.
-
-IMPORTANT: The language setting (${outputLanguage}) affects ONLY the output text, NOT your ability to recognize and identify the product. You must identify the product correctly based on visual content, regardless of what language the output will be in.
-
-**Instructions:**
-1. FIRST, determine if the image contains food or a food product. If it does NOT contain food (e.g., landscape, person, non-edible object), set isFood to false and return early.
-2. Identify the product name and brand from the image.
-3. **CRITICAL - PREVENTING FALSE NEGATIVES**: Before concluding that a product does NOT contain animal ingredients, you MUST:
-   a. Read ALL visible text on the packaging using OCR
-   b. Check for common animal product keywords (yogurt, cheese, milk, cream, butter, egg, chicken, beef, pork, ham, bacon, fish, salmon, tuna, turkey, lamb, etc.) in ANY language
-   c. Analyze visual texture cues (meat appearance, dairy packaging styles, creamy textures)
-   d. Cross-reference product category (dairy section items, meat products, etc.)
-   e. Only if ALL checks confirm no animal ingredients should you set hasAnimalIngredients to false
-   f. If you detect ANY animal-related terms or visual cues, set hasAnimalIngredients to true
-   g. When uncertain, prefer setting hasAnimalIngredients to true with Medium or Low confidence rather than false positives
-4. If it contains animal-derived ingredients:
-   - List them.
-   - Infer the likely production system with detailed brand-specific information.
-   - Provide potential welfare concerns STRICTLY LIMITED TO ANIMAL WELFARE (sentience, suffering, living conditions, physical/mental well-being of the animals).
-   - Estimate data confidence for each field (Low, Medium, High).
-5. If it does NOT contain animal-derived ingredients (only after passing ALL checks in step 3), only return the product name, set hasAnimalIngredients to false with High confidence, and set isFood to true.
-6. If the image does NOT contain food at all, set isFood to false, hasAnimalIngredients to false, and you may set productName to describe what the image shows (e.g., "Landscape photo", "Person", "Non-food object").
-
-**CRITICAL - Animal Welfare Focus:**
-ONLY discuss animal welfare concerns related to:
-- Physical suffering (pain, injury, disease, mutilations)
-- Mental suffering (stress, fear, frustration, boredom)
-- Living conditions (confinement, crowding, barren environments)
-- Natural behaviors (ability to express species-typical behaviors)
-- Slaughter and handling practices
-- Selective breeding effects on animal health
-
-DO NOT INCLUDE:
-- Environmental concerns (habitat destruction, pollution, deforestation)
-- Sustainability issues (carbon footprint, water usage)
-- Human health concerns (antibiotics resistance, food safety)
-- Ecological impacts (biodiversity, ecosystem disruption)
-
-**IMPORTANT - Production System Field:**
-When you identify a known brand or product line:
-- Research and include specific welfare certifications (e.g., "USDA Organic", "Certified Humane", "Animal Welfare Approved")
-- Explain what those certifications mean in practice FOR ANIMAL WELFARE SPECIFICALLY (e.g., "USDA Organic implies some welfare standards but focuses more on organic feed and avoiding synthetic pesticides rather than guaranteeing high animal welfare")
-- Note any limitations or gaps in available welfare information (e.g., "specific detailed information about pasture access is not readily available")
-- Mention welfare-relevant factors like use of antibiotics or growth hormones (only as they relate to animal health and welfare)
-- Provide context about industry-standard practices if brand-specific information is limited
-- Be informative but honest about what is and isn't known
-
-Example: "Kirkland Signature Organic Ground Beef meets certain animal welfare standards by being USDA Organic and raised without antibiotics or growth hormones, but specific detailed information about its animal welfare practices, such as pasture access, is not readily available. While 'USDA Organic' implies some welfare standards, it doesn't guarantee high animal welfare, focusing more on organic feed and avoiding synthetic pesticides."
-
-**JSON Schema:**
-{
-  "productName": {"value": "string", "confidence": "Low|Medium|High"},
-  "hasAnimalIngredients": true|false,
-  "isFood": true|false,
-  "animalIngredients": {"value": "string", "confidence": "Low|Medium|High"},
-  "productionSystem": {"value": "string (detailed, multi-sentence description)", "confidence": "Low|Medium|High", "assumption": "string (optional)"},
-  "welfareConcerns": {"value": "string (multi-line allowed, ANIMAL WELFARE ONLY)", "confidence": "Low|Medium|High"},
-  "disclaimer": "This analysis was generated using AI and may contain errors or inaccuracies. It is a preliminary estimate and has not been scientifically validated by the Welfare Footprint Institute. Please verify information independently before making decisions."
-}
-
-Analyze the image and return ONLY valid JSON matching this schema.`;
-    }
-
-    // Add additional context if provided by user (only in detailed mode)
-    if (additionalInfo && mode === 'analyze') {
-      prompt += `\n\n**CRITICAL - USER-PROVIDED INFORMATION:**
+      prompt = await loadAndProcessPrompt('detect_items', {
+        LANGUAGE: outputLanguage,
+        USER_CORRECTION: userCorrection
+      });
+    } else if (mode === 'analyze' && focusItem) {
+      // Focused item analysis mode
+      prompt = await loadAndProcessPrompt('analyze_focused_item', {
+        LANGUAGE: outputLanguage,
+        FOCUS_ITEM: focusItem
+      });
+      
+      // Add user-provided additional information if available
+      if (additionalInfo) {
+        prompt += `\n\n**CRITICAL - USER-PROVIDED INFORMATION:**
 The user has provided the following verified information: ${additionalInfo}
 
 When incorporating this information:
@@ -151,6 +62,25 @@ When incorporating this information:
 - Remove speculative language (like "likely", "possibly", "appears to be") for facts the user has confirmed
 - State the information definitively (e.g., "Beef, Cheese (cow's milk)" NOT "Meat (likely beef or pork), Cheese (likely cow's milk)")
 - Only use speculative language for aspects NOT covered by the user's information`;
+      }
+    } else {
+      // Standard product analysis mode
+      prompt = await loadAndProcessPrompt('analyze_product', {
+        LANGUAGE: outputLanguage
+      });
+      
+      // Add user-provided additional information if available
+      if (additionalInfo) {
+        prompt += `\n\n**CRITICAL - USER-PROVIDED INFORMATION:**
+The user has provided the following verified information: ${additionalInfo}
+
+When incorporating this information:
+- Treat user-provided details as FACTS, not speculation
+- Use "High" confidence for fields directly addressed by the user's information
+- Remove speculative language (like "likely", "possibly", "appears to be") for facts the user has confirmed
+- State the information definitively (e.g., "Beef, Cheese (cow's milk)" NOT "Meat (likely beef or pork), Cheese (likely cow's milk)")
+- Only use speculative language for aspects NOT covered by the user's information`;
+      }
     }
 
     const requestBody = {
