@@ -33,9 +33,15 @@ interface ResultsScreenProps {
   imageData?: string;
   onReanalyze?: (newData: AnalysisData) => void;
   onBackToItems?: () => void;
+  cacheMetadata?: {
+    cacheHit: boolean;
+    latencyMs: number;
+    provider: string;
+    model: string;
+  } | null;
 }
 
-const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems }: ResultsScreenProps) => {
+const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems, cacheMetadata }: ResultsScreenProps) => {
   const [ethicalSwaps, setEthicalSwaps] = useState<any[]>([]);
   const [isLoadingSwaps, setIsLoadingSwaps] = useState(false);
   const [sliderValue, setSliderValue] = useState<number[]>([appConfig.ethicalLens.defaultValue]);
@@ -289,6 +295,18 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems 
   return (
     <div className="p-4 pb-32 glass-card rounded-2xl animate-fade-in">
       <h1 className="text-3xl font-bold mb-6 text-center text-white">{t('results.analysis')}</h1>
+      
+      {/* Cache Hit Indicator */}
+      {cacheMetadata?.cacheHit && (
+        <div className="mb-4 flex items-center justify-center gap-2 px-4 py-2 bg-emerald-500/20 border border-emerald-500/30 rounded-lg">
+          <span className="text-2xl">⚡</span>
+          <div className="text-sm">
+            <p className="text-emerald-300 font-semibold">Cached Result</p>
+            <p className="text-emerald-400/80 text-xs">{cacheMetadata.latencyMs}ms response time</p>
+          </div>
+        </div>
+      )}
+      
       <div className="space-y-4">
         <div className="border-b border-gray-700 pb-3">
           <h3 className="font-bold text-emerald-400 mb-1">{t('results.product')}</h3>

@@ -10,7 +10,7 @@ import { appConfig } from "@/config/app.config";
 
 interface ScannerScreenProps {
   onBack: () => void;
-  onAnalysisComplete: (data: any, imageData: string) => void;
+  onAnalysisComplete: (data: any, imageData: string, metadata?: any) => void;
   onConfirmationNeeded: (items: any[], summary: string, imageData: string, imagePreview: string, hasNoFoodItems?: boolean) => void;
 }
 
@@ -131,7 +131,8 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
         try {
           const analysisJson = JSON.parse(sanitizedText);
           const imageDataString = JSON.stringify(imageData);
-          onAnalysisComplete(analysisJson, imageDataString);
+          const metadata = data._metadata;
+          onAnalysisComplete(analysisJson, imageDataString, metadata);
         } catch (parseError) {
           console.error('JSON Parse Error:', parseError);
           console.error('Raw text:', rawText);

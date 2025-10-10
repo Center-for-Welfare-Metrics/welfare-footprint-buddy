@@ -199,7 +199,7 @@ IMPORTANT INSTRUCTIONS FOR USING THIS INFORMATION:
       );
     }
 
-    // Return in the original format expected by the frontend
+    // Return in the original format expected by the frontend, with cache metadata
     const data = {
       candidates: [{
         content: {
@@ -207,7 +207,14 @@ IMPORTANT INSTRUCTIONS FOR USING THIS INFORMATION:
             text: cleanedText
           }]
         }
-      }]
+      }],
+      // Add cache metadata for UI display
+      _metadata: {
+        cacheHit: aiResponse.metadata.cacheHit,
+        latencyMs: aiResponse.metadata.latencyMs,
+        provider: aiResponse.metadata.provider,
+        model: aiResponse.metadata.model,
+      }
     };
 
     console.log('Analysis completed successfully via AI Handler');

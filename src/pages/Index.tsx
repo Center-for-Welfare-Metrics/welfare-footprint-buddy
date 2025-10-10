@@ -29,6 +29,7 @@ const Index = () => {
   const [currentImagePreview, setCurrentImagePreview] = useState<string>("");
   const [hasNoFoodItems, setHasNoFoodItems] = useState(false);
   const [isAnalyzingItem, setIsAnalyzingItem] = useState(false);
+  const [cacheMetadata, setCacheMetadata] = useState<any>(null);
   
   const { toast } = useToast();
   const { i18n, t } = useTranslation();
@@ -100,9 +101,10 @@ const Index = () => {
     }
   };
   
-  const handleAnalysisComplete = (data: any, imageData: string) => {
+  const handleAnalysisComplete = (data: any, imageData: string, metadata?: any) => {
     setAnalysisData(data);
     setScannedImageData(imageData);
+    setCacheMetadata(metadata || null);
     setCurrentScreen('results');
     setIsAnalyzingItem(false);
   };
@@ -129,7 +131,9 @@ const Index = () => {
         
         try {
           const analysisJson = JSON.parse(sanitizedText);
-          handleAnalysisComplete(analysisJson, scannedImageData);
+          // Extract cache metadata if available
+          const metadata = data._metadata;
+          handleAnalysisComplete(analysisJson, scannedImageData, metadata);
         } catch (parseError) {
           console.error('JSON Parse Error:', parseError);
           console.error('Raw text:', rawText);
@@ -208,6 +212,7 @@ const Index = () => {
           imageData={scannedImageData}
           onReanalyze={handleReanalyze}
           onBackToItems={detectedItems.length > 0 ? handleBackToItems : undefined}
+          cacheMetadata={cacheMetadata}
         />
       )}
     </div>
