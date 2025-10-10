@@ -193,6 +193,10 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
   if (!data.hasAnimalIngredients) {
     console.log('Non-animal product view - imageData:', imageData ? 'present' : 'missing', 'onReanalyze:', onReanalyze ? 'present' : 'missing');
     
+    // Check confidence level for uncertainty warning
+    const productNameConfidence = data.productName?.confidence || 'Low';
+    const hasLowConfidence = productNameConfidence === 'Low' || productNameConfidence === 'Medium';
+    
     return (
       <div className="p-4 glass-card rounded-2xl animate-fade-in">
         <h1 className="text-3xl font-bold mb-6 text-center text-white">{t('results.analysis')}</h1>
@@ -207,9 +211,23 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
             {t('results.outOfScope')}
           </p>
           {data.isFood && (
-            <p className="text-emerald-300 text-base font-medium mt-6">
-              {t('results.welfareFriendly')}
-            </p>
+            hasLowConfidence ? (
+              <div className="mt-6 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <AlertCircle className="h-5 w-5 text-yellow-400" />
+                  <p className="text-yellow-300 text-base font-medium">
+                    {t('results.uncertainAnalysis')}
+                  </p>
+                </div>
+                <p className="text-yellow-200/80 text-sm">
+                  {t('results.uncertainAnalysisDesc')}
+                </p>
+              </div>
+            ) : (
+              <p className="text-emerald-300 text-base font-medium mt-6">
+                {t('results.welfareFriendly')}
+              </p>
+            )
           )}
         </div>
         {imageData && onReanalyze ? (

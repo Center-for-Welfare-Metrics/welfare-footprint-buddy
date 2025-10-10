@@ -126,6 +126,8 @@
     "noAnimalIngredients": "This product does not appear to contain animal-derived ingredients.",
     "outOfScope": "As such, it is outside the scope of this animal welfare assessment.",
     "welfareFriendly": "The good news? It's already a welfare-friendly choice!",
+    "uncertainAnalysis": "Uncertain Classification",
+    "uncertainAnalysisDesc": "I couldn't confidently determine whether this product contains animal-derived ingredients. It may include mixed or unclear items. Please check the ingredients list manually.",
     "notFoodProduct": "Not a Food Product",
     "notFoodDescription": "This image doesn't seem to contain food or a recognizable product. Please upload a photo of a food item or packaged product so I can analyze its welfare footprint.",
     "challengeAnalysis": "Challenge Analysis",

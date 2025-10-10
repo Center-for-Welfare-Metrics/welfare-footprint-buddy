@@ -44,13 +44,20 @@ IMPORTANT: The language setting (${outputLanguage}) affects ONLY the output text
 **Instructions:**
 1. FIRST, determine if the image contains food or a food product. If it does NOT contain food (e.g., landscape, person, non-edible object), set isFood to false and return early.
 2. Identify the product name and brand from the image.
-3. Determine if it contains animal-derived ingredients.
+3. **CRITICAL - PREVENTING FALSE NEGATIVES**: Before concluding that a product does NOT contain animal ingredients, you MUST:
+   a. Read ALL visible text on the packaging using OCR
+   b. Check for common animal product keywords (yogurt, cheese, milk, cream, butter, egg, chicken, beef, pork, ham, bacon, fish, salmon, tuna, turkey, lamb, etc.) in ANY language
+   c. Analyze visual texture cues (meat appearance, dairy packaging styles, creamy textures)
+   d. Cross-reference product category (dairy section items, meat products, etc.)
+   e. Only if ALL checks confirm no animal ingredients should you set hasAnimalIngredients to false
+   f. If you detect ANY animal-related terms or visual cues, set hasAnimalIngredients to true
+   g. When uncertain, prefer setting hasAnimalIngredients to true with Medium or Low confidence rather than false positives
 4. If it contains animal-derived ingredients:
    - List them.
    - Infer the likely production system with detailed brand-specific information.
    - Provide potential welfare concerns STRICTLY LIMITED TO ANIMAL WELFARE (sentience, suffering, living conditions, physical/mental well-being of the animals).
    - Estimate data confidence for each field (Low, Medium, High).
-5. If it does NOT contain animal-derived ingredients, only return the product name, set hasAnimalIngredients to false, and set isFood to true.
+5. If it does NOT contain animal-derived ingredients (only after passing ALL checks in step 3), only return the product name, set hasAnimalIngredients to false with High confidence, and set isFood to true.
 6. If the image does NOT contain food at all, set isFood to false, hasAnimalIngredients to false, and you may set productName to describe what the image shows (e.g., "Landscape photo", "Person", "Non-food object").
 
 **CRITICAL - Animal Welfare Focus:**
