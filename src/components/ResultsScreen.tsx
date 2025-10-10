@@ -462,7 +462,21 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
         <div className="p-3 bg-gray-800/50 border border-gray-700 text-gray-300 rounded-lg text-center">
           <h3 className="font-bold">{t('results.disclaimer')}</h3>
           <p className="text-xs">
-            {data.disclaimer || t('results.defaultDisclaimer')}
+            {(data.disclaimer || t('results.defaultDisclaimer')).split('Welfare Footprint Institute').map((part, index, arr) => (
+              index < arr.length - 1 ? (
+                <span key={index}>
+                  {part}
+                  <a 
+                    href="https://welfarefootprint.org" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-emerald-400 hover:text-emerald-300 underline"
+                  >
+                    Welfare Footprint Institute
+                  </a>
+                </span>
+              ) : part
+            ))}
           </p>
         </div>
       </div>
