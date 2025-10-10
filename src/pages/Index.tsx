@@ -27,6 +27,7 @@ const Index = () => {
   const [detectedItems, setDetectedItems] = useState<any[]>([]);
   const [itemsSummary, setItemsSummary] = useState<string>("");
   const [currentImagePreview, setCurrentImagePreview] = useState<string>("");
+  const [hasNoFoodItems, setHasNoFoodItems] = useState(false);
   const [isAnalyzingItem, setIsAnalyzingItem] = useState(false);
   
   const { toast } = useToast();
@@ -41,11 +42,12 @@ const Index = () => {
     setCurrentImagePreview("");
   };
   
-  const handleConfirmationNeeded = (items: any[], summary: string, imageData: string, imagePreview: string) => {
+  const handleConfirmationNeeded = (items: any[], summary: string, imageData: string, imagePreview: string, noFoodItems: boolean = false) => {
     setDetectedItems(items);
     setItemsSummary(summary);
     setScannedImageData(imageData);
     setCurrentImagePreview(imagePreview);
+    setHasNoFoodItems(noFoodItems);
     setCurrentScreen('confirmation');
   };
   
@@ -184,6 +186,7 @@ const Index = () => {
           onEdit={handleConfirmationEdit}
           onBack={handleBack}
           isProcessing={isAnalyzingItem}
+          hasNoFoodItems={hasNoFoodItems}
         />
       )}
       

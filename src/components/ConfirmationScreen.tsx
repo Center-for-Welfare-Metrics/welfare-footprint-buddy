@@ -11,6 +11,7 @@ interface ConfirmationScreenProps {
   onEdit: (editedDescription: string) => void;
   onBack: () => void;
   isProcessing: boolean;
+  hasNoFoodItems?: boolean;
 }
 
 const ConfirmationScreen = ({ 
@@ -19,7 +20,8 @@ const ConfirmationScreen = ({
   onContinue, 
   onEdit, 
   onBack,
-  isProcessing 
+  isProcessing,
+  hasNoFoodItems = false
 }: ConfirmationScreenProps) => {
   const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
@@ -55,7 +57,7 @@ const ConfirmationScreen = ({
       {/* Instruction Message */}
       <div className="glass-card rounded-2xl p-6 mb-6 w-full border-2 border-emerald-500/30">
         <p className="text-gray-200 text-center mb-4">
-          {t('confirmation.instructionMessageGeneric')}
+          {hasNoFoodItems ? t('confirmation.noFoodItemsMessage') : t('confirmation.instructionMessageGeneric')}
         </p>
         
         {/* AI Interpretation */}
@@ -74,7 +76,14 @@ const ConfirmationScreen = ({
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          {!isEditing ? (
+          {hasNoFoodItems ? (
+            <Button
+              onClick={onBack}
+              className="bg-emerald-500 hover:bg-emerald-400 text-gray-900 font-bold"
+            >
+              {t('scanner.scanNew')}
+            </Button>
+          ) : !isEditing ? (
             <>
               <Button
                 onClick={onContinue}

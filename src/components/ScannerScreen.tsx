@@ -11,7 +11,7 @@ import { appConfig } from "@/config/app.config";
 interface ScannerScreenProps {
   onBack: () => void;
   onAnalysisComplete: (data: any, imageData: string) => void;
-  onConfirmationNeeded: (items: any[], summary: string, imageData: string, imagePreview: string) => void;
+  onConfirmationNeeded: (items: any[], summary: string, imageData: string, imagePreview: string, hasNoFoodItems?: boolean) => void;
 }
 
 const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: ScannerScreenProps) => {
@@ -79,17 +79,17 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
           const detectionJson = JSON.parse(sanitizedText);
           const imageDataStr = JSON.stringify(imageData);
           
-          if (detectionJson.items && detectionJson.items.length > 0) {
-            // Always show confirmation screen first
-            onConfirmationNeeded(detectionJson.items, detectionJson.summary, imageDataStr, imagePreview);
-          } else {
-            // No food items detected
-            toast({
-              title: t('itemSelection.noItemsDetected'),
-              description: t('scanner.tryAgain'),
-              variant: "default",
-            });
-          }
+          // Check if any items contain animal ingredients (food items)
+          const hasFoodItems = detectionJson.items && detectionJson.items.length > 0;
+          
+          // Always show confirmation screen, but pass flag if no food items
+          onConfirmationNeeded(
+            detectionJson.items || [], 
+            detectionJson.summary, 
+            imageDataStr, 
+            imagePreview,
+            !hasFoodItems
+          );
         } catch (parseError) {
           console.error('JSON Parse Error:', parseError);
           console.error('Raw text:', rawText);
