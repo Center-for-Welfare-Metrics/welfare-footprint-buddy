@@ -60,15 +60,28 @@ const ConfirmationScreen = ({
           {hasNoFoodItems ? t('confirmation.noFoodItemsMessage') : t('confirmation.instructionMessageGeneric')}
         </p>
         
-        {/* AI Interpretation */}
-        {!isEditing ? (
-          <div className="bg-white/5 rounded-xl p-4 mb-4">
-            <p className="text-white text-center">{summary}</p>
-          </div>
-        ) : (
+        {/* AI Interpretation - Only show if food items were detected */}
+        {!hasNoFoodItems && (
+          !isEditing ? (
+            <div className="bg-white/5 rounded-xl p-4 mb-4">
+              <p className="text-white text-center">{summary}</p>
+            </div>
+          ) : (
+            <Textarea
+              value={editedText}
+              onChange={(e) => setEditedText(e.target.value)}
+              className="mb-4 min-h-[100px] bg-white/10 text-white border-gray-600"
+              disabled={isProcessing}
+            />
+          )
+        )}
+        
+        {/* Allow challenge when no food items detected */}
+        {hasNoFoodItems && (
           <Textarea
             value={editedText}
             onChange={(e) => setEditedText(e.target.value)}
+            placeholder={t('confirmation.challengePlaceholder')}
             className="mb-4 min-h-[100px] bg-white/10 text-white border-gray-600"
             disabled={isProcessing}
           />
@@ -77,12 +90,22 @@ const ConfirmationScreen = ({
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           {hasNoFoodItems ? (
-            <Button
-              onClick={onBack}
-              className="bg-emerald-500 hover:bg-emerald-400 text-gray-900 font-bold"
-            >
-              {t('scanner.scanNew')}
-            </Button>
+            <>
+              <Button
+                onClick={handleEditSubmit}
+                disabled={isProcessing || !editedText.trim()}
+                className="bg-emerald-500 hover:bg-emerald-400 text-gray-900 font-bold"
+              >
+                {isProcessing ? t('confirmation.analyzing') : t('confirmation.challengeSubmit')}
+              </Button>
+              <Button
+                onClick={onBack}
+                variant="outline"
+                className="border-gray-500 text-gray-400 hover:bg-gray-500/10"
+              >
+                {t('scanner.scanNew')}
+              </Button>
+            </>
           ) : !isEditing ? (
             <>
               <Button
