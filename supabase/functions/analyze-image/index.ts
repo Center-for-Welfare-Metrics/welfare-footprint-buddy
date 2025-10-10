@@ -12,7 +12,7 @@ const corsHeaders = {
 
 // Prompt versions (update these when prompts change to auto-invalidate cache)
 const PROMPT_VERSIONS = {
-  detect_items: 'v1.0',
+  detect_items: 'v1.1', // Updated: Fixed food-related terminology for non-food items
   analyze_focused_item: 'v1.0',
   analyze_product: 'v1.0',
 };
