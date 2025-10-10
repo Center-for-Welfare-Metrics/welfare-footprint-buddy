@@ -90,14 +90,17 @@ serve(async (req) => {
       // Add user-provided additional information if available
       if (additionalInfo) {
         prompt += `\n\n**CRITICAL - USER-PROVIDED INFORMATION:**
-The user has provided the following verified information: ${additionalInfo}
+The user has provided the following verified information about this product: ${additionalInfo}
 
-When incorporating this information:
-- Treat user-provided details as FACTS, not speculation
+IMPORTANT INSTRUCTIONS FOR USING THIS INFORMATION:
+- This is ADDITIONAL CONTEXT that ENHANCES your analysis - it does NOT replace what you see in the image
+- If the user mentions specific ingredients (e.g., "eggs", "milk", "chicken"), you MUST recognize these as animal-derived ingredients
+- If the user mentions production methods (e.g., "cage-free", "free-range", "organic"), incorporate this into the productionSystem field
+- The user is CORRECTING or CLARIFYING your analysis, not providing an entirely new product description
+- Update hasAnimalIngredients and animalIngredients fields based on what ingredients the user mentions
 - Use "High" confidence for fields directly addressed by the user's information
-- Remove speculative language (like "likely", "possibly", "appears to be") for facts the user has confirmed
-- State the information definitively (e.g., "Beef, Cheese (cow's milk)" NOT "Meat (likely beef or pork), Cheese (likely cow's milk)")
-- Only use speculative language for aspects NOT covered by the user's information`;
+- State the information definitively (e.g., "Eggs (from cage-free laying hens)" NOT "No animal ingredients")
+- NEVER say "no animal ingredients" if the user has mentioned any animal-derived ingredients like eggs, milk, meat, cheese, etc.`;
       }
     } else {
       // Standard product analysis mode
@@ -108,14 +111,17 @@ When incorporating this information:
       // Add user-provided additional information if available
       if (additionalInfo) {
         prompt += `\n\n**CRITICAL - USER-PROVIDED INFORMATION:**
-The user has provided the following verified information: ${additionalInfo}
+The user has provided the following verified information about this product: ${additionalInfo}
 
-When incorporating this information:
-- Treat user-provided details as FACTS, not speculation
+IMPORTANT INSTRUCTIONS FOR USING THIS INFORMATION:
+- This is ADDITIONAL CONTEXT that ENHANCES your analysis - it does NOT replace what you see in the image
+- If the user mentions specific ingredients (e.g., "eggs", "milk", "chicken"), you MUST recognize these as animal-derived ingredients
+- If the user mentions production methods (e.g., "cage-free", "free-range", "organic"), incorporate this into the productionSystem field
+- The user is CORRECTING or CLARIFYING your analysis, not providing an entirely new product description
+- Update hasAnimalIngredients and animalIngredients fields based on what ingredients the user mentions
 - Use "High" confidence for fields directly addressed by the user's information
-- Remove speculative language (like "likely", "possibly", "appears to be") for facts the user has confirmed
-- State the information definitively (e.g., "Beef, Cheese (cow's milk)" NOT "Meat (likely beef or pork), Cheese (likely cow's milk)")
-- Only use speculative language for aspects NOT covered by the user's information`;
+- State the information definitively (e.g., "Eggs (from cage-free laying hens)" NOT "No animal ingredients")
+- NEVER say "no animal ingredients" if the user has mentioned any animal-derived ingredients like eggs, milk, meat, cheese, etc.`;
       }
     }
 
