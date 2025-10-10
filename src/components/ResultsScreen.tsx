@@ -214,25 +214,9 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems 
           <p className="text-gray-400 text-sm mt-4">
             {t('results.outOfScope')}
           </p>
-          {data.isFood && (
-            hasLowConfidence ? (
-              <div className="mt-6 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <AlertCircle className="h-5 w-5 text-yellow-400" />
-                  <p className="text-yellow-300 text-base font-medium">
-                    {t('results.uncertainAnalysis')}
-                  </p>
-                </div>
-                <p className="text-yellow-200/80 text-sm">
-                  {t('results.uncertainAnalysisDesc')}
-                </p>
-              </div>
-            ) : (
-              <p className="text-emerald-300 text-base font-medium mt-6">
-                {t('results.welfareFriendly')}
-              </p>
-            )
-          )}
+          <p className="text-emerald-300 text-base font-medium mt-6">
+            {t('results.welfareFriendly')}
+          </p>
         </div>
         {imageData && onReanalyze ? (
           <Dialog open={challengeOpen} onOpenChange={setChallengeOpen}>
@@ -294,7 +278,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems 
         
         <Button
           onClick={onNewScan}
-          className="w-full mt-4 bg-gray-700 hover:bg-gray-600 text-white font-bold"
+          className="w-full mt-4 bg-emerald-500 hover:bg-emerald-400 text-gray-900 font-bold shadow-lg shadow-emerald-500/20"
         >
           {t('scanner.scanNew')}
         </Button>

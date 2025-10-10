@@ -100,16 +100,11 @@ const ItemSelectionScreen = ({
 
       {/* Plant-based items */}
       {plantItems.length > 0 && (
-        <div className="w-full">
+        <div className="w-full mb-6">
           <h2 className="text-xl font-semibold mb-4 text-white flex items-center gap-2">
             <CheckCircle className="h-5 w-5 text-emerald-400" />
             {t('itemSelection.plantBasedItems')} ({plantItems.length})
           </h2>
-          {plantItems.length === 1 && (
-            <div className="mb-4 px-3 py-2 rounded bg-emerald-500/20 text-emerald-300 text-sm">
-              {t('results.welfareFriendly')}
-            </div>
-          )}
           <div className="space-y-3">
             {plantItems.map((item, index) => (
               <div 
@@ -126,7 +121,22 @@ const ItemSelectionScreen = ({
               </div>
             ))}
           </div>
+          {animalItems.length === 0 && (
+            <p className="text-emerald-300 text-base font-medium mt-6 text-center">
+              {t('results.welfareFriendly')}
+            </p>
+          )}
         </div>
+      )}
+
+      {/* Scan New Item button - shown when no animal items detected */}
+      {animalItems.length === 0 && plantItems.length > 0 && (
+        <Button
+          onClick={onBack}
+          className="w-full bg-emerald-500 hover:bg-emerald-400 text-gray-900 font-bold shadow-lg shadow-emerald-500/20"
+        >
+          {t('scanner.scanNew')}
+        </Button>
       )}
 
       {/* No items found */}
