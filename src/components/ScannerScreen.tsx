@@ -82,6 +82,13 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
           if (detectionJson.items && detectionJson.items.length > 0) {
             // Always show confirmation screen first
             onConfirmationNeeded(detectionJson.items, detectionJson.summary, imageDataStr, imagePreview);
+          } else {
+            // No food items detected
+            toast({
+              title: t('itemSelection.noItemsDetected'),
+              description: t('scanner.tryAgain'),
+              variant: "default",
+            });
           }
         } catch (parseError) {
           console.error('JSON Parse Error:', parseError);
