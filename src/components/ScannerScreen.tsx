@@ -10,10 +10,10 @@ import { useTranslation } from "react-i18next";
 interface ScannerScreenProps {
   onBack: () => void;
   onAnalysisComplete: (data: any, imageData: string) => void;
-  onItemsDetected: (items: any[], summary: string, imageData: string, imagePreview: string) => void;
+  onConfirmationNeeded: (items: any[], summary: string, imageData: string, imagePreview: string) => void;
 }
 
-const ScannerScreen = ({ onBack, onAnalysisComplete, onItemsDetected }: ScannerScreenProps) => {
+const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: ScannerScreenProps) => {
   const [imagePreview, setImagePreview] = useState<string>("");
   const [imageData, setImageData] = useState<{ base64: string; mimeType: string } | null>(null);
   const [additionalInfo, setAdditionalInfo] = useState<string>("");
@@ -62,32 +62,12 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onItemsDetected }: ScannerS
       if (error) throw error;
 
       if (data?.candidates?.[0]?.content?.parts[0]?.text) {
-        const detectionResult = JSON.parse(data.candidates[0].content.parts[0].text);
+        const detectionJson = JSON.parse(data.candidates[0].content.parts[0].text);
+        const imageDataStr = JSON.stringify(imageData);
         
-        // Check if multiple items were detected
-        if (detectionResult.items && detectionResult.items.length > 1) {
-          // Multiple items - go to selection screen
-          const imageDataString = JSON.stringify(imageData);
-          onItemsDetected(detectionResult.items, detectionResult.summary, imageDataString, imagePreview);
-        } else if (detectionResult.items && detectionResult.items.length === 1) {
-          // Single item - proceed directly to detailed analysis
-          const singleItem = detectionResult.items[0];
-          
-          // Only analyze if it has animal ingredients
-          if (singleItem.likelyHasAnimalIngredients) {
-            await analyzeSingleItem(singleItem.name);
-          } else {
-            // Show plant-based result directly
-            const plantBasedResult = {
-              productName: { value: singleItem.name, confidence: singleItem.confidence },
-              hasAnimalIngredients: false,
-              isFood: true
-            };
-            const imageDataString = JSON.stringify(imageData);
-            onAnalysisComplete(plantBasedResult, imageDataString);
-          }
-        } else {
-          throw new Error('No items detected in the image.');
+        if (detectionJson.items && detectionJson.items.length > 0) {
+          // Always show confirmation screen first
+          onConfirmationNeeded(detectionJson.items, detectionJson.summary, imageDataStr, imagePreview);
         }
       } else {
         throw new Error('Unexpected response format from AI.');

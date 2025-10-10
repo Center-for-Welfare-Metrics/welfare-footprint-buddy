@@ -6,8 +6,9 @@ import HomeScreen from "@/components/HomeScreen";
 import ScannerScreen from "@/components/ScannerScreen";
 import ResultsScreen from "@/components/ResultsScreen";
 import ItemSelectionScreen from "@/components/ItemSelectionScreen";
+import ConfirmationScreen from "@/components/ConfirmationScreen";
 
-type Screen = 'home' | 'scanner' | 'itemSelection' | 'results';
+type Screen = 'home' | 'scanner' | 'confirmation' | 'itemSelection' | 'results';
 
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState<Screen>('home');
@@ -30,12 +31,51 @@ const Index = () => {
     setCurrentImagePreview("");
   };
   
-  const handleItemsDetected = (items: any[], summary: string, imageData: string, imagePreview: string) => {
+  const handleConfirmationNeeded = (items: any[], summary: string, imageData: string, imagePreview: string) => {
     setDetectedItems(items);
     setItemsSummary(summary);
     setScannedImageData(imageData);
     setCurrentImagePreview(imagePreview);
+    setCurrentScreen('confirmation');
+  };
+  
+  const handleConfirmationContinue = () => {
     setCurrentScreen('itemSelection');
+  };
+  
+  const handleConfirmationEdit = async (editedDescription: string) => {
+    setIsAnalyzingItem(true);
+    try {
+      const imageData = JSON.parse(scannedImageData);
+      
+      const { data, error } = await supabase.functions.invoke('analyze-image', {
+        body: { 
+          imageData, 
+          language: i18n.language,
+          mode: 'detect',
+          userCorrection: editedDescription
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.candidates?.[0]?.content?.parts[0]?.text) {
+        const detectionJson = JSON.parse(data.candidates[0].content.parts[0].text);
+        setDetectedItems(detectionJson.items);
+        setItemsSummary(detectionJson.summary);
+        setCurrentScreen('itemSelection');
+      } else {
+        throw new Error('Unexpected response format from AI.');
+      }
+    } catch (error) {
+      toast({
+        title: t('scanner.analysisFailed'),
+        description: error instanceof Error ? error.message : t('results.failedToLoad'),
+        variant: "destructive",
+      });
+    } finally {
+      setIsAnalyzingItem(false);
+    }
   };
   
   const handleAnalysisComplete = (data: any, imageData: string) => {
@@ -102,7 +142,18 @@ const Index = () => {
         <ScannerScreen 
           onBack={handleBack} 
           onAnalysisComplete={handleAnalysisComplete}
-          onItemsDetected={handleItemsDetected}
+          onConfirmationNeeded={handleConfirmationNeeded}
+        />
+      )}
+      
+      {currentScreen === 'confirmation' && (
+        <ConfirmationScreen
+          summary={itemsSummary}
+          imagePreview={currentImagePreview}
+          onContinue={handleConfirmationContinue}
+          onEdit={handleConfirmationEdit}
+          onBack={handleBack}
+          isProcessing={isAnalyzingItem}
         />
       )}
       

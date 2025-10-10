@@ -141,6 +141,14 @@
     "reanalysisFailed": "Reanálise Falhou",
     "failedToLoad": "Falha ao carregar sugestões"
   },
+  "confirmation": {
+    "title": "Resultados do Desafio",
+    "instructionMessage": "Antes de listar os ingredientes, confirme ou ajuste o que encontrei na imagem. Se parecer correto, basta pressionar Continuar para seguir em frente.",
+    "continue": "✅ Continuar",
+    "edit": "✏️ Editar / Adicionar Detalhes",
+    "submitEdit": "Enviar Alterações",
+    "analyzing": "Analisando ingredientes agora..."
+  },
   "itemSelection": {
     "title": "Múltiplos Itens Detectados",
     "animalDerivedItems": "Itens de Origem Animal",

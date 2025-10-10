@@ -141,6 +141,14 @@
     "reanalysisFailed": "Neuanalyse Fehlgeschlagen",
     "failedToLoad": "Fehler beim Laden von Vorschlägen"
   },
+  "confirmation": {
+    "title": "Herausforderungsergebnisse",
+    "instructionMessage": "Bevor ich die Zutaten aufliste, bestätigen oder korrigieren Sie bitte, was ich im Bild gefunden habe. Wenn es richtig aussieht, drücken Sie einfach Weiter, um fortzufahren.",
+    "continue": "✅ Weiter",
+    "edit": "✏️ Bearbeiten / Details Hinzufügen",
+    "submitEdit": "Änderungen Einreichen",
+    "analyzing": "Zutaten werden jetzt analysiert..."
+  },
   "itemSelection": {
     "title": "Mehrere Artikel Erkannt",
     "animalDerivedItems": "Tierische Artikel",

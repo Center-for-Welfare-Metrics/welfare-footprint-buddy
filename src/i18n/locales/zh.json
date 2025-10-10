@@ -141,6 +141,14 @@
     "reanalysisFailed": "重新分析失败",
     "failedToLoad": "加载建议失败"
   },
+  "confirmation": {
+    "title": "挑战结果",
+    "instructionMessage": "在列出成分之前，请确认或调整我在图像中发现的内容。如果看起来正确，只需按继续即可。",
+    "continue": "✅ 继续",
+    "edit": "✏️ 编辑/添加详细信息",
+    "submitEdit": "提交更改",
+    "analyzing": "正在分析成分..."
+  },
   "itemSelection": {
     "title": "检测到多个项目",
     "animalDerivedItems": "动物源性项目",
