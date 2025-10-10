@@ -32,7 +32,7 @@ const ItemSelectionScreen = ({
   const plantItems = items.filter(item => !item.likelyHasAnimalIngredients);
 
   return (
-    <div className="flex flex-col items-center p-4 max-w-4xl mx-auto">
+    <div className="flex flex-col items-center p-4 pb-32 max-w-4xl mx-auto">
       <button 
         onClick={onBack}
         className="self-start text-emerald-400 hover:underline mb-6"

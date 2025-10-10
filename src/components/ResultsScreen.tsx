@@ -169,7 +169,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems 
   // Check if the image doesn't contain food first
   if (data.isFood === false) {
     return (
-      <div className="p-4 glass-card rounded-2xl animate-fade-in">
+      <div className="p-4 pb-32 glass-card rounded-2xl animate-fade-in">
         <h1 className="text-3xl font-bold mb-6 text-center text-white">{t('results.analysis')}</h1>
         <div className="text-center p-8">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-500/20 flex items-center justify-center">
@@ -199,7 +199,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems 
     const hasLowConfidence = productNameConfidence === 'Low' || productNameConfidence === 'Medium';
     
     return (
-      <div className="p-4 glass-card rounded-2xl animate-fade-in">
+      <div className="p-4 pb-32 glass-card rounded-2xl animate-fade-in">
         <h1 className="text-3xl font-bold mb-6 text-center text-white">{t('results.analysis')}</h1>
         <div className="text-center p-8">
           <h3 className="font-bold text-2xl text-emerald-400 mb-2">
@@ -300,7 +300,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems 
   }
 
   return (
-    <div className="p-4 glass-card rounded-2xl animate-fade-in">
+    <div className="p-4 pb-32 glass-card rounded-2xl animate-fade-in">
       <h1 className="text-3xl font-bold mb-6 text-center text-white">{t('results.analysis')}</h1>
       <div className="space-y-4">
         <div className="border-b border-gray-700 pb-3">
