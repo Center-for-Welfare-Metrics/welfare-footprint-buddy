@@ -141,6 +141,14 @@
     "reanalysisFailed": "重新分析失败",
     "failedToLoad": "加载建议失败"
   },
+  "itemSelection": {
+    "title": "检测到多个项目",
+    "animalDerivedItems": "动物源性项目",
+    "plantBasedItems": "植物性项目",
+    "analyzeThis": "分析此项",
+    "backToItems": "← 返回列表",
+    "noItemsDetected": "此图像中未检测到任何项目。请尝试上传更清晰的照片。"
+  },
   "ethicalLens": {
     "title": "伦理视角 ⚖️",
     "level1": "优先考虑重大福利收益",

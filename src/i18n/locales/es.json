@@ -141,6 +141,14 @@
     "reanalysisFailed": "Reanálisis Fallido",
     "failedToLoad": "Error al cargar sugerencias"
   },
+  "itemSelection": {
+    "title": "Múltiples Artículos Detectados",
+    "animalDerivedItems": "Artículos de Origen Animal",
+    "plantBasedItems": "Artículos de Base Vegetal",
+    "analyzeThis": "Analizar Este",
+    "backToItems": "← Volver a la Lista",
+    "noItemsDetected": "No se detectaron artículos en esta imagen. Por favor, intente subir una foto más clara."
+  },
   "ethicalLens": {
     "title": "Lente Ética ⚖️",
     "level1": "Priorizar Grandes Ganancias de Bienestar",

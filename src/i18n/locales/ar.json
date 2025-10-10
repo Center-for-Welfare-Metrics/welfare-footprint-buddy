@@ -141,6 +141,14 @@
     "reanalysisFailed": "فشلت إعادة التحليل",
     "failedToLoad": "فشل تحميل الاقتراحات"
   },
+  "itemSelection": {
+    "title": "تم اكتشاف عناصر متعددة",
+    "animalDerivedItems": "عناصر مشتقة من الحيوانات",
+    "plantBasedItems": "عناصر نباتية",
+    "analyzeThis": "تحليل هذا",
+    "backToItems": "← العودة إلى القائمة",
+    "noItemsDetected": "لم يتم اكتشاف أي عناصر في هذه الصورة. يرجى محاولة تحميل صورة أوضح."
+  },
   "ethicalLens": {
     "title": "العدسة الأخلاقية ⚖️",
     "level1": "إعطاء الأولوية لمكاسب الرفاهية الكبيرة",

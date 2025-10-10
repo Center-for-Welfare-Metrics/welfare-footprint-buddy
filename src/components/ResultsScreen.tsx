@@ -31,9 +31,10 @@ interface ResultsScreenProps {
   onNewScan: () => void;
   imageData?: string;
   onReanalyze?: (newData: AnalysisData) => void;
+  onBackToItems?: () => void;
 }
 
-const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScreenProps) => {
+const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems }: ResultsScreenProps) => {
   const [ethicalSwaps, setEthicalSwaps] = useState<any[]>([]);
   const [isLoadingSwaps, setIsLoadingSwaps] = useState(false);
   const [sliderValue, setSliderValue] = useState([3]); // Default to "Minimal Animal Suffering"
@@ -278,9 +279,19 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
           <p className="text-xs text-gray-500 text-center mt-4">Debug: imageData={imageData ? 'yes' : 'no'} onReanalyze={onReanalyze ? 'yes' : 'no'}</p>
         )}
 
+        {onBackToItems && (
+          <Button
+            onClick={onBackToItems}
+            variant="outline"
+            className="w-full mt-4 border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/10"
+          >
+            {t('itemSelection.backToItems')}
+          </Button>
+        )}
+        
         <Button
           onClick={onNewScan}
-          className="w-full mt-8 bg-gray-700 hover:bg-gray-600 text-white font-bold"
+          className="w-full mt-4 bg-gray-700 hover:bg-gray-600 text-white font-bold"
         >
           {t('scanner.scanNew')}
         </Button>
@@ -545,9 +556,19 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze }: ResultsScree
           </Dialog>
         )}
 
-        <Button 
+        {onBackToItems && (
+          <Button
+            onClick={onBackToItems}
+            variant="outline"
+            className="w-full mt-4 border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/10"
+          >
+            {t('itemSelection.backToItems')}
+          </Button>
+        )}
+        
+        <Button
           onClick={onNewScan}
-          className="w-full mt-8 bg-gray-700 hover:bg-gray-600 text-white font-bold"
+          className="w-full mt-4 bg-gray-700 hover:bg-gray-600 text-white font-bold"
         >
           {t('scanner.scanNew')}
         </Button>

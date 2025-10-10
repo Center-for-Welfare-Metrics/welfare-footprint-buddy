@@ -141,6 +141,14 @@
     "reanalysisFailed": "Neuanalyse Fehlgeschlagen",
     "failedToLoad": "Fehler beim Laden von Vorschlägen"
   },
+  "itemSelection": {
+    "title": "Mehrere Artikel Erkannt",
+    "animalDerivedItems": "Tierische Artikel",
+    "plantBasedItems": "Pflanzliche Artikel",
+    "analyzeThis": "Dies Analysieren",
+    "backToItems": "← Zurück zur Liste",
+    "noItemsDetected": "In diesem Bild wurden keine Artikel erkannt. Bitte versuchen Sie, ein klareres Foto hochzuladen."
+  },
   "ethicalLens": {
     "title": "Ethische Linse ⚖️",
     "level1": "Große Tierwohl-Gewinne Priorisieren",

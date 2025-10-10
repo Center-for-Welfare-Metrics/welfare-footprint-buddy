@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { imageData, additionalInfo, language = 'en' } = await req.json();
+    const { imageData, additionalInfo, language = 'en', mode = 'detect', focusItem } = await req.json();
     const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
 
     if (!GEMINI_API_KEY) {
@@ -33,7 +33,47 @@ serve(async (req) => {
     
     const outputLanguage = languageNames[language] || 'English';
     
-    let prompt = `You are an AI assistant specializing in animal welfare analysis. Your task is to analyze the provided product image and provide a structured JSON response.
+    let prompt = '';
+    
+    if (mode === 'detect') {
+      // Multi-item detection mode
+      prompt = `You are an AI assistant specializing in detecting food products in images. Your task is to identify ALL distinct food items or packaged products in the image.
+
+**CRITICAL - ANALYSIS AND LANGUAGE SEPARATION:**
+STEP 1: First, analyze the image content ACCURATELY and OBJECTIVELY, regardless of language. Identify what products are actually present, what ingredients they contain, and read any visible text on labels.
+STEP 2: Then, translate your findings into ${outputLanguage} for the JSON response.
+
+**Instructions:**
+1. Carefully examine the image and identify EACH distinct food item or packaged product.
+2. For EACH item detected:
+   - Provide a clear name/description
+   - Determine if it likely contains animal-derived ingredients
+   - Provide brief reasoning for your conclusion
+   - Use OCR to read visible labels and check for animal product keywords (yogurt, cheese, milk, cream, butter, egg, chicken, beef, pork, ham, bacon, fish, etc.) in ANY language
+3. If you detect multiple items, list them ALL separately.
+4. If only one item is present, still return it in an array with a single element.
+
+**JSON Schema:**
+{
+  "items": [
+    {
+      "name": "string (product name or description)",
+      "likelyHasAnimalIngredients": true|false,
+      "reasoning": "string (brief explanation of why you think it does or doesn't contain animal ingredients)",
+      "confidence": "Low|Medium|High"
+    }
+  ],
+  "summary": "string (overall summary, e.g., 'This image contains both plant-based and animal-derived foods. I will analyze the animal-derived items.' or 'This image contains a single product.')"
+}
+
+Analyze the image and return ONLY valid JSON matching this schema.`;
+    } else {
+      // Detailed analysis mode for a specific item
+      prompt = `You are an AI assistant specializing in animal welfare analysis. Your task is to analyze the provided product image focusing SPECIFICALLY on: "${focusItem}".
+
+**CRITICAL - FOCUS ON SPECIFIC ITEM:**
+The image may contain multiple products, but you must ONLY analyze: "${focusItem}"
+Ignore any other products visible in the image.
 
 **CRITICAL - ANALYSIS AND LANGUAGE SEPARATION:**
 STEP 1: First, analyze the image content ACCURATELY and OBJECTIVELY, regardless of language. Identify what the product actually is, what ingredients it contains, and read any visible text on labels.
@@ -98,10 +138,11 @@ Example: "Kirkland Signature Organic Ground Beef meets certain animal welfare st
 }
 
 Analyze the image and return ONLY valid JSON matching this schema.`;
+    }
 
-    // Add additional context if provided by user
-    if (additionalInfo) {
-      prompt += `\n\n**CRITICAL - USER-PROVIDED INFORMATION:** 
+    // Add additional context if provided by user (only in detailed mode)
+    if (additionalInfo && mode === 'analyze') {
+      prompt += `\n\n**CRITICAL - USER-PROVIDED INFORMATION:**
 The user has provided the following verified information: ${additionalInfo}
 
 When incorporating this information:

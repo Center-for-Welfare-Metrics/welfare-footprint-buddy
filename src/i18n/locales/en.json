@@ -148,6 +148,14 @@
     "reanalysisFailed": "Re-analysis Failed",
     "failedToLoad": "Failed to load suggestions"
   },
+  "itemSelection": {
+    "title": "Multiple Items Detected",
+    "animalDerivedItems": "Animal-Derived Items",
+    "plantBasedItems": "Plant-Based Items",
+    "analyzeThis": "Analyze This",
+    "backToItems": "← Back to Item List",
+    "noItemsDetected": "No items were detected in this image. Please try uploading a clearer photo."
+  },
   "ethicalLens": {
     "title": "Ethical Lens ⚖️",
     "level1": "Prioritize Big Welfare Gains",

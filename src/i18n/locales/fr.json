@@ -141,6 +141,14 @@
     "reanalysisFailed": "Réanalyse Échouée",
     "failedToLoad": "Échec du chargement des suggestions"
   },
+  "itemSelection": {
+    "title": "Plusieurs Articles Détectés",
+    "animalDerivedItems": "Articles d'Origine Animale",
+    "plantBasedItems": "Articles à Base de Plantes",
+    "analyzeThis": "Analyser Ceci",
+    "backToItems": "← Retour à la Liste",
+    "noItemsDetected": "Aucun article détecté dans cette image. Veuillez essayer de télécharger une photo plus claire."
+  },
   "ethicalLens": {
     "title": "Lentille Éthique ⚖️",
     "level1": "Prioriser les Grands Gains de Bien-être",

@@ -10,9 +10,10 @@ import { useTranslation } from "react-i18next";
 interface ScannerScreenProps {
   onBack: () => void;
   onAnalysisComplete: (data: any, imageData: string) => void;
+  onItemsDetected: (items: any[], summary: string, imageData: string, imagePreview: string) => void;
 }
 
-const ScannerScreen = ({ onBack, onAnalysisComplete }: ScannerScreenProps) => {
+const ScannerScreen = ({ onBack, onAnalysisComplete, onItemsDetected }: ScannerScreenProps) => {
   const [imagePreview, setImagePreview] = useState<string>("");
   const [imageData, setImageData] = useState<{ base64: string; mimeType: string } | null>(null);
   const [additionalInfo, setAdditionalInfo] = useState<string>("");
@@ -49,15 +50,75 @@ const ScannerScreen = ({ onBack, onAnalysisComplete }: ScannerScreenProps) => {
 
     setIsLoading(true);
     try {
+      // First, detect all items in the image
       const { data, error } = await supabase.functions.invoke('analyze-image', {
-        body: { imageData, additionalInfo, language: i18n.language }
+        body: { 
+          imageData, 
+          language: i18n.language,
+          mode: 'detect' 
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.candidates?.[0]?.content?.parts[0]?.text) {
+        const detectionResult = JSON.parse(data.candidates[0].content.parts[0].text);
+        
+        // Check if multiple items were detected
+        if (detectionResult.items && detectionResult.items.length > 1) {
+          // Multiple items - go to selection screen
+          const imageDataString = JSON.stringify(imageData);
+          onItemsDetected(detectionResult.items, detectionResult.summary, imageDataString, imagePreview);
+        } else if (detectionResult.items && detectionResult.items.length === 1) {
+          // Single item - proceed directly to detailed analysis
+          const singleItem = detectionResult.items[0];
+          
+          // Only analyze if it has animal ingredients
+          if (singleItem.likelyHasAnimalIngredients) {
+            await analyzeSingleItem(singleItem.name);
+          } else {
+            // Show plant-based result directly
+            const plantBasedResult = {
+              productName: { value: singleItem.name, confidence: singleItem.confidence },
+              hasAnimalIngredients: false,
+              isFood: true
+            };
+            const imageDataString = JSON.stringify(imageData);
+            onAnalysisComplete(plantBasedResult, imageDataString);
+          }
+        } else {
+          throw new Error('No items detected in the image.');
+        }
+      } else {
+        throw new Error('Unexpected response format from AI.');
+      }
+    } catch (error) {
+      toast({
+        title: t('scanner.analysisFailed'),
+        description: error instanceof Error ? error.message : t('results.failedToLoad'),
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const analyzeSingleItem = async (itemName: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('analyze-image', {
+        body: { 
+          imageData, 
+          additionalInfo,
+          language: i18n.language,
+          mode: 'analyze',
+          focusItem: itemName
+        }
       });
 
       if (error) throw error;
 
       if (data?.candidates?.[0]?.content?.parts[0]?.text) {
         const analysisJson = JSON.parse(data.candidates[0].content.parts[0].text);
-        // Convert the imageData to the format expected by ResultsScreen
         const imageDataString = JSON.stringify(imageData);
         onAnalysisComplete(analysisJson, imageDataString);
       } else {
@@ -69,7 +130,6 @@ const ScannerScreen = ({ onBack, onAnalysisComplete }: ScannerScreenProps) => {
         description: error instanceof Error ? error.message : t('results.failedToLoad'),
         variant: "destructive",
       });
-    } finally {
       setIsLoading(false);
     }
   };

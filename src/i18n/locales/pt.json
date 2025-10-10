@@ -141,6 +141,14 @@
     "reanalysisFailed": "Reanálise Falhou",
     "failedToLoad": "Falha ao carregar sugestões"
   },
+  "itemSelection": {
+    "title": "Múltiplos Itens Detectados",
+    "animalDerivedItems": "Itens de Origem Animal",
+    "plantBasedItems": "Itens à Base de Plantas",
+    "analyzeThis": "Analisar Este",
+    "backToItems": "← Voltar à Lista",
+    "noItemsDetected": "Nenhum item foi detectado nesta imagem. Por favor, tente enviar uma foto mais clara."
+  },
   "ethicalLens": {
     "title": "Lente Ética ⚖️",
     "level1": "Priorizar Grandes Ganhos de Bem-Estar",
