@@ -22,9 +22,8 @@
  */
 export async function loadPromptTemplate(promptName: string): Promise<string> {
   try {
-    // Construct the path to the prompt file
-    // In Supabase edge functions, we need to use relative paths from the function directory
-    const promptPath = `../../../prompts/${promptName}.txt`;
+    // Construct the path to the prompt file in the _shared/prompts directory
+    const promptPath = `./prompts/${promptName}.txt`;
     
     // Read the prompt file
     const promptContent = await Deno.readTextFile(promptPath);
