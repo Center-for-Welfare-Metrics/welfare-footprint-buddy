@@ -79,16 +79,16 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
           const detectionJson = JSON.parse(sanitizedText);
           const imageDataStr = JSON.stringify(imageData);
           
-          // Check if any items contain animal ingredients (food items)
+          // Check if there are any food items detected
           const hasFoodItems = detectionJson.items && detectionJson.items.length > 0;
           
-          // Always show confirmation screen, but pass flag if no food items
+          // Pass to confirmation screen with flag indicating if no food items found
           onConfirmationNeeded(
             detectionJson.items || [], 
             detectionJson.summary, 
             imageDataStr, 
             imagePreview,
-            !hasFoodItems
+            !hasFoodItems  // hasNoFoodItems flag
           );
         } catch (parseError) {
           console.error('JSON Parse Error:', parseError);
