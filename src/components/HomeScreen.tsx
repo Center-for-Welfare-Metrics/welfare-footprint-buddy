@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { User, Info } from "lucide-react";
@@ -14,18 +15,39 @@ const HomeScreen = ({ onStartScan }: HomeScreenProps) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
+  const getUserInitials = () => {
+    if (!user?.email) return "U";
+    const email = user.email;
+    return email.substring(0, 2).toUpperCase();
+  };
+
   return (
     <div className="flex flex-col min-h-screen text-center">
       <div className="absolute top-4 right-4 flex items-center gap-2">
         <LanguageSelector />
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => navigate(user ? '/profile' : '/auth')}
-        >
-          <User className="mr-2 h-4 w-4" />
-          {user ? t('common.profile') : t('common.signIn')}
-        </Button>
+        {user ? (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/profile')}
+            className="flex items-center gap-2 px-2"
+          >
+            <Avatar className="h-8 w-8">
+              <AvatarFallback className="bg-emerald-500 text-gray-900 text-xs font-semibold">
+                {getUserInitials()}
+              </AvatarFallback>
+            </Avatar>
+          </Button>
+        ) : (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/auth')}
+          >
+            <User className="mr-2 h-4 w-4" />
+            {t('common.signIn')}
+          </Button>
+        )}
       </div>
       
       <div className="flex-grow flex flex-col items-center justify-center px-4">
