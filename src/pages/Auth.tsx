@@ -55,12 +55,12 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md bg-card border-border">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">
+          <CardTitle className="text-2xl font-bold text-center text-foreground">
             {isLogin ? t('auth.welcomeBack') : t('auth.createAccount')}
           </CardTitle>
-          <CardDescription className="text-center">
+          <CardDescription className="text-center text-muted-foreground">
             {isLogin
               ? t('auth.signInDescription')
               : t('auth.signUpDescription')}
@@ -70,7 +70,7 @@ const Auth = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
               <div className="space-y-2">
-                <Label htmlFor="fullName">{t('auth.fullName')}</Label>
+                <Label htmlFor="fullName" className="text-foreground">{t('auth.fullName')}</Label>
                 <Input
                   id="fullName"
                   type="text"
@@ -78,11 +78,12 @@ const Auth = () => {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required={!isLogin}
+                  className="bg-muted border-border text-foreground"
                 />
               </div>
             )}
             <div className="space-y-2">
-              <Label htmlFor="email">{t('auth.email')}</Label>
+              <Label htmlFor="email" className="text-foreground">{t('auth.email')}</Label>
               <Input
                 id="email"
                 type="email"
@@ -90,10 +91,11 @@ const Auth = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className="bg-muted border-border text-foreground"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">{t('auth.password')}</Label>
+              <Label htmlFor="password" className="text-foreground">{t('auth.password')}</Label>
               <Input
                 id="password"
                 type="password"
@@ -102,6 +104,7 @@ const Auth = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
+                className="bg-muted border-border text-foreground"
               />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
@@ -112,8 +115,8 @@ const Auth = () => {
           <div className="text-center mt-4">
             <Button
               type="button"
-              variant="link"
-              className="text-sm"
+              variant="ghost"
+              className="text-sm text-muted-foreground hover:text-foreground"
               onClick={() => setIsLogin(!isLogin)}
             >
               {isLogin
@@ -126,7 +129,7 @@ const Auth = () => {
             <Button
               type="button"
               variant="ghost"
-              className="text-sm"
+              className="text-sm text-muted-foreground hover:text-foreground"
               onClick={() => navigate('/')}
             >
               {t('home.continueAsGuest')}
