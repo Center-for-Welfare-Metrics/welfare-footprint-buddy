@@ -45,7 +45,7 @@ const HomeScreen = ({ onStartScan }: HomeScreenProps) => {
           </Button>
         </main>
       </div>
-      <footer className="w-full py-4 px-4 space-y-3">
+      <footer className="w-full py-4 px-4 pb-24 space-y-3">
         <p className="text-xs text-gray-500 whitespace-pre-line">
           {t('home.footer')}
         </p>
