@@ -100,8 +100,7 @@ const ConfirmationScreen = ({
               </Button>
               <Button
                 onClick={onBack}
-                variant="outline"
-                className="border-gray-500 text-gray-400 hover:bg-gray-500/10"
+                className="bg-emerald-500 hover:bg-emerald-400 text-gray-900 font-bold shadow-lg shadow-emerald-500/20"
               >
                 {t('scanner.scanNew')}
               </Button>
