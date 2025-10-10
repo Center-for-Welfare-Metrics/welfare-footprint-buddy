@@ -39,6 +39,15 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
     }
   };
 
+  const sanitizeJson = (text: string): string => {
+    // Replace smart quotes with regular quotes
+    return text
+      .replace(/[\u2018\u2019]/g, "'")  // Single smart quotes
+      .replace(/[\u201C\u201D]/g, '"')  // Double smart quotes
+      .replace(/[\u2013\u2014]/g, '-')  // Em/en dashes
+      .replace(/\u2026/g, '...');        // Ellipsis
+  };
+
   const handleAnalyze = async () => {
     if (!imageData) {
       toast({
@@ -63,12 +72,22 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
       if (error) throw error;
 
       if (data?.candidates?.[0]?.content?.parts[0]?.text) {
-        const detectionJson = JSON.parse(data.candidates[0].content.parts[0].text);
-        const imageDataStr = JSON.stringify(imageData);
+        const rawText = data.candidates[0].content.parts[0].text;
+        const sanitizedText = sanitizeJson(rawText);
         
-        if (detectionJson.items && detectionJson.items.length > 0) {
-          // Always show confirmation screen first
-          onConfirmationNeeded(detectionJson.items, detectionJson.summary, imageDataStr, imagePreview);
+        try {
+          const detectionJson = JSON.parse(sanitizedText);
+          const imageDataStr = JSON.stringify(imageData);
+          
+          if (detectionJson.items && detectionJson.items.length > 0) {
+            // Always show confirmation screen first
+            onConfirmationNeeded(detectionJson.items, detectionJson.summary, imageDataStr, imagePreview);
+          }
+        } catch (parseError) {
+          console.error('JSON Parse Error:', parseError);
+          console.error('Raw text:', rawText);
+          console.error('Sanitized text:', sanitizedText);
+          throw new Error(`JSON Parse error: ${parseError instanceof Error ? parseError.message : 'Invalid JSON'}`);
         }
       } else {
         throw new Error('Unexpected response format from AI.');
@@ -99,9 +118,19 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
       if (error) throw error;
 
       if (data?.candidates?.[0]?.content?.parts[0]?.text) {
-        const analysisJson = JSON.parse(data.candidates[0].content.parts[0].text);
-        const imageDataString = JSON.stringify(imageData);
-        onAnalysisComplete(analysisJson, imageDataString);
+        const rawText = data.candidates[0].content.parts[0].text;
+        const sanitizedText = sanitizeJson(rawText);
+        
+        try {
+          const analysisJson = JSON.parse(sanitizedText);
+          const imageDataString = JSON.stringify(imageData);
+          onAnalysisComplete(analysisJson, imageDataString);
+        } catch (parseError) {
+          console.error('JSON Parse Error:', parseError);
+          console.error('Raw text:', rawText);
+          console.error('Sanitized text:', sanitizedText);
+          throw new Error(`JSON Parse error: ${parseError instanceof Error ? parseError.message : 'Invalid JSON'}`);
+        }
       } else {
         throw new Error('Unexpected response format from AI.');
       }

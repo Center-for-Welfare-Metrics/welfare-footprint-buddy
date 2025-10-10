@@ -10,6 +10,16 @@ import ConfirmationScreen from "@/components/ConfirmationScreen";
 
 type Screen = 'home' | 'scanner' | 'confirmation' | 'itemSelection' | 'results';
 
+// Utility function to sanitize JSON from AI responses
+const sanitizeJson = (text: string): string => {
+  // Replace smart quotes with regular quotes
+  return text
+    .replace(/[\u2018\u2019]/g, "'")  // Single smart quotes
+    .replace(/[\u201C\u201D]/g, '"')  // Double smart quotes
+    .replace(/[\u2013\u2014]/g, '-')  // Em/en dashes
+    .replace(/\u2026/g, '...');        // Ellipsis
+};
+
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState<Screen>('home');
   const [analysisData, setAnalysisData] = useState<any>(null);
@@ -60,10 +70,20 @@ const Index = () => {
       if (error) throw error;
 
       if (data?.candidates?.[0]?.content?.parts[0]?.text) {
-        const detectionJson = JSON.parse(data.candidates[0].content.parts[0].text);
-        setDetectedItems(detectionJson.items);
-        setItemsSummary(detectionJson.summary);
-        setCurrentScreen('itemSelection');
+        const rawText = data.candidates[0].content.parts[0].text;
+        const sanitizedText = sanitizeJson(rawText);
+        
+        try {
+          const detectionJson = JSON.parse(sanitizedText);
+          setDetectedItems(detectionJson.items);
+          setItemsSummary(detectionJson.summary);
+          setCurrentScreen('itemSelection');
+        } catch (parseError) {
+          console.error('JSON Parse Error:', parseError);
+          console.error('Raw text:', rawText);
+          console.error('Sanitized text:', sanitizedText);
+          throw new Error(`JSON Parse error: ${parseError instanceof Error ? parseError.message : 'Invalid JSON'}`);
+        }
       } else {
         throw new Error('Unexpected response format from AI.');
       }
@@ -102,8 +122,18 @@ const Index = () => {
       if (error) throw error;
 
       if (data?.candidates?.[0]?.content?.parts[0]?.text) {
-        const analysisJson = JSON.parse(data.candidates[0].content.parts[0].text);
-        handleAnalysisComplete(analysisJson, scannedImageData);
+        const rawText = data.candidates[0].content.parts[0].text;
+        const sanitizedText = sanitizeJson(rawText);
+        
+        try {
+          const analysisJson = JSON.parse(sanitizedText);
+          handleAnalysisComplete(analysisJson, scannedImageData);
+        } catch (parseError) {
+          console.error('JSON Parse Error:', parseError);
+          console.error('Raw text:', rawText);
+          console.error('Sanitized text:', sanitizedText);
+          throw new Error(`JSON Parse error: ${parseError instanceof Error ? parseError.message : 'Invalid JSON'}`);
+        }
       } else {
         throw new Error('Unexpected response format from AI.');
       }
