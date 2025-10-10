@@ -344,11 +344,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems 
               <span 
                 className="text-xs font-medium italic transition-colors duration-300"
                 style={{
-                  color: sliderValue[0] === 1 ? '#FF6B9D' :
-                         sliderValue[0] === 2 ? '#E677B8' :
-                         sliderValue[0] === 3 ? '#C084FC' :
-                         sliderValue[0] === 4 ? '#90B5FB' :
-                         '#60A5FA'
+                  color: appConfig.ethicalLens.colors[sliderValue[0] as 1 | 2 | 3 | 4 | 5]
                 }}
               >
                 {sliderValue[0] === 1 ? t('ethicalLens.level1') :
@@ -361,27 +357,9 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems 
             <div className="relative">
               <style>{`
                 .ethical-lens-slider [role="slider"] {
-                  background-color: ${
-                    sliderValue[0] === 1 ? '#FF6B9D' :
-                    sliderValue[0] === 2 ? '#E677B8' :
-                    sliderValue[0] === 3 ? '#C084FC' :
-                    sliderValue[0] === 4 ? '#90B5FB' :
-                    '#60A5FA'
-                  } !important;
-                  border-color: ${
-                    sliderValue[0] === 1 ? '#FF6B9D' :
-                    sliderValue[0] === 2 ? '#E677B8' :
-                    sliderValue[0] === 3 ? '#C084FC' :
-                    sliderValue[0] === 4 ? '#90B5FB' :
-                    '#60A5FA'
-                  } !important;
-                  box-shadow: 0 0 20px ${
-                    sliderValue[0] === 1 ? '#FF6B9D' :
-                    sliderValue[0] === 2 ? '#E677B8' :
-                    sliderValue[0] === 3 ? '#C084FC' :
-                    sliderValue[0] === 4 ? '#90B5FB' :
-                    '#60A5FA'
-                  }80 !important;
+                  background-color: ${appConfig.ethicalLens.colors[sliderValue[0] as 1 | 2 | 3 | 4 | 5]} !important;
+                  border-color: ${appConfig.ethicalLens.colors[sliderValue[0] as 1 | 2 | 3 | 4 | 5]} !important;
+                  box-shadow: 0 0 20px ${appConfig.ethicalLens.colors[sliderValue[0] as 1 | 2 | 3 | 4 | 5]}80 !important;
                   transition: all 0.3s ease;
                 }
               `}</style>
@@ -396,22 +374,18 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems 
             </div>
             <div className="flex justify-between text-xs font-medium -mx-2">
               <div className="flex flex-col items-start">
-                <span className="text-lg mb-1" style={{ color: '#FF6B9D' }}>←</span>
-                <span style={{ color: '#FF6B9D' }}>{t('ethicalLens.rangeStart')}</span>
+                <span className="text-lg mb-1" style={{ color: appConfig.ethicalLens.colors[1] }}>←</span>
+                <span style={{ color: appConfig.ethicalLens.colors[1] }}>{t('ethicalLens.rangeStart')}</span>
               </div>
               <div className="flex flex-col items-end">
-                <span className="text-lg mb-1" style={{ color: '#60A5FA' }}>→</span>
-                <span className="text-right" style={{ color: '#60A5FA' }}>{t('ethicalLens.rangeEnd')}</span>
+                <span className="text-lg mb-1" style={{ color: appConfig.ethicalLens.colors[5] }}>→</span>
+                <span className="text-right" style={{ color: appConfig.ethicalLens.colors[5] }}>{t('ethicalLens.rangeEnd')}</span>
               </div>
             </div>
             <p 
               className="text-xs text-center font-medium transition-colors duration-300"
               style={{
-                color: sliderValue[0] === 1 ? '#FF6B9D' :
-                       sliderValue[0] === 2 ? '#E677B8' :
-                       sliderValue[0] === 3 ? '#C084FC' :
-                       sliderValue[0] === 4 ? '#90B5FB' :
-                       '#60A5FA'
+                color: appConfig.ethicalLens.colors[sliderValue[0] as 1 | 2 | 3 | 4 | 5]
               }}
             >
               {sliderValue[0] === 1 && t('ethicalLens.desc1')}
@@ -431,11 +405,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems 
                 disabled={isLoadingSwaps}
                 className="w-full text-white font-bold transition-all duration-300"
                 style={{
-                  backgroundColor: sliderValue[0] === 1 ? '#FF6B9D' :
-                                   sliderValue[0] === 2 ? '#E677B8' :
-                                   sliderValue[0] === 3 ? '#C084FC' :
-                                   sliderValue[0] === 4 ? '#90B5FB' :
-                                   '#60A5FA'
+                  backgroundColor: appConfig.ethicalLens.colors[sliderValue[0] as 1 | 2 | 3 | 4 | 5]
                 }}
               >
                 {isLoadingSwaps ? (

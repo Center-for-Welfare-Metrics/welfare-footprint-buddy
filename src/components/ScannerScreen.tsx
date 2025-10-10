@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useTranslation } from "react-i18next";
+import { appConfig } from "@/config/app.config";
 
 interface ScannerScreenProps {
   onBack: () => void;
@@ -51,11 +52,11 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
     setIsLoading(true);
     try {
       // First, detect all items in the image
-      const { data, error } = await supabase.functions.invoke('analyze-image', {
+      const { data, error } = await supabase.functions.invoke(appConfig.api.functions.analyzeImage, {
         body: { 
           imageData, 
           language: i18n.language,
-          mode: 'detect' 
+          mode: appConfig.api.modes.detect
         }
       });
 
@@ -85,12 +86,12 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
 
   const analyzeSingleItem = async (itemName: string) => {
     try {
-      const { data, error } = await supabase.functions.invoke('analyze-image', {
+      const { data, error } = await supabase.functions.invoke(appConfig.api.functions.analyzeImage, {
         body: { 
           imageData, 
           additionalInfo,
           language: i18n.language,
-          mode: 'analyze',
+          mode: appConfig.api.modes.analyze,
           focusItem: itemName
         }
       });

@@ -94,6 +94,7 @@ export const appConfig = {
     functions: {
       analyzeImage: 'analyze-image',
       suggestEthicalSwap: 'suggest-ethical-swap',
+      generateText: 'generate-text',
     },
     
     /** Analysis modes */
@@ -101,6 +102,9 @@ export const appConfig = {
       detect: 'detect',
       analyze: 'analyze',
     },
+    
+    /** Request timeout in milliseconds */
+    requestTimeoutMs: 30000, // 30 seconds
   },
 };
 

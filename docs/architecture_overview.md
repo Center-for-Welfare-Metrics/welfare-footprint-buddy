@@ -184,6 +184,44 @@ The app prioritizes **transparency**, **scientific accuracy**, and **user privac
 
 ## AI Integration
 
+The Welfare Footprint App uses a **model-agnostic AI Handler** to interact with AI providers. Currently implemented with **Google Gemini 2.0 Flash Experimental**, but designed for easy provider switching.
+
+### AI Handler Architecture
+
+The AI Handler provides a unified interface for all AI interactions:
+
+**Core Components**:
+- `supabase/functions/_shared/ai-handler.ts` - Main handler with provider management
+- `supabase/functions/_shared/providers/gemini.ts` - Gemini provider implementation
+- Type-safe request/response interfaces (`AIRequest`, `AIResponse`, `AIProvider`)
+- Consistent error handling and timeout management
+
+**Key Features**:
+- ✅ **Provider Independence**: Switch AI providers without changing calling code
+- ✅ **Error Handling**: Standardized error codes (`TIMEOUT`, `RATE_LIMIT`, `AUTHENTICATION`, `NETWORK`, etc.)
+- ✅ **Timeout Protection**: Built-in 30-second timeout with fallback behavior
+- ✅ **Metadata Tracking**: Latency, token usage, provider info for all requests
+- ✅ **Type Safety**: Full TypeScript interfaces for requests and responses
+
+**Usage Example**:
+```typescript
+import { callAI } from '../_shared/ai-handler.ts';
+
+const response = await callAI({
+  prompt: 'Analyze this product...',
+  imageData: { base64: '...', mimeType: 'image/jpeg' },
+  language: 'en',
+  timeout: 30000,
+});
+
+if (response.success) {
+  const text = response.data.text;
+  console.log('Latency:', response.metadata.latencyMs);
+} else {
+  console.error('Error:', response.error.code, response.error.message);
+}
+```
+
 ### Prompt System
 
 All AI prompts are stored in `/prompts` as version-controlled text files:
@@ -200,9 +238,18 @@ The `prompt-loader.ts` utility provides:
 - Conditional blocks (`{{#if VARIABLE}}...{{/if}}`)
 - Metadata extraction (headers, versioning)
 
-### Model Agnosticity
+### Adding New AI Providers
 
-Prompts are designed to work with any vision-capable LLM (Gemini, GPT-4V, Claude 3, etc.). See `docs/ai-handler-proposal.md` for planned abstraction layer.
+To add a new provider (e.g., OpenAI GPT, Claude):
+
+1. Create a provider class implementing `AIProvider` interface in `/supabase/functions/_shared/providers/`
+2. Implement the required `call(request: AIRequest)` method
+3. Register the provider in edge functions:
+   ```typescript
+   const newProvider = new OpenAIProvider(apiKey);
+   handler.registerProvider(newProvider);
+   ```
+4. Use by specifying provider name: `callAI(request, 'openai')`
 
 ---
 
@@ -216,12 +263,18 @@ All tunable parameters are in `src/config/app.config.ts`:
 appConfig = {
   ai: { confidenceThresholds, suggestionDebounceMs },
   ui: { imagePreviewHeight, textareaMinRows },
-  ethicalLens: { defaultValue, colors, min/max/step },
+  ethicalLens: { defaultValue, colors (1-5), min/max/step },
   confidenceMeter: { levels (low/medium/high) },
   storage: { maxWelfareCategoryLength },
-  api: { functions, modes }
+  api: { functions, modes, requestTimeoutMs }
 }
 ```
+
+**Migration Status** (Phase 1 Complete):
+- ✅ All ethical lens colors migrated from hardcoded hex values to config
+- ✅ API function names and modes centralized
+- ✅ Components (`ResultsScreen`, `ScannerScreen`) now use `appConfig`
+- ✅ Consistent color scheme across all UI elements
 
 This eliminates "magic numbers" and provides type-safe configuration access.
 

@@ -1,9 +1,22 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { AIHandler, callAI } from '../_shared/ai-handler.ts';
+import { GeminiProvider } from '../_shared/providers/gemini.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
+// Initialize AI Handler once
+const initAIHandler = (apiKey: string) => {
+  if (!(globalThis as any).__aiHandler) {
+    const handler = new AIHandler();
+    const geminiProvider = new GeminiProvider(apiKey);
+    handler.registerProvider(geminiProvider);
+    handler.setDefaultProvider('gemini');
+    (globalThis as any).__aiHandler = handler;
+  }
 };
 
 serve(async (req) => {
@@ -18,6 +31,9 @@ serve(async (req) => {
     if (!GEMINI_API_KEY) {
       throw new Error('GEMINI_API_KEY is not configured');
     }
+
+    // Initialize AI Handler
+    initAIHandler(GEMINI_API_KEY);
 
     console.log(`Generating ethical swap suggestions for: ${productName}, ethical lens: ${ethicalLens}`);
 
@@ -136,32 +152,37 @@ Return ONLY valid JSON matching this schema:
   "generalNote": "string (overall context about this ethical lens position and welfare science limitations)"
 }`;
 
-    const requestBody = {
-      contents: [{
-        parts: [{ text: prompt }]
-      }],
-      generationConfig: {
-        response_mime_type: "application/json"
-      }
-    };
+    // Call AI using the new handler
+    const aiResponse = await callAI({
+      prompt,
+      language,
+      timeout: 30000,
+    });
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody)
-      }
-    );
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Gemini API error:', response.status, errorText);
-      throw new Error(`Gemini API error: ${response.status}`);
+    if (!aiResponse.success) {
+      console.error('AI Handler error:', aiResponse.error);
+      throw new Error(aiResponse.error?.message || 'AI request failed');
     }
 
-    const data = await response.json();
-    console.log('Ethical swap suggestions generated successfully');
+    // Parse the AI response
+    const text = aiResponse.data?.text;
+    if (!text) {
+      throw new Error('No text response from AI');
+    }
+
+    // Return in the original format expected by the frontend
+    const data = {
+      candidates: [{
+        content: {
+          parts: [{
+            text: text
+          }]
+        }
+      }]
+    };
+
+    console.log('Ethical swap suggestions generated successfully via AI Handler');
+    console.log('Metadata:', aiResponse.metadata);
 
     return new Response(JSON.stringify(data), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
