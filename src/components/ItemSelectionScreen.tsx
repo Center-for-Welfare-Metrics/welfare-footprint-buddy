@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, CheckCircle, XCircle } from "lucide-react";
+import { AlertCircle, CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 interface DetectedItem {
@@ -15,7 +16,6 @@ interface ItemSelectionScreenProps {
   imagePreview: string;
   onItemSelect: (itemName: string) => void;
   onBack: () => void;
-  isAnalyzing: boolean;
 }
 
 const ItemSelectionScreen = ({ 
@@ -23,10 +23,15 @@ const ItemSelectionScreen = ({
   summary, 
   imagePreview,
   onItemSelect, 
-  onBack,
-  isAnalyzing 
+  onBack
 }: ItemSelectionScreenProps) => {
   const { t } = useTranslation();
+  const [analyzingItemName, setAnalyzingItemName] = useState<string | null>(null);
+
+  const handleItemSelect = (itemName: string) => {
+    setAnalyzingItemName(itemName);
+    onItemSelect(itemName);
+  };
 
   const animalItems = items.filter(item => item.likelyHasAnimalIngredients);
   const plantItems = items.filter(item => !item.likelyHasAnimalIngredients);
@@ -36,7 +41,7 @@ const ItemSelectionScreen = ({
       <button 
         onClick={onBack}
         className="self-start text-emerald-400 hover:underline mb-6"
-        disabled={isAnalyzing}
+        disabled={analyzingItemName !== null}
       >
         ← {t('common.back')}
       </button>
@@ -85,11 +90,22 @@ const ItemSelectionScreen = ({
                     </span>
                   </div>
                   <Button
-                    onClick={() => onItemSelect(item.name)}
-                    disabled={isAnalyzing}
-                    className="bg-emerald-500 hover:bg-emerald-400 text-gray-900 font-bold"
+                    onClick={() => handleItemSelect(item.name)}
+                    disabled={analyzingItemName !== null}
+                    className={`font-bold transition-all ${
+                      analyzingItemName === item.name 
+                        ? 'bg-emerald-600 hover:bg-emerald-600 text-white' 
+                        : 'bg-emerald-500 hover:bg-emerald-400 text-gray-900'
+                    }`}
                   >
-                    {t('itemSelection.analyzeThis')}
+                    {analyzingItemName === item.name ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        {t('scanner.analyzing')}
+                      </>
+                    ) : (
+                      t('itemSelection.analyzeThis')
+                    )}
                   </Button>
                 </div>
               </div>

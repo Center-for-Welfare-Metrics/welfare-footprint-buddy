@@ -201,7 +201,6 @@ const Index = () => {
           imagePreview={currentImagePreview}
           onItemSelect={handleItemSelect}
           onBack={handleBack}
-          isAnalyzing={isAnalyzingItem}
         />
       )}
       
