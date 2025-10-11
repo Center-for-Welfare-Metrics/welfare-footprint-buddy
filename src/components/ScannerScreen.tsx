@@ -184,6 +184,10 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
           onChange={handleImageChange}
         />
         
+        <p className="text-sm text-gray-400 text-center mb-6">
+          {t('scanner.uploadTip')}
+        </p>
+        
         {imagePreview && (
           <div className="mb-6 space-y-2">
             <Label htmlFor="additional-info" className="text-sm text-gray-300">

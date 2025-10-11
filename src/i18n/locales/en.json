@@ -122,12 +122,12 @@
   },
   "scanner": {
     "title": "Scan Product",
-    "uploadImage": "Upload Product Image",
-    "takePhoto": "Tap to upload",
     "uploadImage": "Upload food image",
+    "takePhoto": "Tap to upload",
     "analyzing": "Analyzing...",
     "analysisFailed": "Analysis failed",
-    "scanNew": "Scan New Item"
+    "scanNew": "Scan New Item",
+    "uploadTip": "Make sure your food products are visible and in focus for best results."
   },
   "results": {
     "analysis": "Analysis",
