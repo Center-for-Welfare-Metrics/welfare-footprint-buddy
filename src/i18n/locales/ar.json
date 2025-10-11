@@ -108,7 +108,7 @@
   "scanner": {
     "title": "مسح المنتج",
     "takePhoto": "التقاط صورة",
-    "uploadImage": "تحميل صورة",
+    "uploadImage": "تحميل صورة طعام",
     "analyzing": "جار التحليل...",
     "analysisFailed": "فشل التحليل",
     "scanNew": "مسح عنصر جديد"

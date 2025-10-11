@@ -17,7 +17,7 @@
   "home": {
     "title": "Welfare",
     "subtitle": "Footprint",
-    "description": "Instant AI-powered welfare analysis.",
+    "description": "Instant AI-powered welfare analysis of food products.",
     "startScan": "Start Scan",
     "continueAsGuest": "Continue as Guest",
     "footer": "Prototype – For Internal Use Only\nThanks for helping us test the Welfare Footprint App.\n\nFuture versions will use the Welfare Footprint Framework™;\nthis one uses general animal welfare knowledge to trial the technology."
@@ -124,7 +124,7 @@
     "title": "Scan Product",
     "uploadImage": "Upload Product Image",
     "takePhoto": "Tap to upload",
-    "uploadImage": "Upload Image",
+    "uploadImage": "Upload food image",
     "analyzing": "Analyzing...",
     "analysisFailed": "Analysis failed",
     "scanNew": "Scan New Item"

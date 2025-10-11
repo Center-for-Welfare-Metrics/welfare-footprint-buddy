@@ -17,7 +17,7 @@
   "home": {
     "title": "福利",
     "subtitle": "足迹",
-    "description": "即时AI驱动的福利分析。",
+    "description": "即时AI驱动的食品产品福利分析。",
     "startScan": "开始扫描",
     "continueAsGuest": "以访客身份继续",
     "footer": "原型 – 仅供内部使用\n感谢您帮助我们测试福利足迹应用程序。\n\n未来版本将使用福利足迹框架™；\n这个版本使用一般的动物福利知识来试用技术。"
@@ -108,7 +108,7 @@
   "scanner": {
     "title": "扫描产品",
     "takePhoto": "拍照",
-    "uploadImage": "上传图片",
+    "uploadImage": "上传食品图片",
     "analyzing": "分析中...",
     "analysisFailed": "分析失败",
     "scanNew": "扫描新项目"

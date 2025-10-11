@@ -17,7 +17,7 @@
   "home": {
     "title": "Pegada de",
     "subtitle": "Bem-Estar",
-    "description": "Análise instantânea de bem-estar com IA.",
+    "description": "Análise instantânea de bem-estar de produtos alimentares com IA.",
     "startScan": "Iniciar Escaneamento",
     "continueAsGuest": "Continuar como Visitante",
     "footer": "Protótipo – Apenas para Uso Interno\nObrigado por nos ajudar a testar o App Pegada de Bem-Estar.\n\nVersões futuras usarão o Framework de Pegada de Bem-Estar™;\nesta usa conhecimento geral de bem-estar animal para testar a tecnologia."
@@ -108,7 +108,7 @@
   "scanner": {
     "title": "Escanear Produto",
     "takePhoto": "Tirar Foto",
-    "uploadImage": "Enviar Imagem",
+    "uploadImage": "Enviar imagem de alimentos",
     "analyzing": "Analisando...",
     "analysisFailed": "Análise falhou",
     "scanNew": "Escanear Novo Item"

@@ -17,7 +17,7 @@
   "home": {
     "title": "Huella de",
     "subtitle": "Bienestar",
-    "description": "Análisis de bienestar instantáneo con IA.",
+    "description": "Análisis de bienestar instantáneo de productos alimenticios con IA.",
     "startScan": "Iniciar Escaneo",
     "continueAsGuest": "Continuar como Invitado",
     "footer": "Prototipo – Solo para Uso Interno\nGracias por ayudarnos a probar la App de Huella de Bienestar.\n\nLas versiones futuras usarán el Marco de Huella de Bienestar™;\nesta utiliza conocimiento general de bienestar animal para probar la tecnología."
@@ -108,7 +108,7 @@
   "scanner": {
     "title": "Escanear Producto",
     "takePhoto": "Tomar Foto",
-    "uploadImage": "Subir Imagen",
+    "uploadImage": "Subir imagen de alimentos",
     "analyzing": "Analizando...",
     "analysisFailed": "Análisis fallido",
     "scanNew": "Escanear Nuevo Artículo"

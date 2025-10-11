@@ -17,7 +17,7 @@
   "home": {
     "title": "Tierwohl-",
     "subtitle": "Fußabdruck",
-    "description": "Sofortige KI-gestützte Tierwohl-Analyse.",
+    "description": "Sofortige KI-gestützte Tierwohl-Analyse von Lebensmittelprodukten.",
     "startScan": "Scan Starten",
     "continueAsGuest": "Als Gast Fortfahren",
     "footer": "Prototyp – Nur für internen Gebrauch\nDanke, dass Sie uns beim Testen der Tierwohl-Fußabdruck-App helfen.\n\nZukünftige Versionen werden das Tierwohl-Fußabdruck-Framework™ verwenden;\ndiese nutzt allgemeines Tierwohl-Wissen, um die Technologie zu testen."
@@ -121,7 +121,7 @@
   "scanner": {
     "title": "Produkt Scannen",
     "takePhoto": "Foto Aufnehmen",
-    "uploadImage": "Bild Hochladen",
+    "uploadImage": "Lebensmittelbild hochladen",
     "analyzing": "Analysiere...",
     "analysisFailed": "Analyse fehlgeschlagen",
     "scanNew": "Neuen Artikel Scannen"

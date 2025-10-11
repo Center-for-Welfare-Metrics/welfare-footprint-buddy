@@ -17,7 +17,7 @@
   "home": {
     "title": "Empreinte de",
     "subtitle": "Bien-être",
-    "description": "Analyse instantanée du bien-être par IA.",
+    "description": "Analyse instantanée du bien-être des produits alimentaires par IA.",
     "startScan": "Démarrer le Scan",
     "continueAsGuest": "Continuer en Invité",
     "footer": "Prototype – Usage Interne Uniquement\nMerci de nous aider à tester l'App Empreinte de Bien-être.\n\nLes versions futures utiliseront le Cadre d'Empreinte de Bien-être™;\ncelle-ci utilise des connaissances générales sur le bien-être animal pour tester la technologie."
@@ -108,7 +108,7 @@
   "scanner": {
     "title": "Scanner le Produit",
     "takePhoto": "Prendre une Photo",
-    "uploadImage": "Télécharger une Image",
+    "uploadImage": "Télécharger une image d'aliments",
     "analyzing": "Analyse en cours...",
     "analysisFailed": "Analyse échouée",
     "scanNew": "Scanner un Nouvel Article"
