@@ -203,20 +203,22 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
           </div>
         )}
         
-        <Button 
-          onClick={handleAnalyze}
-          disabled={!imageData || isLoading}
-          className="w-full bg-emerald-500 hover:bg-emerald-400 text-gray-900 font-bold disabled:bg-gray-600 disabled:text-gray-400"
-        >
-          {isLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {t('scanner.analyzing')}
-            </>
-          ) : (
-            t('scanner.title')
-          )}
-        </Button>
+        {imageData && (
+          <Button 
+            onClick={handleAnalyze}
+            disabled={isLoading}
+            className="w-full bg-emerald-500 hover:bg-emerald-400 text-gray-900 font-bold disabled:bg-gray-600 disabled:text-gray-400"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {t('scanner.analyzing')}
+              </>
+            ) : (
+              t('scanner.title')
+            )}
+          </Button>
+        )}
       </div>
     </div>
   );

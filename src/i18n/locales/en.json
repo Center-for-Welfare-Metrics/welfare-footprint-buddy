@@ -121,7 +121,7 @@
     "failedToUpdate": "Failed to update setting"
   },
   "scanner": {
-    "title": "Scan Product",
+    "title": "Proceed to analyze the image",
     "uploadImage": "Upload food image",
     "takePhoto": "Tap to upload",
     "analyzing": "Analyzing...",
