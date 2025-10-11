@@ -2,6 +2,11 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface DetectedItem {
   name: string;
@@ -16,6 +21,8 @@ interface ItemSelectionScreenProps {
   imagePreview: string;
   onItemSelect: (itemName: string) => void;
   onBack: () => void;
+  imageData?: string;
+  onReanalyze?: (itemName: string, additionalInfo: string) => void;
 }
 
 const ItemSelectionScreen = ({ 
@@ -23,14 +30,58 @@ const ItemSelectionScreen = ({
   summary, 
   imagePreview,
   onItemSelect, 
-  onBack
+  onBack,
+  imageData,
+  onReanalyze
 }: ItemSelectionScreenProps) => {
   const { t } = useTranslation();
+  const { toast } = useToast();
   const [analyzingItemName, setAnalyzingItemName] = useState<string | null>(null);
+  const [challengeOpen, setChallengeOpen] = useState(false);
+  const [additionalInfo, setAdditionalInfo] = useState("");
+  const [isReanalyzing, setIsReanalyzing] = useState(false);
 
   const handleItemSelect = (itemName: string) => {
     setAnalyzingItemName(itemName);
     onItemSelect(itemName);
+  };
+
+  const handleChallengeAnalysis = async () => {
+    if (!imageData || !onReanalyze) return;
+
+    setIsReanalyzing(true);
+    try {
+      const parsedImageData = JSON.parse(imageData);
+      
+      const { data: result, error } = await supabase.functions.invoke('detect-items', {
+        body: { 
+          imageData: parsedImageData,
+          additionalInfo: additionalInfo.trim() || undefined,
+        }
+      });
+
+      if (error) throw error;
+
+      setChallengeOpen(false);
+      setAdditionalInfo("");
+      toast({
+        title: t('results.reanalysisComplete'),
+        description: t('results.reanalysisCompleteDesc'),
+      });
+
+      // Trigger parent reanalysis
+      if (onReanalyze) {
+        onReanalyze("", additionalInfo);
+      }
+    } catch (error) {
+      toast({
+        title: t('results.reanalysisFailed'),
+        description: error instanceof Error ? error.message : t('results.failedToLoad'),
+        variant: "destructive",
+      });
+    } finally {
+      setIsReanalyzing(false);
+    }
   };
 
   const animalItems = items.filter(item => item.likelyHasAnimalIngredients);
@@ -143,6 +194,53 @@ const ItemSelectionScreen = ({
             </p>
           )}
         </div>
+      )}
+
+      {/* Challenge Analysis Dialog */}
+      {imageData && animalItems.length === 0 && plantItems.length > 0 && (
+        <Dialog open={challengeOpen} onOpenChange={setChallengeOpen}>
+          <DialogTrigger asChild>
+            <Button 
+              variant="outline"
+              className="w-full mb-4 border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/10"
+            >
+              <AlertCircle className="mr-2 h-4 w-4" />
+              {t('results.challengeAnalysis')}
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="glass-card max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold text-white">{t('results.challengeTitle')}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="info" className="text-gray-300">{t('results.challengeDescription')}</Label>
+                <Textarea
+                  id="info"
+                  placeholder={t('results.challengePlaceholder')}
+                  value={additionalInfo}
+                  onChange={(e) => setAdditionalInfo(e.target.value)}
+                  className="mt-2 bg-gray-800 border-gray-700 text-white"
+                  rows={5}
+                />
+              </div>
+              <Button 
+                onClick={handleChallengeAnalysis}
+                disabled={isReanalyzing || !additionalInfo.trim()}
+                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
+              >
+                {isReanalyzing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    {t('results.reanalyzing')}
+                  </>
+                ) : (
+                  t('results.reanalyzeProduct')
+                )}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       )}
 
       {/* Scan New Item button - shown when no animal items detected */}

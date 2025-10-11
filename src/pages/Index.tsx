@@ -100,6 +100,50 @@ const Index = () => {
       setIsAnalyzingItem(false);
     }
   };
+
+  const handleItemReanalyze = async (_itemName: string, additionalInfo: string) => {
+    setIsAnalyzingItem(true);
+    try {
+      const imageData = JSON.parse(scannedImageData);
+      
+      const { data, error } = await supabase.functions.invoke('analyze-image', {
+        body: { 
+          imageData, 
+          language: i18n.language,
+          mode: 'detect',
+          additionalInfo: additionalInfo.trim() || undefined
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.candidates?.[0]?.content?.parts[0]?.text) {
+        const rawText = data.candidates[0].content.parts[0].text;
+        const sanitizedText = sanitizeJson(rawText);
+        
+        try {
+          const detectionJson = JSON.parse(sanitizedText);
+          setDetectedItems(detectionJson.items);
+          setItemsSummary(detectionJson.summary);
+        } catch (parseError) {
+          console.error('JSON Parse Error:', parseError);
+          console.error('Raw text:', rawText);
+          console.error('Sanitized text:', sanitizedText);
+          throw new Error(`JSON Parse error: ${parseError instanceof Error ? parseError.message : 'Invalid JSON'}`);
+        }
+      } else {
+        throw new Error('Unexpected response format from AI.');
+      }
+    } catch (error) {
+      toast({
+        title: t('scanner.analysisFailed'),
+        description: error instanceof Error ? error.message : t('results.failedToLoad'),
+        variant: "destructive",
+      });
+    } finally {
+      setIsAnalyzingItem(false);
+    }
+  };
   
   const handleAnalysisComplete = (data: any, imageData: string, metadata?: any) => {
     setAnalysisData(data);
@@ -201,6 +245,8 @@ const Index = () => {
           imagePreview={currentImagePreview}
           onItemSelect={handleItemSelect}
           onBack={handleBack}
+          imageData={scannedImageData}
+          onReanalyze={handleItemReanalyze}
         />
       )}
       
