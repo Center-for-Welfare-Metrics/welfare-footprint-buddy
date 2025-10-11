@@ -258,6 +258,36 @@ export type Database = {
           },
         ]
       }
+      shared_results: {
+        Row: {
+          analysis_data: Json
+          created_at: string
+          expires_at: string | null
+          id: string
+          share_token: string
+          user_id: string | null
+          view_count: number | null
+        }
+        Insert: {
+          analysis_data: Json
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          share_token: string
+          user_id?: string | null
+          view_count?: number | null
+        }
+        Update: {
+          analysis_data?: Json
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          share_token?: string
+          user_id?: string | null
+          view_count?: number | null
+        }
+        Relationships: []
+      }
       user_preferences: {
         Row: {
           anonymous_usage: boolean | null
@@ -328,6 +358,10 @@ export type Database = {
         Returns: undefined
       }
       cleanup_expired_cache: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      cleanup_expired_shares: {
         Args: Record<PropertyKey, never>
         Returns: number
       }

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, HelpCircle, AlertCircle } from "lucide-react";
+import { Loader2, HelpCircle, AlertCircle, Share2, Check, Copy } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -48,6 +48,9 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
   const [challengeOpen, setChallengeOpen] = useState(false);
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [isReanalyzing, setIsReanalyzing] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
+  const [shareUrl, setShareUrl] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
   const { i18n, t } = useTranslation();
@@ -172,6 +175,61 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
       });
     } finally {
       setIsReanalyzing(false);
+    }
+  };
+
+  const handleShare = async () => {
+    setIsSharing(true);
+    try {
+      const shareToken = crypto.randomUUID();
+      const expiresAt = user ? null : new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString();
+
+      const { error } = await supabase
+        .from('shared_results')
+        .insert([{
+          user_id: user?.id || null,
+          analysis_data: data as any,
+          share_token: shareToken,
+          expires_at: expiresAt
+        }]);
+
+      if (error) throw error;
+
+      const url = `${window.location.origin}/share/${shareToken}`;
+      setShareUrl(url);
+
+      toast({
+        title: t('results.shareLinkCreated'),
+        description: user 
+          ? t('results.shareLinkPermanent')
+          : t('results.shareLinkTemporary'),
+      });
+    } catch (error) {
+      toast({
+        title: t('results.shareError'),
+        description: error instanceof Error ? error.message : t('results.failedToLoad'),
+        variant: "destructive",
+      });
+    } finally {
+      setIsSharing(false);
+    }
+  };
+
+  const copyToClipboard = async () => {
+    if (!shareUrl) return;
+    
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setCopied(true);
+      toast({
+        title: t('results.linkCopied'),
+      });
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      toast({
+        title: t('results.copyFailed'),
+        variant: "destructive",
+      });
     }
   };
 
@@ -529,6 +587,52 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
               </div>
             </DialogContent>
           </Dialog>
+        )}
+
+        {/* Share Button */}
+        {!shareUrl ? (
+          <Button
+            onClick={handleShare}
+            disabled={isSharing}
+            className="w-full mt-4 bg-blue-600 hover:bg-blue-500 text-white font-bold"
+          >
+            {isSharing ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                {t('results.creatingShareLink')}
+              </>
+            ) : (
+              <>
+                <Share2 className="mr-2 h-4 w-4" />
+                {t('results.shareResults')}
+              </>
+            )}
+          </Button>
+        ) : (
+          <div className="mt-4 p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+            <p className="text-sm text-blue-300 mb-2 font-medium">
+              {user ? t('results.shareLinkPermanent') : t('results.shareLinkTemporary')}
+            </p>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={shareUrl}
+                readOnly
+                className="flex-1 bg-gray-800 border-gray-700 text-white text-sm px-3 py-2 rounded"
+              />
+              <Button
+                onClick={copyToClipboard}
+                size="sm"
+                className="bg-blue-600 hover:bg-blue-500"
+              >
+                {copied ? (
+                  <Check className="h-4 w-4" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
+          </div>
         )}
 
         {onBackToItems && (

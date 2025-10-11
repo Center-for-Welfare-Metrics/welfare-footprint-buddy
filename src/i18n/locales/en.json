@@ -161,7 +161,15 @@
     "reanalysisComplete": "Re-analysis Complete",
     "reanalysisCompleteDesc": "The product has been re-analyzed with your additional information.",
     "reanalysisFailed": "Re-analysis Failed",
-    "failedToLoad": "Failed to load suggestions"
+    "failedToLoad": "Failed to load suggestions",
+    "shareResults": "Share Results",
+    "creatingShareLink": "Creating link...",
+    "shareLinkCreated": "Share Link Created",
+    "shareLinkPermanent": "✓ Permanent link (never expires)",
+    "shareLinkTemporary": "⏱ Temporary link (expires in 48 hours)",
+    "shareError": "Failed to Create Share Link",
+    "linkCopied": "Link Copied!",
+    "copyFailed": "Failed to Copy"
   },
   "confirmation": {
     "title": "Challenge Results",

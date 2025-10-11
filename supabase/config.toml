@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.admin-cache-control]
 verify_jwt = false
+
+[functions.share-result]
+verify_jwt = false
