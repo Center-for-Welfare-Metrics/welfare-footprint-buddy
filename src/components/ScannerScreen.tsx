@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useTranslation } from "react-i18next";
 import { appConfig } from "@/config/app.config";
+import { ErrorHandler, withRetry } from "@/lib/errorHandler";
 
 interface ScannerScreenProps {
   onBack: () => void;
@@ -60,14 +61,18 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
 
     setIsLoading(true);
     try {
-      // First, detect all items in the image
-      const { data, error } = await supabase.functions.invoke(appConfig.api.functions.analyzeImage, {
-        body: { 
-          imageData, 
-          language: i18n.language,
-          mode: appConfig.api.modes.detect
-        }
-      });
+      // First, detect all items in the image with retry logic
+      const { data, error } = await withRetry(async () => {
+        const result = await supabase.functions.invoke(appConfig.api.functions.analyzeImage, {
+          body: { 
+            imageData, 
+            language: i18n.language,
+            mode: appConfig.api.modes.detect
+          }
+        });
+        if (result.error) throw result.error;
+        return result;
+      }, 2, 1000);
 
       if (error) throw error;
 
@@ -91,7 +96,7 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
             !hasFoodItems  // hasNoFoodItems flag
           );
         } catch (parseError) {
-          console.error('JSON Parse Error:', parseError);
+          console.error('[ERROR][' + new Date().toISOString() + '][handleAnalyze] JSON Parse Error:', parseError);
           console.error('Raw text:', rawText);
           console.error('Sanitized text:', sanitizedText);
           throw new Error(`JSON Parse error: ${parseError instanceof Error ? parseError.message : 'Invalid JSON'}`);
@@ -100,9 +105,10 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
         throw new Error('Unexpected response format from AI.');
       }
     } catch (error) {
+      const appError = ErrorHandler.parseSupabaseError(error, 'handleAnalyze');
       toast({
-        title: t('scanner.analysisFailed'),
-        description: error instanceof Error ? error.message : t('results.failedToLoad'),
+        title: appError.retryable ? "Analysis Failed" : "Error",
+        description: appError.userMessage,
         variant: "destructive",
       });
     } finally {

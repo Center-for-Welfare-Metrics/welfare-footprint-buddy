@@ -7,6 +7,7 @@ import ScannerScreen from "@/components/ScannerScreen";
 import ResultsScreen from "@/components/ResultsScreen";
 import ItemSelectionScreen from "@/components/ItemSelectionScreen";
 import ConfirmationScreen from "@/components/ConfirmationScreen";
+import { ErrorHandler, withRetry } from "@/lib/errorHandler";
 
 type Screen = 'home' | 'scanner' | 'confirmation' | 'itemSelection' | 'results';
 
@@ -61,14 +62,18 @@ const Index = () => {
     try {
       const imageData = JSON.parse(scannedImageData);
       
-      const { data, error } = await supabase.functions.invoke('analyze-image', {
-        body: { 
-          imageData, 
-          language: i18n.language,
-          mode: 'detect',
-          userCorrection: editedDescription
-        }
-      });
+      const { data, error } = await withRetry(async () => {
+        const res = await supabase.functions.invoke('analyze-image', {
+          body: { 
+            imageData, 
+            language: i18n.language,
+            mode: 'detect',
+            userCorrection: editedDescription
+          }
+        });
+        if (res.error) throw res.error;
+        return res;
+      }, 2, 1000);
 
       if (error) throw error;
 
@@ -82,7 +87,7 @@ const Index = () => {
           setItemsSummary(detectionJson.summary);
           setCurrentScreen('itemSelection');
         } catch (parseError) {
-          console.error('JSON Parse Error:', parseError);
+          console.error('[ERROR][' + new Date().toISOString() + '][handleConfirmationEdit] JSON Parse Error:', parseError);
           console.error('Raw text:', rawText);
           console.error('Sanitized text:', sanitizedText);
           throw new Error(`JSON Parse error: ${parseError instanceof Error ? parseError.message : 'Invalid JSON'}`);
@@ -91,9 +96,10 @@ const Index = () => {
         throw new Error('Unexpected response format from AI.');
       }
     } catch (error) {
+      const appError = ErrorHandler.parseSupabaseError(error, 'handleConfirmationEdit');
       toast({
-        title: t('scanner.analysisFailed'),
-        description: error instanceof Error ? error.message : t('results.failedToLoad'),
+        title: appError.retryable ? "Analysis Failed" : "Error",
+        description: appError.userMessage,
         variant: "destructive",
       });
     } finally {
@@ -106,14 +112,18 @@ const Index = () => {
     try {
       const imageData = JSON.parse(scannedImageData);
       
-      const { data, error } = await supabase.functions.invoke('analyze-image', {
-        body: { 
-          imageData, 
-          language: i18n.language,
-          mode: 'detect',
-          additionalInfo: additionalInfo.trim() || undefined
-        }
-      });
+      const { data, error } = await withRetry(async () => {
+        const res = await supabase.functions.invoke('analyze-image', {
+          body: { 
+            imageData, 
+            language: i18n.language,
+            mode: 'detect',
+            additionalInfo: additionalInfo.trim() || undefined
+          }
+        });
+        if (res.error) throw res.error;
+        return res;
+      }, 2, 1000);
 
       if (error) throw error;
 
@@ -126,7 +136,7 @@ const Index = () => {
           setDetectedItems(detectionJson.items);
           setItemsSummary(detectionJson.summary);
         } catch (parseError) {
-          console.error('JSON Parse Error:', parseError);
+          console.error('[ERROR][' + new Date().toISOString() + '][handleItemReanalyze] JSON Parse Error:', parseError);
           console.error('Raw text:', rawText);
           console.error('Sanitized text:', sanitizedText);
           throw new Error(`JSON Parse error: ${parseError instanceof Error ? parseError.message : 'Invalid JSON'}`);
@@ -135,9 +145,10 @@ const Index = () => {
         throw new Error('Unexpected response format from AI.');
       }
     } catch (error) {
+      const appError = ErrorHandler.parseSupabaseError(error, 'handleItemReanalyze');
       toast({
-        title: t('scanner.analysisFailed'),
-        description: error instanceof Error ? error.message : t('results.failedToLoad'),
+        title: appError.retryable ? "Analysis Failed" : "Error",
+        description: appError.userMessage,
         variant: "destructive",
       });
     } finally {
@@ -158,14 +169,18 @@ const Index = () => {
     try {
       const imageData = JSON.parse(scannedImageData);
       
-      const { data, error } = await supabase.functions.invoke('analyze-image', {
-        body: { 
-          imageData, 
-          language: i18n.language,
-          mode: 'analyze',
-          focusItem: itemName
-        }
-      });
+      const { data, error } = await withRetry(async () => {
+        const res = await supabase.functions.invoke('analyze-image', {
+          body: { 
+            imageData, 
+            language: i18n.language,
+            mode: 'analyze',
+            focusItem: itemName
+          }
+        });
+        if (res.error) throw res.error;
+        return res;
+      }, 2, 1000);
 
       if (error) throw error;
 
@@ -179,7 +194,7 @@ const Index = () => {
           const metadata = data._metadata;
           handleAnalysisComplete(analysisJson, scannedImageData, metadata);
         } catch (parseError) {
-          console.error('JSON Parse Error:', parseError);
+          console.error('[ERROR][' + new Date().toISOString() + '][handleItemSelect] JSON Parse Error:', parseError);
           console.error('Raw text:', rawText);
           console.error('Sanitized text:', sanitizedText);
           throw new Error(`JSON Parse error: ${parseError instanceof Error ? parseError.message : 'Invalid JSON'}`);
@@ -188,9 +203,10 @@ const Index = () => {
         throw new Error('Unexpected response format from AI.');
       }
     } catch (error) {
+      const appError = ErrorHandler.parseSupabaseError(error, 'handleItemSelect');
       toast({
-        title: t('scanner.analysisFailed'),
-        description: error instanceof Error ? error.message : t('results.failedToLoad'),
+        title: appError.retryable ? "Analysis Failed" : "Error",
+        description: appError.userMessage,
         variant: "destructive",
       });
       setIsAnalyzingItem(false);

@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { ErrorHandler, withRetry } from "@/lib/errorHandler";
 
 interface DetectedItem {
   name: string;
@@ -53,12 +54,16 @@ const ItemSelectionScreen = ({
     try {
       const parsedImageData = JSON.parse(imageData);
       
-      const { data: result, error } = await supabase.functions.invoke('detect-items', {
-        body: { 
-          imageData: parsedImageData,
-          additionalInfo: additionalInfo.trim() || undefined,
-        }
-      });
+      const { data: result, error } = await withRetry(async () => {
+        const res = await supabase.functions.invoke('detect-items', {
+          body: { 
+            imageData: parsedImageData,
+            additionalInfo: additionalInfo.trim() || undefined,
+          }
+        });
+        if (res.error) throw res.error;
+        return res;
+      }, 2, 1000);
 
       if (error) throw error;
 
@@ -74,9 +79,10 @@ const ItemSelectionScreen = ({
         onReanalyze("", additionalInfo);
       }
     } catch (error) {
+      const appError = ErrorHandler.parseSupabaseError(error, 'handleChallengeAnalysis');
       toast({
-        title: t('results.reanalysisFailed'),
-        description: error instanceof Error ? error.message : t('results.failedToLoad'),
+        title: appError.retryable ? "Reanalysis Failed" : "Error",
+        description: appError.userMessage,
         variant: "destructive",
       });
     } finally {

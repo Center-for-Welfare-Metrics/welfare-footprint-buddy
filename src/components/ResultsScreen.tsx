@@ -11,6 +11,7 @@ import { Card } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "react-i18next";
 import { appConfig } from "@/config/app.config";
+import { ErrorHandler, withRetry } from "@/lib/errorHandler";
 
 interface AnalysisData {
   productName?: { value: string; confidence: string };
@@ -147,13 +148,17 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
       // Parse the imageData string back to object
       const parsedImageData = JSON.parse(imageData);
       
-      const { data: result, error } = await supabase.functions.invoke('analyze-image', {
-        body: { 
-          imageData: parsedImageData,
-          additionalInfo: additionalInfo.trim() || undefined,
-          language: i18n.language
-        }
-      });
+      const { data: result, error } = await withRetry(async () => {
+        const res = await supabase.functions.invoke('analyze-image', {
+          body: { 
+            imageData: parsedImageData,
+            additionalInfo: additionalInfo.trim() || undefined,
+            language: i18n.language
+          }
+        });
+        if (res.error) throw res.error;
+        return res;
+      }, 2, 1000);
 
       if (error) throw error;
 
@@ -168,9 +173,10 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
         description: t('results.reanalysisCompleteDesc'),
       });
     } catch (error) {
+      const appError = ErrorHandler.parseSupabaseError(error, 'handleChallengeAnalysis');
       toast({
-        title: t('results.reanalysisFailed'),
-        description: error instanceof Error ? error.message : t('results.failedToLoad'),
+        title: appError.retryable ? "Reanalysis Failed" : "Error",
+        description: appError.userMessage,
         variant: "destructive",
       });
     } finally {
@@ -181,22 +187,28 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
   const handleShare = async () => {
     setIsSharing(true);
     try {
-      const shareToken = crypto.randomUUID();
-      const expiresAt = user ? null : new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString();
+      const { error } = await withRetry(async () => {
+        const shareToken = crypto.randomUUID();
+        const expiresAt = user ? null : new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString();
 
-      const { error } = await supabase
-        .from('shared_results')
-        .insert([{
-          user_id: user?.id || null,
-          analysis_data: data as any,
-          share_token: shareToken,
-          expires_at: expiresAt
-        }]);
+        const res = await supabase
+          .from('shared_results')
+          .insert([{
+            user_id: user?.id || null,
+            analysis_data: data as any,
+            share_token: shareToken,
+            expires_at: expiresAt
+          }]);
+
+        if (res.error) throw res.error;
+
+        const url = `${window.location.origin}/share/${shareToken}`;
+        setShareUrl(url);
+        
+        return res;
+      }, 2, 1000);
 
       if (error) throw error;
-
-      const url = `${window.location.origin}/share/${shareToken}`;
-      setShareUrl(url);
 
       toast({
         title: t('results.shareLinkCreated'),
@@ -205,9 +217,10 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
           : t('results.shareLinkTemporary'),
       });
     } catch (error) {
+      const appError = ErrorHandler.parseSupabaseError(error, 'handleShare');
       toast({
-        title: t('results.shareError'),
-        description: error instanceof Error ? error.message : t('results.failedToLoad'),
+        title: appError.retryable ? "Share Failed" : "Error",
+        description: appError.userMessage,
         variant: "destructive",
       });
     } finally {
