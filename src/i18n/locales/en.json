@@ -123,7 +123,7 @@
   "scanner": {
     "title": "Proceed to analyze the image",
     "uploadImage": "Upload food image",
-    "takePhoto": "Tap to upload",
+    "takePhoto": "Upload or take a photo of an ingredient, a dish, or a food product on a supermarket shelf",
     "analyzing": "Analyzing...",
     "analysisFailed": "Analysis failed",
     "scanNew": "Scan New Item",

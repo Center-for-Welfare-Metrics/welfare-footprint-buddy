@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, ImagePlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -164,7 +164,7 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
       <div className="w-full max-w-md glass-card rounded-2xl p-6">
         <div 
           onClick={() => fileInputRef.current?.click()}
-          className="w-full h-60 border-2 border-dashed border-gray-600 rounded-xl flex items-center justify-center mb-6 cursor-pointer overflow-hidden"
+          className="w-full h-60 border-2 border-dashed border-gray-600 rounded-xl flex items-center justify-center mb-6 cursor-pointer overflow-hidden hover:border-emerald-500/50 transition-colors"
         >
           {imagePreview ? (
             <img 
@@ -173,7 +173,10 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
               className="h-full w-full object-contain rounded-lg" 
             />
           ) : (
-            <span className="text-gray-400">{t('scanner.takePhoto')}</span>
+            <div className="flex flex-col items-center gap-3 px-6 text-center">
+              <ImagePlus className="w-12 h-12 text-emerald-400" />
+              <span className="text-gray-300 text-sm leading-relaxed">{t('scanner.takePhoto')}</span>
+            </div>
           )}
         </div>
         <input 
