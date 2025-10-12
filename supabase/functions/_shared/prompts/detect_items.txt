@@ -53,6 +53,45 @@ For dishes that contain MULTIPLE ANIMAL-DERIVED INGREDIENTS (e.g., pizza with ch
   1. "Cheese (from Khachapuri)" - likelyHasAnimalIngredients: true
   2. "Egg (from Khachapuri)" - likelyHasAnimalIngredients: true
 - You may OPTIONALLY include the plant-based components as well (e.g., "Bread (from Khachapuri)")
+- DO NOT create a single item for the whole dish when it contains multiple animal ingredients
+
+CRITICAL JSON OUTPUT REQUIREMENT:
+When you detect a composite dish like Khachapuri, your JSON MUST look like this:
+{
+  "items": [
+    {
+      "name": "Cheese (from Khachapuri)",
+      "likelyHasAnimalIngredients": true,
+      "reasoning": "Cheese is a dairy product made from milk",
+      "confidence": "High"
+    },
+    {
+      "name": "Egg (from Khachapuri)",
+      "likelyHasAnimalIngredients": true,
+      "reasoning": "The egg yolk is clearly visible on top of the bread",
+      "confidence": "High"
+    },
+    {
+      "name": "Bread (from Khachapuri)",
+      "likelyHasAnimalIngredients": false,
+      "reasoning": "The bread dough is typically plant-based",
+      "confidence": "Medium"
+    }
+  ],
+  "summary": "The image shows Khachapuri with cheese and egg, both animal-derived ingredients."
+}
+
+DO NOT return this:
+{
+  "items": [
+    {
+      "name": "Khachapuri",
+      "likelyHasAnimalIngredients": true,
+      "reasoning": "Contains cheese and egg...",
+      "confidence": "High"
+    }
+  ]
+}
 
 For each FOOD item or INGREDIENT you detect:
 
