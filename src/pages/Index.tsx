@@ -315,7 +315,7 @@ const Index = () => {
               summary={itemsSummary}
               imagePreview={currentImagePreview}
               onItemSelect={handleItemSelect}
-              onBack={() => {}}
+              onBack={handleGoHome}
               imageData={scannedImageData}
               onReanalyze={handleItemReanalyze}
             />
