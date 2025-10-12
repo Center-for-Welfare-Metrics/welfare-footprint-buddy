@@ -120,17 +120,17 @@ const ItemSelectionScreen = ({
             <AlertCircle className="h-5 w-5 text-orange-400" />
             {t('itemSelection.animalDerivedItems')} ({animalItems.length})
           </h2>
-          <div className="space-y-3">
+          <div className="grid grid-cols-1 gap-4">
             {animalItems.map((item, index) => (
               <div 
                 key={index}
-                className="glass-card rounded-xl p-4 hover:bg-white/10 transition-colors"
+                className="glass-card rounded-xl p-5 hover:bg-white/10 transition-all border border-white/10"
               >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-white mb-1">{item.name}</h3>
-                    <p className="text-sm text-gray-300 mb-2">{item.reasoning}</p>
-                    <span className={`text-xs px-2 py-1 rounded ${
+                <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
+                  <div className="flex-1 w-full">
+                    <h3 className="font-bold text-lg text-white mb-2">{item.name}</h3>
+                    <p className="text-sm text-gray-300 mb-3 leading-relaxed">{item.reasoning}</p>
+                    <span className={`inline-block text-xs px-3 py-1 rounded-full font-medium ${
                       item.confidence === 'High' ? 'bg-green-500/20 text-green-300' :
                       item.confidence === 'Medium' ? 'bg-yellow-500/20 text-yellow-300' :
                       'bg-red-500/20 text-red-300'
@@ -141,7 +141,7 @@ const ItemSelectionScreen = ({
                   <Button
                     onClick={() => handleItemSelect(item.name)}
                     disabled={analyzingItemName !== null}
-                    className={`font-bold transition-all ${
+                    className={`font-bold transition-all shrink-0 ${
                       analyzingItemName === item.name 
                         ? 'bg-emerald-600 hover:bg-emerald-600 text-white' 
                         : 'bg-emerald-500 hover:bg-emerald-400 text-gray-900'
@@ -170,17 +170,17 @@ const ItemSelectionScreen = ({
             <CheckCircle className="h-5 w-5 text-emerald-400" />
             {t('itemSelection.plantBasedItems')} ({plantItems.length})
           </h2>
-          <div className="space-y-3">
+          <div className="grid grid-cols-1 gap-4">
             {plantItems.map((item, index) => (
               <div 
                 key={index}
-                className="glass-card rounded-xl p-4 bg-emerald-500/5 border border-emerald-500/20"
+                className="glass-card rounded-xl p-5 bg-emerald-500/5 border border-emerald-500/30"
               >
                 <div className="flex items-start gap-3">
-                  <CheckCircle className="h-5 w-5 text-emerald-400 mt-0.5 flex-shrink-0" />
+                  <CheckCircle className="h-6 w-6 text-emerald-400 mt-0.5 flex-shrink-0" />
                   <div className="flex-1">
-                    <h3 className="font-semibold text-white mb-1">{item.name}</h3>
-                    <p className="text-sm text-gray-300">{item.reasoning}</p>
+                    <h3 className="font-bold text-lg text-white mb-2">{item.name}</h3>
+                    <p className="text-sm text-gray-300 leading-relaxed">{item.reasoning}</p>
                   </div>
                 </div>
               </div>
