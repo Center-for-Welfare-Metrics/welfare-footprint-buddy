@@ -31,6 +31,15 @@ const ConfirmationScreen = ({
     onEdit(editedText);
   };
 
+  const handleContinue = () => {
+    // If text was edited, treat it as an edit submission
+    if (editedText !== summary) {
+      onEdit(editedText);
+    } else {
+      onContinue();
+    }
+  };
+
   return (
     <div className="flex flex-col items-center pb-32 max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-4 text-center text-white">
@@ -100,7 +109,7 @@ const ConfirmationScreen = ({
           ) : !isEditing ? (
             <>
               <Button
-                onClick={onContinue}
+                onClick={handleContinue}
                 disabled={isProcessing}
                 className="bg-emerald-500 hover:bg-emerald-400 text-gray-900 font-bold gap-2"
               >
