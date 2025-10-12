@@ -159,7 +159,7 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
   };
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center pb-40">
       <h2 className="text-3xl font-bold mb-6 text-white">{t('scanner.uploadImage')}</h2>
       <div className="w-full max-w-md glass-card rounded-2xl p-6">
         <div 
