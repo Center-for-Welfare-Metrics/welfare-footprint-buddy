@@ -659,8 +659,11 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
         )}
         
         <Button
-          onClick={onNewScan}
-          className="w-full mt-4 bg-gray-700 hover:bg-gray-600 text-white font-bold"
+          onClick={() => {
+            console.log('[ResultsScreen] Scan New Item button clicked');
+            onNewScan();
+          }}
+          className="w-full mt-4 bg-emerald-500 hover:bg-emerald-400 text-gray-900 font-bold shadow-lg shadow-emerald-500/20 relative z-20"
         >
           {t('scanner.scanNew')}
         </Button>
