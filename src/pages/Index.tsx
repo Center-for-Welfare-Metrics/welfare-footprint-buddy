@@ -294,7 +294,7 @@ const Index = () => {
               imagePreview={currentImagePreview}
               onContinue={handleConfirmationContinue}
               onEdit={handleConfirmationEdit}
-              onBack={() => {}}
+              onBack={handleGoHome}
               isProcessing={isAnalyzingItem}
               hasNoFoodItems={hasNoFoodItems}
             />
