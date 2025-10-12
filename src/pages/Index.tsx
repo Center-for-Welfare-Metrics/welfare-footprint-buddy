@@ -56,12 +56,16 @@ const Index = () => {
 
   // Navigate to home and reset history
   const handleGoHome = () => {
+    console.log('[Navigation] Going to home - resetting all state');
     setCurrentScreen('home');
     setNavigationHistory(['home']);
     setDetectedItems([]);
     setItemsSummary("");
     setCurrentImagePreview("");
     setAnalysisData(null);
+    setScannedImageData("");
+    setHasNoFoodItems(false);
+    setCacheMetadata(null);
   };
 
   const handleStartScan = () => navigateToScreen('scanner');
@@ -240,6 +244,7 @@ const Index = () => {
   };
   
   const handleNewScan = () => {
+    console.log('[Navigation] New scan requested - going home');
     handleGoHome();
   };
   
