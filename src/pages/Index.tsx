@@ -7,6 +7,7 @@ import ScannerScreen from "@/components/ScannerScreen";
 import ResultsScreen from "@/components/ResultsScreen";
 import ItemSelectionScreen from "@/components/ItemSelectionScreen";
 import ConfirmationScreen from "@/components/ConfirmationScreen";
+import NavigationWrapper from "@/components/NavigationWrapper";
 import { ErrorHandler, withRetry } from "@/lib/errorHandler";
 
 type Screen = 'home' | 'scanner' | 'confirmation' | 'itemSelection' | 'results';
@@ -23,6 +24,7 @@ const sanitizeJson = (text: string): string => {
 
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState<Screen>('home');
+  const [navigationHistory, setNavigationHistory] = useState<Screen[]>(['home']);
   const [analysisData, setAnalysisData] = useState<any>(null);
   const [scannedImageData, setScannedImageData] = useState<string>("");
   const [detectedItems, setDetectedItems] = useState<any[]>([]);
@@ -35,14 +37,34 @@ const Index = () => {
   const { toast } = useToast();
   const { i18n, t } = useTranslation();
 
-  const handleStartScan = () => setCurrentScreen('scanner');
-  
+  // Navigate to a new screen and add to history
+  const navigateToScreen = (screen: Screen) => {
+    setNavigationHistory(prev => [...prev, screen]);
+    setCurrentScreen(screen);
+  };
+
+  // Navigate back one step in history
   const handleBack = () => {
+    if (navigationHistory.length > 1) {
+      const newHistory = [...navigationHistory];
+      newHistory.pop(); // Remove current screen
+      const previousScreen = newHistory[newHistory.length - 1];
+      setNavigationHistory(newHistory);
+      setCurrentScreen(previousScreen);
+    }
+  };
+
+  // Navigate to home and reset history
+  const handleGoHome = () => {
     setCurrentScreen('home');
+    setNavigationHistory(['home']);
     setDetectedItems([]);
     setItemsSummary("");
     setCurrentImagePreview("");
+    setAnalysisData(null);
   };
+
+  const handleStartScan = () => navigateToScreen('scanner');
   
   const handleConfirmationNeeded = (items: any[], summary: string, imageData: string, imagePreview: string, noFoodItems: boolean = false) => {
     setDetectedItems(items);
@@ -50,11 +72,11 @@ const Index = () => {
     setScannedImageData(imageData);
     setCurrentImagePreview(imagePreview);
     setHasNoFoodItems(noFoodItems);
-    setCurrentScreen('confirmation');
+    navigateToScreen('confirmation');
   };
   
   const handleConfirmationContinue = () => {
-    setCurrentScreen('itemSelection');
+    navigateToScreen('itemSelection');
   };
   
   const handleConfirmationEdit = async (editedDescription: string) => {
@@ -85,7 +107,7 @@ const Index = () => {
           const detectionJson = JSON.parse(sanitizedText);
           setDetectedItems(detectionJson.items);
           setItemsSummary(detectionJson.summary);
-          setCurrentScreen('itemSelection');
+          navigateToScreen('itemSelection');
         } catch (parseError) {
           console.error('[ERROR][' + new Date().toISOString() + '][handleConfirmationEdit] JSON Parse Error:', parseError);
           console.error('Raw text:', rawText);
@@ -160,7 +182,7 @@ const Index = () => {
     setAnalysisData(data);
     setScannedImageData(imageData);
     setCacheMetadata(metadata || null);
-    setCurrentScreen('results');
+    navigateToScreen('results');
     setIsAnalyzingItem(false);
   };
 
@@ -218,63 +240,102 @@ const Index = () => {
   };
   
   const handleNewScan = () => {
-    setAnalysisData(null);
-    setDetectedItems([]);
-    setItemsSummary("");
-    setCurrentImagePreview("");
-    setCurrentScreen('home');
+    handleGoHome();
   };
   
   const handleBackToItems = () => {
     setAnalysisData(null);
-    setCurrentScreen('itemSelection');
+    handleBack();
   };
 
+  // Determine if Home icon should be shown
+  const showHomeIcon = currentScreen !== 'home' && currentScreen !== 'scanner';
+
   return (
-    <div className="container mx-auto p-4 max-w-lg">
-      {currentScreen === 'home' && <HomeScreen onStartScan={handleStartScan} />}
+    <div className="container mx-auto max-w-lg">
+      {currentScreen === 'home' && (
+        <div className="p-4">
+          <HomeScreen onStartScan={handleStartScan} />
+        </div>
+      )}
       
       {currentScreen === 'scanner' && (
-        <ScannerScreen 
-          onBack={handleBack} 
-          onAnalysisComplete={handleAnalysisComplete}
-          onConfirmationNeeded={handleConfirmationNeeded}
-        />
+        <NavigationWrapper 
+          onBack={handleBack}
+          onHome={handleGoHome}
+          showHome={showHomeIcon}
+          isProcessing={isAnalyzingItem}
+        >
+          <div className="p-4">
+            <ScannerScreen 
+              onBack={() => {}} 
+              onAnalysisComplete={handleAnalysisComplete}
+              onConfirmationNeeded={handleConfirmationNeeded}
+            />
+          </div>
+        </NavigationWrapper>
       )}
       
       {currentScreen === 'confirmation' && (
-        <ConfirmationScreen
-          summary={itemsSummary}
-          imagePreview={currentImagePreview}
-          onContinue={handleConfirmationContinue}
-          onEdit={handleConfirmationEdit}
+        <NavigationWrapper 
           onBack={handleBack}
+          onHome={handleGoHome}
+          showHome={showHomeIcon}
           isProcessing={isAnalyzingItem}
-          hasNoFoodItems={hasNoFoodItems}
-        />
+        >
+          <div className="p-4">
+            <ConfirmationScreen
+              summary={itemsSummary}
+              imagePreview={currentImagePreview}
+              onContinue={handleConfirmationContinue}
+              onEdit={handleConfirmationEdit}
+              onBack={() => {}}
+              isProcessing={isAnalyzingItem}
+              hasNoFoodItems={hasNoFoodItems}
+            />
+          </div>
+        </NavigationWrapper>
       )}
       
       {currentScreen === 'itemSelection' && (
-        <ItemSelectionScreen
-          items={detectedItems}
-          summary={itemsSummary}
-          imagePreview={currentImagePreview}
-          onItemSelect={handleItemSelect}
+        <NavigationWrapper 
           onBack={handleBack}
-          imageData={scannedImageData}
-          onReanalyze={handleItemReanalyze}
-        />
+          onHome={handleGoHome}
+          showHome={showHomeIcon}
+          isProcessing={isAnalyzingItem}
+        >
+          <div className="p-4">
+            <ItemSelectionScreen
+              items={detectedItems}
+              summary={itemsSummary}
+              imagePreview={currentImagePreview}
+              onItemSelect={handleItemSelect}
+              onBack={() => {}}
+              imageData={scannedImageData}
+              onReanalyze={handleItemReanalyze}
+            />
+          </div>
+        </NavigationWrapper>
       )}
       
       {currentScreen === 'results' && analysisData && (
-        <ResultsScreen 
-          data={analysisData} 
-          onNewScan={handleNewScan}
-          imageData={scannedImageData}
-          onReanalyze={handleReanalyze}
-          onBackToItems={detectedItems.length > 0 ? handleBackToItems : undefined}
-          cacheMetadata={cacheMetadata}
-        />
+        <NavigationWrapper 
+          onBack={handleBack}
+          onHome={handleGoHome}
+          showHome={showHomeIcon}
+          isProcessing={isAnalyzingItem}
+        >
+          <div className="p-4">
+            <ResultsScreen 
+              data={analysisData} 
+              onNewScan={handleNewScan}
+              imageData={scannedImageData}
+              onReanalyze={handleReanalyze}
+              onBackToItems={detectedItems.length > 0 ? handleBackToItems : undefined}
+              cacheMetadata={cacheMetadata}
+            />
+          </div>
+        </NavigationWrapper>
       )}
     </div>
   );

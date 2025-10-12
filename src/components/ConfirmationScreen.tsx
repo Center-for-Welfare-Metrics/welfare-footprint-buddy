@@ -32,15 +32,7 @@ const ConfirmationScreen = ({
   };
 
   return (
-    <div className="flex flex-col items-center p-4 pb-32 max-w-4xl mx-auto">
-      <button 
-        onClick={onBack}
-        className="self-start text-emerald-400 hover:underline mb-6"
-        disabled={isProcessing}
-      >
-        ← {t('common.back')}
-      </button>
-
+    <div className="flex flex-col items-center pb-32 max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-4 text-center text-white">
         {t('confirmation.title')}
       </h1>
