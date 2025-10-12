@@ -25,8 +25,16 @@ interface CategoryStyle {
 const getCategoryStyle = (itemName: string): CategoryStyle | null => {
   const lowerName = itemName.toLowerCase();
   
-  // Dairy category
-  if (lowerName.includes('dairy') || (lowerName.includes('cheese') && lowerName.includes(','))) {
+  console.log('🎨 getCategoryStyle for:', itemName);
+  
+  // Check for multiple items (commas indicate grouped items)
+  const hasMultipleItems = itemName.includes(',');
+  
+  // Dairy category - check for dairy-related keywords
+  if (lowerName.includes('dairy') || lowerName.includes('milk') || lowerName.includes('cream') || 
+      lowerName.includes('butter') || lowerName.includes('yogurt') || 
+      (lowerName.includes('cheese') && hasMultipleItems)) {
+    console.log('✅ Matched DAIRY category');
     return {
       accentColor: 'hsl(217, 91%, 60%)', // soft blue
       bgColor: 'bg-blue-500/5',
@@ -34,8 +42,11 @@ const getCategoryStyle = (itemName: string): CategoryStyle | null => {
     };
   }
   
-  // Meat category
-  if (lowerName.includes('meat') || lowerName.includes('beef') || lowerName.includes('pork') || lowerName.includes('sausage')) {
+  // Meat category - check for meat-related keywords
+  if (lowerName.includes('meat') || lowerName.includes('beef') || lowerName.includes('pork') || 
+      lowerName.includes('sausage') || lowerName.includes('bacon') || lowerName.includes('ham') ||
+      lowerName.includes('chicken') || lowerName.includes('turkey') || lowerName.includes('lamb')) {
+    console.log('✅ Matched MEAT category');
     return {
       accentColor: 'hsl(0, 84%, 60%)', // muted red
       bgColor: 'bg-red-500/5',
@@ -43,8 +54,10 @@ const getCategoryStyle = (itemName: string): CategoryStyle | null => {
     };
   }
   
-  // Seafood category
-  if (lowerName.includes('seafood') || lowerName.includes('fish') || lowerName.includes('shrimp')) {
+  // Seafood category - check for seafood-related keywords
+  if (lowerName.includes('seafood') || lowerName.includes('fish') || lowerName.includes('shrimp') ||
+      lowerName.includes('salmon') || lowerName.includes('tuna') || lowerName.includes('crab')) {
+    console.log('✅ Matched SEAFOOD category');
     return {
       accentColor: 'hsl(172, 79%, 40%)', // teal
       bgColor: 'bg-teal-500/5',
@@ -52,8 +65,9 @@ const getCategoryStyle = (itemName: string): CategoryStyle | null => {
     };
   }
   
-  // Egg category
+  // Egg category - check for egg-related keywords
   if (lowerName.includes('egg')) {
+    console.log('✅ Matched EGG category');
     return {
       accentColor: 'hsl(45, 93%, 53%)', // golden yellow
       bgColor: 'bg-yellow-500/5',
@@ -61,8 +75,10 @@ const getCategoryStyle = (itemName: string): CategoryStyle | null => {
     };
   }
   
-  // Mixed/general animal-derived
-  if (lowerName.includes('ingredient') || lowerName.includes('item') || lowerName.includes('product')) {
+  // Mixed/general animal-derived - check for generic grouping words
+  if (lowerName.includes('ingredient') || lowerName.includes('item') || lowerName.includes('product') ||
+      hasMultipleItems) {
+    console.log('✅ Matched MIXED/GENERAL category');
     return {
       accentColor: 'hsl(38, 92%, 50%)', // amber
       bgColor: 'bg-amber-500/5',
@@ -70,17 +86,21 @@ const getCategoryStyle = (itemName: string): CategoryStyle | null => {
     };
   }
   
+  console.log('❌ No category matched - using default styling');
   return null;
 };
 
 const isGroupedItem = (itemName: string): boolean => {
   const lowerName = itemName.toLowerCase();
-  return (
-    lowerName.includes('ingredient') ||
-    lowerName.includes('item') ||
-    lowerName.includes('product') ||
-    (lowerName.split(',').length > 2)
-  );
+  const hasCommas = itemName.includes(',');
+  const hasGroupingWords = lowerName.includes('ingredient') || 
+                           lowerName.includes('item') || 
+                           lowerName.includes('product');
+  
+  const isGrouped = hasGroupingWords || hasCommas;
+  console.log('📦 isGroupedItem:', itemName, '→', isGrouped);
+  
+  return isGrouped;
 };
 
 interface ItemSelectionScreenProps {
@@ -192,15 +212,26 @@ const ItemSelectionScreen = ({
               const categoryStyle = getCategoryStyle(item.name);
               const isGrouped = isGroupedItem(item.name);
               
+              console.log('🔍 Rendering item:', { 
+                name: item.name, 
+                isGrouped, 
+                hasCategoryStyle: !!categoryStyle,
+                categoryStyle 
+              });
+              
               return (
                 <div 
                   key={index}
-                  className={`glass-card rounded-xl overflow-hidden hover:bg-white/10 transition-all border ${
-                    categoryStyle ? categoryStyle.borderColor : 'border-white/10'
-                  } ${categoryStyle && isGrouped ? categoryStyle.bgColor : ''}`}
+                  className={`glass-card rounded-xl overflow-hidden hover:bg-white/10 transition-all ${
+                    categoryStyle && isGrouped ? categoryStyle.bgColor : ''
+                  }`}
                   style={{
-                    borderTopWidth: categoryStyle && isGrouped ? '4px' : '1px',
-                    borderTopColor: categoryStyle && isGrouped ? categoryStyle.accentColor : undefined
+                    borderTop: categoryStyle && isGrouped 
+                      ? `4px solid ${categoryStyle.accentColor}` 
+                      : '1px solid rgba(255, 255, 255, 0.1)',
+                    borderLeft: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRight: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
                   }}
                 >
                   {/* Grouped Card Header */}
