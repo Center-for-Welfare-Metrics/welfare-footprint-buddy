@@ -671,7 +671,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
       <Dialog>
         <DialogTrigger asChild>
           <Button 
-            className="fixed bottom-4 right-4 bg-gray-700 hover:bg-gray-600 text-white w-12 h-12 rounded-full shadow-lg z-10"
+            className="fixed bottom-20 right-4 bg-gray-700 hover:bg-gray-600 text-white w-12 h-12 rounded-full shadow-lg z-50"
           >
             <HelpCircle className="h-5 w-5" />
           </Button>
