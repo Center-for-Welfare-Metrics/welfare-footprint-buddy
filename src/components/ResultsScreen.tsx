@@ -354,8 +354,11 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
         )}
         
         <Button
-          onClick={onNewScan}
-          className="w-full mt-4 bg-emerald-500 hover:bg-emerald-400 text-gray-900 font-bold shadow-lg shadow-emerald-500/20"
+          onClick={() => {
+            console.log('[ResultsScreen] Scan New Item clicked - non-animal product');
+            onNewScan();
+          }}
+          className="w-full mt-4 bg-emerald-500 hover:bg-emerald-400 text-gray-900 font-bold shadow-lg shadow-emerald-500/20 relative z-50"
         >
           {t('scanner.scanNew')}
         </Button>
@@ -660,10 +663,10 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
         
         <Button
           onClick={() => {
-            console.log('[ResultsScreen] Scan New Item button clicked');
+            console.log('[ResultsScreen] Scan New Item button clicked - main results');
             onNewScan();
           }}
-          className="w-full mt-4 bg-emerald-500 hover:bg-emerald-400 text-gray-900 font-bold shadow-lg shadow-emerald-500/20 relative z-20"
+          className="w-full mt-4 bg-emerald-500 hover:bg-emerald-400 text-gray-900 font-bold shadow-lg shadow-emerald-500/20 relative z-50 pointer-events-auto"
         >
           {t('scanner.scanNew')}
         </Button>
