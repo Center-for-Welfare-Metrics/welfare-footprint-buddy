@@ -182,10 +182,12 @@ const ItemSelectionScreen = ({
     const result: DetectedItem[] = [];
     
     items.forEach(item => {
-      // Check if item name contains commas (multiple items)
-      if (item.name.includes(',') && !item.name.toLowerCase().includes('ingredient')) {
+      // Check if item name contains commas (multiple items) - ALWAYS split comma-separated items
+      if (item.name.includes(',')) {
         // Split by comma and create individual items
         const itemNames = item.name.split(',').map(n => n.trim()).filter(n => n.length > 0);
+        
+        console.log('🔪 Splitting comma-separated item:', item.name, '→', itemNames);
         
         itemNames.forEach(name => {
           result.push({
