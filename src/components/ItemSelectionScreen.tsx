@@ -16,6 +16,73 @@ interface DetectedItem {
   confidence: string;
 }
 
+interface CategoryStyle {
+  accentColor: string;
+  bgColor: string;
+  borderColor: string;
+}
+
+const getCategoryStyle = (itemName: string): CategoryStyle | null => {
+  const lowerName = itemName.toLowerCase();
+  
+  // Dairy category
+  if (lowerName.includes('dairy') || (lowerName.includes('cheese') && lowerName.includes(','))) {
+    return {
+      accentColor: 'hsl(217, 91%, 60%)', // soft blue
+      bgColor: 'bg-blue-500/5',
+      borderColor: 'border-blue-500/30'
+    };
+  }
+  
+  // Meat category
+  if (lowerName.includes('meat') || lowerName.includes('beef') || lowerName.includes('pork') || lowerName.includes('sausage')) {
+    return {
+      accentColor: 'hsl(0, 84%, 60%)', // muted red
+      bgColor: 'bg-red-500/5',
+      borderColor: 'border-red-500/30'
+    };
+  }
+  
+  // Seafood category
+  if (lowerName.includes('seafood') || lowerName.includes('fish') || lowerName.includes('shrimp')) {
+    return {
+      accentColor: 'hsl(172, 79%, 40%)', // teal
+      bgColor: 'bg-teal-500/5',
+      borderColor: 'border-teal-500/30'
+    };
+  }
+  
+  // Egg category
+  if (lowerName.includes('egg')) {
+    return {
+      accentColor: 'hsl(45, 93%, 53%)', // golden yellow
+      bgColor: 'bg-yellow-500/5',
+      borderColor: 'border-yellow-500/30'
+    };
+  }
+  
+  // Mixed/general animal-derived
+  if (lowerName.includes('ingredient') || lowerName.includes('item') || lowerName.includes('product')) {
+    return {
+      accentColor: 'hsl(38, 92%, 50%)', // amber
+      bgColor: 'bg-amber-500/5',
+      borderColor: 'border-amber-500/30'
+    };
+  }
+  
+  return null;
+};
+
+const isGroupedItem = (itemName: string): boolean => {
+  const lowerName = itemName.toLowerCase();
+  return (
+    lowerName.includes('ingredient') ||
+    lowerName.includes('item') ||
+    lowerName.includes('product') ||
+    (lowerName.split(',').length > 2)
+  );
+};
+
 interface ItemSelectionScreenProps {
   items: DetectedItem[];
   summary: string;
@@ -121,44 +188,77 @@ const ItemSelectionScreen = ({
             {t('itemSelection.animalDerivedItems')} ({animalItems.length})
           </h2>
           <div className="grid grid-cols-1 gap-4">
-            {animalItems.map((item, index) => (
-              <div 
-                key={index}
-                className="glass-card rounded-xl p-5 hover:bg-white/10 transition-all border border-white/10"
-              >
-                <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
-                  <div className="flex-1 w-full">
-                    <h3 className="font-bold text-lg text-white mb-2">{item.name}</h3>
-                    <p className="text-sm text-gray-300 mb-3 leading-relaxed">{item.reasoning}</p>
-                    <span className={`inline-block text-xs px-3 py-1 rounded-full font-medium ${
-                      item.confidence === 'High' ? 'bg-green-500/20 text-green-300' :
-                      item.confidence === 'Medium' ? 'bg-yellow-500/20 text-yellow-300' :
-                      'bg-red-500/20 text-red-300'
-                    }`}>
-                      {t('results.confidence')}: {item.confidence}
-                    </span>
+            {animalItems.map((item, index) => {
+              const categoryStyle = getCategoryStyle(item.name);
+              const isGrouped = isGroupedItem(item.name);
+              
+              return (
+                <div 
+                  key={index}
+                  className={`glass-card rounded-xl overflow-hidden hover:bg-white/10 transition-all border ${
+                    categoryStyle ? categoryStyle.borderColor : 'border-white/10'
+                  } ${categoryStyle && isGrouped ? categoryStyle.bgColor : ''}`}
+                  style={{
+                    borderTopWidth: categoryStyle && isGrouped ? '4px' : '1px',
+                    borderTopColor: categoryStyle && isGrouped ? categoryStyle.accentColor : undefined
+                  }}
+                >
+                  {/* Grouped Card Header */}
+                  {isGrouped && categoryStyle && (
+                    <div 
+                      className="px-5 pt-4 pb-2"
+                      style={{ 
+                        background: `linear-gradient(to bottom, ${categoryStyle.accentColor}10, transparent)` 
+                      }}
+                    >
+                      <h3 className="font-bold text-lg text-white mb-1">{item.name}</h3>
+                      <p className="text-xs text-gray-400 italic">
+                        Grouped detection: multiple items identified in this category
+                      </p>
+                    </div>
+                  )}
+                  
+                  {/* Card Content */}
+                  <div className={`flex flex-col sm:flex-row items-start justify-between gap-4 ${
+                    isGrouped ? 'px-5 pb-5 pt-3' : 'p-5'
+                  }`}>
+                    <div className="flex-1 w-full">
+                      {!isGrouped && (
+                        <h3 className="font-bold text-lg text-white mb-2">{item.name}</h3>
+                      )}
+                      <p className="text-sm text-gray-300 mb-3 leading-relaxed">{item.reasoning}</p>
+                      <span className={`inline-block text-xs px-3 py-1 rounded-full font-medium ${
+                        item.confidence === 'High' ? 'bg-green-500/20 text-green-300' :
+                        item.confidence === 'Medium' ? 'bg-yellow-500/20 text-yellow-300' :
+                        'bg-red-500/20 text-red-300'
+                      }`}>
+                        {t('results.confidence')}: {item.confidence}
+                      </span>
+                    </div>
+                    <Button
+                      onClick={() => handleItemSelect(item.name)}
+                      disabled={analyzingItemName !== null}
+                      className={`font-bold transition-all shrink-0 ${
+                        isGrouped ? 'text-sm' : ''
+                      } ${
+                        analyzingItemName === item.name 
+                          ? 'bg-emerald-600 hover:bg-emerald-600 text-white' 
+                          : 'bg-emerald-500 hover:bg-emerald-400 text-gray-900'
+                      }`}
+                    >
+                      {analyzingItemName === item.name ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          {t('scanner.analyzing')}
+                        </>
+                      ) : (
+                        t('itemSelection.analyzeThis')
+                      )}
+                    </Button>
                   </div>
-                  <Button
-                    onClick={() => handleItemSelect(item.name)}
-                    disabled={analyzingItemName !== null}
-                    className={`font-bold transition-all shrink-0 ${
-                      analyzingItemName === item.name 
-                        ? 'bg-emerald-600 hover:bg-emerald-600 text-white' 
-                        : 'bg-emerald-500 hover:bg-emerald-400 text-gray-900'
-                    }`}
-                  >
-                    {analyzingItemName === item.name ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        {t('scanner.analyzing')}
-                      </>
-                    ) : (
-                      t('itemSelection.analyzeThis')
-                    )}
-                  </Button>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
