@@ -177,8 +177,33 @@ const ItemSelectionScreen = ({
     }
   };
 
-  const animalItems = items.filter(item => item.likelyHasAnimalIngredients);
-  const plantItems = items.filter(item => !item.likelyHasAnimalIngredients);
+  // Split items that contain multiple comma-separated items into individual cards
+  const splitItems = (items: DetectedItem[]): DetectedItem[] => {
+    const result: DetectedItem[] = [];
+    
+    items.forEach(item => {
+      // Check if item name contains commas (multiple items)
+      if (item.name.includes(',') && !item.name.toLowerCase().includes('ingredient')) {
+        // Split by comma and create individual items
+        const itemNames = item.name.split(',').map(n => n.trim()).filter(n => n.length > 0);
+        
+        itemNames.forEach(name => {
+          result.push({
+            ...item,
+            name: name
+          });
+        });
+      } else {
+        // Keep as single item
+        result.push(item);
+      }
+    });
+    
+    return result;
+  };
+
+  const animalItems = splitItems(items.filter(item => item.likelyHasAnimalIngredients));
+  const plantItems = splitItems(items.filter(item => !item.likelyHasAnimalIngredients));
 
   return (
     <div className="flex flex-col items-center pb-32 max-w-4xl mx-auto">
