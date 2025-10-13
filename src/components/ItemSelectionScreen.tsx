@@ -190,9 +190,38 @@ const ItemSelectionScreen = ({
         console.log('🔪 Splitting comma-separated item:', item.name, '→', itemNames);
         
         itemNames.forEach(name => {
+          // Generate item-specific reasoning
+          const lowerName = name.toLowerCase();
+          let itemReasoning = item.reasoning;
+          
+          // Try to extract item-specific reasoning from the original text
+          const reasoningSentences = item.reasoning.split(/[.!?]+/).filter(s => s.trim().length > 0);
+          const relevantSentence = reasoningSentences.find(sentence => 
+            sentence.toLowerCase().includes(lowerName) || 
+            lowerName.split(' ').some(word => word.length > 3 && sentence.toLowerCase().includes(word))
+          );
+          
+          if (relevantSentence) {
+            itemReasoning = relevantSentence.trim() + '.';
+          } else {
+            // Fallback: generic reasoning based on common ingredients
+            if (lowerName.includes('cream') || lowerName.includes('milk') || lowerName.includes('cheese') || lowerName.includes('butter') || lowerName.includes('yogurt')) {
+              itemReasoning = 'This item likely contains dairy products.';
+            } else if (lowerName.includes('egg')) {
+              itemReasoning = 'This item contains eggs.';
+            } else if (lowerName.includes('meat') || lowerName.includes('beef') || lowerName.includes('pork') || lowerName.includes('chicken')) {
+              itemReasoning = 'This item contains meat.';
+            } else if (lowerName.includes('fish') || lowerName.includes('seafood')) {
+              itemReasoning = 'This item contains seafood.';
+            } else {
+              itemReasoning = 'This item may contain animal-derived ingredients.';
+            }
+          }
+          
           result.push({
             ...item,
-            name: name
+            name: name,
+            reasoning: itemReasoning
           });
         });
       } else {
