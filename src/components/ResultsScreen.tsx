@@ -191,11 +191,19 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
         const shareToken = crypto.randomUUID();
         const expiresAt = user ? null : new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString();
 
+        // Include complete analysis with ethical suggestions
+        const completeAnalysis = {
+          ...data,
+          ethicalSwaps: ethicalSwaps.length > 0 ? ethicalSwaps : null,
+          ethicalLensValue: sliderValue[0],
+          cacheMetadata,
+        };
+
         const res = await supabase
           .from('shared_results')
           .insert([{
             user_id: user?.id || null,
-            analysis_data: data as any,
+            analysis_data: completeAnalysis as any,
             share_token: shareToken,
             expires_at: expiresAt
           }]);
