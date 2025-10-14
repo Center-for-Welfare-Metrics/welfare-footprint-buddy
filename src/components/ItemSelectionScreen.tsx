@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, CheckCircle, XCircle, Loader2 } from "lucide-react";
+import { AlertCircle, CheckCircle, XCircle, Loader2, Edit3, Sparkles } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ErrorHandler, withRetry } from "@/lib/errorHandler";
@@ -125,27 +123,29 @@ const ItemSelectionScreen = ({
   const { t } = useTranslation();
   const { toast } = useToast();
   const [analyzingItemName, setAnalyzingItemName] = useState<string | null>(null);
-  const [challengeOpen, setChallengeOpen] = useState(false);
-  const [additionalInfo, setAdditionalInfo] = useState("");
-  const [isReanalyzing, setIsReanalyzing] = useState(false);
+  const [isEditingDescription, setIsEditingDescription] = useState(false);
+  const [editedDescription, setEditedDescription] = useState(summary);
+  const [isUpdatingResults, setIsUpdatingResults] = useState(false);
 
   const handleItemSelect = (itemName: string) => {
     setAnalyzingItemName(itemName);
     onItemSelect(itemName);
   };
 
-  const handleChallengeAnalysis = async () => {
-    if (!imageData || !onReanalyze) return;
+  const handleUpdateDescription = async () => {
+    if (!imageData || !onReanalyze || !editedDescription.trim()) return;
 
-    setIsReanalyzing(true);
+    setIsUpdatingResults(true);
     try {
       const parsedImageData = JSON.parse(imageData);
       
       const { data: result, error } = await withRetry(async () => {
-        const res = await supabase.functions.invoke('detect-items', {
+        const res = await supabase.functions.invoke('analyze-image', {
           body: { 
             imageData: parsedImageData,
-            additionalInfo: additionalInfo.trim() || undefined,
+            mode: 'detect',
+            language: localStorage.getItem("i18nextLng") || "en",
+            additionalInfo: editedDescription.trim(),
           }
         });
         if (res.error) throw res.error;
@@ -154,26 +154,25 @@ const ItemSelectionScreen = ({
 
       if (error) throw error;
 
-      setChallengeOpen(false);
-      setAdditionalInfo("");
+      setIsEditingDescription(false);
       toast({
-        title: t('results.reanalysisComplete'),
-        description: t('results.reanalysisCompleteDesc'),
+        title: "Results Updated",
+        description: "The detected items have been updated based on your description.",
       });
 
       // Trigger parent reanalysis
       if (onReanalyze) {
-        onReanalyze("", additionalInfo);
+        onReanalyze("", editedDescription);
       }
     } catch (error) {
-      const appError = ErrorHandler.parseSupabaseError(error, 'handleChallengeAnalysis');
+      const appError = ErrorHandler.parseSupabaseError(error, 'handleUpdateDescription');
       toast({
-        title: appError.retryable ? "Reanalysis Failed" : "Error",
+        title: appError.retryable ? "Update Failed" : "Error",
         description: appError.userMessage,
         variant: "destructive",
       });
     } finally {
-      setIsReanalyzing(false);
+      setIsUpdatingResults(false);
     }
   };
 
@@ -251,9 +250,73 @@ const ItemSelectionScreen = ({
         />
       </div>
 
-      {/* Summary */}
-      <div className="glass-card rounded-2xl p-6 mb-6 w-full">
-        <p className="text-gray-200 text-center">{summary}</p>
+      {/* Summary with Edit Functionality */}
+      <div className="glass-card rounded-2xl p-6 mb-6 w-full border-2 border-emerald-500/30">
+        <div className="flex items-start gap-3 mb-4">
+          <Sparkles className="h-6 w-6 text-emerald-400 flex-shrink-0 mt-1" />
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-white mb-3">
+              {t('itemSelection.summaryTitle')}
+            </h3>
+            
+            {!isEditingDescription ? (
+              <>
+                <p className="text-gray-200 leading-relaxed mb-4">{summary}</p>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setIsEditingDescription(true);
+                    setEditedDescription(summary);
+                  }}
+                  className="w-full border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10"
+                >
+                  <Edit3 className="h-4 w-4 mr-2" />
+                  Refine Description
+                </Button>
+              </>
+            ) : (
+              <>
+                <p className="text-sm text-gray-300 mb-3 italic">
+                  Refine or correct the AI's description below — your changes will automatically update the items detected.
+                </p>
+                <Textarea
+                  value={editedDescription}
+                  onChange={(e) => setEditedDescription(e.target.value)}
+                  placeholder="Example: The soup is served inside bread and topped with cheese."
+                  className="min-h-[120px] bg-white/10 text-white border-gray-600 mb-3"
+                  disabled={isUpdatingResults}
+                />
+                <div className="flex gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setIsEditingDescription(false);
+                      setEditedDescription(summary);
+                    }}
+                    disabled={isUpdatingResults}
+                    className="flex-1 border-gray-500 text-gray-400 hover:bg-gray-500/10"
+                  >
+                    {t('common.cancel')}
+                  </Button>
+                  <Button
+                    onClick={handleUpdateDescription}
+                    disabled={!editedDescription.trim() || isUpdatingResults}
+                    className="flex-1 bg-emerald-500 hover:bg-emerald-400 text-gray-900 font-bold"
+                  >
+                    {isUpdatingResults ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Updating...
+                      </>
+                    ) : (
+                      'Update Results'
+                    )}
+                  </Button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Animal-derived items */}
@@ -381,52 +444,6 @@ const ItemSelectionScreen = ({
         </div>
       )}
 
-      {/* Challenge Analysis Dialog */}
-      {imageData && animalItems.length === 0 && plantItems.length > 0 && (
-        <Dialog open={challengeOpen} onOpenChange={setChallengeOpen}>
-          <DialogTrigger asChild>
-            <Button 
-              variant="outline"
-              className="w-full mb-4 border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/10"
-            >
-              <AlertCircle className="mr-2 h-4 w-4" />
-              {t('results.challengeAnalysis')}
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="glass-card max-w-md">
-            <DialogHeader>
-              <DialogTitle className="text-xl font-bold text-white">{t('results.challengeTitle')}</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="info" className="text-gray-300">{t('results.challengeDescription')}</Label>
-                <Textarea
-                  id="info"
-                  placeholder={t('results.challengePlaceholder')}
-                  value={additionalInfo}
-                  onChange={(e) => setAdditionalInfo(e.target.value)}
-                  className="mt-2 bg-gray-800 border-gray-700 text-white"
-                  rows={5}
-                />
-              </div>
-              <Button 
-                onClick={handleChallengeAnalysis}
-                disabled={isReanalyzing || !additionalInfo.trim()}
-                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
-              >
-                {isReanalyzing ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t('results.reanalyzing')}
-                  </>
-                ) : (
-                  t('results.reanalyzeProduct')
-                )}
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
 
       {/* Scan New Item button - shown when no animal items detected */}
       {animalItems.length === 0 && plantItems.length > 0 && (

@@ -79,7 +79,8 @@ const Index = () => {
     setCurrentImagePreview(imagePreview);
     setAdditionalInfo(userAdditionalInfo);
     setHasNoFoodItems(noFoodItems);
-    navigateToScreen('confirmation');
+    // Skip confirmation screen, go directly to item selection
+    navigateToScreen('itemSelection');
   };
   
   const handleConfirmationContinue = () => {
@@ -288,26 +289,6 @@ const Index = () => {
         </NavigationWrapper>
       )}
       
-      {currentScreen === 'confirmation' && (
-        <NavigationWrapper 
-          onBack={handleBack}
-          onHome={handleGoHome}
-          showHome={showHomeIcon}
-          isProcessing={isAnalyzingItem}
-        >
-          <div className="p-4">
-            <ConfirmationScreen
-              summary={itemsSummary}
-              imagePreview={currentImagePreview}
-              onContinue={handleConfirmationContinue}
-              onEdit={handleConfirmationEdit}
-              onBack={handleGoHome}
-              isProcessing={isAnalyzingItem}
-              hasNoFoodItems={hasNoFoodItems}
-            />
-          </div>
-        </NavigationWrapper>
-      )}
       
       {currentScreen === 'itemSelection' && (
         <NavigationWrapper 
