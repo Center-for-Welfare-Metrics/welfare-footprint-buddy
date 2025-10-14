@@ -87,48 +87,12 @@ serve(async (req) => {
         FOCUS_ITEM: focusItem,
         ADDITIONAL_INFO: additionalInfo || ''
       });
-      
-      // Add user-provided additional information if available
-      if (additionalInfo?.trim()) {
-        prompt += `\n\n**CRITICAL - USER-PROVIDED INFORMATION:**
-The user has provided the following verified information about this product: "${additionalInfo}"
-
-MANDATORY INSTRUCTIONS FOR USING THIS INFORMATION:
-- This user information is CRITICAL and MUST be incorporated into your analysis
-- If the user mentions specific ingredients (e.g., "eggs", "milk", "chicken", "beef", "pork"), you MUST:
-  * Set hasAnimalIngredients to true
-  * List those ingredients in the animalIngredients array
-  * Provide welfare analysis for those specific animals
-- If the user mentions production methods (e.g., "cage-free", "free-range", "organic", "pasture-raised"), incorporate this into the productionSystem field
-- The user is providing VERIFIED FACTS that override any uncertainty from the image
-- Use "High" confidence for all fields directly addressed by the user's information
-- State the information definitively based on what the user told you
-- NEVER contradict the user's information - if they say there are eggs, there ARE eggs in the product`;
-      }
     } else {
       // Standard product analysis mode
       prompt = await loadAndProcessPrompt('analyze_product', {
         LANGUAGE: outputLanguage,
         ADDITIONAL_INFO: additionalInfo || ''
       });
-      
-      // Add user-provided additional information if available
-      if (additionalInfo?.trim()) {
-        prompt += `\n\n**CRITICAL - USER-PROVIDED INFORMATION:**
-The user has provided the following verified information about this product: "${additionalInfo}"
-
-MANDATORY INSTRUCTIONS FOR USING THIS INFORMATION:
-- This user information is CRITICAL and MUST be incorporated into your analysis
-- If the user mentions specific ingredients (e.g., "eggs", "milk", "chicken", "beef", "pork"), you MUST:
-  * Set hasAnimalIngredients to true
-  * List those ingredients in the animalIngredients array
-  * Provide welfare analysis for those specific animals
-- If the user mentions production methods (e.g., "cage-free", "free-range", "organic", "pasture-raised"), incorporate this into the productionSystem field
-- The user is providing VERIFIED FACTS that override any uncertainty from the image
-- Use "High" confidence for all fields directly addressed by the user's information
-- State the information definitively based on what the user told you
-- NEVER contradict the user's information - if they say there are eggs, there ARE eggs in the product`;
-      }
     }
 
     // Prepare cache options
