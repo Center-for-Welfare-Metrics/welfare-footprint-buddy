@@ -13,8 +13,8 @@ const corsHeaders = {
 // Prompt versions (update these when prompts change to auto-invalidate cache)
 const PROMPT_VERSIONS = {
   detect_items: 'v1.1', // Updated: Fixed food-related terminology for non-food items
-  analyze_focused_item: 'v1.0',
-  analyze_product: 'v1.0',
+  analyze_focused_item: 'v2.0', // Updated: Added authoritative user-provided context handling
+  analyze_product: 'v2.0', // Updated: Added authoritative user-provided context handling
 };
 
 // Initialize AI Handler once
@@ -82,17 +82,23 @@ serve(async (req) => {
       });
     } else if (mode === 'analyze' && focusItem) {
       // Focused item analysis mode
+      console.log('🔍 ANALYZE MODE - User provided info:', additionalInfo);
       prompt = await loadAndProcessPrompt('analyze_focused_item', {
         LANGUAGE: outputLanguage,
         FOCUS_ITEM: focusItem,
         ADDITIONAL_INFO: additionalInfo || ''
       });
+      console.log('📝 Generated prompt length:', prompt.length);
+      console.log('✅ USER CONTEXT INJECTED:', prompt.includes('USER-PROVIDED CONTEXT'));
     } else {
       // Standard product analysis mode
+      console.log('🔍 ANALYZE MODE - User provided info:', additionalInfo);
       prompt = await loadAndProcessPrompt('analyze_product', {
         LANGUAGE: outputLanguage,
         ADDITIONAL_INFO: additionalInfo || ''
       });
+      console.log('📝 Generated prompt length:', prompt.length);
+      console.log('✅ USER CONTEXT INJECTED:', prompt.includes('USER-PROVIDED CONTEXT'));
     }
 
     // Prepare cache options
