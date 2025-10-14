@@ -198,6 +198,9 @@ const Index = () => {
     try {
       const imageData = JSON.parse(scannedImageData);
       
+      console.log('[handleItemSelect] Analyzing item:', itemName);
+      console.log('[handleItemSelect] Additional info:', additionalInfo);
+      
       const { data, error } = await withRetry(async () => {
         const res = await supabase.functions.invoke('analyze-image', {
           body: { 
