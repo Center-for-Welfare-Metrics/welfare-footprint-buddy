@@ -49,11 +49,11 @@ export const appConfig = {
     
     /** Color mapping for each ethical lens level */
     colors: {
-      1: '#FF6B9D', // Welfare concerns only
-      2: '#E677B8',
+      1: '#60A5FA', // Same Product, High Welfare (blue)
+      2: '#90B5FB',
       3: '#C084FC', // Minimal Animal Suffering (default)
-      4: '#90B5FB',
-      5: '#60A5FA', // No Animal Products
+      4: '#E677B8',
+      5: '#FF6B9D', // Plant-Based / Cultured Only (pink/red)
     },
   },
 
