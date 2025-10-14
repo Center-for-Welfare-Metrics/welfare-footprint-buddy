@@ -12,7 +12,7 @@ import { ErrorHandler, withRetry } from "@/lib/errorHandler";
 interface ScannerScreenProps {
   onBack: () => void;
   onAnalysisComplete: (data: any, imageData: string, metadata?: any) => void;
-  onConfirmationNeeded: (items: any[], summary: string, imageData: string, imagePreview: string, hasNoFoodItems?: boolean) => void;
+  onConfirmationNeeded: (items: any[], summary: string, imageData: string, imagePreview: string, additionalInfo: string, hasNoFoodItems?: boolean) => void;
 }
 
 const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: ScannerScreenProps) => {
@@ -93,6 +93,7 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
             detectionJson.summary, 
             imageDataStr, 
             imagePreview,
+            additionalInfo,
             !hasFoodItems  // hasNoFoodItems flag
           );
         } catch (parseError) {

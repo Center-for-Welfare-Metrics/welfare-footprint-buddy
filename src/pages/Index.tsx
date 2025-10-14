@@ -33,6 +33,7 @@ const Index = () => {
   const [hasNoFoodItems, setHasNoFoodItems] = useState(false);
   const [isAnalyzingItem, setIsAnalyzingItem] = useState(false);
   const [cacheMetadata, setCacheMetadata] = useState<any>(null);
+  const [additionalInfo, setAdditionalInfo] = useState<string>("");
   
   const { toast } = useToast();
   const { i18n, t } = useTranslation();
@@ -66,15 +67,17 @@ const Index = () => {
     setScannedImageData("");
     setHasNoFoodItems(false);
     setCacheMetadata(null);
+    setAdditionalInfo("");
   };
 
   const handleStartScan = () => navigateToScreen('scanner');
   
-  const handleConfirmationNeeded = (items: any[], summary: string, imageData: string, imagePreview: string, noFoodItems: boolean = false) => {
+  const handleConfirmationNeeded = (items: any[], summary: string, imageData: string, imagePreview: string, userAdditionalInfo: string, noFoodItems: boolean = false) => {
     setDetectedItems(items);
     setItemsSummary(summary);
     setScannedImageData(imageData);
     setCurrentImagePreview(imagePreview);
+    setAdditionalInfo(userAdditionalInfo);
     setHasNoFoodItems(noFoodItems);
     navigateToScreen('confirmation');
   };
@@ -198,7 +201,8 @@ const Index = () => {
       const { data, error } = await withRetry(async () => {
         const res = await supabase.functions.invoke('analyze-image', {
           body: { 
-            imageData, 
+            imageData,
+            additionalInfo,
             language: i18n.language,
             mode: 'analyze',
             focusItem: itemName
