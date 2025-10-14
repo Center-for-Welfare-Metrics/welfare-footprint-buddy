@@ -74,6 +74,13 @@ serve(async (req) => {
     // Load the appropriate prompt based on mode
     let prompt = '';
     
+    console.log('=== PROMPT GENERATION START ===');
+    console.log('Mode:', mode);
+    console.log('FocusItem:', focusItem);
+    console.log('AdditionalInfo provided:', !!additionalInfo);
+    console.log('AdditionalInfo value:', additionalInfo);
+    console.log('AdditionalInfo length:', additionalInfo?.length || 0);
+    
     if (mode === 'detect') {
       // Multi-item detection mode
       prompt = await loadAndProcessPrompt('detect_items', {
@@ -82,24 +89,66 @@ serve(async (req) => {
       });
     } else if (mode === 'analyze' && focusItem) {
       // Focused item analysis mode
-      console.log('🔍 ANALYZE MODE - User provided info:', additionalInfo);
       prompt = await loadAndProcessPrompt('analyze_focused_item', {
         LANGUAGE: outputLanguage,
         FOCUS_ITEM: focusItem,
         ADDITIONAL_INFO: additionalInfo || ''
       });
-      console.log('📝 Generated prompt length:', prompt.length);
-      console.log('✅ USER CONTEXT INJECTED:', prompt.includes('USER-PROVIDED CONTEXT'));
     } else {
       // Standard product analysis mode
-      console.log('🔍 ANALYZE MODE - User provided info:', additionalInfo);
       prompt = await loadAndProcessPrompt('analyze_product', {
         LANGUAGE: outputLanguage,
         ADDITIONAL_INFO: additionalInfo || ''
       });
-      console.log('📝 Generated prompt length:', prompt.length);
-      console.log('✅ USER CONTEXT INJECTED:', prompt.includes('USER-PROVIDED CONTEXT'));
     }
+    
+    // CRITICAL FIX: Direct injection of user context at the VERY TOP of the prompt
+    // This ensures the model cannot miss it and must treat it as primary context
+    if (additionalInfo && additionalInfo.trim() && mode !== 'detect') {
+      console.log('🔥🔥🔥 INJECTING USER CONTEXT DIRECTLY INTO PROMPT 🔥🔥🔥');
+      
+      const userContextPrefix = `
+═══════════════════════════════════════════════════════════════════
+🚨 CRITICAL - USER-PROVIDED FACTUAL INFORMATION (HIGHEST PRIORITY) 🚨
+═══════════════════════════════════════════════════════════════════
+
+The user has provided the following VERIFIED, AUTHORITATIVE information:
+
+"${additionalInfo}"
+
+⚠️ MANDATORY REQUIREMENTS - YOU MUST FOLLOW THESE EXACTLY:
+
+1. ✅ This user-provided text is GROUND TRUTH - it is 100% factual and authoritative
+2. ✅ This information TAKES ABSOLUTE PRECEDENCE over any visual analysis
+3. ✅ If the user mentions ANY animal ingredients (examples: "soup with sausage", "contains eggs", "made with chicken", "has meat", "fish dish"):
+   → Set hasAnimalIngredients = true
+   → List those specific ingredients in animalIngredients with HIGH confidence
+   → Provide detailed welfare analysis for those specific animals
+4. ✅ If the user mentions production methods (e.g., "cage-free", "organic"), incorporate them into productionSystem with HIGH confidence
+5. ✅ If the user provides cultural/regional context (e.g., "Polish Żurek soup traditionally contains sausage"), USE THIS KNOWLEDGE to inform your analysis
+6. ❌ NEVER contradict this user-provided information
+7. ❌ NEVER ignore this context in favor of only visual analysis
+8. ✅ COMBINE this authoritative user context WITH your visual analysis for a complete assessment
+
+═══════════════════════════════════════════════════════════════════
+NOW PROCEED WITH YOUR ANALYSIS USING THE ABOVE USER CONTEXT:
+═══════════════════════════════════════════════════════════════════
+
+`;
+      
+      prompt = userContextPrefix + prompt;
+      
+      console.log('✅ User context injected successfully');
+      console.log('New prompt length:', prompt.length);
+      console.log('First 1000 chars of final prompt:');
+      console.log(prompt.substring(0, 1000));
+      console.log('Verification - contains user text:', prompt.includes(additionalInfo));
+    } else {
+      console.log('ℹ️ No additionalInfo - using standard prompt only');
+    }
+    
+    console.log('=== FINAL PROMPT READY ===');
+    console.log('Total prompt length:', prompt.length);
 
     // Prepare cache options
     const cacheOptions: CacheOptions = {
@@ -113,12 +162,22 @@ serve(async (req) => {
     };
 
     // Call AI using the new handler with caching
+    console.log('=== CALLING AI ===');
+    console.log('Prompt length being sent:', prompt.length);
+    console.log('Has image data:', !!imageData);
+    console.log('Cache strategy:', cacheOptions.strategy);
+    
     const aiResponse = await callAI({
       prompt,
       imageData,
       language,
       timeout: 30000,
     }, cacheOptions);
+    
+    console.log('=== AI RESPONSE RECEIVED ===');
+    console.log('Success:', aiResponse.success);
+    console.log('Cache hit:', aiResponse.metadata?.cacheHit);
+    console.log('Response text length:', aiResponse.data?.text?.length || 0);
 
     if (!aiResponse.success) {
       console.error('AI Handler error:', aiResponse.error);
