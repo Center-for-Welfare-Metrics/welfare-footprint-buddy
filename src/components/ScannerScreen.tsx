@@ -3,8 +3,6 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, ImagePlus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { useTranslation } from "react-i18next";
 import { appConfig } from "@/config/app.config";
 import { ErrorHandler, withRetry } from "@/lib/errorHandler";
@@ -12,13 +10,12 @@ import { ErrorHandler, withRetry } from "@/lib/errorHandler";
 interface ScannerScreenProps {
   onBack: () => void;
   onAnalysisComplete: (data: any, imageData: string, metadata?: any) => void;
-  onConfirmationNeeded: (items: any[], summary: string, imageData: string, imagePreview: string, additionalInfo: string, hasNoFoodItems?: boolean) => void;
+  onConfirmationNeeded: (items: any[], summary: string, imageData: string, imagePreview: string, hasNoFoodItems?: boolean) => void;
 }
 
 const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: ScannerScreenProps) => {
   const [imagePreview, setImagePreview] = useState<string>("");
   const [imageData, setImageData] = useState<{ base64: string; mimeType: string } | null>(null);
-  const [additionalInfo, setAdditionalInfo] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -93,7 +90,6 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
             detectionJson.summary, 
             imageDataStr, 
             imagePreview,
-            additionalInfo,
             !hasFoodItems  // hasNoFoodItems flag
           );
         } catch (parseError) {
@@ -122,7 +118,6 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
       const { data, error } = await supabase.functions.invoke(appConfig.api.functions.analyzeImage, {
         body: { 
           imageData, 
-          additionalInfo,
           language: i18n.language,
           mode: appConfig.api.modes.analyze,
           focusItem: itemName
@@ -191,21 +186,6 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
         <p className="text-sm text-gray-400 text-center mb-6">
           {t('scanner.uploadTip')}
         </p>
-        
-        {imagePreview && (
-          <div className="mb-6 space-y-2">
-            <Label htmlFor="additional-info" className="text-sm text-gray-300">
-              {t('results.challengeTitle')}
-            </Label>
-            <Textarea
-              id="additional-info"
-              placeholder={t('results.challengeDescription')}
-              value={additionalInfo}
-              onChange={(e) => setAdditionalInfo(e.target.value)}
-              className="min-h-[100px] bg-gray-800/50 border-gray-600 text-white"
-            />
-          </div>
-        )}
         
         {imageData && (
           <Button 
