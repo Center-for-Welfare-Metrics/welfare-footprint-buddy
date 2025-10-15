@@ -209,8 +209,11 @@ NOW PROCEED WITH YOUR ANALYSIS USING THE ABOVE USER CONTEXT:
       prompt = userContextPrefix + prompt;
     }
 
+    // CRITICAL: Disable caching when user provides corrections
+    // This ensures corrections only apply to the current scan session
+    // and don't pollute the cache for future scans of the same image
     const cacheOptions: CacheOptions = {
-      strategy: 'prefer',
+      strategy: userCorrection ? 'bypass' : 'prefer',
       promptTemplateId: mode === 'detect' ? 'detect_items' : 
                         (mode === 'analyze' && focusItem ? 'analyze_focused_item' : 'analyze_product'),
       promptVersion: mode === 'detect' ? PROMPT_VERSIONS.detect_items : 
