@@ -157,7 +157,7 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
   return (
     <div className="flex flex-col items-center pb-40">
       <h2 className="text-3xl font-bold mb-6 text-white">{t('scanner.uploadImage')}</h2>
-      <div className="w-full max-w-md glass-card rounded-2xl p-6">
+      <div className="w-full max-w-2xl glass-card rounded-2xl p-6">
         <div 
           onClick={() => fileInputRef.current?.click()}
           className="w-full h-60 border-2 border-dashed border-gray-600 rounded-xl flex items-center justify-center mb-6 cursor-pointer overflow-hidden hover:border-emerald-500/50 transition-colors"

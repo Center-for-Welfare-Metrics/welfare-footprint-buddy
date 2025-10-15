@@ -306,7 +306,7 @@ const Index = () => {
   const showHomeIcon = currentScreen !== 'home' && currentScreen !== 'scanner';
 
   return (
-    <div className="container mx-auto max-w-lg">
+    <div className="container mx-auto max-w-4xl px-4">
       {currentScreen === 'home' && (
         <div className="p-4">
           <HomeScreen onStartScan={handleStartScan} />

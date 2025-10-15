@@ -22,7 +22,7 @@ const NavigationWrapper = ({
   return (
     <div className="min-h-screen flex flex-col animate-fade-in">
       {/* Top Navigation Bar */}
-      <nav className="flex items-center justify-between p-4 max-w-4xl mx-auto w-full">
+      <nav className="flex items-center justify-between p-4 max-w-6xl mx-auto w-full">
         {/* Back Button */}
         <div className="flex-1">
           {onBack && (

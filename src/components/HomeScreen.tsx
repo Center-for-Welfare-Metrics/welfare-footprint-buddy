@@ -55,7 +55,7 @@ const HomeScreen = ({ onStartScan }: HomeScreenProps) => {
           <h1 className="text-5xl font-bold text-white">{t('home.title')}</h1>
           <h2 className="text-4xl font-bold text-emerald-400">{t('home.subtitle')}</h2>
         </header>
-        <main className="w-full max-w-md">
+        <main className="w-full max-w-2xl">
           <p className="mb-8 text-lg text-gray-400">
             {t('home.description')}
           </p>
