@@ -63,9 +63,10 @@ function validateInput(body: any): { valid: boolean; data?: ValidatedInput; erro
     return { valid: false, error: `userCorrection exceeds maximum length of ${MAX_TEXT_LENGTH} characters` };
   }
 
-  // Validate language code
+  // Validate language code - extract base language code (e.g., 'en-US' -> 'en')
   const validLanguages = ['en', 'es', 'fr', 'de', 'pt', 'zh', 'hi', 'ar', 'ru'];
-  if (language && !validLanguages.includes(language)) {
+  const baseLanguage = language ? language.split('-')[0] : 'en';
+  if (!validLanguages.includes(baseLanguage)) {
     return { valid: false, error: `Invalid language code. Must be one of: ${validLanguages.join(', ')}` };
   }
 
@@ -74,7 +75,7 @@ function validateInput(body: any): { valid: boolean; data?: ValidatedInput; erro
     data: {
       imageData,
       additionalInfo: additionalInfo?.trim(),
-      language,
+      language: baseLanguage,
       mode,
       focusItem: focusItem?.trim(),
       userCorrection: userCorrection?.trim(),
@@ -119,9 +120,7 @@ serve(async (req) => {
   try {
     // Parse and validate input
     const body = await req.json();
-    console.log('[analyze-image] Request body keys:', Object.keys(body));
-    console.log('[analyze-image] imageData type:', typeof body.imageData);
-    console.log('[analyze-image] imageData structure:', body.imageData ? Object.keys(body.imageData) : 'null');
+    console.log('[analyze-image] Received language:', body.language);
     
     const validation = validateInput(body);
     
