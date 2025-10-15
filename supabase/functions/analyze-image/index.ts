@@ -160,7 +160,7 @@ serve(async (req) => {
     if (mode === 'detect') {
       prompt = await loadAndProcessPrompt('detect_items', {
         LANGUAGE: outputLanguage,
-        USER_CORRECTION: userCorrection
+        USER_CORRECTION: userCorrection || ''
       });
     } else if (mode === 'analyze' && focusItem) {
       prompt = await loadAndProcessPrompt('analyze_focused_item', {
@@ -175,7 +175,7 @@ serve(async (req) => {
       });
     }
     
-    // Inject user context if provided
+    // Inject user context if provided (for analyze modes only, detect mode handles it in the prompt template)
     if (additionalInfo && additionalInfo.trim() && mode !== 'detect') {
       const userContextPrefix = `
 ═══════════════════════════════════════════════════════════════════
