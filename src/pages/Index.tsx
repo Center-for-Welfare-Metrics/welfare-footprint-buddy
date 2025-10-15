@@ -7,10 +7,11 @@ import ScannerScreen from "@/components/ScannerScreen";
 import ResultsScreen from "@/components/ResultsScreen";
 import ItemSelectionScreen from "@/components/ItemSelectionScreen";
 import ConfirmationScreen from "@/components/ConfirmationScreen";
+import DescriptionConfirmationScreen from "@/components/DescriptionConfirmationScreen";
 import NavigationWrapper from "@/components/NavigationWrapper";
 import { ErrorHandler, withRetry } from "@/lib/errorHandler";
 
-type Screen = 'home' | 'scanner' | 'confirmation' | 'itemSelection' | 'results';
+type Screen = 'home' | 'scanner' | 'confirmation' | 'descriptionConfirmation' | 'itemSelection' | 'results';
 
 // Utility function to sanitize JSON from AI responses
 const sanitizeJson = (text: string): string => {
@@ -71,17 +72,62 @@ const Index = () => {
   const handleStartScan = () => navigateToScreen('scanner');
   
   const handleConfirmationNeeded = (items: any[], summary: string, imageData: string, imagePreview: string, noFoodItems: boolean = false) => {
-    setDetectedItems(items);
+    // Stage 1: Show description confirmation screen
     setItemsSummary(summary);
     setScannedImageData(imageData);
     setCurrentImagePreview(imagePreview);
     setHasNoFoodItems(noFoodItems);
-    // Skip confirmation screen, go directly to item selection
-    navigateToScreen('itemSelection');
+    navigateToScreen('descriptionConfirmation');
   };
   
-  const handleConfirmationContinue = () => {
-    navigateToScreen('itemSelection');
+  const handleDescriptionConfirmed = async (confirmedDescription: string) => {
+    // Stage 2: Use confirmed description to detect items
+    setIsAnalyzingItem(true);
+    setItemsSummary(confirmedDescription);
+    
+    try {
+      const imageData = JSON.parse(scannedImageData);
+      
+      const { data, error } = await withRetry(async () => {
+        const res = await supabase.functions.invoke('analyze-image', {
+          body: { 
+            imageData, 
+            language: i18n.language,
+            mode: 'detect',
+            userCorrection: confirmedDescription
+          }
+        });
+        if (res.error) throw res.error;
+        return res;
+      }, 2, 1000);
+
+      if (error) throw error;
+
+      if (data?.candidates?.[0]?.content?.parts[0]?.text) {
+        const rawText = data.candidates[0].content.parts[0].text;
+        const sanitizedText = sanitizeJson(rawText);
+        
+        try {
+          const detectionJson = JSON.parse(sanitizedText);
+          setDetectedItems(detectionJson.items);
+          navigateToScreen('itemSelection');
+        } catch (parseError) {
+          console.error('[ERROR][handleDescriptionConfirmed] JSON Parse Error:', parseError);
+          throw new Error(`JSON Parse error: ${parseError instanceof Error ? parseError.message : 'Invalid JSON'}`);
+        }
+      } else {
+        throw new Error('Unexpected response format from AI.');
+      }
+    } catch (error) {
+      const appError = ErrorHandler.parseSupabaseError(error, 'handleDescriptionConfirmed');
+      toast({
+        title: appError.retryable ? "Analysis Failed" : "Error",
+        description: appError.userMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setIsAnalyzingItem(false);
+    }
   };
   
   const handleConfirmationEdit = async (editedDescription: string) => {
@@ -285,6 +331,24 @@ const Index = () => {
         </NavigationWrapper>
       )}
       
+      
+      {currentScreen === 'descriptionConfirmation' && (
+        <NavigationWrapper 
+          onBack={handleBack}
+          onHome={handleGoHome}
+          showHome={showHomeIcon}
+          isProcessing={isAnalyzingItem}
+        >
+          <div className="p-4">
+            <DescriptionConfirmationScreen
+              initialDescription={itemsSummary}
+              imagePreview={currentImagePreview}
+              onConfirm={handleDescriptionConfirmed}
+              isProcessing={isAnalyzingItem}
+            />
+          </div>
+        </NavigationWrapper>
+      )}
       
       {currentScreen === 'itemSelection' && (
         <NavigationWrapper 

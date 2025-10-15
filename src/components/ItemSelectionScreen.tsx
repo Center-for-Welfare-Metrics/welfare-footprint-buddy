@@ -123,65 +123,13 @@ const ItemSelectionScreen = ({
   const { t } = useTranslation();
   const { toast } = useToast();
   const [analyzingItemName, setAnalyzingItemName] = useState<string | null>(null);
-  const [isEditingDescription, setIsEditingDescription] = useState(false);
-  const [editedDescription, setEditedDescription] = useState(summary);
-  const [isUpdatingResults, setIsUpdatingResults] = useState(false);
-  const [hasBeenEdited, setHasBeenEdited] = useState(false);
-
-  // Sync edited description with summary prop when it changes
-  useEffect(() => {
-    setEditedDescription(summary);
-  }, [summary]);
+  // No longer need description editing here - it's handled in DescriptionConfirmationScreen
 
   const handleItemSelect = (itemName: string) => {
     setAnalyzingItemName(itemName);
     onItemSelect(itemName);
   };
 
-  const handleUpdateDescription = async () => {
-    if (!imageData || !onReanalyze || !editedDescription.trim()) return;
-
-    setIsUpdatingResults(true);
-    try {
-      const parsedImageData = JSON.parse(imageData);
-      
-      const { data: result, error } = await withRetry(async () => {
-        const res = await supabase.functions.invoke('analyze-image', {
-          body: { 
-            imageData: parsedImageData,
-            mode: 'detect',
-            language: localStorage.getItem("i18nextLng") || "en",
-            userCorrection: editedDescription.trim(),
-          }
-        });
-        if (res.error) throw res.error;
-        return res;
-      }, 2, 1000);
-
-      if (error) throw error;
-
-      setIsEditingDescription(false);
-      setHasBeenEdited(true);
-      toast({
-        title: "Results Updated",
-        description: "The detected items have been updated based on your description.",
-      });
-
-      // Trigger parent reanalysis with the edited description as the new summary
-      if (onReanalyze) {
-        onReanalyze("", editedDescription.trim());
-      }
-    } catch (error) {
-      const appError = ErrorHandler.parseSupabaseError(error, 'handleUpdateDescription');
-      toast({
-        title: appError.retryable ? "Update Failed" : "Error",
-        description: appError.userMessage,
-        variant: "destructive",
-      });
-    } finally {
-      setIsUpdatingResults(false);
-    }
-  };
 
   // Split items that contain multiple comma-separated items into individual cards
   const splitItems = (items: DetectedItem[]): DetectedItem[] => {
@@ -257,71 +205,15 @@ const ItemSelectionScreen = ({
         />
       </div>
 
-      {/* Summary with Edit Functionality */}
+      {/* Confirmed Description Display */}
       <div className="glass-card rounded-2xl p-6 mb-6 w-full border-2 border-emerald-500/30">
-        <div className="flex items-start gap-3 mb-4">
+        <div className="flex items-start gap-3">
           <Sparkles className="h-6 w-6 text-emerald-400 flex-shrink-0 mt-1" />
           <div className="flex-1">
             <h3 className="text-lg font-semibold text-white mb-3">
-              {hasBeenEdited ? "Here's your edited description" : t('itemSelection.summaryTitle')}
+              Confirmed Description
             </h3>
-            
-            {!isEditingDescription ? (
-              <>
-                <p className="text-gray-200 leading-relaxed mb-4">{summary}</p>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setIsEditingDescription(true);
-                    setEditedDescription(summary);
-                  }}
-                  className="w-full border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10"
-                >
-                  <Edit3 className="h-4 w-4 mr-2" />
-                  Refine Description
-                </Button>
-              </>
-            ) : (
-              <>
-                <p className="text-sm text-gray-300 mb-3 italic">
-                  Refine or correct the AI's description below — your changes will automatically update the items detected.
-                </p>
-                <Textarea
-                  value={editedDescription}
-                  onChange={(e) => setEditedDescription(e.target.value)}
-                  placeholder="Example: The soup is served inside bread and topped with cheese."
-                  className="min-h-[120px] bg-white/10 text-white border-gray-600 mb-3"
-                  disabled={isUpdatingResults}
-                />
-                <div className="flex gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setIsEditingDescription(false);
-                      setEditedDescription(summary);
-                    }}
-                    disabled={isUpdatingResults}
-                    className="flex-1 border-gray-500 text-gray-400 hover:bg-gray-500/10"
-                  >
-                    {t('common.cancel')}
-                  </Button>
-                  <Button
-                    onClick={handleUpdateDescription}
-                    disabled={!editedDescription.trim() || isUpdatingResults}
-                    className="flex-1 bg-emerald-500 hover:bg-emerald-400 text-gray-900 font-bold"
-                  >
-                    {isUpdatingResults ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Updating...
-                      </>
-                    ) : (
-                      'Update Results'
-                    )}
-                  </Button>
-                </div>
-              </>
-            )}
+            <p className="text-gray-200 leading-relaxed">{summary}</p>
           </div>
         </div>
       </div>
