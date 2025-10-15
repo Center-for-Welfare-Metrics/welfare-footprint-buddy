@@ -8,6 +8,55 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Input validation constants
+const MAX_TEXT_LENGTH = 5000;
+const VALID_ETHICAL_LENS = [1, 2, 3, 4, 5] as const;
+
+interface ValidatedInput {
+  productName: string;
+  animalIngredients: string;
+  ethicalLens: typeof VALID_ETHICAL_LENS[number];
+  language: string;
+}
+
+function validateInput(body: any): { valid: boolean; data?: ValidatedInput; error?: string } {
+  if (!body || typeof body !== 'object') {
+    return { valid: false, error: 'Invalid request body' };
+  }
+
+  const { productName, animalIngredients, ethicalLens, language = 'en' } = body;
+
+  // Validate required fields
+  if (!productName || typeof productName !== 'string' || productName.length > MAX_TEXT_LENGTH) {
+    return { valid: false, error: `productName is required and must be less than ${MAX_TEXT_LENGTH} characters` };
+  }
+
+  if (!animalIngredients || typeof animalIngredients !== 'string' || animalIngredients.length > MAX_TEXT_LENGTH) {
+    return { valid: false, error: `animalIngredients is required and must be less than ${MAX_TEXT_LENGTH} characters` };
+  }
+
+  // Validate ethicalLens is 1-5
+  if (!VALID_ETHICAL_LENS.includes(ethicalLens)) {
+    return { valid: false, error: 'ethicalLens must be a number between 1 and 5' };
+  }
+
+  // Validate language code
+  const validLanguages = ['en', 'es', 'fr', 'de', 'pt', 'zh', 'hi', 'ar', 'ru'];
+  if (language && !validLanguages.includes(language)) {
+    return { valid: false, error: `Invalid language code. Must be one of: ${validLanguages.join(', ')}` };
+  }
+
+  return {
+    valid: true,
+    data: {
+      productName: productName.trim(),
+      animalIngredients: animalIngredients.trim(),
+      ethicalLens,
+      language,
+    }
+  };
+}
+
 // Initialize AI Handler once
 const initAIHandler = (apiKey: string) => {
   if (!(globalThis as any).__aiHandler) {
@@ -25,14 +74,24 @@ serve(async (req) => {
   }
 
   try {
-    const { productName, animalIngredients, ethicalLens, language = 'en' } = await req.json();
-    const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
+    // Parse and validate input
+    const body = await req.json();
+    const validation = validateInput(body);
+    
+    if (!validation.valid) {
+      return new Response(
+        JSON.stringify({ success: false, error: { message: validation.error } }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
+    const { productName, animalIngredients, ethicalLens, language } = validation.data!;
+
+    const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
     if (!GEMINI_API_KEY) {
       throw new Error('GEMINI_API_KEY is not configured');
     }
 
-    // Initialize AI Handler
     initAIHandler(GEMINI_API_KEY);
 
     console.log(`Generating ethical swap suggestions for: ${productName}, ethical lens: ${ethicalLens}`);
@@ -152,7 +211,6 @@ Return ONLY valid JSON matching this schema:
   "generalNote": "string (overall context about this ethical lens position and welfare science limitations)"
 }`;
 
-    // Call AI using the new handler
     const aiResponse = await callAI({
       prompt,
       language,
@@ -164,54 +222,35 @@ Return ONLY valid JSON matching this schema:
       throw new Error(aiResponse.error?.message || 'AI request failed');
     }
 
-    // Parse the AI response
     const text = aiResponse.data?.text?.trim();
     if (!text) {
-      console.error('No text response from AI');
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: { message: 'No text response from AI' },
-          rawOutput: text 
+          error: { message: 'No text response from AI' }
         }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Clean the AI output by removing markdown code blocks
     let cleanedText = text;
     try {
       cleanedText = text.replace(/```(json)?/gi, '').trim();
-      
-      // Validate it's valid JSON by parsing it
       JSON.parse(cleanedText);
-      
-      console.log('AI output successfully cleaned and validated');
     } catch (parseError) {
       console.error('JSON parse error:', parseError);
-      console.error('Raw AI output:', text);
-      console.error('Cleaned output:', cleanedText);
-      
       return new Response(
         JSON.stringify({ 
           success: false, 
           error: { 
             message: 'JSON Parse error: Invalid AI response',
             details: parseError instanceof Error ? parseError.message : 'Unknown error'
-          },
-          rawOutput: text 
+          }
         }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Return in the original format expected by the frontend
     const data = {
       candidates: [{
         content: {
@@ -223,7 +262,6 @@ Return ONLY valid JSON matching this schema:
     };
 
     console.log('Ethical swap suggestions generated successfully via AI Handler');
-    console.log('Metadata:', aiResponse.metadata);
 
     return new Response(JSON.stringify(data), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -233,10 +271,7 @@ Return ONLY valid JSON matching this schema:
     console.error('Error in suggest-ethical-swap function:', error);
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });

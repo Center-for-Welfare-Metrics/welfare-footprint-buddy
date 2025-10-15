@@ -6,13 +6,46 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+const MAX_PROMPT_LENGTH = 10000;
+
+function validateInput(body: any): { valid: boolean; data?: { prompt: string }; error?: string } {
+  if (!body || typeof body !== 'object') {
+    return { valid: false, error: 'Invalid request body' };
+  }
+
+  const { prompt } = body;
+
+  if (!prompt || typeof prompt !== 'string') {
+    return { valid: false, error: 'Prompt is required and must be a string' };
+  }
+
+  if (prompt.length > MAX_PROMPT_LENGTH) {
+    return { valid: false, error: `Prompt exceeds maximum length of ${MAX_PROMPT_LENGTH} characters` };
+  }
+
+  return {
+    valid: true,
+    data: { prompt: prompt.trim() }
+  };
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { prompt } = await req.json();
+    const body = await req.json();
+    const validation = validateInput(body);
+    
+    if (!validation.valid) {
+      return new Response(
+        JSON.stringify({ success: false, error: validation.error }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const { prompt } = validation.data!;
     const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
 
     if (!GEMINI_API_KEY) {

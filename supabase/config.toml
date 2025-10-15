@@ -7,7 +7,7 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.admin-cache-control]
-verify_jwt = false
+verify_jwt = true
 
 [functions.share-result]
 verify_jwt = false

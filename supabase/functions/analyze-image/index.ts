@@ -10,11 +10,77 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Input validation constants
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB in bytes (base64 is ~33% larger)
+const MAX_TEXT_LENGTH = 5000;
+const ALLOWED_MODES = ['detect', 'analyze'] as const;
+
+interface ValidatedInput {
+  imageData?: string;
+  additionalInfo?: string;
+  language: string;
+  mode: typeof ALLOWED_MODES[number];
+  focusItem?: string;
+  userCorrection?: string;
+}
+
+function validateInput(body: any): { valid: boolean; data?: ValidatedInput; error?: string } {
+  if (!body || typeof body !== 'object') {
+    return { valid: false, error: 'Invalid request body' };
+  }
+
+  const { imageData, additionalInfo, language = 'en', mode = 'detect', focusItem, userCorrection } = body;
+
+  // Validate mode
+  if (!ALLOWED_MODES.includes(mode)) {
+    return { valid: false, error: `Invalid mode. Must be one of: ${ALLOWED_MODES.join(', ')}` };
+  }
+
+  // Validate imageData size
+  if (imageData && typeof imageData === 'string') {
+    const estimatedSize = imageData.length * 0.75; // Estimate decoded size from base64
+    if (estimatedSize > MAX_IMAGE_SIZE) {
+      return { valid: false, error: 'Image data exceeds maximum size of 10MB' };
+    }
+  }
+
+  // Validate text field lengths
+  if (additionalInfo && (typeof additionalInfo !== 'string' || additionalInfo.length > MAX_TEXT_LENGTH)) {
+    return { valid: false, error: `additionalInfo exceeds maximum length of ${MAX_TEXT_LENGTH} characters` };
+  }
+
+  if (focusItem && (typeof focusItem !== 'string' || focusItem.length > MAX_TEXT_LENGTH)) {
+    return { valid: false, error: `focusItem exceeds maximum length of ${MAX_TEXT_LENGTH} characters` };
+  }
+
+  if (userCorrection && (typeof userCorrection !== 'string' || userCorrection.length > MAX_TEXT_LENGTH)) {
+    return { valid: false, error: `userCorrection exceeds maximum length of ${MAX_TEXT_LENGTH} characters` };
+  }
+
+  // Validate language code
+  const validLanguages = ['en', 'es', 'fr', 'de', 'pt', 'zh', 'hi', 'ar', 'ru'];
+  if (language && !validLanguages.includes(language)) {
+    return { valid: false, error: `Invalid language code. Must be one of: ${validLanguages.join(', ')}` };
+  }
+
+  return {
+    valid: true,
+    data: {
+      imageData: imageData?.trim(),
+      additionalInfo: additionalInfo?.trim(),
+      language,
+      mode,
+      focusItem: focusItem?.trim(),
+      userCorrection: userCorrection?.trim(),
+    }
+  };
+}
+
 // Prompt versions (update these when prompts change to auto-invalidate cache)
 const PROMPT_VERSIONS = {
-  detect_items: 'v1.1', // Updated: Fixed food-related terminology for non-food items
-  analyze_focused_item: 'v2.0', // Updated: Added authoritative user-provided context handling
-  analyze_product: 'v2.0', // Updated: Added authoritative user-provided context handling
+  detect_items: 'v1.1',
+  analyze_focused_item: 'v2.0',
+  analyze_product: 'v2.0',
 };
 
 // Initialize AI Handler once
@@ -22,7 +88,6 @@ const initAIHandler = (apiKey: string) => {
   if (!(globalThis as any).__aiHandler) {
     const handler = new AIHandler();
     
-    // Initialize cache service
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
     const SUPABASE_SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
     
@@ -46,17 +111,26 @@ serve(async (req) => {
   }
 
   try {
-    const { imageData, additionalInfo, language = 'en', mode = 'detect', focusItem, userCorrection } = await req.json();
-    const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
+    // Parse and validate input
+    const body = await req.json();
+    const validation = validateInput(body);
+    
+    if (!validation.valid) {
+      return new Response(
+        JSON.stringify({ success: false, error: { message: validation.error } }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
+    const { imageData, additionalInfo, language, mode, focusItem, userCorrection } = validation.data!;
+
+    const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
     if (!GEMINI_API_KEY) {
       throw new Error('GEMINI_API_KEY is not configured');
     }
 
-    // Initialize AI Handler
     initAIHandler(GEMINI_API_KEY);
 
-    // Map language codes to full language names
     const languageNames: Record<string, string> = {
       'en': 'English',
       'es': 'Spanish',
@@ -71,42 +145,28 @@ serve(async (req) => {
     
     const outputLanguage = languageNames[language] || 'English';
     
-    // Load the appropriate prompt based on mode
     let prompt = '';
     
-    console.log('=== PROMPT GENERATION START ===');
-    console.log('Mode:', mode);
-    console.log('FocusItem:', focusItem);
-    console.log('AdditionalInfo provided:', !!additionalInfo);
-    console.log('AdditionalInfo value:', additionalInfo);
-    console.log('AdditionalInfo length:', additionalInfo?.length || 0);
-    
     if (mode === 'detect') {
-      // Multi-item detection mode
       prompt = await loadAndProcessPrompt('detect_items', {
         LANGUAGE: outputLanguage,
         USER_CORRECTION: userCorrection
       });
     } else if (mode === 'analyze' && focusItem) {
-      // Focused item analysis mode
       prompt = await loadAndProcessPrompt('analyze_focused_item', {
         LANGUAGE: outputLanguage,
         FOCUS_ITEM: focusItem,
         ADDITIONAL_INFO: additionalInfo || ''
       });
     } else {
-      // Standard product analysis mode
       prompt = await loadAndProcessPrompt('analyze_product', {
         LANGUAGE: outputLanguage,
         ADDITIONAL_INFO: additionalInfo || ''
       });
     }
     
-    // CRITICAL FIX: Direct injection of user context at the VERY TOP of the prompt
-    // This ensures the model cannot miss it and must treat it as primary context
+    // Inject user context if provided
     if (additionalInfo && additionalInfo.trim() && mode !== 'detect') {
-      console.log('🔥🔥🔥 INJECTING USER CONTEXT DIRECTLY INTO PROMPT 🔥🔥🔥');
-      
       const userContextPrefix = `
 ═══════════════════════════════════════════════════════════════════
 🚨 CRITICAL - USER-PROVIDED FACTUAL INFORMATION (HIGHEST PRIORITY) 🚨
@@ -137,22 +197,10 @@ NOW PROCEED WITH YOUR ANALYSIS USING THE ABOVE USER CONTEXT:
 `;
       
       prompt = userContextPrefix + prompt;
-      
-      console.log('✅ User context injected successfully');
-      console.log('New prompt length:', prompt.length);
-      console.log('First 1000 chars of final prompt:');
-      console.log(prompt.substring(0, 1000));
-      console.log('Verification - contains user text:', prompt.includes(additionalInfo));
-    } else {
-      console.log('ℹ️ No additionalInfo - using standard prompt only');
     }
-    
-    console.log('=== FINAL PROMPT READY ===');
-    console.log('Total prompt length:', prompt.length);
 
-    // Prepare cache options
     const cacheOptions: CacheOptions = {
-      strategy: 'prefer', // Can be overridden to 'bypass' for debugging
+      strategy: 'prefer',
       promptTemplateId: mode === 'detect' ? 'detect_items' : 
                         (mode === 'analyze' && focusItem ? 'analyze_focused_item' : 'analyze_product'),
       promptVersion: mode === 'detect' ? PROMPT_VERSIONS.detect_items : 
@@ -161,80 +209,47 @@ NOW PROCEED WITH YOUR ANALYSIS USING THE ABOVE USER CONTEXT:
       focusItem: focusItem || undefined,
     };
 
-    // Call AI using the new handler with caching
-    console.log('=== CALLING AI ===');
-    console.log('Prompt length being sent:', prompt.length);
-    console.log('Has image data:', !!imageData);
-    console.log('Cache strategy:', cacheOptions.strategy);
-    
     const aiResponse = await callAI({
       prompt,
-      imageData,
+      imageData: imageData ? { base64: imageData, mimeType: 'image/jpeg' } : undefined,
       language,
       timeout: 30000,
     }, cacheOptions);
-    
-    console.log('=== AI RESPONSE RECEIVED ===');
-    console.log('Success:', aiResponse.success);
-    console.log('Cache hit:', aiResponse.metadata?.cacheHit);
-    console.log('Response text length:', aiResponse.data?.text?.length || 0);
 
     if (!aiResponse.success) {
       console.error('AI Handler error:', aiResponse.error);
       throw new Error(aiResponse.error?.message || 'AI request failed');
     }
 
-    // Parse the AI response
     const text = aiResponse.data?.text?.trim();
     if (!text) {
-      console.error('No text response from AI');
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: { message: 'No text response from AI' },
-          rawOutput: text 
+          error: { message: 'No text response from AI' }
         }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Clean the AI output by removing markdown code blocks
     let cleanedText = text;
     try {
       cleanedText = text.replace(/```(json)?/gi, '').trim();
-      
-      // Validate it's valid JSON by parsing it
       JSON.parse(cleanedText);
-      
-      console.log('AI output successfully cleaned and validated');
     } catch (parseError) {
       console.error('JSON parse error:', parseError);
-      console.error('Raw AI output:', text);
-      console.error('Cleaned output:', cleanedText);
-      
-      // Don't save invalid responses to cache - they would be useless
-      // Skip cache write by not calling any cache service methods here
-      
       return new Response(
         JSON.stringify({ 
           success: false, 
           error: { 
             message: 'JSON Parse error: Invalid AI response',
             details: parseError instanceof Error ? parseError.message : 'Unknown error'
-          },
-          rawOutput: text 
+          }
         }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Return in the original format expected by the frontend, with cache metadata
     const data = {
       candidates: [{
         content: {
@@ -243,7 +258,6 @@ NOW PROCEED WITH YOUR ANALYSIS USING THE ABOVE USER CONTEXT:
           }]
         }
       }],
-      // Add cache metadata for UI display
       _metadata: {
         cacheHit: aiResponse.metadata.cacheHit,
         latencyMs: aiResponse.metadata.latencyMs,
@@ -252,17 +266,13 @@ NOW PROCEED WITH YOUR ANALYSIS USING THE ABOVE USER CONTEXT:
       }
     };
 
-    console.log('Analysis completed successfully via AI Handler');
-    console.log('Metadata:', aiResponse.metadata);
-
-    // Add cache header for observability
     const cacheHeader = aiResponse.metadata.cacheHit ? 'HIT' : 'MISS';
 
     return new Response(JSON.stringify(data), {
       headers: { 
         ...corsHeaders, 
         'Content-Type': 'application/json',
-        'X-Cache': cacheHeader, // Observability header
+        'X-Cache': cacheHeader,
       },
     });
 
@@ -270,10 +280,7 @@ NOW PROCEED WITH YOUR ANALYSIS USING THE ABOVE USER CONTEXT:
     console.error('Error in analyze-image function:', error);
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });
