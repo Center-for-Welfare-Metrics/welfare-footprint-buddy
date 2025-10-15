@@ -8,6 +8,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { toast } from 'sonner';
 import { Separator } from '@/components/ui/separator';
 import { useTranslation } from 'react-i18next';
+import { z } from 'zod';
+
+// Validation schema for authentication
+const authSchema = z.object({
+  email: z.string().trim().email('Invalid email address').max(255, 'Email must be less than 255 characters'),
+  password: z.string().min(8, 'Password must be at least 8 characters').max(128, 'Password must be less than 128 characters'),
+  fullName: z.string().trim().max(100, 'Name must be less than 100 characters').optional()
+});
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -24,8 +32,27 @@ const Auth = () => {
     setLoading(true);
 
     try {
+      // Validate inputs using zod schema
+      const validationData = {
+        email: email.trim(),
+        password,
+        fullName: isLogin ? undefined : fullName.trim()
+      };
+
+      const result = authSchema.safeParse(validationData);
+      if (!result.success) {
+        const errorMessage = result.error.issues[0].message;
+        toast.error(errorMessage);
+        return;
+      }
+
+      // Use validated data
+      const validatedEmail = result.data.email;
+      const validatedPassword = result.data.password;
+      const validatedFullName = result.data.fullName || '';
+
       if (isLogin) {
-        const { error } = await signIn(email, password);
+        const { error } = await signIn(validatedEmail, validatedPassword);
         if (error) {
           toast.error(error.message);
         } else {
@@ -33,7 +60,7 @@ const Auth = () => {
           navigate('/');
         }
       } else {
-        const { error } = await signUp(email, password, fullName);
+        const { error } = await signUp(validatedEmail, validatedPassword, validatedFullName);
         if (error) {
           toast.error(error.message);
         } else {
@@ -96,16 +123,16 @@ const Auth = () => {
             </div>
             <div className="space-y-2">
               <Label htmlFor="password" className="text-foreground">{t('auth.password')}</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder={t('auth.passwordPlaceholder')}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-                className="bg-muted border-border text-foreground"
-              />
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder={t('auth.passwordPlaceholder')}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={8}
+                  className="bg-muted border-border text-foreground"
+                />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? t('common.loading') : isLogin ? t('common.signIn') : t('common.signUp')}
