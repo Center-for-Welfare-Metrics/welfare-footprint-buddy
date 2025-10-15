@@ -186,7 +186,7 @@ const SharedResult = () => {
         <div className="glass-card rounded-2xl p-6 animate-fade-in">
           <div className="mb-6 pb-4 border-b border-gray-700">
             <h1 className="text-3xl font-bold text-center text-white mb-2">
-              Shared Welfare Analysis
+              Product Welfare Assessment
             </h1>
             <p className="text-center text-gray-400 text-sm">
               View-only shared result

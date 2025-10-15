@@ -258,7 +258,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
   if (data.isFood === false) {
     return (
       <div className="p-4 pb-32 glass-card rounded-2xl animate-fade-in">
-        <h1 className="text-3xl font-bold mb-6 text-center text-white">{t('results.analysis')}</h1>
+        <h1 className="text-3xl font-bold mb-6 text-center text-white">Product Welfare Assessment</h1>
         <div className="text-center p-8">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-500/20 flex items-center justify-center">
             <AlertCircle className="w-8 h-8 text-amber-400" />
@@ -288,7 +288,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
     
     return (
       <div className="p-4 pb-32 glass-card rounded-2xl animate-fade-in">
-        <h1 className="text-3xl font-bold mb-6 text-center text-white">{t('results.analysis')}</h1>
+        <h1 className="text-3xl font-bold mb-6 text-center text-white">Product Welfare Assessment</h1>
         <div className="text-center p-8">
           <h3 className="font-bold text-2xl text-emerald-400 mb-2">
             {data.productName?.value || t('results.productAnalysis')}
@@ -376,7 +376,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
 
   return (
     <div className="p-4 pb-32 glass-card rounded-2xl animate-fade-in">
-      <h1 className="text-3xl font-bold mb-6 text-center text-white">{t('results.analysis')}</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center text-white">Product Welfare Assessment</h1>
       
       {/* Cache Hit Indicator */}
       {cacheMetadata?.cacheHit && (
