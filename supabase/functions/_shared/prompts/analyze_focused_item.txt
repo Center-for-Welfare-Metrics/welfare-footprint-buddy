@@ -64,14 +64,19 @@ ANALYSIS STEPS:
    - Identify animal-derived ingredients in "{{FOCUS_ITEM}}"
    - List the specific animal ingredients (meat, dairy, eggs, fish, etc.)
    - Rate your confidence in this determination
-   - **CRITICAL**: Use DEFINITIVE language when evidence is clear:
-     * If the product name/label explicitly mentions animal ingredients (e.g., "Four Cheese Pizza", "Beef Burger", "Contains Milk", "Egg Pasta")
-     * Use: "This product CONTAINS animal-derived ingredients"
-     * Set confidence to "High" and hasAnimalIngredients to true
-   - Use cautious language ("likely contains", "may contain") ONLY when:
-     * Product name is vague or ambiguous
-     * Label is partially obscured
-     * Evidence is unclear
+   
+   ⚠️ **CRITICAL LANGUAGE REQUIREMENT** ⚠️
+   When the product name or visible label EXPLICITLY mentions animal ingredients:
+   - Examples: "Four Cheese Pizza", "Beef Burger", "Contains Milk", "Egg Pasta", "Chicken Sandwich", "Yogurt", "Cheese"
+   - You MUST write: "This product CONTAINS animal-derived ingredients"
+   - NEVER write: "likely contains", "may contain", "appears to contain"
+   - Set confidence to "High" and hasAnimalIngredients to true
+   - This is MANDATORY - do not hedge or use cautious language when evidence is explicit
+   
+   Use cautious language ("likely contains", "may contain") ONLY when:
+   - Product name is vague or ambiguous
+   - Label is partially obscured or unclear
+   - Evidence is insufficient
 
 3. PRODUCTION SYSTEM ASSESSMENT
    - If animal ingredients are present, assess the likely production system
