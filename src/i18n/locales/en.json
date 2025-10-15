@@ -186,6 +186,7 @@
   },
   "itemSelection": {
     "title": "Multiple Items Detected",
+    "summaryTitle": "Here's what I found in your image",
     "animalDerivedItems": "Animal-Derived Items",
     "plantBasedItems": "Plant-Based Items",
     "analyzeThis": "Analyze This",
