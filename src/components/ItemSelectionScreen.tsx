@@ -165,9 +165,9 @@ const ItemSelectionScreen = ({
         description: "The detected items have been updated based on your description.",
       });
 
-      // Trigger parent reanalysis
+      // Trigger parent reanalysis with the edited description as the new summary
       if (onReanalyze) {
-        onReanalyze("", editedDescription);
+        onReanalyze("", editedDescription.trim());
       }
     } catch (error) {
       const appError = ErrorHandler.parseSupabaseError(error, 'handleUpdateDescription');

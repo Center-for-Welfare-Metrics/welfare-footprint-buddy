@@ -134,7 +134,7 @@ const Index = () => {
     }
   };
 
-  const handleItemReanalyze = async (_itemName: string, additionalInfo: string) => {
+  const handleItemReanalyze = async (_itemName: string, userEditedDescription: string) => {
     setIsAnalyzingItem(true);
     try {
       const imageData = JSON.parse(scannedImageData);
@@ -145,7 +145,7 @@ const Index = () => {
             imageData, 
             language: i18n.language,
             mode: 'detect',
-            additionalInfo: additionalInfo.trim() || undefined
+            additionalInfo: userEditedDescription.trim() || undefined
           }
         });
         if (res.error) throw res.error;
@@ -160,8 +160,9 @@ const Index = () => {
         
         try {
           const detectionJson = JSON.parse(sanitizedText);
+          // Update items from AI, but use the user's edited description as the summary
           setDetectedItems(detectionJson.items);
-          setItemsSummary(detectionJson.summary);
+          setItemsSummary(userEditedDescription.trim());
         } catch (parseError) {
           console.error('[ERROR][' + new Date().toISOString() + '][handleItemReanalyze] JSON Parse Error:', parseError);
           console.error('Raw text:', rawText);
