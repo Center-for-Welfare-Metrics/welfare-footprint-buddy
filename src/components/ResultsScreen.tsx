@@ -567,61 +567,63 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
         </div>
       </div>
 
-        {imageData && onReanalyze && (
-          <Dialog open={challengeOpen} onOpenChange={setChallengeOpen}>
-            <DialogTrigger asChild>
-              <Button 
-                variant="outline"
-                className="w-full mt-4 border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/10"
-              >
-                <AlertCircle className="mr-2 h-4 w-4" />
-                {t('results.challengeAnalysis')}
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="glass-card max-w-md">
-              <DialogHeader>
-                <DialogTitle className="text-xl font-bold text-white">{t('results.challengeAnalysis')}</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="info-full" className="text-gray-300">{t('results.challengeDescription')}</Label>
-                  <Textarea
-                    id="info-full"
-                    placeholder={t('results.challengePlaceholder')}
-                    value={additionalInfo}
-                    onChange={(e) => setAdditionalInfo(e.target.value)}
-                    className="mt-2 bg-gray-800 border-gray-700 text-white"
-                    rows={5}
-                  />
-                </div>
+        {/* Action Buttons - 2x2 Grid on desktop, stacked on mobile */}
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-3">
+          {/* Challenge Analysis Button & Dialog */}
+          {imageData && onReanalyze && (
+            <Dialog open={challengeOpen} onOpenChange={setChallengeOpen}>
+              <DialogTrigger asChild>
                 <Button 
-                  onClick={handleChallengeAnalysis}
-                  disabled={isReanalyzing || !additionalInfo.trim()}
-                  className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
+                  variant="outline"
+                  size="sm"
+                  className="border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/10"
                 >
-                  {isReanalyzing ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      {t('results.reanalyzing')}
-                    </>
-                  ) : (
-                    t('results.reanalyzeProduct')
-                  )}
+                  <AlertCircle className="mr-2 h-4 w-4" />
+                  {t('results.challengeAnalysis')}
                 </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-        )}
+              </DialogTrigger>
+              <DialogContent className="glass-card max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="text-xl font-bold text-white">{t('results.challengeAnalysis')}</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="info-full" className="text-gray-300">{t('results.challengeDescription')}</Label>
+                    <Textarea
+                      id="info-full"
+                      placeholder={t('results.challengePlaceholder')}
+                      value={additionalInfo}
+                      onChange={(e) => setAdditionalInfo(e.target.value)}
+                      className="mt-2 bg-gray-800 border-gray-700 text-white"
+                      rows={5}
+                    />
+                  </div>
+                  <Button 
+                    onClick={handleChallengeAnalysis}
+                    disabled={isReanalyzing || !additionalInfo.trim()}
+                    className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
+                  >
+                    {isReanalyzing ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        {t('results.reanalyzing')}
+                      </>
+                    ) : (
+                      t('results.reanalyzeProduct')
+                    )}
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          )}
 
-        {/* Action Buttons - Grid layout on desktop, stacked on mobile */}
-        <div className="mt-6 space-y-3">
           {/* Share Button */}
           {!shareUrl ? (
             <Button
               onClick={handleShare}
               disabled={isSharing}
               size="sm"
-              className="w-full bg-blue-600 hover:bg-blue-500 text-white"
+              className="bg-blue-600 hover:bg-blue-500 text-white"
             >
               {isSharing ? (
                 <>
@@ -636,7 +638,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
               )}
             </Button>
           ) : (
-            <div className="p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+            <div className="md:col-span-2 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
               <p className="text-xs text-blue-300 mb-2 font-medium">
                 {user ? t('results.shareLinkPermanent') : t('results.shareLinkTemporary')}
               </p>
@@ -662,30 +664,29 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
             </div>
           )}
 
-          {/* Bottom action buttons in grid on desktop */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {onBackToItems && (
-              <Button
-                onClick={onBackToItems}
-                variant="outline"
-                size="sm"
-                className="border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/10"
-              >
-                {t('itemSelection.backToItems')}
-              </Button>
-            )}
-            
+          {/* Back to Items Button */}
+          {onBackToItems && (
             <Button
-              onClick={() => {
-                console.log('[ResultsScreen] Scan New Item button clicked - main results');
-                onNewScan();
-              }}
+              onClick={onBackToItems}
+              variant="outline"
               size="sm"
-              className="bg-emerald-500 hover:bg-emerald-400 text-gray-900 font-semibold shadow-lg shadow-emerald-500/20 relative z-50 pointer-events-auto"
+              className="border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/10"
             >
-              {t('scanner.scanNew')}
+              {t('itemSelection.backToItems')}
             </Button>
-          </div>
+          )}
+          
+          {/* Scan New Item Button */}
+          <Button
+            onClick={() => {
+              console.log('[ResultsScreen] Scan New Item button clicked - main results');
+              onNewScan();
+            }}
+            size="sm"
+            className="bg-emerald-500 hover:bg-emerald-400 text-gray-900 font-semibold shadow-lg shadow-emerald-500/20 relative z-50 pointer-events-auto"
+          >
+            {t('scanner.scanNew')}
+          </Button>
         </div>
 
       <Dialog>
