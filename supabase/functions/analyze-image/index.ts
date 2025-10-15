@@ -16,7 +16,7 @@ const MAX_TEXT_LENGTH = 5000;
 const ALLOWED_MODES = ['detect', 'analyze'] as const;
 
 interface ValidatedInput {
-  imageData?: string;
+  imageData?: { base64: string; mimeType: string };
   additionalInfo?: string;
   language: string;
   mode: typeof ALLOWED_MODES[number];
@@ -36,9 +36,15 @@ function validateInput(body: any): { valid: boolean; data?: ValidatedInput; erro
     return { valid: false, error: `Invalid mode. Must be one of: ${ALLOWED_MODES.join(', ')}` };
   }
 
-  // Validate imageData size
-  if (imageData && typeof imageData === 'string') {
-    const estimatedSize = imageData.length * 0.75; // Estimate decoded size from base64
+  // Validate imageData size and structure
+  if (imageData) {
+    if (typeof imageData !== 'object' || !imageData.base64 || !imageData.mimeType) {
+      return { valid: false, error: 'imageData must be an object with base64 and mimeType properties' };
+    }
+    if (typeof imageData.base64 !== 'string' || typeof imageData.mimeType !== 'string') {
+      return { valid: false, error: 'imageData.base64 and imageData.mimeType must be strings' };
+    }
+    const estimatedSize = imageData.base64.length * 0.75; // Estimate decoded size from base64
     if (estimatedSize > MAX_IMAGE_SIZE) {
       return { valid: false, error: 'Image data exceeds maximum size of 10MB' };
     }
@@ -66,7 +72,7 @@ function validateInput(body: any): { valid: boolean; data?: ValidatedInput; erro
   return {
     valid: true,
     data: {
-      imageData: imageData?.trim(),
+      imageData,
       additionalInfo: additionalInfo?.trim(),
       language,
       mode,
@@ -211,7 +217,7 @@ NOW PROCEED WITH YOUR ANALYSIS USING THE ABOVE USER CONTEXT:
 
     const aiResponse = await callAI({
       prompt,
-      imageData: imageData ? { base64: imageData, mimeType: 'image/jpeg' } : undefined,
+      imageData,
       language,
       timeout: 30000,
     }, cacheOptions);
