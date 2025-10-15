@@ -150,7 +150,7 @@ const ItemSelectionScreen = ({
             imageData: parsedImageData,
             mode: 'detect',
             language: localStorage.getItem("i18nextLng") || "en",
-            additionalInfo: editedDescription.trim(),
+            userCorrection: editedDescription.trim(),
           }
         });
         if (res.error) throw res.error;

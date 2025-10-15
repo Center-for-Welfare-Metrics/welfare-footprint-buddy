@@ -145,7 +145,7 @@ const Index = () => {
             imageData, 
             language: i18n.language,
             mode: 'detect',
-            additionalInfo: userEditedDescription.trim() || undefined
+            userCorrection: userEditedDescription.trim() || undefined
           }
         });
         if (res.error) throw res.error;
