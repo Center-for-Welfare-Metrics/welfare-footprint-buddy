@@ -119,9 +119,14 @@ serve(async (req) => {
   try {
     // Parse and validate input
     const body = await req.json();
+    console.log('[analyze-image] Request body keys:', Object.keys(body));
+    console.log('[analyze-image] imageData type:', typeof body.imageData);
+    console.log('[analyze-image] imageData structure:', body.imageData ? Object.keys(body.imageData) : 'null');
+    
     const validation = validateInput(body);
     
     if (!validation.valid) {
+      console.error('[analyze-image] Validation failed:', validation.error);
       return new Response(
         JSON.stringify({ success: false, error: { message: validation.error } }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
