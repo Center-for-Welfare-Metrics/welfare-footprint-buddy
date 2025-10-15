@@ -227,6 +227,7 @@ NOW PROCEED WITH YOUR ANALYSIS USING THE ABOVE USER CONTEXT:
       imageData,
       language,
       timeout: 30000,
+      cache: userCorrection ? 'bypass' : 'prefer', // CRITICAL: Also set on request to prevent saving to cache
     }, cacheOptions);
 
     if (!aiResponse.success) {
