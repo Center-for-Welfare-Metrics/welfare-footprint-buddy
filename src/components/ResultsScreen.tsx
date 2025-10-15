@@ -613,71 +613,80 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
           </Dialog>
         )}
 
-        {/* Share Button */}
-        {!shareUrl ? (
-          <Button
-            onClick={handleShare}
-            disabled={isSharing}
-            className="w-full mt-4 bg-blue-600 hover:bg-blue-500 text-white font-bold"
-          >
-            {isSharing ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {t('results.creatingShareLink')}
-              </>
-            ) : (
-              <>
-                <Share2 className="mr-2 h-4 w-4" />
-                {t('results.shareResults')}
-              </>
-            )}
-          </Button>
-        ) : (
-          <div className="mt-4 p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-            <p className="text-sm text-blue-300 mb-2 font-medium">
-              {user ? t('results.shareLinkPermanent') : t('results.shareLinkTemporary')}
-            </p>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={shareUrl}
-                readOnly
-                className="flex-1 bg-gray-800 border-gray-700 text-white text-sm px-3 py-2 rounded"
-              />
-              <Button
-                onClick={copyToClipboard}
-                size="sm"
-                className="bg-blue-600 hover:bg-blue-500"
-              >
-                {copied ? (
-                  <Check className="h-4 w-4" />
-                ) : (
-                  <Copy className="h-4 w-4" />
-                )}
-              </Button>
+        {/* Action Buttons - Grid layout on desktop, stacked on mobile */}
+        <div className="mt-6 space-y-3">
+          {/* Share Button */}
+          {!shareUrl ? (
+            <Button
+              onClick={handleShare}
+              disabled={isSharing}
+              size="sm"
+              className="w-full bg-blue-600 hover:bg-blue-500 text-white"
+            >
+              {isSharing ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {t('results.creatingShareLink')}
+                </>
+              ) : (
+                <>
+                  <Share2 className="mr-2 h-4 w-4" />
+                  {t('results.shareResults')}
+                </>
+              )}
+            </Button>
+          ) : (
+            <div className="p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+              <p className="text-xs text-blue-300 mb-2 font-medium">
+                {user ? t('results.shareLinkPermanent') : t('results.shareLinkTemporary')}
+              </p>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={shareUrl}
+                  readOnly
+                  className="flex-1 bg-gray-800 border-gray-700 text-white text-sm px-3 py-2 rounded"
+                />
+                <Button
+                  onClick={copyToClipboard}
+                  size="sm"
+                  className="bg-blue-600 hover:bg-blue-500"
+                >
+                  {copied ? (
+                    <Check className="h-4 w-4" />
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {onBackToItems && (
-          <Button
-            onClick={onBackToItems}
-            variant="outline"
-            className="w-full mt-4 border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/10"
-          >
-            {t('itemSelection.backToItems')}
-          </Button>
-        )}
-        
-        <Button
-          onClick={() => {
-            console.log('[ResultsScreen] Scan New Item button clicked - main results');
-            onNewScan();
-          }}
-          className="w-full mt-4 bg-emerald-500 hover:bg-emerald-400 text-gray-900 font-bold shadow-lg shadow-emerald-500/20 relative z-50 pointer-events-auto"
-        >
-          {t('scanner.scanNew')}
-        </Button>
+          {/* Bottom action buttons in grid on desktop */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {onBackToItems && (
+              <Button
+                onClick={onBackToItems}
+                variant="outline"
+                size="sm"
+                className="border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/10"
+              >
+                {t('itemSelection.backToItems')}
+              </Button>
+            )}
+            
+            <Button
+              onClick={() => {
+                console.log('[ResultsScreen] Scan New Item button clicked - main results');
+                onNewScan();
+              }}
+              size="sm"
+              className="bg-emerald-500 hover:bg-emerald-400 text-gray-900 font-semibold shadow-lg shadow-emerald-500/20 relative z-50 pointer-events-auto"
+            >
+              {t('scanner.scanNew')}
+            </Button>
+          </div>
+        </div>
 
       <Dialog>
         <DialogTrigger asChild>
