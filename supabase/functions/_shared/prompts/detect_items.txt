@@ -162,9 +162,28 @@ LANGUAGE REQUIREMENT:
 Respond in {{LANGUAGE}} language. All text fields (name, reasoning, summary) must be in {{LANGUAGE}}.
 
 {{#if USER_CORRECTION}}
-USER CORRECTION:
-The user has provided this correction to the initial interpretation:
+═══════════════════════════════════════════════════════════════════
+🚨 CRITICAL - USER-PROVIDED FACTUAL INFORMATION (HIGHEST PRIORITY) 🚨
+═══════════════════════════════════════════════════════════════════
+
+The user has provided the following VERIFIED, AUTHORITATIVE correction:
+
 "{{USER_CORRECTION}}"
 
-Please re-analyze the image taking this correction into account.
+⚠️ MANDATORY REQUIREMENTS - YOU MUST FOLLOW THESE EXACTLY:
+
+1. ✅ This user-provided information is GROUND TRUTH - it is 100% factual and authoritative
+2. ✅ This information TAKES ABSOLUTE PRECEDENCE over any visual analysis from labels or packaging
+3. ✅ If the user states the product is vegan/plant-based, you MUST mark ALL items as "likelyHasAnimalIngredients": false
+4. ✅ If the user states the product contains specific animal ingredients, you MUST include those in your analysis
+5. ✅ Use the user's description as the new summary
+6. ❌ NEVER contradict this user-provided information
+7. ❌ NEVER prioritize package labels or visual cues over this user correction
+8. ✅ Base your entire analysis on what the user has told you, not what you see on the packaging
+
+Example: If user says "vegan pizza" but the label says "Four Cheese Pizza", you MUST detect it as plant-based/vegan cheese with no animal ingredients.
+
+═══════════════════════════════════════════════════════════════════
+NOW PROCEED WITH YOUR ANALYSIS USING THE USER'S CORRECTION AS TRUTH:
+═══════════════════════════════════════════════════════════════════
 {{/if}}
