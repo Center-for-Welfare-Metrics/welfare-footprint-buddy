@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, CheckCircle, XCircle, Loader2, Edit3, Sparkles } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -126,6 +126,11 @@ const ItemSelectionScreen = ({
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [editedDescription, setEditedDescription] = useState(summary);
   const [isUpdatingResults, setIsUpdatingResults] = useState(false);
+
+  // Sync edited description with summary prop when it changes
+  useEffect(() => {
+    setEditedDescription(summary);
+  }, [summary]);
 
   const handleItemSelect = (itemName: string) => {
     setAnalyzingItemName(itemName);
