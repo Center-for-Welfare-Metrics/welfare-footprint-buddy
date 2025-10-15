@@ -126,6 +126,7 @@ const ItemSelectionScreen = ({
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [editedDescription, setEditedDescription] = useState(summary);
   const [isUpdatingResults, setIsUpdatingResults] = useState(false);
+  const [hasBeenEdited, setHasBeenEdited] = useState(false);
 
   // Sync edited description with summary prop when it changes
   useEffect(() => {
@@ -160,6 +161,7 @@ const ItemSelectionScreen = ({
       if (error) throw error;
 
       setIsEditingDescription(false);
+      setHasBeenEdited(true);
       toast({
         title: "Results Updated",
         description: "The detected items have been updated based on your description.",
@@ -261,7 +263,7 @@ const ItemSelectionScreen = ({
           <Sparkles className="h-6 w-6 text-emerald-400 flex-shrink-0 mt-1" />
           <div className="flex-1">
             <h3 className="text-lg font-semibold text-white mb-3">
-              {t('itemSelection.summaryTitle')}
+              {hasBeenEdited ? "Here's your edited description" : t('itemSelection.summaryTitle')}
             </h3>
             
             {!isEditingDescription ? (
