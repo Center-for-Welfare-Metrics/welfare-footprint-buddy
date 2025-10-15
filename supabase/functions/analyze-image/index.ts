@@ -85,7 +85,7 @@ function validateInput(body: any): { valid: boolean; data?: ValidatedInput; erro
 
 // Prompt versions (update these when prompts change to auto-invalidate cache)
 const PROMPT_VERSIONS = {
-  detect_items: 'v1.1',
+  detect_items: 'v1.2',  // Updated to v1.2 for stronger user correction handling
   analyze_focused_item: 'v2.0',
   analyze_product: 'v2.0',
 };
