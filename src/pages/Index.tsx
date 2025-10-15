@@ -81,17 +81,16 @@ const Index = () => {
   };
   
   const handleDescriptionConfirmed = async (confirmedDescription: string) => {
-    // Stage 2: Use confirmed description to detect items
+    // Stage 2: Use ONLY the confirmed description to detect items
+    // CRITICAL: Do NOT send the image - only use the user's confirmed text
     setIsAnalyzingItem(true);
     setItemsSummary(confirmedDescription);
     
     try {
-      const imageData = JSON.parse(scannedImageData);
-      
       const { data, error } = await withRetry(async () => {
         const res = await supabase.functions.invoke('analyze-image', {
           body: { 
-            imageData, 
+            // NO imageData - only the confirmed description
             language: i18n.language,
             mode: 'detect',
             userCorrection: confirmedDescription
