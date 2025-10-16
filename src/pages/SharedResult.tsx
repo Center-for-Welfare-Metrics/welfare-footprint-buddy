@@ -291,14 +291,6 @@ const SharedResult = () => {
               </div>
             )}
 
-            {/* Cache Metadata (if present) */}
-            {analysisData?.cacheMetadata && (
-              <div className="text-xs text-gray-500 text-center pt-2">
-                {analysisData.cacheMetadata.cacheHit ? '⚡ Cached' : '🔄 Fresh'} • 
-                {' '}{analysisData.cacheMetadata.latencyMs}ms • 
-                {' '}{analysisData.cacheMetadata.provider}/{analysisData.cacheMetadata.model}
-              </div>
-            )}
           </div>
 
           {/* Social Sharing Section */}

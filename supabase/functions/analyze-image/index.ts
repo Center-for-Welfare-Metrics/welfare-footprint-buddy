@@ -209,11 +209,10 @@ NOW PROCEED WITH YOUR ANALYSIS USING THE ABOVE USER CONTEXT:
       prompt = userContextPrefix + prompt;
     }
 
-    // CRITICAL: Disable caching when user provides corrections
-    // This ensures corrections only apply to the current scan session
-    // and don't pollute the cache for future scans of the same image
+    // CRITICAL: Always bypass cache to ensure fresh AI calls for each upload
+    // This prevents cross-user/cross-session caching and ensures analysis reflects current prompts
     const cacheOptions: CacheOptions = {
-      strategy: userCorrection ? 'bypass' : 'prefer',
+      strategy: 'bypass',
       promptTemplateId: mode === 'detect' ? 'detect_items' : 
                         (mode === 'analyze' && focusItem ? 'analyze_focused_item' : 'analyze_product'),
       promptVersion: mode === 'detect' ? PROMPT_VERSIONS.detect_items : 
@@ -227,7 +226,7 @@ NOW PROCEED WITH YOUR ANALYSIS USING THE ABOVE USER CONTEXT:
       imageData,
       language,
       timeout: 30000,
-      cache: userCorrection ? 'bypass' : 'prefer', // CRITICAL: Also set on request to prevent saving to cache
+      cache: 'bypass', // Always bypass cache for fresh results
     }, cacheOptions);
 
     if (!aiResponse.success) {
