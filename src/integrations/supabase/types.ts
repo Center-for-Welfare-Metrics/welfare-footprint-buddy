@@ -158,6 +158,30 @@ export type Database = {
         }
         Relationships: []
       }
+      api_rate_limits: {
+        Row: {
+          created_at: string
+          hour_timestamp: string
+          id: string
+          request_count: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          hour_timestamp: string
+          id?: string
+          request_count?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          hour_timestamp?: string
+          id?: string
+          request_count?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       favorites: {
         Row: {
           created_at: string
@@ -217,6 +241,36 @@ export type Database = {
           full_name?: string | null
           id?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      scan_usage: {
+        Row: {
+          additional_scans_purchased: number
+          created_at: string
+          id: string
+          month_year: string
+          scans_used: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          additional_scans_purchased?: number
+          created_at?: string
+          id?: string
+          month_year: string
+          scans_used?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          additional_scans_purchased?: number
+          created_at?: string
+          id?: string
+          month_year?: string
+          scans_used?: number
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -331,6 +385,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_subscriptions: {
+        Row: {
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string | null
+          id: string
+          product_id: string
+          status: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          product_id: string
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          product_id?: string
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
     }
     Views: {

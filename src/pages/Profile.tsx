@@ -11,6 +11,7 @@ import ScanHistory from '@/components/profile/ScanHistory';
 import PreferencesSettings from '@/components/profile/PreferencesSettings';
 import PrivacyControls from '@/components/profile/PrivacyControls';
 import ProgressInsights from '@/components/profile/ProgressInsights';
+import { SubscriptionManagement } from '@/components/profile/SubscriptionManagement';
 
 const Profile = () => {
   const { user, signOut } = useAuth();
@@ -102,9 +103,10 @@ const Profile = () => {
       </Card>
 
       <Tabs defaultValue="scans" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4 bg-muted">
+        <TabsList className="grid w-full grid-cols-5 bg-muted">
           <TabsTrigger value="scans" className="text-muted-foreground data-[state=active]:text-foreground">Scan History</TabsTrigger>
           <TabsTrigger value="insights" className="text-muted-foreground data-[state=active]:text-foreground">Insights</TabsTrigger>
+          <TabsTrigger value="subscription" className="text-muted-foreground data-[state=active]:text-foreground">Subscription</TabsTrigger>
           <TabsTrigger value="preferences" className="text-muted-foreground data-[state=active]:text-foreground">Preferences</TabsTrigger>
           <TabsTrigger value="privacy" className="text-muted-foreground data-[state=active]:text-foreground">Privacy</TabsTrigger>
         </TabsList>
@@ -115,6 +117,10 @@ const Profile = () => {
 
         <TabsContent value="insights">
           <ProgressInsights userId={user.id} />
+        </TabsContent>
+
+        <TabsContent value="subscription">
+          <SubscriptionManagement />
         </TabsContent>
 
         <TabsContent value="preferences">
