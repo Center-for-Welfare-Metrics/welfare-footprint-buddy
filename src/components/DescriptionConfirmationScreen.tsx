@@ -44,14 +44,14 @@ const DescriptionConfirmationScreen = ({
       <div className="glass-card rounded-2xl p-6 mb-6 w-full border-2 border-emerald-500/30">
         <div className="flex items-start gap-3 mb-4">
           <Sparkles className="h-6 w-6 text-emerald-400 flex-shrink-0 mt-1" />
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <h3 className="text-lg font-semibold text-white mb-3">
               AI-Generated Description
             </h3>
             
             {!isEditing ? (
               <>
-                <p className="text-gray-200 leading-relaxed mb-4 break-words whitespace-normal overflow-hidden">{description}</p>
+                <p className="text-gray-200 leading-relaxed mb-4 break-words max-w-full">{description}</p>
                 <div className="flex gap-3">
                   <Button
                     variant="outline"
