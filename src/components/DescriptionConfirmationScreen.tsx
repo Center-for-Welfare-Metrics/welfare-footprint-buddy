@@ -52,7 +52,7 @@ const DescriptionConfirmationScreen = ({
             {!isEditing ? (
               <>
                 <p className="text-gray-200 leading-relaxed mb-4 break-words max-w-full">{description}</p>
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-3">
                   <Button
                     variant="outline"
                     onClick={() => setIsEditing(true)}
@@ -90,7 +90,7 @@ const DescriptionConfirmationScreen = ({
                   className="min-h-[120px] bg-white/10 text-white border-gray-600 mb-3"
                   disabled={isProcessing}
                 />
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-3">
                   <Button
                     variant="outline"
                     onClick={() => {
