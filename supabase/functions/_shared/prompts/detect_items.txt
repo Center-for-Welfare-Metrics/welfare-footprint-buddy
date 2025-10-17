@@ -61,17 +61,45 @@ TASK:
 Analyze the provided image and detect ONLY packaged food products, prepared meals, or food items intended for human consumption that are visible in the image.
 
 CRITICAL FOR COMPOSITE FOODS:
-For dishes that contain MULTIPLE ANIMAL-DERIVED INGREDIENTS (e.g., pizza with cheese and meat, khachapuri with cheese and egg, lasagna with cheese and meat), you MUST:
+🚨 MANDATORY DECOMPOSITION RULE 🚨
+For ANY dish or meal that contains MULTIPLE ANIMAL-DERIVED INGREDIENTS (e.g., pizza with cheese and meat, khachapuri with cheese and egg, salmon rice bowl with egg, lasagna with cheese and meat), you MUST:
 - Decompose the dish into INDIVIDUAL INGREDIENT-LEVEL items
 - Create a SEPARATE item for EACH distinct animal-derived ingredient
-- For example, "Khachapuri with cheese and egg" should become TWO separate items:
-  1. "Cheese (from Khachapuri)" - likelyHasAnimalIngredients: true
-  2. "Egg (from Khachapuri)" - likelyHasAnimalIngredients: true
-- You may OPTIONALLY include the plant-based components as well (e.g., "Bread (from Khachapuri)")
+- For example, "Salmon rice bowl with egg" MUST become TWO separate items:
+  1. "Salmon (from rice bowl)" - likelyHasAnimalIngredients: true
+  2. "Egg (from rice bowl)" - likelyHasAnimalIngredients: true
+- You may OPTIONALLY include the plant-based components as well (e.g., "Rice (from rice bowl)")
 - DO NOT create a single item for the whole dish when it contains multiple animal ingredients
+- This rule applies to ALL composite dishes including bowls, plates, sandwiches, pizzas, etc.
 
 CRITICAL JSON OUTPUT REQUIREMENT:
-When you detect a composite dish like Khachapuri, your JSON MUST look like this:
+🚨 EXAMPLE: Salmon rice bowl with egg 🚨
+When you detect a composite dish like a salmon rice bowl with egg, your JSON MUST look like this:
+{
+  "items": [
+    {
+      "name": "Salmon (from rice bowl)",
+      "likelyHasAnimalIngredients": true,
+      "reasoning": "Salmon is a fish",
+      "confidence": "High"
+    },
+    {
+      "name": "Egg (from rice bowl)",
+      "likelyHasAnimalIngredients": true,
+      "reasoning": "The egg is visible in the bowl",
+      "confidence": "High"
+    },
+    {
+      "name": "Rice (from rice bowl)",
+      "likelyHasAnimalIngredients": false,
+      "reasoning": "Rice is plant-based",
+      "confidence": "High"
+    }
+  ],
+  "summary": "The image shows a rice bowl with salmon and egg, both animal-derived ingredients."
+}
+
+🚨 EXAMPLE: Khachapuri 🚨
 {
   "items": [
     {
@@ -96,7 +124,20 @@ When you detect a composite dish like Khachapuri, your JSON MUST look like this:
   "summary": "The image shows Khachapuri with cheese and egg, both animal-derived ingredients."
 }
 
-DO NOT return this:
+🚨 FORBIDDEN OUTPUT 🚨
+DO NOT return this for a salmon rice bowl with egg:
+{
+  "items": [
+    {
+      "name": "Salmon rice bowl",
+      "likelyHasAnimalIngredients": true,
+      "reasoning": "Contains salmon and egg...",
+      "confidence": "High"
+    }
+  ]
+}
+
+DO NOT return this for Khachapuri:
 {
   "items": [
     {
@@ -119,6 +160,9 @@ EXAMPLES OF CORRECT DECOMPOSITION:
 - Pizza with pepperoni and cheese → "Pepperoni (from Pizza)", "Cheese (from Pizza)", optionally "Dough (from Pizza)"
 - Burger with cheese and beef patty → "Beef patty (from Burger)", "Cheese (from Burger)", optionally "Bun (from Burger)"
 - Khachapuri → "Cheese (from Khachapuri)", "Egg (from Khachapuri)", optionally "Bread (from Khachapuri)"
+- Salmon rice bowl with egg → "Salmon (from rice bowl)", "Egg (from rice bowl)", optionally "Rice (from rice bowl)"
+- Breakfast burrito with bacon and cheese → "Bacon (from burrito)", "Cheese (from burrito)", optionally "Tortilla (from burrito)"
+- Sushi roll with fish → "Fish (from sushi roll)", optionally "Rice (from sushi roll)"
 
 CRITICAL RULES - WHAT IS A FOOD ITEM:
 ✓ Packaged food products with labels (boxes, bottles, cans, bags)
