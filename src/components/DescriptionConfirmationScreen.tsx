@@ -51,7 +51,7 @@ const DescriptionConfirmationScreen = ({
             
             {!isEditing ? (
               <>
-                <p className="text-gray-200 leading-relaxed mb-4 break-words overflow-wrap-anywhere">{description}</p>
+                <p className="text-gray-200 leading-relaxed mb-4 break-words whitespace-normal overflow-hidden">{description}</p>
                 <div className="flex gap-3">
                   <Button
                     variant="outline"
