@@ -115,14 +115,25 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('[handleEthicalSwap] Edge function error:', error);
+        throw error;
+      }
+
+      // Check if result contains an error (from the function's error response)
+      if (result?.error) {
+        console.error('[handleEthicalSwap] Function returned error:', result.error);
+        throw new Error(result.error.message || result.error);
+      }
 
       const parsedResult = JSON.parse(result.candidates[0].content.parts[0].text);
       setEthicalSwaps([parsedResult]);
-    } catch (error) {
+    } catch (error: any) {
+      console.error('[handleEthicalSwap] Full error:', error);
+      const errorMessage = error?.message || error?.error?.message || "An error occurred";
       toast({
         title: "Failed to load suggestions",
-        description: error instanceof Error ? error.message : "An error occurred",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
