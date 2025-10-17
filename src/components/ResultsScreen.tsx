@@ -106,12 +106,15 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
 
     setIsLoadingSwaps(true);
     try {
+      // Normalize language code (e.g., "en-GB" -> "en")
+      const languageCode = i18n.language.split('-')[0];
+      
       const { data: result, error } = await supabase.functions.invoke('suggest-ethical-swap', {
         body: { 
           productName,
           animalIngredients,
           ethicalLens: sliderValue[0],
-          language: i18n.language
+          language: languageCode
         }
       });
 
