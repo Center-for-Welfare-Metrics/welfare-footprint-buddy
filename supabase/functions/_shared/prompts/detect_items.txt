@@ -193,10 +193,18 @@ DETECTION GUIDELINES:
 - List EVERY distinct FOOD PRODUCT and INGREDIENT visible
 - DECOMPOSE composite dishes into individual animal-derived ingredients (see examples above)
 - For packaged products, try to read visible labels or brand names
-- For food items that are plant-based, explain why
-- For food items with animal ingredients, explain which specific animal ingredient it is
+- **USE PRODUCT KNOWLEDGE**: Infer likely ingredients based on product type and standard formulations:
+  * Most chocolates (especially milk, white, and "diet" varieties) contain dairy unless explicitly labeled as dark/vegan
+  * "Branco" (white chocolate) ALWAYS contains milk/dairy products
+  * Standard cookies, cakes, and baked goods typically contain eggs and dairy
+  * Ice cream typically contains dairy unless labeled as plant-based
+  * Cheese products always contain dairy
+  * Standard yogurt contains dairy unless labeled as plant-based
+- For food items that are plant-based, explain why (e.g., "explicitly labeled vegan", "dark chocolate without milk")
+- For food items with animal ingredients, explain which specific animal ingredient it is OR why it's inferred (e.g., "white chocolate typically contains milk", "standard chocolate formulation includes dairy")
 - Be conservative: if unsure about ingredients, mark as Medium or Low confidence
 - When decomposing, maintain high confidence for visible ingredients (e.g., a visible egg yolk should be "High" confidence)
+- **CONTEXTUAL REASONING**: Consider the product category and typical ingredients even when specific ingredients are not visible on the label
 
 OUTPUT FORMAT:
 Return ONLY valid JSON with this exact structure:
