@@ -57,7 +57,13 @@ ANALYSIS STEPS:
 
 1. PRODUCT IDENTIFICATION
    - Confirm the identity of "{{FOCUS_ITEM}}" in the image
-   - Provide a detailed description
+   - Provide a detailed, perceptive description:
+     * Highlight key ingredients and preparation style
+     * Mention cultural or regional cues if relevant (e.g., presentation, accompaniments)
+     * Keep tone factual but engaging, avoiding repetition or generic phrasing
+     * AVOID stating the obvious or restating product names (e.g., "The chicken dish likely contains chicken")
+     * NEVER infer welfare impact or ethical evaluation in the description
+     * Example: "This appears to be a chicken-based dish served with vegetables in a savory sauce. The preparation suggests deep-fried chicken pieces coated in a spiced broth, a style common in Southeast Asian cuisine."
    - Rate your confidence in the identification
 
 2. INGREDIENT ANALYSIS
