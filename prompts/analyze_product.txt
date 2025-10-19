@@ -107,6 +107,18 @@ ANALYSIS STEPS:
    - Consider: conventional farming, organic, free-range, cage-free, etc.
    - Note: Without specific labeling, you'll need to make reasonable assumptions
    - Explain any assumptions you're making
+   
+   {{#if USER_PREFERENCES}}
+   🎯 USER WELFARE PREFERENCE CONTEXT 🎯
+   The user has selected: "{{USER_PREFERENCES}}"
+   
+   CERTIFIED HUMANE CONFIDENCE ADJUSTMENT:
+   - If the product has "Certified Humane" certification:
+     * When user preference is "Prioritize Big Welfare Gains" OR "Strong Welfare Standards" → Set productionSystem confidence to "High"
+     * When user preference is "Minimal Animal Suffering" → Set productionSystem confidence to "Medium"
+   - This adjustment applies ONLY to products with explicit Certified Humane certification
+   - For products without certification, use standard confidence assessment
+   {{/if}}
 
 4. WELFARE CONCERNS
    - Describe potential animal welfare concerns associated with this product
