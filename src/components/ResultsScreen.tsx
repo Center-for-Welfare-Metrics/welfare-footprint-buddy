@@ -46,6 +46,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
   const [ethicalSwaps, setEthicalSwaps] = useState<any[]>([]);
   const [isLoadingSwaps, setIsLoadingSwaps] = useState(false);
   const [sliderValue, setSliderValue] = useState<number[]>([appConfig.ethicalLens.defaultValue]);
+  const [initialSliderValue, setInitialSliderValue] = useState<number[]>([appConfig.ethicalLens.defaultValue]);
   const [challengeOpen, setChallengeOpen] = useState(false);
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [isReanalyzing, setIsReanalyzing] = useState(false);
@@ -144,15 +145,14 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
     }
   };
 
-  useEffect(() => {
-    if (ethicalSwaps.length === 0 || !data.hasAnimalIngredients) return;
-
-    const debounceTimer = setTimeout(() => {
-      handleEthicalSwap();
-    }, appConfig.ai.suggestionDebounceMs);
-
-    return () => clearTimeout(debounceTimer);
-  }, [sliderValue]);
+  const handleSliderCommit = (value: number[]) => {
+    // Only trigger action if value changed from initial
+    if (value[0] !== initialSliderValue[0]) {
+      // Clear ethical swaps and reset to show button again
+      setEthicalSwaps([]);
+      setInitialSliderValue(value);
+    }
+  };
 
   const handleChallengeAnalysis = async () => {
     if (!imageData || !onReanalyze) return;
@@ -453,6 +453,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
               <Slider
                 value={sliderValue}
                 onValueChange={setSliderValue}
+                onValueCommit={handleSliderCommit}
                 max={5}
                 min={1}
                 step={1}
