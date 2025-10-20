@@ -56,7 +56,7 @@ const HomeScreen = ({ onStartScan }: HomeScreenProps) => {
           <h2 className="text-4xl font-bold text-emerald-400">{t('home.subtitle')}</h2>
         </header>
         <main className="w-full max-w-2xl">
-          <p className="mb-8 text-lg text-gray-400">
+          <p className="mb-8 text-xl font-medium text-foreground/90">
             {t('home.description')}
           </p>
           <Button 
@@ -68,7 +68,7 @@ const HomeScreen = ({ onStartScan }: HomeScreenProps) => {
         </main>
       </div>
       <footer className="w-full py-4 px-4 pb-40 space-y-3">
-        <p className="text-xs text-gray-500 whitespace-pre-line">
+        <p className="text-xs whitespace-pre-line" style={{ color: '#B0B8B6' }}>
           {t('home.footer')}
         </p>
         <Button
