@@ -61,7 +61,7 @@ const HomeScreen = ({ onStartScan }: HomeScreenProps) => {
           </p>
           <Button 
             onClick={onStartScan}
-            className="w-full max-w-xs bg-emerald-500 hover:bg-emerald-400 text-gray-900 font-bold py-3 px-6 rounded-lg shadow-[0_0_30px_rgba(16,185,129,0.3),0_0_15px_rgba(16,185,129,0.2),0_4px_12px_rgba(0,0,0,0.4)] hover:shadow-[0_0_40px_rgba(16,185,129,0.4),0_0_20px_rgba(16,185,129,0.3),0_4px_12px_rgba(0,0,0,0.4)] transition-all duration-300"
+            className="w-full max-w-xs bg-emerald-500 hover:bg-emerald-400 text-gray-900 font-bold py-3 px-6 rounded-lg shadow-[0_0_30px_rgba(16,185,129,0.3),0_0_15px_rgba(16,185,129,0.2),0_4px_12px_rgba(0,0,0,0.4)] hover:animate-[gentle-pulse_1.5s_ease-in-out_infinite] transition-colors duration-300"
           >
             {t('home.startScan')}
           </Button>
