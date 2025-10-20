@@ -144,6 +144,7 @@ All colors MUST be HSL.
       hsl(166 45% 18%) 50%,    /* Muted teal transition */
       hsl(152 38% 22%) 100%    /* Emerald green edges */
     );
+    animation: gradient-shift 20s ease-in-out infinite;
   }
   
   .bg-gradient-vertical-forest {
@@ -151,6 +152,7 @@ All colors MUST be HSL.
       hsl(163 60% 15%) 0%,     /* Dark green #0e3c32 top */
       hsl(158 50% 23%) 100%    /* Brighter green #1f5e4b bottom */
     );
+    animation: gradient-shift 20s ease-in-out infinite;
   }
   
   .bg-gradient-diagonal-mystery {
@@ -159,6 +161,7 @@ All colors MUST be HSL.
       hsl(166 48% 16%) 50%,    /* Muted teal middle */
       hsl(152 42% 20%) 100%    /* Warm emerald */
     );
+    animation: gradient-shift 20s ease-in-out infinite;
   }
   
   .bg-gradient-radial-ethereal {
@@ -167,6 +170,23 @@ All colors MUST be HSL.
       hsl(166 52% 14%) 50%,    /* Deep teal middle */
       hsl(158 60% 11%) 100%    /* Forest green edges */
     );
+    animation: gradient-shift 20s ease-in-out infinite;
+  }
+  
+  /* Living background animation - slow gradient color shift */
+  @keyframes gradient-shift {
+    0%, 100% {
+      filter: hue-rotate(0deg) brightness(1);
+    }
+    25% {
+      filter: hue-rotate(5deg) brightness(1.05);
+    }
+    50% {
+      filter: hue-rotate(-3deg) brightness(0.98);
+    }
+    75% {
+      filter: hue-rotate(3deg) brightness(1.02);
+    }
   }
   
   .animate-fade-in {
