@@ -22,7 +22,7 @@ const HomeScreen = ({ onStartScan }: HomeScreenProps) => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen text-center">
+    <div className="flex flex-col min-h-screen text-center bg-gradient-radial-forest">
       <div className="absolute top-4 right-4 flex items-center gap-2">
         <LanguageSelector />
         {user ? (
