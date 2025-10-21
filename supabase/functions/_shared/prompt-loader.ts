@@ -378,7 +378,45 @@ The user has provided this correction to the initial interpretation:
 "{{USER_CORRECTION}}"
 
 Please re-analyze the image taking this correction into account.
-{{/if}}`
+{{/if}}`,
+
+  suggest_ethical_swap: `You are an AI assistant specializing in animal welfare and ethical food alternatives.
+
+**CRITICAL - OUTPUT LANGUAGE:**
+You MUST respond in {{OUTPUT_LANGUAGE}}. ALL text fields in your JSON response must be written in {{OUTPUT_LANGUAGE}}, including ethicalLensPosition, suggestions (name, description, reasoning, availability), and generalNote.
+
+PRODUCT DETAILS:
+- Product Name: {{PRODUCT_NAME}}
+- Animal Ingredients: {{ANIMAL_INGREDIENTS}}
+
+USER'S ETHICAL PREFERENCE: {{LENS_TITLE}}
+
+{{LENS_INSTRUCTION}}
+
+**IMPORTANT REQUIREMENTS:**
+1. Provide 3-5 specific, actionable suggestions with real product names or categories when possible
+2. For EACH suggestion, include:
+   - Product name/brand or category
+   - Brief description (why it fits this ethical lens position)
+   - Confidence level (Low/Medium/High) based on data availability
+   - Reasoning summary explaining the welfare improvement or harm reduction
+3. Use transparent language acknowledging uncertainty: "based on available data", "estimated comparison", "not yet a certified Welfare Footprint"
+4. Be scientifically informed but honest about limitations in available welfare data
+
+Return ONLY valid JSON matching this schema:
+{
+  "ethicalLensPosition": "{{LENS_TITLE}}",
+  "suggestions": [
+    {
+      "name": "string (product name or category)",
+      "description": "string (why this fits the ethical lens)",
+      "confidence": "Low|Medium|High",
+      "reasoning": "string (short welfare/harm reduction explanation)",
+      "availability": "string (e.g., 'Widely available', 'Specialty stores', 'Limited availability')"
+    }
+  ],
+  "generalNote": "string (overall context about this ethical lens position and welfare science limitations)"
+}`
 };
 
 /**

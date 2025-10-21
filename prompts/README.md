@@ -64,6 +64,12 @@ PROMPT TEXT BEGINS BELOW:
 **Use Case:** User selects one item from detection results to analyze  
 **Output:** Same as analyze_product.txt but focused on specified item  
 
+### 4. suggest_ethical_swap.txt
+**Purpose:** Generate ethical product swap suggestions based on user's welfare priorities  
+**Use Case:** When user requests alternative products aligned with their ethical lens preference (1-5)  
+**Output:** JSON with ethicalLensPosition, suggestions array (with confidence levels), and generalNote  
+**Input Variables:** PRODUCT_NAME, ANIMAL_INGREDIENTS, ETHICAL_LENS, LENS_TITLE, LENS_INSTRUCTION, OUTPUT_LANGUAGE
+
 ## Template Variables
 
 Prompts support template variables using `{{VARIABLE_NAME}}` syntax:
@@ -167,6 +173,8 @@ When adding new prompts:
 
 ## Version History
 
+- **v1.1** (2025-01-21) - Added ethical swap suggestions prompt
+  - suggest_ethical_swap.txt - Ethical product alternatives based on user's welfare priorities
 - **v1.0** (2025-10-10) - Initial implementation with three core prompts
   - detect_items.txt - Multi-item detection
   - analyze_product.txt - Standard product analysis  

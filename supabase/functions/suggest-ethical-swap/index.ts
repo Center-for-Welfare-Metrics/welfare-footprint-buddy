@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { AIHandler, callAI } from '../_shared/ai-handler.ts';
 import { GeminiProvider } from '../_shared/providers/gemini.ts';
+import { loadAndProcessPrompt } from '../_shared/prompt-loader.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -173,43 +174,14 @@ Always include confidence level (High/Medium/Low) and brief reasoning summary.`
     
     const outputLanguage = languageNames[language] || 'English';
 
-    const prompt = `You are an AI assistant specializing in animal welfare and ethical food alternatives.
-
-**CRITICAL - OUTPUT LANGUAGE:**
-You MUST respond in ${outputLanguage}. ALL text fields in your JSON response must be written in ${outputLanguage}, including ethicalLensPosition, suggestions (name, description, reasoning, availability), and generalNote.
-
-PRODUCT DETAILS:
-- Product Name: ${productName}
-- Animal Ingredients: ${animalIngredients}
-
-USER'S ETHICAL PREFERENCE: ${selectedLens.title}
-
-${selectedLens.instruction}
-
-**IMPORTANT REQUIREMENTS:**
-1. Provide 3-5 specific, actionable suggestions with real product names or categories when possible
-2. For EACH suggestion, include:
-   - Product name/brand or category
-   - Brief description (why it fits this ethical lens position)
-   - Confidence level (Low/Medium/High) based on data availability
-   - Reasoning summary explaining the welfare improvement or harm reduction
-3. Use transparent language acknowledging uncertainty: "based on available data", "estimated comparison", "not yet a certified Welfare Footprint"
-4. Be scientifically informed but honest about limitations in available welfare data
-
-Return ONLY valid JSON matching this schema:
-{
-  "ethicalLensPosition": "${selectedLens.title}",
-  "suggestions": [
-    {
-      "name": "string (product name or category)",
-      "description": "string (why this fits the ethical lens)",
-      "confidence": "Low|Medium|High",
-      "reasoning": "string (short welfare/harm reduction explanation)",
-      "availability": "string (e.g., 'Widely available', 'Specialty stores', 'Limited availability')"
-    }
-  ],
-  "generalNote": "string (overall context about this ethical lens position and welfare science limitations)"
-}`;
+    // Load prompt from centralized prompt repository
+    const prompt = await loadAndProcessPrompt('suggest_ethical_swap', {
+      PRODUCT_NAME: productName,
+      ANIMAL_INGREDIENTS: animalIngredients,
+      LENS_TITLE: selectedLens.title,
+      LENS_INSTRUCTION: selectedLens.instruction,
+      OUTPUT_LANGUAGE: outputLanguage,
+    });
 
     const aiResponse = await callAI({
       prompt,
