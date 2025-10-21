@@ -13,7 +13,7 @@ The Welfare Footprint application has been refactored to use a **model-agnostic 
 - Model-specific structure mixed with prompt content
 
 ### After Refactoring
-- All prompts stored in `/science_and_ai_prompts` directory as `.txt` files
+- All prompts stored in `/science_and_ai_prompts` directory as `.md` files
 - Prompts can be updated without touching code
 - Full version control and documentation
 - Model-agnostic design works with any vision AI
@@ -25,9 +25,9 @@ The Welfare Footprint application has been refactored to use a **model-agnostic 
 science_and_ai_prompts/
 ├── README.md                    # Overview and documentation
 ├── USAGE_GUIDE.md              # Detailed usage instructions
-├── detect_items.txt            # Multi-item detection prompt
-├── analyze_product.txt         # Standard product analysis prompt
-└── analyze_focused_item.txt    # Focused item analysis prompt
+├── detect_items.md             # Multi-item detection prompt
+├── analyze_product.md          # Standard product analysis prompt
+└── analyze_focused_item.md     # Focused item analysis prompt
 
 supabase/functions/_shared/
 └── prompt-loader.ts            # Utility to load and process prompts
@@ -90,30 +90,30 @@ const prompt = await loadAndProcessPrompt('detect_items', {
 
 ### Update a Prompt
 
-1. Edit the `.txt` file in `/science_and_ai_prompts` directory
+1. Edit the `.md` file in `/science_and_ai_prompts` directory
 2. Changes apply on next deployment
 3. No code changes needed
 
 ### Add a New Prompt
 
-1. Create new `.txt` file in `/science_and_ai_prompts`
+1. Create new `.md` file in `/science_and_ai_prompts`
 2. Follow the standard header format
 3. Write your prompt
 4. Use `loadAndProcessPrompt('your_prompt_name', variables)`
 
 ## Available Prompts
 
-### detect_items.txt
+### detect_items.md
 - **Purpose:** Detect all items in an image
 - **Output:** JSON array of items with animal ingredient analysis
 - **Variables:** `LANGUAGE`, `USER_CORRECTION`
 
-### analyze_product.txt
+### analyze_product.md
 - **Purpose:** Comprehensive welfare analysis of a product
 - **Output:** Detailed JSON with welfare assessment
 - **Variables:** `LANGUAGE`
 
-### analyze_focused_item.txt
+### analyze_focused_item.md
 - **Purpose:** Analyze specific item from multi-item image
 - **Output:** Same as analyze_product but focused
 - **Variables:** `LANGUAGE`, `FOCUS_ITEM`
@@ -166,7 +166,7 @@ The refactoring maintains **100% identical functionality**:
 3. Calls loadAndProcessPrompt(name, variables)
    ↓
 4. Prompt loader:
-   - Reads .txt file from /science_and_ai_prompts
+   - Reads .md file from /science_and_ai_prompts
    - Extracts prompt text (removes metadata)
    - Substitutes template variables
    ↓

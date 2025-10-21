@@ -114,10 +114,10 @@ Variables can be:
 
 ### Step 1: Create the Prompt File
 
-Create a new `.txt` file in the `/science_and_ai_prompts` directory:
+Create a new `.md` file in the `/science_and_ai_prompts` directory:
 
 ```bash
-touch science_and_ai_prompts/my_new_prompt.txt
+touch science_and_ai_prompts/my_new_prompt.md
 ```
 
 ### Step 2: Add the Standard Header
@@ -415,7 +415,7 @@ EXPECTED INPUTS:
 **Cause:** Prompt file not found or path incorrect  
 **Solution:** 
 - Verify file exists in `/prompts` directory
-- Check file name (case-sensitive, include `.txt`)
+- Check file name (case-sensitive, include `.md`)
 - Ensure path is correct relative to edge function
 
 ### Problem: Variables not being replaced

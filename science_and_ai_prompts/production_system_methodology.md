@@ -373,7 +373,7 @@ When user's ethical lens is:
 
 - `science_and_ai_prompts/welfare_concerns_framework.md` - How to assess welfare issues by system
 - `science_and_ai_prompts/confidence_level_guidelines.md` - Confidence assignment rules
-- `science_and_ai_prompts/analyze_product.txt` - Product analysis prompt
+- [`science_and_ai_prompts/analyze_product.md`](analyze_product.md) - Product analysis prompt
 
 ---
 

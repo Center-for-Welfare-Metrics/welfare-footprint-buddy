@@ -226,9 +226,9 @@ if (response.success) {
 
 All AI prompts are stored in `/science_and_ai_prompts` as version-controlled text files:
 
-- **`detect_items.txt`**: Multi-item detection prompt
-- **`analyze_product.txt`**: Comprehensive welfare analysis prompt
-- **`analyze_focused_item.txt`**: Focused single-item analysis prompt
+- **[`detect_items.md`](../science_and_ai_prompts/detect_items.md)**: Multi-item detection prompt
+- **[`analyze_product.md`](../science_and_ai_prompts/analyze_product.md)**: Comprehensive welfare analysis prompt
+- **[`analyze_focused_item.md`](../science_and_ai_prompts/analyze_focused_item.md)**: Focused single-item analysis prompt
 
 ### Prompt Loading
 

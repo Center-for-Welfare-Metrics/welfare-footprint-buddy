@@ -166,7 +166,7 @@ Regardless of the selected ethical lens, all AI-generated suggestions must inclu
 
 - **Code Location:** These criteria are implemented in `supabase/functions/suggest-ethical-swap/index.ts` (lines 100-159)
 - **AI Model:** Currently uses Gemini API via centralized AI handler
-- **Prompt Template:** `science_and_ai_prompts/suggest_ethical_swap.txt` structures the AI instructions
+- **Prompt Template:** [`science_and_ai_prompts/suggest_ethical_swap.md`](suggest_ethical_swap.md) structures the AI instructions
 - **Input Validation:** Ethical lens must be integer 1-5, validated before processing
 
 ---
@@ -198,7 +198,7 @@ Regardless of the selected ethical lens, all AI-generated suggestions must inclu
 
 ## Related Documentation
 
-- `science_and_ai_prompts/suggest_ethical_swap.txt` - AI prompt template
+- [`science_and_ai_prompts/suggest_ethical_swap.md`](suggest_ethical_swap.md) - AI prompt template
 - `science_and_ai_prompts/README.md` - Prompt system overview
 - `supabase/functions/suggest-ethical-swap/index.ts` - Implementation code
 - `docs/architecture_overview.md` - System architecture

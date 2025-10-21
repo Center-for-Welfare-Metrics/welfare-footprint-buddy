@@ -379,8 +379,8 @@ Ingredients where an animal (or animal-derived material) is the primary, intenti
 ## Related Documentation
 
 - `science_and_ai_prompts/confidence_level_guidelines.md` - Confidence in ingredient detection
-- `science_and_ai_prompts/analyze_product.txt` - Product analysis prompt
-- `science_and_ai_prompts/detect_items.txt` - Multi-item detection prompt
+- [`science_and_ai_prompts/analyze_product.md`](analyze_product.md) - Product analysis prompt
+- [`science_and_ai_prompts/detect_items.md`](detect_items.md) - Multi-item detection prompt
 
 ---
 
