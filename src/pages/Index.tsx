@@ -42,6 +42,9 @@ const Index = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
 
+  // Debug log - no auth redirects should happen on Index page
+  console.log('Index page loaded - user:', user?.email || 'not logged in', 'loading:', loading);
+
   // Navigate to a new screen and add to history
   const navigateToScreen = (screen: Screen) => {
     setNavigationHistory(prev => [...prev, screen]);
