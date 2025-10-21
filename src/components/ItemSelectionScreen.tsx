@@ -284,18 +284,19 @@ const ItemSelectionScreen = ({
                   <div className={`flex flex-col sm:flex-row items-start justify-between gap-4 ${
                     isGrouped ? 'px-5 pb-5 pt-3' : 'p-5'
                   }`}>
-                    <div className="flex-1 w-full">
+                     <div className="flex-1 w-full">
                       {!isGrouped && (
                         <h3 className="font-bold text-lg text-white mb-2">{item.name}</h3>
                       )}
                       <p className="text-sm text-gray-300 mb-3 leading-relaxed">{item.reasoning}</p>
-                      <span className={`inline-block text-xs px-3 py-1 rounded-full font-medium ${
-                        item.confidence === 'High' ? 'bg-green-500/20 text-green-300' :
-                        item.confidence === 'Medium' ? 'bg-yellow-500/20 text-yellow-300' :
-                        'bg-red-500/20 text-red-300'
-                      }`}>
-                        {t('results.confidence')}: {item.confidence}
-                      </span>
+                      {item.confidence !== 'High' && (
+                        <span className={`inline-block text-xs px-3 py-1 rounded-full font-medium ${
+                          item.confidence === 'Medium' ? 'bg-yellow-500/20 text-yellow-300' :
+                          'bg-red-500/20 text-red-300'
+                        }`}>
+                          {t('results.confidence')}: {item.confidence}
+                        </span>
+                      )}
                     </div>
                     <Button
                       onClick={() => handleItemSelect(item.name)}

@@ -153,7 +153,12 @@ For each FOOD item or INGREDIENT you detect:
 
 1. Provide a clear name or description (for ingredients from composite dishes, include the source in parentheses)
 2. Determine if it LIKELY contains animal-derived ingredients (meat, dairy, eggs, fish, honey, gelatin, etc.)
-3. Explain your reasoning briefly
+3. Provide CONCISE, VALUE-ADDED reasoning:
+   - For animal-derived items: Include source animal classification, habitat/origin (wild-caught vs farmed), or culinary context
+   - For plant-based items: Brief explanation of why it's plant-based
+   - AVOID redundant statements like "[X] is a type of [animal], so this contains animal-derived ingredients"
+   - Example good reasoning: "Bottom-dwelling finfish, typically wild-caught. Popular in East Asian cuisines."
+   - Example bad reasoning: "Flounder is a type of fish, so this dish contains animal-derived ingredients."
 4. Rate your confidence level (High/Medium/Low)
 
 EXAMPLES OF CORRECT DECOMPOSITION:
