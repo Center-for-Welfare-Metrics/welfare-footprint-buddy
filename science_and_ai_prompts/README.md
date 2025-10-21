@@ -2,8 +2,6 @@
 
 Welcome! This folder contains the scientific and AI logic that powers the Welfare Footprint app's ability to analyze food products and provide welfare information.
 
-**Note:** This folder was previously named `prompts/` and was renamed to `science_and_ai_prompts/` on 2025-10-21 to better reflect its dual purpose.
-
 ## What's Inside
 
 This folder contains two types of files:
