@@ -1,21 +1,25 @@
 # Science and AI Prompts
 
-**Note:** This folder was previously named `prompts/` and was renamed to `science_and_ai_prompts/` on 2025-10-21 to better reflect its dual purpose: housing both AI prompt logic and scientific assumptions subject to review.
+Welcome! This folder contains the scientific and AI logic that powers the Welfare Footprint app's ability to analyze food products and provide welfare information.
 
-This directory contains:
-1. **AI prompt templates** used by the Welfare Footprint application (model-agnostic, compatible with Gemini, GPT-4 Vision, Claude with vision, etc.)
-2. **Scientific documentation** of assumptions, criteria, and frameworks that guide the AI's welfare assessments
+**Note:** This folder was previously named `prompts/` and was renamed to `science_and_ai_prompts/` on 2025-10-21 to better reflect its dual purpose.
 
-## Purpose
+## What's Inside
 
-Storing prompts in separate text files provides several benefits:
+This folder contains two types of files:
 
-1. **Transparency** - All prompts are visible and easily reviewable
-2. **Version Control** - Changes to prompts are tracked in git history
-3. **Easy Editing** - Update prompts without modifying code
-4. **Research & Publication** - Simple to export/share prompt text
-5. **Model Agnostic** - Same prompts work across different AI providers
-6. **Documentation** - Each file includes metadata about its purpose and expected I/O
+1. **AI Prompt Templates** - Instructions that tell the AI how to analyze food products and detect animal ingredients
+2. **Scientific Guidelines** - Rules and frameworks that ensure the AI's analysis is scientifically sound and transparent
+
+## Why This Matters
+
+By keeping these files separate from code, we ensure:
+
+- **Transparency** - Anyone can review how the AI makes decisions
+- **Easy Updates** - Scientists can improve the analysis without programming knowledge
+- **Version Tracking** - Every change is documented in the project history
+- **Shareability** - The prompts and criteria can be published in research papers
+- **Flexibility** - The same templates work with different AI models
 
 ## File Structure
 
@@ -51,28 +55,46 @@ PROMPT TEXT BEGINS BELOW:
 [Actual prompt text that gets sent to the AI model]
 ```
 
-## Available Prompts
+## Files in This Folder
 
-### 1. [detect_items.md](detect_items.md)
-**Purpose:** Multi-item detection and categorization  
-**Use Case:** When user uploads an image that may contain multiple products  
-**Output:** JSON array of detected items with animal ingredient analysis  
+### AI Prompt Templates
 
-### 2. [analyze_product.md](analyze_product.md)
-**Purpose:** Comprehensive welfare analysis of a single product  
-**Use Case:** Standard single-item analysis or when user confirms interpretation  
-**Output:** Detailed JSON with welfare assessment  
+These files contain instructions that guide the AI when analyzing food products:
 
-### 3. [analyze_focused_item.md](analyze_focused_item.md)
-**Purpose:** Focused analysis of specific item from multi-item image  
-**Use Case:** User selects one item from detection results to analyze  
-**Output:** Same as analyze_product.md but focused on specified item  
+#### [detect_items.md](detect_items.md)
+Helps the AI identify when a photo contains multiple food items (like a grocery haul or meal with several dishes). The AI lists each item it finds and performs a quick check for animal-derived ingredients.
 
-### 4. [suggest_ethical_swap.md](suggest_ethical_swap.md)
-**Purpose:** Generate ethical product swap suggestions based on user's welfare priorities  
-**Use Case:** When user requests alternative products aligned with their ethical lens preference (1-5)  
-**Output:** JSON with ethicalLensPosition, suggestions array (with confidence levels), and generalNote  
-**Input Variables:** PRODUCT_NAME, ANIMAL_INGREDIENTS, ETHICAL_LENS, LENS_TITLE, LENS_INSTRUCTION, OUTPUT_LANGUAGE
+#### [analyze_product.md](analyze_product.md)
+The main analysis tool. When you scan a single product, this prompt guides the AI to examine:
+- What the product is
+- Which animal ingredients it contains
+- How those animals were likely raised
+- What welfare concerns might exist
+
+#### [analyze_focused_item.md](analyze_focused_item.md)
+Used when you select one specific item from a multi-item photo. The AI focuses only on that item and ignores the rest of the image.
+
+#### [suggest_ethical_swap.md](suggest_ethical_swap.md)
+Recommends alternative products based on your welfare priorities. If you want to reduce animal suffering, this prompt helps the AI suggest better options that align with your values.
+
+### Scientific Guidelines
+
+These files define the scientific rules and frameworks the AI follows:
+
+#### [animal_ingredient_classification.md](animal_ingredient_classification.md)
+Explains how the AI categorizes ingredients as animal-derived or plant-based. Includes guidelines for ambiguous cases and common food additives.
+
+#### [confidence_level_guidelines.md](confidence_level_guidelines.md)
+Defines when the AI should be "highly confident," "moderately confident," or express "low confidence" in its analysis. This ensures honest communication about uncertainty.
+
+#### [ethical_lens_criteria.md](ethical_lens_criteria.md)
+Describes the five ethical perspectives users can choose from (ranging from "reduce the worst suffering" to "avoid all animal products"). The AI uses this to tailor recommendations.
+
+#### [production_system_methodology.md](production_system_methodology.md)
+Guidelines for how the AI infers production systems (conventional, free-range, organic, etc.) from labels, certifications, or product descriptions.
+
+#### [welfare_concerns_framework.md](welfare_concerns_framework.md)
+The core scientific framework that connects animal species, production systems, and specific welfare issues (like space restrictions, painful procedures, or separation from offspring).
 
 ## Template Variables
 
@@ -114,28 +136,30 @@ The `analyze-image` edge function automatically loads the appropriate prompt bas
 - `mode: 'analyze'` with `focusItem` → `analyze_focused_item.md`
 - `mode: 'analyze'` without `focusItem` → `analyze_product.md`
 
-## Modifying Prompts
+## How to Update These Files
 
-To update a prompt:
+If you're a scientist or researcher who wants to improve the AI's logic:
 
-1. Edit the `.md` file directly in the `/science_and_ai_prompts` folder
-2. Changes take effect immediately on next deployment
-3. No code changes required
-4. Git tracks all modifications for version control
+1. Open any `.md` file in this folder
+2. Make your edits directly in the text
+3. Save the file
+4. The changes will automatically apply the next time the app is updated
 
-**Best Practices:**
-- Test prompt changes with diverse images
-- Document significant changes in the VERSION section
-- Keep prompts model-agnostic (avoid model-specific instructions)
-- Maintain clear, structured output requirements
+**No programming required!** These files are written in plain language and can be edited like regular documents.
 
-## Exporting for Research
+**What to document:**
+- Add notes about any significant changes you make
+- Update version numbers when appropriate
+- Test your changes with a variety of products before finalizing
 
-To export a prompt for publication or research:
+## For Researchers and Publications
 
-1. Copy the text from `PROMPT TEXT BEGINS BELOW:` onward
-2. Or use the entire file to include metadata
-3. Reference the git commit hash for exact versioning
+All files in this folder are designed to be:
+- **Citable** - Reference specific versions using git commit history
+- **Exportable** - Copy and paste directly into research papers
+- **Transparent** - Every assumption and decision rule is documented
+
+You can use these files to show exactly how the Welfare Footprint methodology works, making the science fully reproducible.
 
 ## Model-Specific Considerations
 
@@ -164,16 +188,18 @@ While prompts are model-agnostic, be aware of:
 - Test with multiple images
 - Consider model-specific behavior
 
-## Contributing
+## Adding New Files
 
-When adding new prompts:
+If you want to create a new prompt or guideline:
 
-1. Create a new `.md` file in `/science_and_ai_prompts`
-2. Follow the standard structure (copy from existing file)
-3. Add comprehensive metadata in the header
-4. Update this README with the new prompt
-5. Test thoroughly before committing
-6. Update `prompt-loader.ts` if needed
+1. Create a new `.md` file with a descriptive name
+2. Look at existing files to see the standard format
+3. Add a clear header explaining what the file does
+4. Update this README to include your new file in the appropriate section
+5. Test your changes to make sure everything works
+6. Save and commit your work
+
+If you're not sure how to do this, ask a developer for help!
 
 ## Version History
 
