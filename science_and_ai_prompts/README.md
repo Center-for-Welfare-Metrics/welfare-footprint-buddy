@@ -88,7 +88,7 @@ If you notice something unclear, outdated, or scientifically questionable:
 
 ## 🧬 Relation to the Welfare Footprint Framework
 
-This app is a front-end prototype for insights grounded in the **Welfare Footprint Framework (WFF)** — a scientific method that quantifies animal welfare in terms of **intensity and duration** of affective experiences: primarily **Pain** and **Pleasure**.
+This app is a front-end prototype for insights that eventually will be grounded in the **Welfare Footprint Framework (WFF)**. But for now it serves as a **testing ground** to ensure the AI-powered system aligns with reasonable welfare standards — and as a vehicle for public communication of welfare information.
 
 Even in its current stage, this tool lets us:
 
@@ -96,8 +96,6 @@ Even in its current stage, this tool lets us:
 - Test public engagement with different **Ethical Lens** framings
 - Experiment with natural language prompts for clarity and emotional resonance
 - Gather feedback to improve both **AI logic** and **scientific grounding**
-
-It serves as a **testing ground** to ensure the AI-powered system aligns with WFF standards — and as a vehicle for public communication of welfare data.
 
 ---
 
