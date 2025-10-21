@@ -15,19 +15,13 @@ This folder contains two key types of files:
 - **AI Prompt Templates** – Instructions that guide how the AI models analyze food images and generate welfare assessments.
 - **Scientific Guidelines** – Frameworks that ensure assessments are grounded in transparent, evidence-based science.
 
----
 
-## 🔍 Why This Matters
+Some of these files are quite fun to explore — like [`ethical_lens_criteria.md`](ethical_lens_criteria.md) or [`welfare_concerns_framework.md`](welfare_concerns_framework.md), which dive into how moral priorities and welfare issues are handled. Others are definitely on the geekier side and might feel a bit dry unless you're into AI prompts or backend logic.
 
-Keeping prompts and scientific logic separate from application code ensures:
-
-- **Transparency** – Anyone can review how the AI makes decisions.
-- **Easy Updates** – Scientists can improve the analysis without needing to touch the code.
-- **Version Tracking** – Every change is documented in the project history.
-- **Shareability** – Prompts and criteria can be published or cited in academic work.
-- **Model Flexibility** – Templates work across multiple AI models.
+I’ll try to organize things better soon, but for now, sorry if it feels a bit all over the place. Poke around, skip what’s boring, and let me know if anything seems confusing or sparks ideas.
 
 ---
+
 
 ## 📄 Files in This Folder
 
@@ -115,6 +109,20 @@ Suggestions on wording, design, ethics, or scientific clarity are all welcome an
 
 
 ## 🧑‍💻 Developer Reference (Prompt Engineers Only)
+
+
+
+### 🔍 Why keeping prompts and scientific logic separate from application code Matters
+
+ It ensures:
+
+- **Transparency** – Anyone can review how the AI makes decisions.
+- **Easy Updates** – Scientists can improve the analysis without needing to touch the code.
+- **Version Tracking** – Every change is documented in the project history.
+- **Shareability** – Prompts and criteria can be published or cited in academic work.
+- **Model Flexibility** – Templates work across multiple AI models.
+
+---
 
 ### File Structure
 
