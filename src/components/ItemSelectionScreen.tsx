@@ -131,24 +131,85 @@ const ItemSelectionScreen = ({
   };
 
 
-  // Split items that contain multiple comma-separated items into individual cards
+  // Split items that contain multiple comma-separated items OR extract ingredients from reasoning
   const splitItems = (items: DetectedItem[]): DetectedItem[] => {
     const result: DetectedItem[] = [];
     
     items.forEach(item => {
-      // Check if item name contains commas (multiple items) - ALWAYS split comma-separated items
+      // Check if this looks like a composite description mentioning multiple ingredients
+      const lowerReasoning = item.reasoning.toLowerCase();
+      const lowerName = item.name.toLowerCase();
+      
+      // Detect if reasoning mentions multiple animal ingredients (eggs, lard, meat, etc.)
+      const mentionsEgg = lowerReasoning.includes('egg');
+      const mentionsLard = lowerReasoning.includes('lard') || lowerReasoning.includes('pork fat');
+      const mentionsMeat = lowerReasoning.includes('meat filling') || lowerReasoning.includes('meat');
+      const mentionsDairy = lowerReasoning.includes('dairy') || lowerReasoning.includes('cheese') || lowerReasoning.includes('milk');
+      
+      const animalIngredientsCount = [mentionsEgg, mentionsLard, mentionsMeat, mentionsDairy].filter(Boolean).length;
+      
+      // If reasoning mentions 2+ animal ingredients, extract them as separate items
+      if (animalIngredientsCount >= 2) {
+        console.log('🔍 Extracting ingredients from composite item:', item.name);
+        
+        // Extract egg if mentioned
+        if (mentionsEgg) {
+          const eggMatch = item.reasoning.match(/[Tt]he user specified that these .* contain eggs?|contain(?:s|ing)? eggs?/i);
+          result.push({
+            name: `Eggs (from ${item.name})`,
+            likelyHasAnimalIngredients: true,
+            reasoning: eggMatch ? eggMatch[0] : 'This item contains eggs.',
+            confidence: item.confidence
+          });
+        }
+        
+        // Extract lard/pork fat if mentioned
+        if (mentionsLard) {
+          const lardMatch = item.reasoning.match(/[Ll]ard \(pork fat\)[^.]*|contain lard[^.]*/i);
+          result.push({
+            name: `Lard/Pork Fat (from ${item.name})`,
+            likelyHasAnimalIngredients: true,
+            reasoning: lardMatch ? lardMatch[0] : 'Contains lard (pork fat).',
+            confidence: item.confidence
+          });
+        }
+        
+        // Extract meat if mentioned
+        if (mentionsMeat && !mentionsLard) {
+          const meatMatch = item.reasoning.match(/meat fillings?[^.]*|may contain meat[^.]*/i);
+          result.push({
+            name: `Meat (from ${item.name})`,
+            likelyHasAnimalIngredients: true,
+            reasoning: meatMatch ? meatMatch[0] : 'May contain meat fillings.',
+            confidence: 'Medium'
+          });
+        }
+        
+        // Extract dairy if mentioned
+        if (mentionsDairy) {
+          const dairyMatch = item.reasoning.match(/[Dd]airy[^.]*|cheese[^.]*|milk[^.]*/i);
+          result.push({
+            name: `Dairy (from ${item.name})`,
+            likelyHasAnimalIngredients: true,
+            reasoning: dairyMatch ? dairyMatch[0] : 'Contains dairy products.',
+            confidence: item.confidence
+          });
+        }
+        
+        return; // Skip adding the composite item itself
+      }
+      
+      // Check if item name contains commas (multiple items) - split by comma
       if (item.name.includes(',')) {
-        // Split by comma and create individual items
         const itemNames = item.name.split(',').map(n => n.trim()).filter(n => n.length > 0);
         
         console.log('🔪 Splitting comma-separated item:', item.name, '→', itemNames);
         
         itemNames.forEach(name => {
-          // Generate item-specific reasoning
           const lowerName = name.toLowerCase();
           let itemReasoning = item.reasoning;
           
-          // Try to extract item-specific reasoning from the original text
+          // Try to extract item-specific reasoning
           const reasoningSentences = item.reasoning.split(/[.!?]+/).filter(s => s.trim().length > 0);
           const relevantSentence = reasoningSentences.find(sentence => 
             sentence.toLowerCase().includes(lowerName) || 
@@ -158,13 +219,13 @@ const ItemSelectionScreen = ({
           if (relevantSentence) {
             itemReasoning = relevantSentence.trim() + '.';
           } else {
-            // Fallback: generic reasoning based on common ingredients
-            if (lowerName.includes('cream') || lowerName.includes('milk') || lowerName.includes('cheese') || lowerName.includes('butter') || lowerName.includes('yogurt')) {
+            // Fallback: generic reasoning
+            if (lowerName.includes('cream') || lowerName.includes('milk') || lowerName.includes('cheese') || lowerName.includes('butter')) {
               itemReasoning = 'This item likely contains dairy products.';
             } else if (lowerName.includes('egg')) {
               itemReasoning = 'This item contains eggs.';
-            } else if (lowerName.includes('meat') || lowerName.includes('beef') || lowerName.includes('pork') || lowerName.includes('chicken')) {
-              itemReasoning = 'This item contains meat.';
+            } else if (lowerName.includes('meat') || lowerName.includes('beef') || lowerName.includes('pork') || lowerName.includes('lard')) {
+              itemReasoning = 'This item contains meat or meat products.';
             } else if (lowerName.includes('fish') || lowerName.includes('seafood')) {
               itemReasoning = 'This item contains seafood.';
             } else {
