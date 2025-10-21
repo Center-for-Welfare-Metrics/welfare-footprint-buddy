@@ -189,6 +189,10 @@ const ItemSelectionScreen = ({
 
   const animalItems = splitItems(items.filter(item => item.likelyHasAnimalIngredients));
   const plantItems = splitItems(items.filter(item => !item.likelyHasAnimalIngredients));
+  
+  // Check if summary indicates more than 10 items were detected
+  const hasLimitedItems = summary.toLowerCase().includes('more than 10') || 
+                          summary.toLowerCase().includes('showing the 10 most prominent');
 
   return (
     <div className="flex flex-col items-center pb-32 max-w-4xl mx-auto">
@@ -225,6 +229,15 @@ const ItemSelectionScreen = ({
             <AlertCircle className="h-5 w-5 text-orange-400" />
             {t('itemSelection.animalDerivedItems')} ({animalItems.length})
           </h2>
+          
+          {/* Limited Items Notice */}
+          {hasLimitedItems && (
+            <div className="glass-card rounded-xl p-4 mb-4 bg-amber-500/10 border border-amber-500/30">
+              <p className="text-sm text-amber-200 leading-relaxed">
+                <span className="font-semibold">Note:</span> More than 10 animal-derived ingredients detected. Showing the 10 most prominent items based on visual prominence or estimated quantity in the image.
+              </p>
+            </div>
+          )}
           <div className="grid grid-cols-1 gap-4">
             {animalItems.map((item, index) => {
               const categoryStyle = getCategoryStyle(item.name);

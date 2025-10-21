@@ -186,8 +186,9 @@ If the image contains ONLY non-food elements (living animals, people, landscapes
 - DO NOT mention animal-derived ingredients unless actual food products are visible
 
 DETECTION GUIDELINES:
-- List EVERY distinct FOOD PRODUCT and INGREDIENT visible
+- List EVERY distinct FOOD PRODUCT and INGREDIENT visible as SEPARATE items
 - DECOMPOSE composite dishes into individual animal-derived ingredients (see examples above)
+- **CRITICAL: EACH INGREDIENT MUST BE ITS OWN ITEM** - Never combine multiple ingredients into a single item entry
 - For packaged products, try to read visible labels or brand names
 - **DIFFERENTIATE MULTIPLE INSTANCES**: When multiple items of the same product type are visible (e.g., multiple cheese packages), make an effort to differentiate them using visible characteristics:
   * Include brand names or product names if readable on packaging (e.g., "Sargento cheese", "Kraft cheddar")
@@ -195,6 +196,11 @@ DETECTION GUIDELINES:
   * Use package colors or visual features (e.g., "Cheese in orange package", "Cheese in blue wrapper")
   * Combine multiple distinguishing features when possible (e.g., "Brand X cheese in red package")
   * NEVER use generic identical names for multiple distinct products - each item should be uniquely identifiable
+- **LIMIT TO TOP 10 ANIMAL-DERIVED ITEMS**: When 10 or more animal-derived ingredients are detected:
+  * Display ONLY the top 10 most visually prominent or abundant items
+  * Prioritize items based on visual dominance in the image (e.g., large pieces of meat, prominent ingredients)
+  * Or prioritize by estimated quantity inferred from packaging, label, or dish context
+  * In the summary, note: "More than 10 animal-derived ingredients detected. Showing the 10 most prominent items based on visual prominence or estimated quantity."
 - **USE PRODUCT KNOWLEDGE**: Infer likely ingredients based on product type and standard formulations:
   * Most chocolates (especially milk, white, and "diet" varieties) contain dairy unless explicitly labeled as dark/vegan
   * "Branco" (white chocolate) ALWAYS contains milk/dairy products
