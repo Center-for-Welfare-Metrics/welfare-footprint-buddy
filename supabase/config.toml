@@ -1,10 +1,13 @@
 project_id = "bnzhymtlxqtwcwwoirdl"
 
 [functions.analyze-image]
-verify_jwt = false
+verify_jwt = true
 
 [functions.generate-text]
-verify_jwt = false
+verify_jwt = true
+
+[functions.suggest-ethical-swap]
+verify_jwt = true
 
 [functions.admin-cache-control]
 verify_jwt = true
