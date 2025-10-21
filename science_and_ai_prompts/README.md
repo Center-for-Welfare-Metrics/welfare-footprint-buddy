@@ -53,22 +53,22 @@ PROMPT TEXT BEGINS BELOW:
 
 ## Available Prompts
 
-### 1. detect_items.txt
+### 1. [detect_items.md](detect_items.md)
 **Purpose:** Multi-item detection and categorization  
 **Use Case:** When user uploads an image that may contain multiple products  
 **Output:** JSON array of detected items with animal ingredient analysis  
 
-### 2. analyze_product.txt
+### 2. [analyze_product.md](analyze_product.md)
 **Purpose:** Comprehensive welfare analysis of a single product  
 **Use Case:** Standard single-item analysis or when user confirms interpretation  
 **Output:** Detailed JSON with welfare assessment  
 
-### 3. analyze_focused_item.txt
+### 3. [analyze_focused_item.md](analyze_focused_item.md)
 **Purpose:** Focused analysis of specific item from multi-item image  
 **Use Case:** User selects one item from detection results to analyze  
-**Output:** Same as analyze_product.txt but focused on specified item  
+**Output:** Same as analyze_product.md but focused on specified item  
 
-### 4. suggest_ethical_swap.txt
+### 4. [suggest_ethical_swap.md](suggest_ethical_swap.md)
 **Purpose:** Generate ethical product swap suggestions based on user's welfare priorities  
 **Use Case:** When user requests alternative products aligned with their ethical lens preference (1-5)  
 **Output:** JSON with ethicalLensPosition, suggestions array (with confidence levels), and generalNote  
@@ -110,15 +110,15 @@ const prompt = await loadAndProcessPrompt('detect_items', {
 
 The `analyze-image` edge function automatically loads the appropriate prompt based on mode:
 
-- `mode: 'detect'` → `detect_items.txt`
-- `mode: 'analyze'` with `focusItem` → `analyze_focused_item.txt`
-- `mode: 'analyze'` without `focusItem` → `analyze_product.txt`
+- `mode: 'detect'` → `detect_items.md`
+- `mode: 'analyze'` with `focusItem` → `analyze_focused_item.md`
+- `mode: 'analyze'` without `focusItem` → `analyze_product.md`
 
 ## Modifying Prompts
 
 To update a prompt:
 
-1. Edit the `.txt` file directly in the `/science_and_ai_prompts` folder
+1. Edit the `.md` file directly in the `/science_and_ai_prompts` folder
 2. Changes take effect immediately on next deployment
 3. No code changes required
 4. Git tracks all modifications for version control
@@ -168,7 +168,7 @@ While prompts are model-agnostic, be aware of:
 
 When adding new prompts:
 
-1. Create a new `.txt` file in `/science_and_ai_prompts`
+1. Create a new `.md` file in `/science_and_ai_prompts`
 2. Follow the standard structure (copy from existing file)
 3. Add comprehensive metadata in the header
 4. Update this README with the new prompt
@@ -177,9 +177,10 @@ When adding new prompts:
 
 ## Version History
 
+- **v1.2** (2025-10-21) - Converted all prompt files from .txt to .md format with Markdown formatting
 - **v1.1** (2025-01-21) - Added ethical swap suggestions prompt
-  - suggest_ethical_swap.txt - Ethical product alternatives based on user's welfare priorities
+  - [suggest_ethical_swap.md](suggest_ethical_swap.md) - Ethical product alternatives based on user's welfare priorities
 - **v1.0** (2025-10-10) - Initial implementation with three core prompts
-  - detect_items.txt - Multi-item detection
-  - analyze_product.txt - Standard product analysis  
-  - analyze_focused_item.txt - Focused item analysis
+  - [detect_items.md](detect_items.md) - Multi-item detection
+  - [analyze_product.md](analyze_product.md) - Standard product analysis  
+  - [analyze_focused_item.md](analyze_focused_item.md) - Focused item analysis
