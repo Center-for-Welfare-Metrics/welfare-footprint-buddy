@@ -98,7 +98,7 @@ serve(async (req) => {
     console.log(`Generating ethical swap suggestions for: ${productName}, ethical lens: ${ethicalLens}`);
 
     // Define the ethical lens positions
-    // Scientific documentation: See prompts/ethical_lens_criteria.md for detailed
+    // Scientific documentation: See science_and_ai_prompts/ethical_lens_criteria.md for detailed
     // rationale, guidelines, and review process for these criteria
     const lensDescriptions = {
       1: {

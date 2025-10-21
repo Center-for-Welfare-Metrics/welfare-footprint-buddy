@@ -51,7 +51,7 @@ The app prioritizes **transparency**, **scientific accuracy**, and **user privac
 ### AI Integration
 - **Primary Model**: Google Gemini 2.0 Flash Experimental
 - **API**: Gemini REST API (vision-capable)
-- **Prompt System**: Model-agnostic text files in `/prompts` directory
+- **Prompt System**: Model-agnostic text files in `/science_and_ai_prompts` directory
 
 ---
 
@@ -224,7 +224,7 @@ if (response.success) {
 
 ### Prompt System
 
-All AI prompts are stored in `/prompts` as version-controlled text files:
+All AI prompts are stored in `/science_and_ai_prompts` as version-controlled text files:
 
 - **`detect_items.txt`**: Multi-item detection prompt
 - **`analyze_product.txt`**: Comprehensive welfare analysis prompt
@@ -356,7 +356,7 @@ interface AnalysisData {
 ## Related Documentation
 
 - **[AI Handler Proposal](./ai-handler-proposal.md)**: Planned abstraction for AI providers
-- **[Prompt System Guide](../prompts/README.md)**: How to use and update prompts
+- **[Prompt System Guide](../science_and_ai_prompts/README.md)**: How to use and update prompts
 - **[Technical Guide](../Technical_Guide_Welfare_Footprint_App_Updated.md)**: Detailed implementation guide
 
 ---

@@ -114,10 +114,10 @@ Variables can be:
 
 ### Step 1: Create the Prompt File
 
-Create a new `.txt` file in the `/prompts` directory:
+Create a new `.txt` file in the `/science_and_ai_prompts` directory:
 
 ```bash
-touch prompts/my_new_prompt.txt
+touch science_and_ai_prompts/my_new_prompt.txt
 ```
 
 ### Step 2: Add the Standard Header

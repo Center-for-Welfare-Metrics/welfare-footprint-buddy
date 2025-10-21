@@ -1,6 +1,10 @@
-# AI Prompt Templates
+# Science and AI Prompts
 
-This directory contains all AI prompt templates used by the Welfare Footprint application. These prompts are model-agnostic and can be used with any vision-capable language model (Gemini, GPT-4 Vision, Claude with vision, etc.).
+**Note:** This folder was previously named `prompts/` and was renamed to `science_and_ai_prompts/` on 2025-10-21 to better reflect its dual purpose: housing both AI prompt logic and scientific assumptions subject to review.
+
+This directory contains:
+1. **AI prompt templates** used by the Welfare Footprint application (model-agnostic, compatible with Gemini, GPT-4 Vision, Claude with vision, etc.)
+2. **Scientific documentation** of assumptions, criteria, and frameworks that guide the AI's welfare assessments
 
 ## Purpose
 
@@ -114,7 +118,7 @@ The `analyze-image` edge function automatically loads the appropriate prompt bas
 
 To update a prompt:
 
-1. Edit the `.txt` file directly in the `/prompts` folder
+1. Edit the `.txt` file directly in the `/science_and_ai_prompts` folder
 2. Changes take effect immediately on next deployment
 3. No code changes required
 4. Git tracks all modifications for version control
@@ -146,7 +150,7 @@ While prompts are model-agnostic, be aware of:
 
 ### Prompt Not Loading
 - Check file path in `prompt-loader.ts`
-- Verify file exists in `/prompts` directory
+- Verify file exists in `/science_and_ai_prompts` directory
 - Check for syntax errors in template variables
 
 ### Variables Not Substituting
@@ -164,7 +168,7 @@ While prompts are model-agnostic, be aware of:
 
 When adding new prompts:
 
-1. Create a new `.txt` file in `/prompts`
+1. Create a new `.txt` file in `/science_and_ai_prompts`
 2. Follow the standard structure (copy from existing file)
 3. Add comprehensive metadata in the header
 4. Update this README with the new prompt

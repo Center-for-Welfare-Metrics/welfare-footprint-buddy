@@ -202,10 +202,10 @@ Use HIGH confidence when product categories have well-documented standard ingred
 
 ## Related Documentation
 
-- `prompts/analyze_product.txt` - Product analysis prompt with confidence instructions
-- `prompts/analyze_focused_item.txt` - Focused item analysis prompt
-- `prompts/detect_items.txt` - Multi-item detection prompt
-- `prompts/README.md` - Prompt system overview
+- `science_and_ai_prompts/analyze_product.txt` - Product analysis prompt with confidence instructions
+- `science_and_ai_prompts/analyze_focused_item.txt` - Focused item analysis prompt
+- `science_and_ai_prompts/detect_items.txt` - Multi-item detection prompt
+- `science_and_ai_prompts/README.md` - Prompt system overview
 
 ---
 

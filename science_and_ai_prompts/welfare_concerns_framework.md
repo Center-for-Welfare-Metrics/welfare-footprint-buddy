@@ -371,9 +371,9 @@ For battery cage eggs:
 
 ## Related Documentation
 
-- `prompts/production_system_methodology.md` - How production systems relate to welfare concerns
-- `prompts/confidence_level_guidelines.md` - Confidence in welfare assessments
-- `prompts/analyze_product.txt` - Product analysis prompt
+- `science_and_ai_prompts/production_system_methodology.md` - How production systems relate to welfare concerns
+- `science_and_ai_prompts/confidence_level_guidelines.md` - Confidence in welfare assessments
+- `science_and_ai_prompts/analyze_product.txt` - Product analysis prompt
 - Scientific literature on animal welfare (references available upon request)
 
 ---

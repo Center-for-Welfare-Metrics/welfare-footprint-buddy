@@ -13,7 +13,7 @@ The Welfare Footprint application has been refactored to use a **model-agnostic 
 - Model-specific structure mixed with prompt content
 
 ### After Refactoring
-- All prompts stored in `/prompts` directory as `.txt` files
+- All prompts stored in `/science_and_ai_prompts` directory as `.txt` files
 - Prompts can be updated without touching code
 - Full version control and documentation
 - Model-agnostic design works with any vision AI
@@ -22,7 +22,7 @@ The Welfare Footprint application has been refactored to use a **model-agnostic 
 ## New File Structure
 
 ```
-prompts/
+science_and_ai_prompts/
 ├── README.md                    # Overview and documentation
 ├── USAGE_GUIDE.md              # Detailed usage instructions
 ├── detect_items.txt            # Multi-item detection prompt
@@ -90,13 +90,13 @@ const prompt = await loadAndProcessPrompt('detect_items', {
 
 ### Update a Prompt
 
-1. Edit the `.txt` file in `/prompts` directory
+1. Edit the `.txt` file in `/science_and_ai_prompts` directory
 2. Changes apply on next deployment
 3. No code changes needed
 
 ### Add a New Prompt
 
-1. Create new `.txt` file in `/prompts`
+1. Create new `.txt` file in `/science_and_ai_prompts`
 2. Follow the standard header format
 3. Write your prompt
 4. Use `loadAndProcessPrompt('your_prompt_name', variables)`
@@ -166,7 +166,7 @@ The refactoring maintains **100% identical functionality**:
 3. Calls loadAndProcessPrompt(name, variables)
    ↓
 4. Prompt loader:
-   - Reads .txt file from /prompts
+   - Reads .txt file from /science_and_ai_prompts
    - Extracts prompt text (removes metadata)
    - Substitutes template variables
    ↓
@@ -214,9 +214,9 @@ Potential improvements to the system:
 
 ## Documentation
 
-- **[/prompts/README.md](./prompts/README.md)** - Prompt system overview
-- **[/prompts/USAGE_GUIDE.md](./prompts/USAGE_GUIDE.md)** - Detailed usage guide
-- **[Prompt Files](./prompts/)** - Individual prompt templates
+- **[/science_and_ai_prompts/README.md](./science_and_ai_prompts/README.md)** - Prompt system overview
+- **[/science_and_ai_prompts/USAGE_GUIDE.md](./science_and_ai_prompts/USAGE_GUIDE.md)** - Detailed usage guide
+- **[Prompt Files](./science_and_ai_prompts/)** - Individual prompt templates
 
 ## Testing
 
