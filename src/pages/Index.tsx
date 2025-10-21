@@ -42,13 +42,6 @@ const Index = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
 
-  // Require authentication for all features
-  useEffect(() => {
-    if (!loading && !user) {
-      navigate('/auth');
-    }
-  }, [user, loading, navigate]);
-
   // Navigate to a new screen and add to history
   const navigateToScreen = (screen: Screen) => {
     setNavigationHistory(prev => [...prev, screen]);
@@ -315,23 +308,6 @@ const Index = () => {
 
   // Determine if Home icon should be shown
   const showHomeIcon = currentScreen !== 'home' && currentScreen !== 'scanner';
-
-  // Show loading state while checking authentication
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500 mx-auto mb-4"></div>
-          <p className="text-muted-foreground">{t('common.loading')}</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Don't render main content if not authenticated
-  if (!user) {
-    return null;
-  }
 
   return (
     <div className="container mx-auto max-w-4xl px-4">
