@@ -151,12 +151,26 @@ For each FOOD item or INGREDIENT you detect:
 
 1. Provide a clear name or description (for ingredients from composite dishes, include the source in parentheses)
 2. Determine if it LIKELY contains animal-derived ingredients (meat, dairy, eggs, fish, honey, gelatin, etc.)
-3. Provide CONCISE, VALUE-ADDED reasoning:
-   - For animal-derived items: Include source animal classification, habitat/origin (wild-caught vs farmed), or culinary context
-   - For plant-based items: Brief explanation of why it's plant-based
-   - AVOID redundant statements like "[X] is a type of [animal], so this contains animal-derived ingredients"
-   - Example good reasoning: "Bottom-dwelling finfish, typically wild-caught. Popular in East Asian cuisines."
-   - Example bad reasoning: "Flounder is a type of fish, so this dish contains animal-derived ingredients."
+3. Provide INTELLIGENT, SELECTIVE reasoning:
+   - **ONLY provide reasoning if there is something specific, informative, or culturally relevant to say**
+   - **For obvious animal-derived items** (tuna, salmon, beef, chicken, cod, etc.): Leave reasoning EMPTY or minimal unless there's cultural/contextual value to add
+   - **DO provide reasoning when:**
+     * The item is uncommon, exotic, or culturally specific (e.g., "Bottarga is a Mediterranean delicacy made from salted fish roe")
+     * The origin or production method is notable (e.g., "Wild-caught Alaskan salmon", "Free-range organic eggs")
+     * The culinary context adds value (e.g., "Traditional Georgian cheese used in Khachapuri", "Mozzarella di Bufala made from water buffalo milk")
+     * There's ambiguity that needs clarification (e.g., "May contain dairy in the breading")
+   - **NEVER provide redundant reasoning** like:
+     * ❌ "Tuna is a fish product, therefore it is animal-derived"
+     * ❌ "Salmon is a type of fish, so this contains animal-derived ingredients"
+     * ❌ "Dried cod is a fish product"
+     * ❌ "Cheese is a dairy product made from milk"
+     * ❌ "[X] is a [animal type], therefore animal-derived"
+   - **Example good reasoning** (add value):
+     * ✓ "Bottom-dwelling finfish, typically wild-caught. Popular in East Asian cuisines."
+     * ✓ "Bottarga is a Mediterranean delicacy made from salted fish roe, common in Italian and Greek cuisine."
+     * ✓ "Traditional Georgian sulguni cheese made from cow's milk."
+     * ✓ "" (empty is acceptable for obvious items like "Tuna", "Salmon", "Chicken breast")
+   - For plant-based items: Brief explanation only if there's potential confusion or it's not obvious
 4. Rate your confidence level (High/Medium/Low)
 
 ### Examples of Correct Decomposition
