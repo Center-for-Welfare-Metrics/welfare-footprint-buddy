@@ -243,7 +243,19 @@ Return ONLY valid JSON with this exact structure:
 
 ### Summary Field Guidelines
 
-The `summary` field should provide a **neutral, factual description** of what's visible in the image. DO NOT include welfare-related judgments or ingredient assessments.
+🚨 **CRITICAL RULE FOR SUMMARY FIELD** 🚨
+
+The `summary` field should provide a **neutral, factual description** of what's visible in the image. 
+
+**ABSOLUTELY FORBIDDEN IN SUMMARY:**
+- ❌ "contains animal-derived ingredients"
+- ❌ "likely has animal ingredients"
+- ❌ "may contain animal-derived ingredients"
+- ❌ "The dish may contain animal-derived ingredients in the sauce"
+- ❌ ANY mention of animal ingredients, animal products, or welfare
+- ❌ ANY speculation about ingredients not visible
+
+The summary is ONLY for describing what you SEE, not for analyzing ingredients. Ingredient analysis belongs ONLY in the `items` array.
 
 **Include:**
 - Type of food or product (e.g., "packaged snacks", "prepared meal", "bento box")
@@ -251,21 +263,19 @@ The `summary` field should provide a **neutral, factual description** of what's 
 - Cultural, regional, or culinary context (e.g., "appears to be a Japanese bento box", "Latin American grilled meat dish", "Georgian Khachapuri bread")
 - Product category (e.g., "looks like a menu", "packaged product", "homemade dish")
 
-**DO NOT include:**
-- Statements like "contains animal-derived ingredients" or "likely has animal ingredients"
-- Welfare or ethical judgments
-- Ingredient analysis (this belongs in the `items` array)
-
 **Example Good Summaries:**
 - "The image shows a Japanese rice bowl (donburi) with salmon, egg, and rice."
 - "The image contains three packaged chocolate bars with visible brand labels."
 - "The image displays a Georgian Khachapuri bread boat with cheese and egg."
 - "The image shows tamales on a plate with salsa on the side."
+- "The image shows a pasta dish with visible sauce."
 
 **Example Bad Summaries:**
 - "The image shows a rice bowl with salmon and egg, both animal-derived ingredients."
 - "These products likely contain animal-derived ingredients."
 - "The image contains animal products from fish and poultry."
+- "The dish may contain animal-derived ingredients in the sauce."
+- "The pasta likely contains dairy in the sauce."
 
 ### Language Requirement
 
