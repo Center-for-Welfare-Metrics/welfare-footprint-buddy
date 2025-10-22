@@ -43,7 +43,15 @@
     "resetPasswordDescription": "Ingresa tu correo para recibir un enlace de restablecimiento",
     "sendResetLink": "Enviar Enlace",
     "resetEmailSent": "¡Enlace de restablecimiento enviado! Revisa tu correo.",
-    "backToLogin": "Volver al inicio de sesión"
+    "backToLogin": "Volver al inicio de sesión",
+    "setNewPassword": "Establecer Nueva Contraseña",
+    "setNewPasswordDescription": "Ingresa tu nueva contraseña a continuación",
+    "newPassword": "Nueva Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "updatePassword": "Actualizar Contraseña",
+    "passwordUpdated": "¡Contraseña actualizada exitosamente!",
+    "passwordMismatch": "Las contraseñas no coinciden",
+    "passwordTooShort": "La contraseña debe tener al menos 8 caracteres"
   },
   "profile": {
     "yourProfile": "Tu Perfil",

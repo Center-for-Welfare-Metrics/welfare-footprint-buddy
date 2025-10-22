@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { Separator } from '@/components/ui/separator';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
+import { supabase } from '@/integrations/supabase/client';
 
 // Validation schema for authentication
 const authSchema = z.object({
@@ -20,13 +21,29 @@ const authSchema = z.object({
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [isRecoveryMode, setIsRecoveryMode] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
   const { signUp, signIn, signInWithGoogle, user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useTranslation();
+
+  // Check if user is in password recovery mode
+  useEffect(() => {
+    const hashParams = new URLSearchParams(location.hash.substring(1));
+    const type = hashParams.get('type');
+    
+    if (type === 'recovery') {
+      setIsRecoveryMode(true);
+      setIsForgotPassword(false);
+      setIsLogin(false);
+    }
+  }, [location]);
 
   // Redirect authenticated users to home
   useEffect(() => {
@@ -121,15 +138,56 @@ const Auth = () => {
     }
   };
 
+  const handleUpdatePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      if (newPassword !== confirmPassword) {
+        toast.error(t('auth.passwordMismatch'));
+        return;
+      }
+
+      if (newPassword.length < 8) {
+        toast.error(t('auth.passwordTooShort'));
+        return;
+      }
+
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success(t('auth.passwordUpdated'));
+        setIsRecoveryMode(false);
+        setNewPassword('');
+        setConfirmPassword('');
+        navigate('/');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <Card className="w-full max-w-md bg-card border-border">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center text-foreground">
-            {isForgotPassword ? t('auth.resetPassword') : isLogin ? t('auth.welcomeBack') : t('auth.createAccount')}
+            {isRecoveryMode 
+              ? t('auth.setNewPassword') 
+              : isForgotPassword 
+              ? t('auth.resetPassword') 
+              : isLogin 
+              ? t('auth.welcomeBack') 
+              : t('auth.createAccount')}
           </CardTitle>
           <CardDescription className="text-center text-muted-foreground">
-            {isForgotPassword
+            {isRecoveryMode
+              ? t('auth.setNewPasswordDescription')
+              : isForgotPassword
               ? t('auth.resetPasswordDescription')
               : isLogin
               ? t('auth.signInDescription')
@@ -137,7 +195,39 @@ const Auth = () => {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {isForgotPassword ? (
+          {isRecoveryMode ? (
+            <form onSubmit={handleUpdatePassword} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="new-password" className="text-foreground">{t('auth.newPassword')}</Label>
+                <Input
+                  id="new-password"
+                  type="password"
+                  placeholder={t('auth.passwordPlaceholder')}
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                  minLength={8}
+                  className="bg-muted border-border text-foreground"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirm-password" className="text-foreground">{t('auth.confirmPassword')}</Label>
+                <Input
+                  id="confirm-password"
+                  type="password"
+                  placeholder={t('auth.passwordPlaceholder')}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  minLength={8}
+                  className="bg-muted border-border text-foreground"
+                />
+              </div>
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? t('common.loading') : t('auth.updatePassword')}
+              </Button>
+            </form>
+          ) : isForgotPassword ? (
             <form onSubmit={handlePasswordReset} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="reset-email" className="text-foreground">{t('auth.email')}</Label>

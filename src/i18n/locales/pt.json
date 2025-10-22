@@ -43,7 +43,15 @@
     "resetPasswordDescription": "Digite seu e-mail para receber o link de redefinição",
     "sendResetLink": "Enviar Link",
     "resetEmailSent": "Link de redefinição enviado! Verifique seu e-mail.",
-    "backToLogin": "Voltar ao login"
+    "backToLogin": "Voltar ao login",
+    "setNewPassword": "Definir Nova Senha",
+    "setNewPasswordDescription": "Digite sua nova senha abaixo",
+    "newPassword": "Nova Senha",
+    "confirmPassword": "Confirmar Senha",
+    "updatePassword": "Atualizar Senha",
+    "passwordUpdated": "Senha atualizada com sucesso!",
+    "passwordMismatch": "As senhas não coincidem",
+    "passwordTooShort": "A senha deve ter pelo menos 8 caracteres"
   },
   "profile": {
     "yourProfile": "Seu Perfil",

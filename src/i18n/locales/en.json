@@ -43,7 +43,15 @@
     "resetPasswordDescription": "Enter your email to receive a password reset link",
     "sendResetLink": "Send Reset Link",
     "resetEmailSent": "Password reset link sent! Check your email.",
-    "backToLogin": "Back to login"
+    "backToLogin": "Back to login",
+    "setNewPassword": "Set New Password",
+    "setNewPasswordDescription": "Enter your new password below",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "updatePassword": "Update Password",
+    "passwordUpdated": "Password updated successfully!",
+    "passwordMismatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 8 characters"
   },
   "profile": {
     "yourProfile": "Your Profile",
