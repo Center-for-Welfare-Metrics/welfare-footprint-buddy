@@ -79,7 +79,7 @@
     "title": "Vos Préférences",
     "description": "Personnalisez votre expérience avec des paramètres personnalisés",
     "ethicalLens": "Lentille Éthique ⚖️",
-    "ethicalLensDescription": "Choisissez la perspective qui reflète le mieux vos valeurs. Ce paramètre influence la façon dont l'application interprète et priorise les préoccupations relatives au bien-être animal lors de l'analyse des aliments.",
+    "ethicalLensDescription": "Choisissez la perspective qui correspond le mieux à vos valeurs. Cela guidera quels produits alternatifs sont suggérés.",
     "preferredLanguage": "Langue Préférée",
     "preferredRegion": "Région Préférée",
     "regionPlaceholder": "ex., Amérique du Nord, Europe",
