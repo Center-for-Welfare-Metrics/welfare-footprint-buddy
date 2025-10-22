@@ -79,6 +79,7 @@
     "title": "Suas Preferências",
     "description": "Personalize sua experiência com configurações personalizadas",
     "ethicalLens": "Lente Ética ⚖️",
+    "ethicalLensDescription": "Escolha a perspectiva que melhor reflete seus valores. Esta configuração influencia como o aplicativo interpreta e prioriza as preocupações com o bem-estar animal ao analisar alimentos.",
     "preferredLanguage": "Idioma Preferido",
     "preferredRegion": "Região Preferida",
     "regionPlaceholder": "ex., América do Norte, Europa",

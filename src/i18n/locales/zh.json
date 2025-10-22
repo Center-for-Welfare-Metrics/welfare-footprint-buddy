@@ -79,6 +79,7 @@
     "title": "您的偏好设置",
     "description": "使用个性化设置自定义您的体验",
     "ethicalLens": "伦理视角 ⚖️",
+    "ethicalLensDescription": "选择最能反映您价值观的视角。此设置会影响应用在分析食品时如何解释和优先考虑动物福利问题。",
     "preferredLanguage": "首选语言",
     "preferredRegion": "首选地区",
     "regionPlaceholder": "例如，北美、欧洲",

@@ -79,6 +79,7 @@
     "title": "Ihre Einstellungen",
     "description": "Passen Sie Ihre Erfahrung mit personalisierten Einstellungen an",
     "ethicalLens": "Ethische Linse ⚖️",
+    "ethicalLensDescription": "Wählen Sie die Perspektive, die Ihre Werte am besten widerspiegelt. Diese Einstellung beeinflusst, wie die App Tierschutzbedenken bei der Analyse von Lebensmitteln interpretiert und priorisiert.",
     "preferredLanguage": "Bevorzugte Sprache",
     "preferredRegion": "Bevorzugte Region",
     "regionPlaceholder": "z.B., Nordamerika, Europa",

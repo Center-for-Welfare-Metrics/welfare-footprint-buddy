@@ -84,6 +84,7 @@ const PreferencesSettings = ({ userId }: PreferencesSettingsProps) => {
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="ethical-lens" className="text-foreground">{t('preferences.ethicalLens')}</Label>
+          <p className="text-sm text-muted-foreground">{t('preferences.ethicalLensDescription')}</p>
           <Select
             value={preferences.ethical_lens}
             onValueChange={(value) =>
