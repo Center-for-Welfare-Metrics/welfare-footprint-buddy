@@ -216,9 +216,7 @@ They do *not* yet rely on validated Welfare Footprint Framework data but are
 
 Regardless of the selected ethical lens, all AI-generated suggestions must include:
 
-1. **Confidence Level** - 
-
-### 🔍 Confidence Level — Definitions and Criteria
+### 1. **Confidence Level** - 
 
 Each AI-generated recommendation must include a **Confidence Level** to help users understand how reliable the suggestion is.
 
@@ -232,32 +230,31 @@ Confidence is based on **three key pillars**:
 
 ---
 
-### 📊 Confidence Is Assessed Using:
+#### 📊 Confidence Is Assessed Using:
 
-#### **Data Availability**
+ **Data Availability**
    - Is the welfare profile of the original product well-documented?
    - Is the suggested alternative linked to specific welfare certifications or known practices?
 
- #### **Welfare Evidence Strength**
+  **Welfare Evidence Strength**
    - Are the welfare improvements supported by scientific literature, certification standards, or third-party audits?
    - Are the claims about suffering reduction **specific and measurable**, or just general assumptions?
 
-#### **Market Accessibility**
+ **Market Accessibility**
    - Can the recommended product be **reasonably found** by consumers in common markets (e.g., supermarkets, online)?
    - Is the alternative **commercially viable**, or is it only available in niche or pilot form?
 
-
-2. **Reasoning Summary** - Brief explanation covering:
+### 2. **Reasoning Summary** - Brief explanation covering:
    - Why this alternative aligns with the selected lens
    - Key welfare differences from the original product
    - Any limitations or uncertainties in the recommendation
 
-3. **Transparency** - When data is limited or uncertain:
+### 3. **Transparency** - When data is limited or uncertain:
    - Explicitly state limitations
    - Avoid making unverifiable claims
    - Use language like "may," "likely," or "based on available information"
 
-4. **Scientific Integrity** - All claims about welfare improvements must be:
+### 4. **Scientific Integrity** - All claims about welfare improvements must be:
    - Based on credible sources (research, certification bodies, industry standards)
    - Verifiable when possible
    - Conservative when evidence is limited
