@@ -58,6 +58,18 @@ ALL text fields in your JSON response must be written in {{OUTPUT_LANGUAGE}}, in
 
 ### User's Ethical Preference: Lens {{ETHICAL_LENS}}
 
+**CRITICAL - First Assessment Step:**
+
+Before providing suggestions, **evaluate whether the product ({{PRODUCT_NAME}}) already meets or exceeds the standards for Lens {{ETHICAL_LENS}}**.
+
+- If the product ALREADY SATISFIES the lens criteria (e.g., it's a certified high-welfare product and user selected Lens 1):
+  - Begin your `generalNote` with an acknowledgment such as: "This product already meets the standards you selected."
+  - Frame suggestions as **additional or even higher welfare options**, NOT as replacements for an inadequate product
+  - Use encouraging language: "If you're interested in alternatives with even higher welfare practices, here are some options."
+
+- If the product does NOT meet the lens criteria:
+  - Proceed normally with suggestions that represent improvements over the current product
+
 Based on the user's selected ethical lens position ({{ETHICAL_LENS}}), apply the following guidance:
 
 #### Lens 1 – Prioritize Big Welfare Gains
