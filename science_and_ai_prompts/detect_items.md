@@ -97,7 +97,7 @@ For ANY dish or meal that contains MULTIPLE ANIMAL-DERIVED INGREDIENTS (e.g., pi
       "confidence": "High"
     }
   ],
-  "summary": "The image shows a rice bowl with salmon and egg, both animal-derived ingredients."
+  "summary": "The image shows a Japanese rice bowl (donburi) with salmon, egg, and rice."
 }
 ```
 
@@ -125,7 +125,7 @@ For ANY dish or meal that contains MULTIPLE ANIMAL-DERIVED INGREDIENTS (e.g., pi
       "confidence": "Medium"
     }
   ],
-  "summary": "The image shows Khachapuri with cheese and egg, both animal-derived ingredients."
+  "summary": "The image displays a Georgian Khachapuri bread boat with cheese and egg."
 }
 ```
 
@@ -237,9 +237,35 @@ Return ONLY valid JSON with this exact structure:
       "confidence": "High", "Medium", or "Low"
     }
   ],
-  "summary": "A 1-2 sentence overview of what you found in the image"
+  "summary": "A neutral, observational 1-2 sentence description of what food is visible in the image"
 }
 ```
+
+### Summary Field Guidelines
+
+The `summary` field should provide a **neutral, factual description** of what's visible in the image. DO NOT include welfare-related judgments or ingredient assessments.
+
+**Include:**
+- Type of food or product (e.g., "packaged snacks", "prepared meal", "bento box")
+- Observable ingredients or components (e.g., "rice bowl with salmon and egg")
+- Cultural, regional, or culinary context (e.g., "appears to be a Japanese bento box", "Latin American grilled meat dish", "Georgian Khachapuri bread")
+- Product category (e.g., "looks like a menu", "packaged product", "homemade dish")
+
+**DO NOT include:**
+- Statements like "contains animal-derived ingredients" or "likely has animal ingredients"
+- Welfare or ethical judgments
+- Ingredient analysis (this belongs in the `items` array)
+
+**Example Good Summaries:**
+- "The image shows a Japanese rice bowl (donburi) with salmon, egg, and rice."
+- "The image contains three packaged chocolate bars with visible brand labels."
+- "The image displays a Georgian Khachapuri bread boat with cheese and egg."
+- "The image shows tamales on a plate with salsa on the side."
+
+**Example Bad Summaries:**
+- "The image shows a rice bowl with salmon and egg, both animal-derived ingredients."
+- "These products likely contain animal-derived ingredients."
+- "The image contains animal products from fish and poultry."
 
 ### Language Requirement
 
