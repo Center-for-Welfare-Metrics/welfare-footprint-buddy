@@ -28,9 +28,9 @@
 This prompt is designed to work with any vision-capable language model (Gemini, GPT-4 Vision, Claude with vision, etc.)
 
 **Versioning:**
-- **Version:** 1.2
-- **Last Updated:** 2025-10-12
-- **Change Log:** Added composite food decomposition requirement
+- **Version:** 1.4
+- **Last Updated:** 2025-01
+- **Change Log:** Enhanced ingredient-level decomposition for composite dishes and culturally significant foods
 
 ---
 
@@ -57,23 +57,71 @@ The user's description ALWAYS overrides what you see in the image. The user know
 
 Analyze the provided image and detect ONLY packaged food products, prepared meals, or food items intended for human consumption that are visible in the image.
 
-### Critical Rule: Composite Food Decomposition
+### CRITICAL RULE: Ingredient-Level Decomposition
 
-🚨 **MANDATORY DECOMPOSITION RULE** 🚨
+🚨 **MANDATORY DECOMPOSITION FOR ALL COMPOSITE DISHES** 🚨
 
-For ANY dish or meal that contains MULTIPLE ANIMAL-DERIVED INGREDIENTS (e.g., pizza with cheese and meat, khachapuri with cheese and egg, salmon rice bowl with egg, lasagna with cheese and meat), you MUST:
-- Decompose the dish into INDIVIDUAL INGREDIENT-LEVEL items
-- Create a SEPARATE item for EACH distinct animal-derived ingredient
-- For example, "Salmon rice bowl with egg" MUST become TWO separate items:
-  1. "Salmon (from rice bowl)" - likelyHasAnimalIngredients: true
-  2. "Egg (from rice bowl)" - likelyHasAnimalIngredients: true
-- You may OPTIONALLY include the plant-based components as well (e.g., "Rice (from rice bowl)")
-- DO NOT create a single item for the whole dish when it contains multiple animal ingredients
-- This rule applies to ALL composite dishes including bowls, plates, sandwiches, pizzas, etc.
+**For ANY prepared dish, meal, or culturally significant food**, you MUST decompose it into **individual ingredients** and evaluate each separately. This applies to:
+- Multi-ingredient dishes (e.g., Caesar Salad, Lasagna, Curry)
+- Culturally significant foods (e.g., **Acarajé**, Paella, Bibimbap, Khachapuri)
+- Street food and regional specialties
+- Packaged prepared meals
+- Restaurant dishes and home-cooked meals
+
+### Decomposition Process:
+
+1. **Identify all major ingredients** in the dish (use your culinary knowledge of typical recipes)
+2. **Create separate items** for each ingredient
+3. **Classify each independently** as animal-derived or plant-based
+4. **Use parenthetical notation** to indicate the source dish (e.g., "Dried Shrimp (from Acarajé)")
+5. **Include ALL significant ingredients** - both animal-derived AND plant-based for transparency
+6. **Only include items with reasonable certainty** about their presence in the dish
 
 ### JSON Output Examples
 
-#### Example 1: Salmon rice bowl with egg
+#### Example 1: Acarajé (Brazilian Street Food)
+
+For **Acarajé**, a traditional Brazilian dish, decompose into ALL major ingredients:
+
+```json
+{
+  "items": [
+    {
+      "name": "Dried Shrimp (from Acarajé)",
+      "likelyHasAnimalIngredients": true,
+      "reasoning": "Crustacean product used as topping; welfare concerns during capture and drying",
+      "confidence": "High"
+    },
+    {
+      "name": "Vatapá (from Acarajé)",
+      "likelyHasAnimalIngredients": true,
+      "reasoning": "Traditional Brazilian paste containing ground dried shrimp and often fish",
+      "confidence": "High"
+    },
+    {
+      "name": "Black-eyed Pea Fritter (from Acarajé)",
+      "likelyHasAnimalIngredients": false,
+      "reasoning": "Base fritter made from black-eyed peas, plant-based",
+      "confidence": "High"
+    },
+    {
+      "name": "Dendê Oil (from Acarajé)",
+      "likelyHasAnimalIngredients": false,
+      "reasoning": "Palm oil used for frying, plant-derived",
+      "confidence": "High"
+    },
+    {
+      "name": "Tomatoes (from Acarajé)",
+      "likelyHasAnimalIngredients": false,
+      "reasoning": "Vegetable garnish",
+      "confidence": "Medium"
+    }
+  ],
+  "summary": "The image shows Acarajé, a traditional Brazilian street food from Bahia."
+}
+```
+
+#### Example 2: Salmon rice bowl with egg
 
 ```json
 {
@@ -101,44 +149,64 @@ For ANY dish or meal that contains MULTIPLE ANIMAL-DERIVED INGREDIENTS (e.g., pi
 }
 ```
 
-#### Example 2: Khachapuri
+#### Example 3: Khachapuri (Georgian Cheese Bread)
 
 ```json
 {
   "items": [
     {
-      "name": "Cheese (from Khachapuri)",
+      "name": "Sulguni Cheese (from Khachapuri)",
       "likelyHasAnimalIngredients": true,
-      "reasoning": "Cheese is a dairy product made from milk",
+      "reasoning": "Traditional Georgian cheese made from cow's milk",
       "confidence": "High"
     },
     {
-      "name": "Egg (from Khachapuri)",
+      "name": "Egg Yolk (from Khachapuri)",
       "likelyHasAnimalIngredients": true,
-      "reasoning": "The egg yolk is clearly visible on top of the bread",
+      "reasoning": "Egg yolk visible on top of the bread",
       "confidence": "High"
     },
     {
-      "name": "Bread (from Khachapuri)",
+      "name": "Butter (from Khachapuri)",
+      "likelyHasAnimalIngredients": true,
+      "reasoning": "Dairy product traditionally added on top",
+      "confidence": "High"
+    },
+    {
+      "name": "Bread Dough (from Khachapuri)",
       "likelyHasAnimalIngredients": false,
-      "reasoning": "The bread dough is typically plant-based",
+      "reasoning": "Wheat-based dough, typically plant-based",
       "confidence": "Medium"
     }
   ],
-  "summary": "The image displays a Georgian Khachapuri bread boat with cheese and egg."
+  "summary": "The image displays a Georgian Khachapuri bread boat with cheese, egg, and butter."
 }
 ```
 
-#### ❌ Forbidden Output
+#### ❌ FORBIDDEN: Single Composite Item
 
-DO NOT return this for a salmon rice bowl with egg:
+DO NOT return dishes as single items. This is **strictly forbidden**:
+
+```json
+{
+  "items": [
+    {
+      "name": "Acarajé",
+      "likelyHasAnimalIngredients": true,
+      "reasoning": "Contains dried shrimp and vatapá",
+      "confidence": "High"
+    }
+  ]
+}
+```
+
 ```json
 {
   "items": [
     {
       "name": "Salmon rice bowl",
       "likelyHasAnimalIngredients": true,
-      "reasoning": "Contains salmon and egg...",
+      "reasoning": "Contains salmon and egg",
       "confidence": "High"
     }
   ]
@@ -173,14 +241,17 @@ For each FOOD item or INGREDIENT you detect:
    - For plant-based items: Brief explanation only if there's potential confusion or it's not obvious
 4. Rate your confidence level (High/Medium/Low)
 
-### Examples of Correct Decomposition
+### Additional Decomposition Examples
 
-- Pizza with pepperoni and cheese → "Pepperoni (from Pizza)", "Cheese (from Pizza)", optionally "Dough (from Pizza)"
-- Burger with cheese and beef patty → "Beef patty (from Burger)", "Cheese (from Burger)", optionally "Bun (from Burger)"
-- Khachapuri → "Cheese (from Khachapuri)", "Egg (from Khachapuri)", optionally "Bread (from Khachapuri)"
-- Salmon rice bowl with egg → "Salmon (from rice bowl)", "Egg (from rice bowl)", optionally "Rice (from rice bowl)"
-- Breakfast burrito with bacon and cheese → "Bacon (from burrito)", "Cheese (from burrito)", optionally "Tortilla (from burrito)"
-- Sushi roll with fish → "Fish (from sushi roll)", optionally "Rice (from sushi roll)"
+**Include both animal-derived AND plant-based components for full transparency:**
+
+- **Acarajé** → "Dried Shrimp (from Acarajé)", "Vatapá (from Acarajé)", "Black-eyed Pea Fritter (from Acarajé)", "Dendê Oil (from Acarajé)", "Tomatoes (from Acarajé)"
+- **Pizza with pepperoni and cheese** → "Pepperoni (from Pizza)", "Mozzarella Cheese (from Pizza)", "Tomato Sauce (from Pizza)", "Pizza Dough (from Pizza)"
+- **Burger with cheese and beef** → "Beef Patty (from Burger)", "Cheese (from Burger)", "Burger Bun (from Burger)", "Lettuce (from Burger)", "Tomato (from Burger)"
+- **Paella** → "Shrimp (from Paella)", "Mussels (from Paella)", "Chicken (from Paella)", "Rice (from Paella)", "Saffron (from Paella)"
+- **Caesar Salad** → "Chicken Breast (from Caesar Salad)", "Parmesan Cheese (from Caesar Salad)", "Anchovies (from dressing)", "Romaine Lettuce (from Caesar Salad)"
+- **Sushi Roll** → "Salmon (from sushi roll)", "Tuna (from sushi roll)", "Rice (from sushi roll)", "Nori Seaweed (from sushi roll)"
+- **Bibimbap** → "Beef (from Bibimbap)", "Fried Egg (from Bibimbap)", "Rice (from Bibimbap)", "Various Vegetables (from Bibimbap)"
 
 ### Critical Rules: What IS a Food Item
 
