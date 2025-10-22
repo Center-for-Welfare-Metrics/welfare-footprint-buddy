@@ -37,7 +37,13 @@
     "orContinueWith": "ou continuar com",
     "google": "Google",
     "noAccount": "Não tem uma conta? Cadastre-se",
-    "hasAccount": "Já tem uma conta? Entre"
+    "hasAccount": "Já tem uma conta? Entre",
+    "forgotPassword": "Esqueceu a senha?",
+    "resetPassword": "Redefinir Senha",
+    "resetPasswordDescription": "Digite seu e-mail para receber o link de redefinição",
+    "sendResetLink": "Enviar Link",
+    "resetEmailSent": "Link de redefinição enviado! Verifique seu e-mail.",
+    "backToLogin": "Voltar ao login"
   },
   "profile": {
     "yourProfile": "Seu Perfil",

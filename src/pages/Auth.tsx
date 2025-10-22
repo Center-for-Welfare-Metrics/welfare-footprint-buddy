@@ -19,6 +19,7 @@ const authSchema = z.object({
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
@@ -87,49 +88,116 @@ const Auth = () => {
     }
   };
 
+  const handlePasswordReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const validationData = { email: email.trim(), password: 'dummy123456' };
+      const result = authSchema.safeParse(validationData);
+      
+      if (!result.success) {
+        const emailError = result.error.issues.find(issue => issue.path.includes('email'));
+        if (emailError) {
+          toast.error(emailError.message);
+          return;
+        }
+      }
+
+      const { supabase } = await import('@/integrations/supabase/client');
+      const { error } = await supabase.auth.resetPasswordForEmail(result.data.email, {
+        redirectTo: `${window.location.origin}/auth`,
+      });
+
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success(t('auth.resetEmailSent'));
+        setIsForgotPassword(false);
+        setEmail('');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <Card className="w-full max-w-md bg-card border-border">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center text-foreground">
-            {isLogin ? t('auth.welcomeBack') : t('auth.createAccount')}
+            {isForgotPassword ? t('auth.resetPassword') : isLogin ? t('auth.welcomeBack') : t('auth.createAccount')}
           </CardTitle>
           <CardDescription className="text-center text-muted-foreground">
-            {isLogin
+            {isForgotPassword
+              ? t('auth.resetPasswordDescription')
+              : isLogin
               ? t('auth.signInDescription')
               : t('auth.signUpDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {!isLogin && (
+          {isForgotPassword ? (
+            <form onSubmit={handlePasswordReset} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="fullName" className="text-foreground">{t('auth.fullName')}</Label>
+                <Label htmlFor="reset-email" className="text-foreground">{t('auth.email')}</Label>
                 <Input
-                  id="fullName"
-                  type="text"
-                  placeholder={t('auth.yourName')}
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  required={!isLogin}
+                  id="reset-email"
+                  type="email"
+                  placeholder={t('auth.emailPlaceholder')}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
                   className="bg-muted border-border text-foreground"
                 />
               </div>
-            )}
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-foreground">{t('auth.email')}</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder={t('auth.emailPlaceholder')}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="bg-muted border-border text-foreground"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-foreground">{t('auth.password')}</Label>
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? t('common.loading') : t('auth.sendResetLink')}
+              </Button>
+              <div className="text-center">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                  onClick={() => {
+                    setIsForgotPassword(false);
+                    setEmail('');
+                  }}
+                >
+                  {t('auth.backToLogin')}
+                </Button>
+              </div>
+            </form>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {!isLogin && (
+                <div className="space-y-2">
+                  <Label htmlFor="fullName" className="text-foreground">{t('auth.fullName')}</Label>
+                  <Input
+                    id="fullName"
+                    type="text"
+                    placeholder={t('auth.yourName')}
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    required={!isLogin}
+                    className="bg-muted border-border text-foreground"
+                  />
+                </div>
+              )}
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-foreground">{t('auth.email')}</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder={t('auth.emailPlaceholder')}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="bg-muted border-border text-foreground"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-foreground">{t('auth.password')}</Label>
                 <Input
                   id="password"
                   type="password"
@@ -140,24 +208,39 @@ const Auth = () => {
                   minLength={8}
                   className="bg-muted border-border text-foreground"
                 />
-            </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? t('common.loading') : isLogin ? t('common.signIn') : t('common.signUp')}
-            </Button>
-          </form>
+              </div>
+              {isLogin && (
+                <div className="text-right">
+                  <Button
+                    type="button"
+                    variant="link"
+                    className="text-sm text-primary hover:underline p-0 h-auto"
+                    onClick={() => setIsForgotPassword(true)}
+                  >
+                    {t('auth.forgotPassword')}
+                  </Button>
+                </div>
+              )}
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? t('common.loading') : isLogin ? t('common.signIn') : t('common.signUp')}
+              </Button>
+            </form>
+          )}
 
-          <div className="text-center mt-4">
-            <Button
-              type="button"
-              variant="ghost"
-              className="text-sm text-muted-foreground hover:text-foreground"
-              onClick={() => setIsLogin(!isLogin)}
-            >
-              {isLogin
-                ? t('auth.noAccount')
-                : t('auth.hasAccount')}
-            </Button>
-          </div>
+          {!isForgotPassword && (
+            <div className="text-center mt-4">
+              <Button
+                type="button"
+                variant="ghost"
+                className="text-sm text-muted-foreground hover:text-foreground"
+                onClick={() => setIsLogin(!isLogin)}
+              >
+                {isLogin
+                  ? t('auth.noAccount')
+                  : t('auth.hasAccount')}
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

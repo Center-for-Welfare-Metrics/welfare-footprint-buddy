@@ -37,7 +37,13 @@
     "orContinueWith": "or continue with",
     "google": "Google",
     "noAccount": "Don't have an account? Sign up",
-    "hasAccount": "Already have an account? Sign in"
+    "hasAccount": "Already have an account? Sign in",
+    "forgotPassword": "Forgot password?",
+    "resetPassword": "Reset Password",
+    "resetPasswordDescription": "Enter your email to receive a password reset link",
+    "sendResetLink": "Send Reset Link",
+    "resetEmailSent": "Password reset link sent! Check your email.",
+    "backToLogin": "Back to login"
   },
   "profile": {
     "yourProfile": "Your Profile",

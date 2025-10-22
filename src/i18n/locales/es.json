@@ -37,7 +37,13 @@
     "orContinueWith": "o continuar con",
     "google": "Google",
     "noAccount": "¿No tienes una cuenta? Regístrate",
-    "hasAccount": "¿Ya tienes una cuenta? Inicia sesión"
+    "hasAccount": "¿Ya tienes una cuenta? Inicia sesión",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "resetPassword": "Restablecer Contraseña",
+    "resetPasswordDescription": "Ingresa tu correo para recibir un enlace de restablecimiento",
+    "sendResetLink": "Enviar Enlace",
+    "resetEmailSent": "¡Enlace de restablecimiento enviado! Revisa tu correo.",
+    "backToLogin": "Volver al inicio de sesión"
   },
   "profile": {
     "yourProfile": "Tu Perfil",
