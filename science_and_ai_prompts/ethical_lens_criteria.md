@@ -216,10 +216,36 @@ They do *not* yet rely on validated Welfare Footprint Framework data but are
 
 Regardless of the selected ethical lens, all AI-generated suggestions must include:
 
-1. **Confidence Level** - High, Medium, or Low based on:
-   - Availability of data about the product
-   - Certainty of welfare improvements
-   - Market availability of alternatives
+1. **Confidence Level** - 
+
+### 🔍 Confidence Level — Definitions and Criteria
+
+Each AI-generated recommendation must include a **Confidence Level** to help users understand how reliable the suggestion is.
+
+Confidence is based on **three key pillars**:
+
+| Confidence Level | Description |
+|------------------|-------------|
+| **High**         | The recommendation is supported by **robust, specific, and verifiable data**. The product or practice has **well-documented welfare attributes** (e.g., certified humane, pasture-raised), and suitable **alternatives are clearly available in the market**. |
+| **Medium**       | The AI draws on **moderately reliable or partially complete information**. Welfare improvements may be documented but not fully certified, or only **some attributes of the alternative** (e.g., stocking density, feed) are verified. Product alternatives may exist but with **regional or availability uncertainties**. |
+| **Low**          | The recommendation is based on **inferred, indirect, or limited data**. There may be **uncertainty** about the welfare status of the original or alternative product, or **no clear market alternative** exists. AI may extrapolate from general trends or similar products/species. These recommendations should be treated as **tentative**. |
+
+---
+
+### 📊 Confidence Is Assessed Using:
+
+#### **Data Availability**
+   - Is the welfare profile of the original product well-documented?
+   - Is the suggested alternative linked to specific welfare certifications or known practices?
+
+ #### **Welfare Evidence Strength**
+   - Are the welfare improvements supported by scientific literature, certification standards, or third-party audits?
+   - Are the claims about suffering reduction **specific and measurable**, or just general assumptions?
+
+#### **Market Accessibility**
+   - Can the recommended product be **reasonably found** by consumers in common markets (e.g., supermarkets, online)?
+   - Is the alternative **commercially viable**, or is it only available in niche or pilot form?
+
 
 2. **Reasoning Summary** - Brief explanation covering:
    - Why this alternative aligns with the selected lens
