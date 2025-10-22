@@ -22,9 +22,6 @@ These criteria serve as:
 
 ---
 
-## Ethical Lens Levels
-
-
 # Ethical Lens Criteria
 
 **Version:** 1.2  
