@@ -95,6 +95,39 @@ serve(async (req) => {
     // Create Supabase client with service role key for admin operations
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
+    // Extract JWT token from Authorization header
+    const token = authHeader.replace('Bearer ', '');
+    
+    // Verify JWT and get user
+    const { data: userData, error: userError } = await supabase.auth.getUser(token);
+    if (userError || !userData.user) {
+      console.error('User verification failed:', userError);
+      return new Response(
+        JSON.stringify({ success: false, error: 'Unauthorized - Invalid token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Check if user has admin role using security definer function
+    const { data: isAdmin, error: roleError } = await supabase
+      .rpc('has_role', { _user_id: userData.user.id, _role: 'admin' });
+
+    if (roleError) {
+      console.error('Role check failed:', roleError);
+      return new Response(
+        JSON.stringify({ success: false, error: 'Authorization check failed' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!isAdmin) {
+      console.warn('Non-admin user attempted cache control:', userData.user.id);
+      return new Response(
+        JSON.stringify({ success: false, error: 'Forbidden - Admin access required' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Parse and validate request body
     const body = await req.json();
     const validation = validateInput(body);
@@ -107,6 +140,10 @@ serve(async (req) => {
     }
 
     const { action, promptTemplateId, promptVersion, model, cacheKey } = validation.data!;
+
+    // Get IP address and user agent for audit logging
+    const ipAddress = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+    const userAgent = req.headers.get('user-agent') || 'unknown';
 
     let result;
 
@@ -189,6 +226,20 @@ serve(async (req) => {
     }
 
     console.log('Cache control action completed:', action, result);
+
+    // Log admin action to audit log
+    try {
+      await supabase.from('admin_audit_log').insert({
+        user_id: userData.user.id,
+        action: action,
+        details: { promptTemplateId, promptVersion, model, cacheKey, result },
+        ip_address: ipAddress,
+        user_agent: userAgent,
+      });
+    } catch (auditError) {
+      // Don't fail the request if audit logging fails, but log the error
+      console.error('Failed to log admin action:', auditError);
+    }
 
     return new Response(JSON.stringify(result), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

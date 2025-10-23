@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_audit_log: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          id: string
+          ip_address: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       ai_metrics_daily_rollup: {
         Row: {
           avg_latency_ms: number | null
@@ -386,6 +416,27 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_subscriptions: {
         Row: {
           created_at: string
@@ -430,14 +481,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      admin_flush_all_cache: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      admin_invalidate_by_key: {
-        Args: { key: string }
-        Returns: boolean
-      }
+      admin_flush_all_cache: { Args: never; Returns: number }
+      admin_invalidate_by_key: { Args: { key: string }; Returns: boolean }
       admin_invalidate_by_model: {
         Args: { model_name: string }
         Returns: number
@@ -450,25 +495,20 @@ export type Database = {
         Args: { target_date?: string }
         Returns: undefined
       }
-      cleanup_expired_cache: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      cleanup_expired_shares: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      cleanup_old_metrics: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      delete_old_scans: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
+      cleanup_expired_cache: { Args: never; Returns: number }
+      cleanup_expired_shares: { Args: never; Returns: number }
+      cleanup_old_metrics: { Args: never; Returns: number }
+      delete_old_scans: { Args: never; Returns: undefined }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
       }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -595,6 +635,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+    },
   },
 } as const
