@@ -427,9 +427,21 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
             <div className="flex justify-start items-center">
               <Label className="text-sm font-medium text-emerald-400">{t('ethicalLens.title')}</Label>
             </div>
-            <div className="text-center">
-              <span 
+            <div className="text-center space-y-1">
+              <p 
                 className="text-xs font-medium italic transition-colors duration-300"
+                style={{
+                  color: appConfig.ethicalLens.colors[sliderValue[0] as 1 | 2 | 3 | 4 | 5]
+                }}
+              >
+                "{sliderValue[0] === 1 ? t('ethicalLens.persona1') :
+                  sliderValue[0] === 2 ? t('ethicalLens.persona2') :
+                  sliderValue[0] === 3 ? t('ethicalLens.persona3') :
+                  sliderValue[0] === 4 ? t('ethicalLens.persona4') :
+                  t('ethicalLens.persona5')}"
+              </p>
+              <p 
+                className="text-sm font-semibold transition-colors duration-300"
                 style={{
                   color: appConfig.ethicalLens.colors[sliderValue[0] as 1 | 2 | 3 | 4 | 5]
                 }}
@@ -439,7 +451,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
                  sliderValue[0] === 3 ? t('ethicalLens.level3') :
                  sliderValue[0] === 4 ? t('ethicalLens.level4') :
                  t('ethicalLens.level5')}
-              </span>
+              </p>
             </div>
             <div className="relative">
               <style>{`

@@ -210,6 +210,11 @@
   },
   "ethicalLens": {
     "title": "Ethical Lens ⚖️",
+    "persona1": "Concerned Omnivore",
+    "persona2": "Welfarist",
+    "persona3": "Reducitarian",
+    "persona4": "Vegetarian",
+    "persona5": "Vegan",
     "level1": "Prioritize Big Welfare Gains",
     "level2": "Strong Welfare Standards",
     "level3": "Minimal Animal Suffering",

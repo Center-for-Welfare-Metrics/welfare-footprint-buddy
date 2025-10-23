@@ -175,6 +175,11 @@
   },
   "ethicalLens": {
     "title": "Lente Ética ⚖️",
+    "persona1": "Omnívoro Consciente",
+    "persona2": "Bienestarista",
+    "persona3": "Reduccionista",
+    "persona4": "Vegetariano",
+    "persona5": "Vegano",
     "level1": "Priorizar Grandes Ganancias de Bienestar",
     "level2": "Estándares Fuertes de Bienestar",
     "level3": "Sufrimiento Animal Mínimo",
