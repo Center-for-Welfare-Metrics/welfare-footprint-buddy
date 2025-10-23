@@ -585,53 +585,6 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
 
         {/* Action Buttons - 2x2 Grid on desktop, stacked on mobile */}
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-3">
-          {/* Challenge Analysis Button & Dialog */}
-          {imageData && onReanalyze && (
-            <Dialog open={challengeOpen} onOpenChange={setChallengeOpen}>
-              <DialogTrigger asChild>
-                <Button 
-                  variant="outline"
-                  size="sm"
-                  className="border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/10"
-                >
-                  <AlertCircle className="mr-2 h-4 w-4" />
-                  {t('results.challengeAnalysis')}
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="glass-card max-w-md">
-                <DialogHeader>
-                  <DialogTitle className="text-xl font-bold text-white">{t('results.challengeAnalysis')}</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="info-full" className="text-gray-300">{t('results.challengeDescription')}</Label>
-                    <Textarea
-                      id="info-full"
-                      placeholder={t('results.challengePlaceholder')}
-                      value={additionalInfo}
-                      onChange={(e) => setAdditionalInfo(e.target.value)}
-                      className="mt-2 bg-gray-800 border-gray-700 text-white"
-                      rows={5}
-                    />
-                  </div>
-                  <Button 
-                    onClick={handleChallengeAnalysis}
-                    disabled={isReanalyzing || !additionalInfo.trim()}
-                    className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
-                  >
-                    {isReanalyzing ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        {t('results.reanalyzing')}
-                      </>
-                    ) : (
-                      t('results.reanalyzeProduct')
-                    )}
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
-          )}
 
           {/* Share Button */}
           {!shareUrl ? (
