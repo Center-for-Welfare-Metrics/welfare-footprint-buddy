@@ -330,37 +330,41 @@ Return ONLY valid JSON with this exact structure:
 
 🚨 **CRITICAL RULE FOR SUMMARY FIELD** 🚨
 
-The `summary` field should provide a **neutral, factual description** of what's visible in the image. 
+The `summary` field should provide a **strictly visual, neutral, and factual description** of what's visible in the image. 
 
 **ABSOLUTELY FORBIDDEN IN SUMMARY:**
 - ❌ "contains animal-derived ingredients"
 - ❌ "likely has animal ingredients"
 - ❌ "may contain animal-derived ingredients"
 - ❌ "The dish may contain animal-derived ingredients in the sauce"
+- ❌ "due to the presence of [animal ingredient]"
 - ❌ ANY mention of animal ingredients, animal products, or welfare
 - ❌ ANY speculation about ingredients not visible
+- ❌ ANY welfare-related interpretations or analysis
 
-The summary is ONLY for describing what you SEE, not for analyzing ingredients. Ingredient analysis belongs ONLY in the `items` array.
+The summary is ONLY for describing what you SEE visually, not for analyzing ingredients. Ingredient analysis belongs ONLY in the `items` array.
 
-**Include:**
+**MUST Include:**
 - Type of food or product (e.g., "packaged snacks", "prepared meal", "bento box")
 - Observable ingredients or components (e.g., "rice bowl with salmon and egg")
 - Cultural, regional, or culinary context (e.g., "appears to be a Japanese bento box", "Latin American grilled meat dish", "Georgian Khachapuri bread")
-- Product category (e.g., "looks like a menu", "packaged product", "homemade dish")
+- Visual setting or presentation style (e.g., "photographed in a restaurant setting", "homemade dish", "street food presentation")
 
-**Example Good Summaries:**
+**Example CORRECT Summaries (Visual & Descriptive):**
+- "The image shows a pizza with anchovies and a glass of white wine, likely photographed in a restaurant setting."
 - "The image shows a Japanese rice bowl (donburi) with salmon, egg, and rice."
 - "The image contains three packaged chocolate bars with visible brand labels."
 - "The image displays a Georgian Khachapuri bread boat with cheese and egg."
 - "The image shows tamales on a plate with salsa on the side."
 - "The image shows a pasta dish with visible sauce."
 
-**Example Bad Summaries:**
-- "The image shows a rice bowl with salmon and egg, both animal-derived ingredients."
-- "These products likely contain animal-derived ingredients."
-- "The image contains animal products from fish and poultry."
-- "The dish may contain animal-derived ingredients in the sauce."
-- "The pasta likely contains dairy in the sauce."
+**Example FORBIDDEN Summaries (Contain Welfare Language):**
+- "The image shows a pizza with anchovies and a glass of white wine. The pizza likely contains animal-derived ingredients due to the presence of anchovies." ❌
+- "The image shows a rice bowl with salmon and egg, both animal-derived ingredients." ❌
+- "These products likely contain animal-derived ingredients." ❌
+- "The image contains animal products from fish and poultry." ❌
+- "The dish may contain animal-derived ingredients in the sauce." ❌
+- "The pasta likely contains dairy in the sauce." ❌
 
 ### Language Requirement
 
