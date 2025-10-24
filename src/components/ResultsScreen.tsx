@@ -272,7 +272,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
   if (data.isFood === false) {
     return (
       <div className="p-4 pb-32 glass-card rounded-2xl animate-fade-in">
-        <h1 className="text-3xl font-bold mb-6 text-center text-white">Product Welfare Assessment</h1>
+        <h1 className="text-3xl font-bold mb-6 text-center text-white">Animal Item Welfare Assessment</h1>
         <div className="text-center p-8">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-500/20 flex items-center justify-center">
             <AlertCircle className="w-8 h-8 text-amber-400" />
@@ -302,7 +302,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
     
     return (
       <div className="p-4 pb-32 glass-card rounded-2xl animate-fade-in">
-        <h1 className="text-3xl font-bold mb-6 text-center text-white">Product Welfare Assessment</h1>
+        <h1 className="text-3xl font-bold mb-6 text-center text-white">Animal Item Welfare Assessment</h1>
         <div className="text-center p-8">
           <h3 className="font-bold text-2xl text-emerald-400 mb-2">
             {data.productName?.value || t('results.productAnalysis')}
@@ -390,17 +390,25 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
 
   return (
     <div className="p-4 pb-32 glass-card rounded-2xl animate-fade-in">
-      <h1 className="text-3xl font-bold mb-6 text-center text-white">Product Welfare Assessment</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center text-white">Animal Item Welfare Assessment</h1>
       
+      {/* Prominent Disclaimer */}
+      <div className="mb-6 p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+        <div className="flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+          <div className="text-sm text-amber-100">
+            <p className="font-semibold mb-1">Preliminary AI-Generated Estimate</p>
+            <p className="text-amber-200/90">
+              This is a preliminary AI-generated estimate based on general welfare criteria. It has not been formally reviewed or approved by the Welfare Footprint Institute. Please verify independently before making decisions.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="space-y-4">
         <div className="border-b border-gray-700 pb-3">
           <h3 className="font-bold text-emerald-400 mb-1">{t('results.product')}</h3>
           <p className="text-gray-300">{data.productName?.value || 'N/A'}</p>
-        </div>
-
-        <div className="border-b border-gray-700 pb-3">
-          <h3 className="font-bold text-emerald-400 mb-1">{t('results.animalIngredients')}</h3>
-          <p className="text-gray-300">{data.animalIngredients?.value || 'N/A'}</p>
         </div>
 
         <div className="border-b border-gray-700 pb-3">
