@@ -96,8 +96,8 @@ function validateInput(body: any): { valid: boolean; data?: ValidatedInput; erro
 
 // Prompt versions (update these when prompts change to auto-invalidate cache)
 const PROMPT_VERSIONS = {
-  analyze_user_material: 'v1.6',  // Updated to v1.6: removed USER_CORRECTION override - purely visual detection now
-  confirm_refine_items: 'v1.0',   // New: handles user corrections in step 2
+  analyze_user_material: 'v1.7',  // Updated to v1.7: Unified schema, removed ethical inference, visual-only description
+  confirm_refine_items: 'v1.0',   // Step 2: handles user corrections with auditability
   analyze_focused_item: 'v2.0',
   analyze_product: 'v2.0',
 };

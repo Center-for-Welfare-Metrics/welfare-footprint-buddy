@@ -2,23 +2,30 @@
 
 ## Metadata
 
-**Purpose:** This prompt instructs the AI to detect and list all food items or products visible in an uploaded image.
+**Purpose:**  
+This prompt instructs the AI to detect and **visually describe** all food items or products visible in an uploaded image.  
+It focuses purely on **what can be seen** — appearance, composition, and context — without any ethical or ingredient interpretation.
 
 **Expected Inputs:**
-- **Image:** A photo of one or more food products or items (required)
-- **Language:** User's preferred language code (e.g., "en", "es", "fr") (required)
+- **Image:** A photo of one or more food products or dishes (required)  
+- **Language:** User's preferred language code (e.g., `"en"`, `"es"`, `"fr"`) (required)
 
-**Note:** This is step 1 of the detection pipeline. User corrections are handled separately in step 2 (see `confirm_refine_items.md`).
+**Note:**  
+This is **Step 1** of the detection pipeline.  
+User corrections and ingredient/ethical inferences are handled separately in **Step 2** (`confirm_refine_items.md`).
 
-**Expected Output Format:**
+---
+
+## Expected Output Format
+
 ```json
 {
   "items": [
     {
       "name": "string",
       "likelyHasAnimalIngredients": boolean,
+      "animalConfidence": "High" | "Medium" | "Low"
       "confidence": "High" | "Medium" | "Low",
-      "animalConfidence": "High" | "Medium" | "Low",
       "source": "visual" | "ocr" | "recipe_inference",
       "parentDish": "string | null",
       "reasoning": "string"
@@ -27,20 +34,33 @@
   "summary": "string"
 }
 ```
+> *Note:* The fields likelyHasAnimalIngredients and animalConfidence may also appear in the JSON output for compatibility with downstream processing. However, they are not interpreted or displayed at this stage — Step 1 focuses only on visual detection and description.
+>
+> ---
 
-**Field Definitions:**
-- `confidence`: Confidence that this item is present in the scene
-- `animalConfidence`: Confidence about the animal-derived status
-- `source`: How the item was detected (visual evidence, OCR text, or recipe inference)
-- `parentDish`: Name of the composite dish this ingredient belongs to, or null for standalone items
+## Field Definitions
 
-**Model Compatibility:**
-This prompt is designed to work with any vision-capable language model (Gemini, GPT-4 Vision, Claude with vision, etc.)
+- **confidence**: Confidence that this item is present in the scene  
+- **source**: How the item was detected (visual evidence, OCR text, or recipe inference)  
+- **parentDish**: Name of the composite dish this ingredient belongs to, or `null` for standalone items  
 
-**Versioning:**
-- **Version:** 1.6
-- **Last Updated:** 2025-01
-- **Change Log:** Fully removed USER_CORRECTION override logic; detection is now purely visual/OCR/recipe-based (step 1). User corrections moved to separate prompt (step 2: confirm_refine_items.md)
+> *Note:* Ingredient classification fields such as `likelyHasAnimalIngredients` are **not used** at this stage.
+
+---
+
+## Model Compatibility
+
+Compatible with any vision-capable language model (e.g., Gemini, GPT-4 Vision, Claude 3 with vision).
+
+---
+
+## Versioning
+
+- **Version:** 1.7  
+- **File ID:** `analyze_user_material_v1.7`  
+- **Last Updated:** 2025-10-24  
+- **Maintainer:** Wladimir  
+- **Change Log:** Removed all ingredient and ethical inference logic from Step 1; restricted summary to purely visual descriptions.
 
 ---
 
@@ -363,6 +383,9 @@ If the image contains ONLY non-food elements (living animals, people, landscapes
   * Prioritize items based on visual dominance in the image (e.g., large pieces of meat, prominent ingredients)
   * Or prioritize by estimated quantity inferred from packaging, label, or dish context
   * In the summary, note: "More than 10 animal-derived ingredients detected. Showing the 10 most prominent items based on visual prominence or estimated quantity."
+  * If more than 10 **plant-based** ingredients are detected as well, summarize the minor ones collectively under a single supporting item,  
+e.g., `"Additional vegetables (from Paella)"`, to keep the output concise and readable.
+
 - **USE PRODUCT KNOWLEDGE**: Infer likely ingredients based on product type and standard formulations:
   * Most chocolates (especially milk, white, and "diet" varieties) contain dairy unless explicitly labeled as dark/vegan
   * "Branco" (white chocolate) ALWAYS contains milk/dairy products
