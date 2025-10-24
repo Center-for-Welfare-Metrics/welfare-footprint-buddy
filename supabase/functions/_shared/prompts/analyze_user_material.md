@@ -5,8 +5,10 @@
 **Purpose:** This prompt instructs the AI to detect and list all food items or products visible in an uploaded image.
 
 **Expected Inputs:**
-- **Image:** A photo of one or more food products or items
-- **Language:** User's preferred language code (e.g., "en", "es", "fr")
+- **Image:** A photo of one or more food products or items (required)
+- **Language:** User's preferred language code (e.g., "en", "es", "fr") (required)
+
+**Note:** This is step 1 of the detection pipeline. User corrections are handled separately in step 2 (see `confirm_refine_items.md`).
 
 **Expected Output Format:**
 ```json
@@ -36,9 +38,9 @@
 This prompt is designed to work with any vision-capable language model (Gemini, GPT-4 Vision, Claude with vision, etc.)
 
 **Versioning:**
-- **Version:** 1.5
+- **Version:** 1.6
 - **Last Updated:** 2025-01
-- **Change Log:** Removed user-correction override from detector; added provenance fields (source, parentDish, animalConfidence); clarified visual-only detection
+- **Change Log:** Fully removed USER_CORRECTION override logic; detection is now purely visual/OCR/recipe-based (step 1). User corrections moved to separate prompt (step 2: confirm_refine_items.md)
 
 ---
 

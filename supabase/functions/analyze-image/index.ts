@@ -85,7 +85,8 @@ function validateInput(body: any): { valid: boolean; data?: ValidatedInput; erro
 
 // Prompt versions (update these when prompts change to auto-invalidate cache)
 const PROMPT_VERSIONS = {
-  analyze_user_material: 'v1.3',  // Updated to v1.3 for critical user correction override
+  analyze_user_material: 'v1.6',  // Updated to v1.6: removed USER_CORRECTION override - purely visual detection now
+  confirm_refine_items: 'v1.0',   // New: handles user corrections in step 2
   analyze_focused_item: 'v2.0',
   analyze_product: 'v2.0',
 };
@@ -158,10 +159,14 @@ serve(async (req) => {
     let prompt = '';
     
     if (mode === 'detect') {
+      // Step 1: Pure visual/OCR detection - no user corrections at this stage
       prompt = await loadAndProcessPrompt('analyze_user_material', {
-        LANGUAGE: outputLanguage,
-        USER_CORRECTION: userCorrection || ''
+        LANGUAGE: outputLanguage
       });
+      
+      // Note: userCorrection is intentionally NOT passed here anymore
+      // User corrections will be handled in a separate step 2 call (confirm_refine_items prompt)
+      // This separation ensures clean audit trails and modular processing
     } else if (mode === 'analyze' && focusItem) {
       prompt = await loadAndProcessPrompt('analyze_focused_item', {
         LANGUAGE: outputLanguage,

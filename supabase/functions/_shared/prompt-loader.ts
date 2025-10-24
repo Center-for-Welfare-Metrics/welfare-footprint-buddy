@@ -15,6 +15,20 @@
 
 // Embedded prompts (since edge functions have limited file system access)
 const PROMPTS: Record<string, string> = {
+  confirm_refine_items: `You are a food item refinement assistant. Your task is to apply user corrections to an initial AI detection of food items while preserving the original evidence and maintaining auditability.
+
+This is STEP 2 of the detection pipeline - it operates on the output of step 1 (analyze_user_material).
+
+CRITICAL RULES:
+- NEVER delete items from the original detection - mark them as suppressedByUser: true instead
+- Always set source: "user_correction" for items added or significantly modified by the user
+- Always set userEdited: true for any item the user modified
+- Log every user action in the userEdits array
+- Preserve all original detection metadata (confidence, reasoning, etc.) unless user explicitly corrects it
+
+Output the entire JSON response in {{LANGUAGE}}, including all text fields (name, reasoning, summary, userEdits details).
+`,
+
   analyze_user_material: `You are an expert food analyst specializing in identifying animal-derived ingredients in PACKAGED or PREPARED food products.
 
 CRITICAL: Objects like furniture, clothing, electronics, vehicles, and their components (seats, leather items, etc.) are NEVER food products and must NEVER be described using food-related terminology.
