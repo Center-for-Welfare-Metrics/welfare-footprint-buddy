@@ -25,7 +25,7 @@ The Welfare Footprint application has been refactored to use a **model-agnostic 
 science_and_ai_prompts/
 ├── README.md                    # Overview and documentation
 ├── USAGE_GUIDE.md              # Detailed usage instructions
-├── detect_items.md             # Multi-item detection prompt
+├── analyze_user_material.md    # Multi-item detection prompt
 ├── analyze_product.md          # Standard product analysis prompt
 └── analyze_focused_item.md     # Focused item analysis prompt
 
@@ -82,7 +82,7 @@ Copy prompt text directly from files for:
 ```typescript
 import { loadAndProcessPrompt } from "../_shared/prompt-loader.ts";
 
-const prompt = await loadAndProcessPrompt('detect_items', {
+const prompt = await loadAndProcessPrompt('analyze_user_material', {
   LANGUAGE: 'English',
   USER_CORRECTION: userInput
 });
@@ -103,7 +103,7 @@ const prompt = await loadAndProcessPrompt('detect_items', {
 
 ## Available Prompts
 
-### detect_items.md
+### analyze_user_material.md
 - **Purpose:** Detect all items in an image
 - **Output:** JSON array of items with animal ingredient analysis
 - **Variables:** `LANGUAGE`, `USER_CORRECTION`

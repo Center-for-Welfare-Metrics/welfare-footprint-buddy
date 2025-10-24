@@ -7,7 +7,7 @@
  * - Model-agnostic prompt management
  * 
  * Usage:
- *   const prompt = await loadAndProcessPrompt('detect_items', { 
+ *   const prompt = await loadAndProcessPrompt('analyze_user_material', { 
  *     LANGUAGE: 'en',
  *     USER_CORRECTION: 'This is chicken, not tofu'
  *   });
@@ -15,7 +15,7 @@
 
 // Embedded prompts (since edge functions have limited file system access)
 const PROMPTS: Record<string, string> = {
-  detect_items: `You are an expert food analyst specializing in identifying animal-derived ingredients in PACKAGED or PREPARED food products.
+  analyze_user_material: `You are an expert food analyst specializing in identifying animal-derived ingredients in PACKAGED or PREPARED food products.
 
 CRITICAL: Objects like furniture, clothing, electronics, vehicles, and their components (seats, leather items, etc.) are NEVER food products and must NEVER be described using food-related terminology.
 
@@ -407,7 +407,7 @@ export function substituteVariables(
  * @returns The processed prompt ready to send to the AI model
  * 
  * @example
- * const prompt = await loadAndProcessPrompt('detect_items', {
+ * const prompt = await loadAndProcessPrompt('analyze_user_material', {
  *   LANGUAGE: 'en',
  *   USER_CORRECTION: 'This is actually tofu, not chicken'
  * });

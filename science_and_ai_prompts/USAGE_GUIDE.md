@@ -12,7 +12,7 @@ The simplest way to use a prompt is through the `loadAndProcessPrompt` function:
 import { loadAndProcessPrompt } from "../_shared/prompt-loader.ts";
 
 // Load a prompt with variables
-const prompt = await loadAndProcessPrompt('detect_items', {
+const prompt = await loadAndProcessPrompt('analyze_user_material', {
   LANGUAGE: 'English',
   USER_CORRECTION: undefined // optional variable
 });
@@ -41,7 +41,7 @@ const prompt = await loadAndProcessPrompt('analyze_product', {
 Loads the raw template file (includes all metadata):
 
 ```typescript
-const template = await loadPromptTemplate('detect_items');
+const template = await loadPromptTemplate('analyze_user_material');
 // Returns entire file content including headers
 ```
 
@@ -49,7 +49,7 @@ const template = await loadPromptTemplate('detect_items');
 Extracts just the prompt portion from a full template:
 
 ```typescript
-const fullTemplate = await loadPromptTemplate('detect_items');
+const fullTemplate = await loadPromptTemplate('analyze_user_material');
 const promptOnly = extractPromptText(fullTemplate);
 // Returns only text after "PROMPT TEXT BEGINS BELOW:"
 ```
@@ -195,7 +195,7 @@ const languageMap = {
   'fr': 'French'
 };
 
-const prompt = await loadAndProcessPrompt('detect_items', {
+const prompt = await loadAndProcessPrompt('analyze_user_material', {
   LANGUAGE: languageMap[userLanguageCode]
 });
 ```
@@ -204,7 +204,7 @@ const prompt = await loadAndProcessPrompt('detect_items', {
 
 ```typescript
 // Only include user correction if provided
-const prompt = await loadAndProcessPrompt('detect_items', {
+const prompt = await loadAndProcessPrompt('analyze_user_material', {
   LANGUAGE: 'English',
   USER_CORRECTION: userProvidedCorrection || undefined
 });
@@ -227,7 +227,7 @@ While prompts are model-agnostic, you may need to adapt the API call:
 ### For Gemini
 
 ```typescript
-const prompt = await loadAndProcessPrompt('detect_items', { LANGUAGE: 'English' });
+const prompt = await loadAndProcessPrompt('analyze_user_material', { LANGUAGE: 'English' });
 
 const response = await fetch(
   `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`,
@@ -251,7 +251,7 @@ const response = await fetch(
 ### For OpenAI GPT-4 Vision
 
 ```typescript
-const prompt = await loadAndProcessPrompt('detect_items', { LANGUAGE: 'English' });
+const prompt = await loadAndProcessPrompt('analyze_user_material', { LANGUAGE: 'English' });
 
 const response = await fetch(
   'https://api.openai.com/v1/chat/completions',
@@ -279,7 +279,7 @@ const response = await fetch(
 ### For Claude (Anthropic)
 
 ```typescript
-const prompt = await loadAndProcessPrompt('detect_items', { LANGUAGE: 'English' });
+const prompt = await loadAndProcessPrompt('analyze_user_material', { LANGUAGE: 'English' });
 
 const response = await fetch(
   'https://api.anthropic.com/v1/messages',
@@ -323,7 +323,7 @@ const response = await fetch(
 
 ```typescript
 // Test prompt loading
-const prompt = await loadAndProcessPrompt('detect_items', {
+const prompt = await loadAndProcessPrompt('analyze_user_material', {
   LANGUAGE: 'English',
   USER_CORRECTION: 'Test correction'
 });
@@ -337,8 +337,8 @@ console.log('Generated prompt:', prompt);
 Create test cases for your prompts:
 
 ```typescript
-Deno.test("detect_items prompt loads correctly", async () => {
-  const prompt = await loadAndProcessPrompt('detect_items', {
+Deno.test("analyze_user_material prompt loads correctly", async () => {
+  const prompt = await loadAndProcessPrompt('analyze_user_material', {
     LANGUAGE: 'English'
   });
   
@@ -348,12 +348,12 @@ Deno.test("detect_items prompt loads correctly", async () => {
 });
 
 Deno.test("conditional content works", async () => {
-  const withCorrection = await loadAndProcessPrompt('detect_items', {
+  const withCorrection = await loadAndProcessPrompt('analyze_user_material', {
     LANGUAGE: 'English',
     USER_CORRECTION: 'Test'
   });
   
-  const withoutCorrection = await loadAndProcessPrompt('detect_items', {
+  const withoutCorrection = await loadAndProcessPrompt('analyze_user_material', {
     LANGUAGE: 'English'
   });
   
@@ -460,12 +460,12 @@ Load prompts asynchronously and in parallel when possible:
 
 ```typescript
 // Sequential (slower)
-const prompt1 = await loadAndProcessPrompt('detect_items', vars1);
+const prompt1 = await loadAndProcessPrompt('analyze_user_material', vars1);
 const prompt2 = await loadAndProcessPrompt('analyze_product', vars2);
 
 // Parallel (faster)
 const [prompt1, prompt2] = await Promise.all([
-  loadAndProcessPrompt('detect_items', vars1),
+  loadAndProcessPrompt('analyze_user_material', vars1),
   loadAndProcessPrompt('analyze_product', vars2)
 ]);
 ```

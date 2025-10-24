@@ -165,7 +165,7 @@ Use HIGH confidence when product categories have well-documented standard ingred
 **Code Location:** Confidence levels are assessed in:
 - `supabase/functions/analyze-image/index.ts`
 - `supabase/functions/_shared/prompt-loader.ts` (prompts define confidence criteria)
-- Applied across all analysis modes (detect_items, analyze_product, analyze_focused_item)
+- Applied across all analysis modes (analyze_user_material, analyze_product, analyze_focused_item)
 
 **Output Format:** Confidence levels appear in JSON responses for:
 - productName.confidence
@@ -204,7 +204,7 @@ Use HIGH confidence when product categories have well-documented standard ingred
 
 - [`science_and_ai_prompts/analyze_product.md`](analyze_product.md) - Product analysis prompt with confidence instructions
 - [`science_and_ai_prompts/analyze_focused_item.md`](analyze_focused_item.md) - Focused item analysis prompt
-- [`science_and_ai_prompts/detect_items.md`](detect_items.md) - Multi-item detection prompt
+- [`science_and_ai_prompts/analyze_user_material.md`](analyze_user_material.md) - Multi-item detection prompt
 - `science_and_ai_prompts/README.md` - Prompt system overview
 
 ---

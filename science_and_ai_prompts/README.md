@@ -29,7 +29,7 @@ I’ll try to organize things better soon, but for now, sorry if it feels a bit 
 
 These files contain natural-language instructions that guide the AI when analyzing food products:
 
-#### [`detect_items.md`](detect_items.md)
+#### [`analyze_user_material.md`](analyze_user_material.md)
 Guides the AI in identifying multiple food items in a single photo (e.g., meals, grocery hauls). Each item is listed with a basic animal-derived ingredient check.
 
 #### [`analyze_product.md`](analyze_product.md)
@@ -186,7 +186,7 @@ Prompts support template variables using `{{VARIABLE_NAME}}` syntax:
 import { loadAndProcessPrompt } from "../_shared/prompt-loader.ts";
 
 // Load with variables
-const prompt = await loadAndProcessPrompt('detect_items', {
+const prompt = await loadAndProcessPrompt('analyze_user_material', {
   LANGUAGE: 'English',
   USER_CORRECTION: 'This is tofu, not chicken'
 });
@@ -196,7 +196,7 @@ const prompt = await loadAndProcessPrompt('detect_items', {
 
 The `analyze-image` edge function automatically loads the appropriate prompt based on mode:
 
-- `mode: 'detect'` → `detect_items.md`
+- `mode: 'detect'` → `analyze_user_material.md`
 - `mode: 'analyze'` with `focusItem` → `analyze_focused_item.md`
 - `mode: 'analyze'` without `focusItem` → `analyze_product.md`
 

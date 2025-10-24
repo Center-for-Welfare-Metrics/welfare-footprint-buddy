@@ -53,7 +53,7 @@ cache_key = SHA256(
 ```
 
 **Example components**:
-- `prompt_template_id`: `"detect_items"`, `"analyze_product"`, `"analyze_focused_item"`
+- `prompt_template_id`: `"analyze_user_material"`, `"analyze_product"`, `"analyze_focused_item"`
 - `prompt_version`: `"v1.0"` (increment on prompt changes)
 - `mode`: `"detect"`, `"analyze"`
 - `language_family`: `"latin"`, `"cjk"`, `"indic"`, `"arabic"`, `"cyrillic"` (bucketed to reduce over-splitting)
@@ -291,7 +291,7 @@ SELECT public.aggregate_daily_metrics('2025-10-09');
 ```json
 {
   "action": "invalidate_by_prompt",
-  "promptTemplateId": "detect_items",
+  "promptTemplateId": "analyze_user_material",
   "promptVersion": "v1.0"  // Optional: omit to invalidate all versions
 }
 ```
@@ -392,13 +392,13 @@ LIMIT 10;
 
 **Test 3: Prompt Version Bump → MISS**
 1. Upload image → Analyze (cache MISS, creates entry)
-2. Increment `PROMPT_VERSIONS.detect_items` to `v1.1`
+2. Increment `PROMPT_VERSIONS.analyze_user_material` to `v1.1`
 3. Upload **same image** → Analyze
 4. **Expected**: Cache MISS (different prompt version), new entry created
 
 **Test 4: Admin Invalidation**
 1. Analyze multiple products → Build cache
-2. Call admin endpoint: `{ "action": "invalidate_by_prompt", "promptTemplateId": "detect_items" }`
+2. Call admin endpoint: `{ "action": "invalidate_by_prompt", "promptTemplateId": "analyze_user_material" }`
 3. Analyze same products again
 4. **Expected**: All MISS, cache refills
 

@@ -85,7 +85,7 @@ function validateInput(body: any): { valid: boolean; data?: ValidatedInput; erro
 
 // Prompt versions (update these when prompts change to auto-invalidate cache)
 const PROMPT_VERSIONS = {
-  detect_items: 'v1.3',  // Updated to v1.3 for critical user correction override
+  analyze_user_material: 'v1.3',  // Updated to v1.3 for critical user correction override
   analyze_focused_item: 'v2.0',
   analyze_product: 'v2.0',
 };
@@ -158,7 +158,7 @@ serve(async (req) => {
     let prompt = '';
     
     if (mode === 'detect') {
-      prompt = await loadAndProcessPrompt('detect_items', {
+      prompt = await loadAndProcessPrompt('analyze_user_material', {
         LANGUAGE: outputLanguage,
         USER_CORRECTION: userCorrection || ''
       });
@@ -213,9 +213,9 @@ NOW PROCEED WITH YOUR ANALYSIS USING THE ABOVE USER CONTEXT:
     // This prevents cross-user/cross-session caching and ensures analysis reflects current prompts
     const cacheOptions: CacheOptions = {
       strategy: 'bypass',
-      promptTemplateId: mode === 'detect' ? 'detect_items' : 
+      promptTemplateId: mode === 'detect' ? 'analyze_user_material' : 
                         (mode === 'analyze' && focusItem ? 'analyze_focused_item' : 'analyze_product'),
-      promptVersion: mode === 'detect' ? PROMPT_VERSIONS.detect_items : 
+      promptVersion: mode === 'detect' ? PROMPT_VERSIONS.analyze_user_material : 
                      (mode === 'analyze' && focusItem ? PROMPT_VERSIONS.analyze_focused_item : PROMPT_VERSIONS.analyze_product),
       mode,
       focusItem: focusItem || undefined,
