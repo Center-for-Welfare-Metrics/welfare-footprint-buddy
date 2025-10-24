@@ -79,125 +79,50 @@ const Index = () => {
   const handleStartScan = () => navigateToScreen('scanner');
   
   const handleConfirmationNeeded = (items: any[], summary: string, imageData: string, imagePreview: string, noFoodItems: boolean = false) => {
-    // Stage 1: Show description confirmation screen
+    // Store the initial detection results
+    setDetectedItems(items); // Store items from Step 1
     setItemsSummary(summary);
     setScannedImageData(imageData);
     setCurrentImagePreview(imagePreview);
     setHasNoFoodItems(noFoodItems);
-    navigateToScreen('descriptionConfirmation');
-  };
-  
-  const handleDescriptionConfirmed = async (confirmedDescription: string) => {
-    // Stage 2: Use ONLY the confirmed description to detect items
-    // CRITICAL: Do NOT send the image - only use the user's confirmed text
-    setIsAnalyzingItem(true);
-    setItemsSummary(confirmedDescription);
     
-    try {
-      const { data, error } = await withRetry(async () => {
-        const res = await supabase.functions.invoke('analyze-image', {
-          body: { 
-            // NO imageData - only the confirmed description
-            language: i18n.language,
-            mode: 'detect',
-            userCorrection: confirmedDescription
-          }
-        });
-        if (res.error) throw res.error;
-        return res;
-      }, 2, 1000);
-
-      if (error) throw error;
-
-      if (data?.candidates?.[0]?.content?.parts[0]?.text) {
-        const rawText = data.candidates[0].content.parts[0].text;
-        const sanitizedText = sanitizeJson(rawText);
-        
-        try {
-          const detectionJson = JSON.parse(sanitizedText);
-          setDetectedItems(detectionJson.items);
-          navigateToScreen('itemSelection');
-        } catch (parseError) {
-          console.error('[ERROR][handleDescriptionConfirmed] JSON Parse Error:', parseError);
-          throw new Error(`JSON Parse error: ${parseError instanceof Error ? parseError.message : 'Invalid JSON'}`);
-        }
-      } else {
-        throw new Error('Unexpected response format from AI.');
-      }
-    } catch (error) {
-      const appError = ErrorHandler.parseSupabaseError(error, 'handleDescriptionConfirmed');
-      toast({
-        title: appError.retryable ? "Analysis Failed" : "Error",
-        description: appError.userMessage,
-        variant: "destructive",
-      });
-    } finally {
-      setIsAnalyzingItem(false);
-    }
+    // Go directly to item selection screen - no need for intermediate description confirmation
+    // The description/summary is just informational context
+    navigateToScreen('itemSelection');
   };
   
+  // This function is no longer needed - we go directly to item selection
+  // Keeping it for backwards compatibility but it should not be called
+  const handleDescriptionConfirmed = async (confirmedDescription: string) => {
+    console.warn('[DEPRECATED] handleDescriptionConfirmed should not be called - items are already detected');
+    setItemsSummary(confirmedDescription);
+    navigateToScreen('itemSelection');
+  };
+  
+  // Deprecated - no longer re-detecting based on description edits
   const handleConfirmationEdit = async (editedDescription: string) => {
-    setIsAnalyzingItem(true);
-    try {
-      const imageData = JSON.parse(scannedImageData);
-      
-      const { data, error } = await withRetry(async () => {
-        const res = await supabase.functions.invoke('analyze-image', {
-          body: { 
-            imageData, 
-            language: i18n.language,
-            mode: 'detect',
-            userCorrection: editedDescription
-          }
-        });
-        if (res.error) throw res.error;
-        return res;
-      }, 2, 1000);
-
-      if (error) throw error;
-
-      if (data?.candidates?.[0]?.content?.parts[0]?.text) {
-        const rawText = data.candidates[0].content.parts[0].text;
-        const sanitizedText = sanitizeJson(rawText);
-        
-        try {
-          const detectionJson = JSON.parse(sanitizedText);
-          setDetectedItems(detectionJson.items);
-          setItemsSummary(detectionJson.summary);
-          navigateToScreen('itemSelection');
-        } catch (parseError) {
-          console.error('[ERROR][' + new Date().toISOString() + '][handleConfirmationEdit] JSON Parse Error:', parseError);
-          console.error('Raw text:', rawText);
-          console.error('Sanitized text:', sanitizedText);
-          throw new Error(`JSON Parse error: ${parseError instanceof Error ? parseError.message : 'Invalid JSON'}`);
-        }
-      } else {
-        throw new Error('Unexpected response format from AI.');
-      }
-    } catch (error) {
-      const appError = ErrorHandler.parseSupabaseError(error, 'handleConfirmationEdit');
-      toast({
-        title: appError.retryable ? "Analysis Failed" : "Error",
-        description: appError.userMessage,
-        variant: "destructive",
-      });
-    } finally {
-      setIsAnalyzingItem(false);
-    }
+    console.warn('[DEPRECATED] handleConfirmationEdit should not be called');
+    setItemsSummary(editedDescription);
+    navigateToScreen('itemSelection');
   };
 
+  // New Step 2: User refines detected items (adds/removes/modifies)
   const handleItemReanalyze = async (_itemName: string, userEditedDescription: string) => {
     setIsAnalyzingItem(true);
     try {
-      const imageData = JSON.parse(scannedImageData);
+      // Call Step 2 (refine mode) with original detection results and user correction
+      const originalDetectionResults = JSON.stringify({
+        items: detectedItems,
+        summary: itemsSummary
+      });
       
       const { data, error } = await withRetry(async () => {
         const res = await supabase.functions.invoke('analyze-image', {
           body: { 
-            imageData, 
             language: i18n.language,
-            mode: 'detect',
-            userCorrection: userEditedDescription.trim() || undefined
+            mode: 'refine', // Step 2: refinement mode
+            userCorrection: userEditedDescription.trim(),
+            originalDetectionResults // Pass Step 1 results
           }
         });
         if (res.error) throw res.error;
@@ -212,11 +137,17 @@ const Index = () => {
         
         try {
           const detectionJson = JSON.parse(sanitizedText);
-          // Update items from AI, but use the user's edited description as the summary
-          setDetectedItems(detectionJson.items);
-          setItemsSummary(userEditedDescription.trim());
+          // Update items from refinement, filter out suppressedByUser items
+          const refinedItems = detectionJson.items.filter((item: any) => !item.suppressedByUser);
+          setDetectedItems(refinedItems);
+          setItemsSummary(detectionJson.summary || userEditedDescription.trim());
+          
+          console.log('[Step 2] Refinement complete:', {
+            userEdits: detectionJson.userEdits,
+            refinedItemCount: refinedItems.length
+          });
         } catch (parseError) {
-          console.error('[ERROR][' + new Date().toISOString() + '][handleItemReanalyze] JSON Parse Error:', parseError);
+          console.error('[ERROR][handleItemReanalyze] JSON Parse Error:', parseError);
           console.error('Raw text:', rawText);
           console.error('Sanitized text:', sanitizedText);
           throw new Error(`JSON Parse error: ${parseError instanceof Error ? parseError.message : 'Invalid JSON'}`);

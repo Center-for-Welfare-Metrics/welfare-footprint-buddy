@@ -13,7 +13,7 @@ const corsHeaders = {
 // Input validation constants
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB in bytes (base64 is ~33% larger)
 const MAX_TEXT_LENGTH = 5000;
-const ALLOWED_MODES = ['detect', 'analyze'] as const;
+const ALLOWED_MODES = ['detect', 'analyze', 'refine'] as const;
 
 interface ValidatedInput {
   imageData?: { base64: string; mimeType: string };
@@ -22,6 +22,7 @@ interface ValidatedInput {
   mode: typeof ALLOWED_MODES[number];
   focusItem?: string;
   userCorrection?: string;
+  originalDetectionResults?: string; // JSON string of original detection for refine mode
 }
 
 function validateInput(body: any): { valid: boolean; data?: ValidatedInput; error?: string } {
@@ -29,7 +30,7 @@ function validateInput(body: any): { valid: boolean; data?: ValidatedInput; erro
     return { valid: false, error: 'Invalid request body' };
   }
 
-  const { imageData, additionalInfo, language = 'en', mode = 'detect', focusItem, userCorrection } = body;
+  const { imageData, additionalInfo, language = 'en', mode = 'detect', focusItem, userCorrection, originalDetectionResults } = body;
 
   // Validate mode
   if (!ALLOWED_MODES.includes(mode)) {
@@ -63,6 +64,15 @@ function validateInput(body: any): { valid: boolean; data?: ValidatedInput; erro
     return { valid: false, error: `userCorrection exceeds maximum length of ${MAX_TEXT_LENGTH} characters` };
   }
 
+  if (originalDetectionResults && typeof originalDetectionResults !== 'string') {
+    return { valid: false, error: 'originalDetectionResults must be a JSON string' };
+  }
+
+  // Validate refine mode requirements
+  if (mode === 'refine' && (!userCorrection || !originalDetectionResults)) {
+    return { valid: false, error: 'refine mode requires both userCorrection and originalDetectionResults' };
+  }
+
   // Validate language code - extract base language code (e.g., 'en-US' -> 'en')
   const validLanguages = ['en', 'es', 'fr', 'de', 'pt', 'zh', 'hi', 'ar', 'ru'];
   const baseLanguage = language ? language.split('-')[0] : 'en';
@@ -79,6 +89,7 @@ function validateInput(body: any): { valid: boolean; data?: ValidatedInput; erro
       mode,
       focusItem: focusItem?.trim(),
       userCorrection: userCorrection?.trim(),
+      originalDetectionResults: originalDetectionResults?.trim(),
     }
   };
 }
@@ -133,7 +144,7 @@ serve(async (req) => {
       );
     }
 
-    const { imageData, additionalInfo, language, mode, focusItem, userCorrection } = validation.data!;
+    const { imageData, additionalInfo, language, mode, focusItem, userCorrection, originalDetectionResults } = validation.data!;
 
     const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
     if (!GEMINI_API_KEY) {
@@ -157,16 +168,36 @@ serve(async (req) => {
     const outputLanguage = languageNames[language] || 'English';
     
     let prompt = '';
+    let isTextOnlyMode = false; // Track if this is a text-only request (no image required)
     
     if (mode === 'detect') {
       // Step 1: Pure visual/OCR detection - no user corrections at this stage
       prompt = await loadAndProcessPrompt('analyze_user_material', {
         LANGUAGE: outputLanguage
       });
+      console.log('[analyze-image] Step 1: Detection mode (visual/OCR)');
       
-      // Note: userCorrection is intentionally NOT passed here anymore
-      // User corrections will be handled in a separate step 2 call (confirm_refine_items prompt)
-      // This separation ensures clean audit trails and modular processing
+    } else if (mode === 'refine') {
+      // Step 2: Apply user corrections to original detection results
+      prompt = await loadAndProcessPrompt('confirm_refine_items', {
+        LANGUAGE: outputLanguage
+      });
+      
+      // Inject original detection results and user correction into the prompt
+      const refinementContext = `
+ORIGINAL DETECTION RESULTS:
+${originalDetectionResults}
+
+USER CORRECTION:
+${userCorrection}
+
+Apply the user correction to the original detection results following the rules in the prompt.
+`;
+      
+      prompt = refinementContext + '\n\n' + prompt;
+      isTextOnlyMode = true; // No image needed for refinement
+      console.log('[analyze-image] Step 2: Refinement mode (user corrections)');
+      
     } else if (mode === 'analyze' && focusItem) {
       prompt = await loadAndProcessPrompt('analyze_focused_item', {
         LANGUAGE: outputLanguage,
@@ -216,19 +247,25 @@ NOW PROCEED WITH YOUR ANALYSIS USING THE ABOVE USER CONTEXT:
 
     // CRITICAL: Always bypass cache to ensure fresh AI calls for each upload
     // This prevents cross-user/cross-session caching and ensures analysis reflects current prompts
+    const promptTemplateId = mode === 'detect' ? 'analyze_user_material' : 
+                             mode === 'refine' ? 'confirm_refine_items' :
+                             (mode === 'analyze' && focusItem ? 'analyze_focused_item' : 'analyze_product');
+    
+    const promptVersion = mode === 'detect' ? PROMPT_VERSIONS.analyze_user_material : 
+                          mode === 'refine' ? PROMPT_VERSIONS.confirm_refine_items :
+                          (mode === 'analyze' && focusItem ? PROMPT_VERSIONS.analyze_focused_item : PROMPT_VERSIONS.analyze_product);
+    
     const cacheOptions: CacheOptions = {
       strategy: 'bypass',
-      promptTemplateId: mode === 'detect' ? 'analyze_user_material' : 
-                        (mode === 'analyze' && focusItem ? 'analyze_focused_item' : 'analyze_product'),
-      promptVersion: mode === 'detect' ? PROMPT_VERSIONS.analyze_user_material : 
-                     (mode === 'analyze' && focusItem ? PROMPT_VERSIONS.analyze_focused_item : PROMPT_VERSIONS.analyze_product),
+      promptTemplateId,
+      promptVersion,
       mode,
       focusItem: focusItem || undefined,
     };
 
     const aiResponse = await callAI({
       prompt,
-      imageData,
+      imageData: isTextOnlyMode ? undefined : imageData, // Skip image for text-only modes like refine
       language,
       timeout: 30000,
       cache: 'bypass', // Always bypass cache for fresh results
