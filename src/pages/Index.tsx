@@ -92,7 +92,61 @@ const Index = () => {
   
   // Step 1 → Step 2 transition: User confirms description, proceed to items list
   const handleDescriptionConfirmed = async (confirmedDescription: string) => {
-    console.log('[Step 1→2] Description confirmed, showing detected items');
+    console.log('[Step 1→2] Description confirmed:', confirmedDescription);
+    
+    // If user edited the description, we need to re-detect items with the new context
+    if (confirmedDescription !== itemsSummary) {
+      console.log('[Step 1→2] Description was edited - re-analyzing with new context');
+      setIsAnalyzingItem(true);
+      
+      try {
+        const imageData = JSON.parse(scannedImageData);
+        
+        const { data, error } = await withRetry(async () => {
+          const res = await supabase.functions.invoke('analyze-image', {
+            body: { 
+              imageData,
+              language: i18n.language,
+              mode: 'detect',
+              additionalInfo: confirmedDescription // Pass edited description as context
+            }
+          });
+          if (res.error) throw res.error;
+          return res;
+        }, 2, 1000);
+
+        if (error) throw error;
+
+        if (data?.candidates?.[0]?.content?.parts[0]?.text) {
+          const rawText = data.candidates[0].content.parts[0].text;
+          const sanitizedText = sanitizeJson(rawText);
+          
+          try {
+            const detectionJson = JSON.parse(sanitizedText);
+            // Update items with re-detected results based on user's description
+            setDetectedItems(detectionJson.items || []);
+            setItemsSummary(confirmedDescription);
+            
+            console.log('[Step 1→2] Re-analysis complete with edited description');
+          } catch (parseError) {
+            console.error('[ERROR][handleDescriptionConfirmed] JSON Parse Error:', parseError);
+            throw new Error(`JSON Parse error: ${parseError instanceof Error ? parseError.message : 'Invalid JSON'}`);
+          }
+        }
+      } catch (error) {
+        const appError = ErrorHandler.parseSupabaseError(error, 'handleDescriptionConfirmed');
+        toast({
+          title: "Re-analysis Failed",
+          description: appError.userMessage,
+          variant: "destructive",
+        });
+        setIsAnalyzingItem(false);
+        return; // Don't navigate if re-analysis failed
+      } finally {
+        setIsAnalyzingItem(false);
+      }
+    }
+    
     setItemsSummary(confirmedDescription);
     navigateToScreen('itemSelection');
   };

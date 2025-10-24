@@ -171,11 +171,40 @@ serve(async (req) => {
     let isTextOnlyMode = false; // Track if this is a text-only request (no image required)
     
     if (mode === 'detect') {
-      // Step 1: Pure visual/OCR detection - no user corrections at this stage
+      // Step 1: Pure visual/OCR detection - but can be guided by user description
       prompt = await loadAndProcessPrompt('analyze_user_material', {
         LANGUAGE: outputLanguage
       });
-      console.log('[analyze-image] Step 1: Detection mode (visual/OCR)');
+      
+      // If user provided additional context (edited description), inject it
+      if (additionalInfo && additionalInfo.trim()) {
+        const userDescriptionContext = `
+═══════════════════════════════════════════════════════════════════
+🚨 USER-PROVIDED DESCRIPTION (USE AS AUTHORITATIVE CONTEXT) 🚨
+═══════════════════════════════════════════════════════════════════
+
+The user has provided this description of the image:
+
+"${additionalInfo}"
+
+⚠️ CRITICAL INSTRUCTIONS:
+
+1. ✅ Use this description as GROUND TRUTH for what's in the image
+2. ✅ If the user mentions specific dishes (e.g., "feijoada", "paella"), decompose those dishes according to their traditional recipes
+3. ✅ If the user mentions specific ingredients, ensure those are included in the items list
+4. ✅ Combine this description with your visual analysis for complete accuracy
+5. ❌ Do NOT contradict this user-provided information
+
+═══════════════════════════════════════════════════════════════════
+NOW ANALYZE THE IMAGE USING THIS CONTEXT:
+═══════════════════════════════════════════════════════════════════
+
+`;
+        prompt = userDescriptionContext + prompt;
+        console.log('[analyze-image] Step 1: Detection mode with user-provided description context');
+      } else {
+        console.log('[analyze-image] Step 1: Detection mode (visual/OCR only)');
+      }
       
     } else if (mode === 'refine') {
       // Step 2: Apply user corrections to original detection results
@@ -204,16 +233,10 @@ Apply the user correction to the original detection results following the rules 
         FOCUS_ITEM: focusItem,
         ADDITIONAL_INFO: additionalInfo || ''
       });
-    } else {
-      prompt = await loadAndProcessPrompt('analyze_product', {
-        LANGUAGE: outputLanguage,
-        ADDITIONAL_INFO: additionalInfo || ''
-      });
-    }
-    
-    // Inject user context if provided (for analyze modes only, detect mode handles it in the prompt template)
-    if (additionalInfo && additionalInfo.trim() && mode !== 'detect') {
-      const userContextPrefix = `
+      
+      // Inject user context for analyze mode
+      if (additionalInfo && additionalInfo.trim()) {
+        const userContextPrefix = `
 ═══════════════════════════════════════════════════════════════════
 🚨 CRITICAL - USER-PROVIDED FACTUAL INFORMATION (HIGHEST PRIORITY) 🚨
 ═══════════════════════════════════════════════════════════════════
@@ -241,8 +264,48 @@ NOW PROCEED WITH YOUR ANALYSIS USING THE ABOVE USER CONTEXT:
 ═══════════════════════════════════════════════════════════════════
 
 `;
+        
+        prompt = userContextPrefix + prompt;
+      }
+    } else {
+      prompt = await loadAndProcessPrompt('analyze_product', {
+        LANGUAGE: outputLanguage,
+        ADDITIONAL_INFO: additionalInfo || ''
+      });
       
-      prompt = userContextPrefix + prompt;
+      // Inject user context for general analyze mode
+      if (additionalInfo && additionalInfo.trim()) {
+        const userContextPrefix = `
+═══════════════════════════════════════════════════════════════════
+🚨 CRITICAL - USER-PROVIDED FACTUAL INFORMATION (HIGHEST PRIORITY) 🚨
+═══════════════════════════════════════════════════════════════════
+
+The user has provided the following VERIFIED, AUTHORITATIVE information:
+
+"${additionalInfo}"
+
+⚠️ MANDATORY REQUIREMENTS - YOU MUST FOLLOW THESE EXACTLY:
+
+1. ✅ This user-provided text is GROUND TRUTH - it is 100% factual and authoritative
+2. ✅ This information TAKES ABSOLUTE PRECEDENCE over any visual analysis
+3. ✅ If the user mentions ANY animal ingredients (examples: "soup with sausage", "contains eggs", "made with chicken", "has meat", "fish dish"):
+   → Set hasAnimalIngredients = true
+   → List those specific ingredients in animalIngredients with HIGH confidence
+   → Provide detailed welfare analysis for those specific animals
+4. ✅ If the user mentions production methods (e.g., "cage-free", "organic"), incorporate them into productionSystem with HIGH confidence
+5. ✅ If the user provides cultural/regional context (e.g., "Polish Żurek soup traditionally contains sausage"), USE THIS KNOWLEDGE to inform your analysis
+6. ❌ NEVER contradict this user-provided information
+7. ❌ NEVER ignore this context in favor of only visual analysis
+8. ✅ COMBINE this authoritative user context WITH your visual analysis for a complete assessment
+
+═══════════════════════════════════════════════════════════════════
+NOW PROCEED WITH YOUR ANALYSIS USING THE ABOVE USER CONTEXT:
+═══════════════════════════════════════════════════════════════════
+
+`;
+        
+        prompt = userContextPrefix + prompt;
+      }
     }
 
     // CRITICAL: Always bypass cache to ensure fresh AI calls for each upload
