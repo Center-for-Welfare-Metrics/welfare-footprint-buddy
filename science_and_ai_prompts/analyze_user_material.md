@@ -23,6 +23,8 @@ User corrections and ingredient/ethical inferences are handled separately in **S
   "items": [
     {
       "name": "string",
+      "likelyHasAnimalIngredients": boolean,
+      "animalConfidence": "High" | "Medium" | "Low"
       "confidence": "High" | "Medium" | "Low",
       "source": "visual" | "ocr" | "recipe_inference",
       "parentDish": "string | null",
@@ -32,6 +34,9 @@ User corrections and ingredient/ethical inferences are handled separately in **S
   "summary": "string"
 }
 ```
+> *Note:* The fields likelyHasAnimalIngredients and animalConfidence may also appear in the JSON output for compatibility with downstream processing. However, they are not interpreted or displayed at this stage — Step 1 focuses only on visual detection and description.
+>
+> ---
 
 ## Field Definitions
 
@@ -52,7 +57,9 @@ Compatible with any vision-capable language model (e.g., Gemini, GPT-4 Vision, C
 ## Versioning
 
 - **Version:** 1.7  
+- **File ID:** `analyze_user_material_v1.7`  
 - **Last Updated:** 2025-10-24  
+- **Maintainer:** Wladimir  
 - **Change Log:** Removed all ingredient and ethical inference logic from Step 1; restricted summary to purely visual descriptions.
 
 
@@ -377,6 +384,9 @@ If the image contains ONLY non-food elements (living animals, people, landscapes
   * Prioritize items based on visual dominance in the image (e.g., large pieces of meat, prominent ingredients)
   * Or prioritize by estimated quantity inferred from packaging, label, or dish context
   * In the summary, note: "More than 10 animal-derived ingredients detected. Showing the 10 most prominent items based on visual prominence or estimated quantity."
+  * If more than 10 **plant-based** ingredients are detected as well, summarize the minor ones collectively under a single supporting item,  
+e.g., `"Additional vegetables (from Paella)"`, to keep the output concise and readable.
+
 - **USE PRODUCT KNOWLEDGE**: Infer likely ingredients based on product type and standard formulations:
   * Most chocolates (especially milk, white, and "diet" varieties) contain dairy unless explicitly labeled as dark/vegan
   * "Branco" (white chocolate) ALWAYS contains milk/dairy products
