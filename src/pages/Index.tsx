@@ -79,29 +79,27 @@ const Index = () => {
   const handleStartScan = () => navigateToScreen('scanner');
   
   const handleConfirmationNeeded = (items: any[], summary: string, imageData: string, imagePreview: string, noFoodItems: boolean = false) => {
-    // Store the initial detection results
-    setDetectedItems(items); // Store items from Step 1
+    // Store the initial detection results (Step 1)
+    setDetectedItems(items);
     setItemsSummary(summary);
     setScannedImageData(imageData);
     setCurrentImagePreview(imagePreview);
     setHasNoFoodItems(noFoodItems);
     
-    // Go directly to item selection screen - no need for intermediate description confirmation
-    // The description/summary is just informational context
-    navigateToScreen('itemSelection');
+    // Show description confirmation screen first (Step 1 UI)
+    navigateToScreen('descriptionConfirmation');
   };
   
-  // This function is no longer needed - we go directly to item selection
-  // Keeping it for backwards compatibility but it should not be called
+  // Step 1 → Step 2 transition: User confirms description, proceed to items list
   const handleDescriptionConfirmed = async (confirmedDescription: string) => {
-    console.warn('[DEPRECATED] handleDescriptionConfirmed should not be called - items are already detected');
+    console.log('[Step 1→2] Description confirmed, showing detected items');
     setItemsSummary(confirmedDescription);
     navigateToScreen('itemSelection');
   };
   
-  // Deprecated - no longer re-detecting based on description edits
+  // Handle description edits - update summary and proceed to items
   const handleConfirmationEdit = async (editedDescription: string) => {
-    console.warn('[DEPRECATED] handleConfirmationEdit should not be called');
+    console.log('[Step 1] Description edited by user');
     setItemsSummary(editedDescription);
     navigateToScreen('itemSelection');
   };
