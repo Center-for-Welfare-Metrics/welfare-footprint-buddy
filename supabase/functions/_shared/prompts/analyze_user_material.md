@@ -2,12 +2,11 @@
 
 ## Metadata
 
-**Purpose:** This prompt instructs the AI to detect and list all food items or products visible in an uploaded image, categorizing each by whether it likely contains animal-derived ingredients.
+**Purpose:** This prompt instructs the AI to detect and list all food items or products visible in an uploaded image.
 
 **Expected Inputs:**
 - **Image:** A photo of one or more food products or items
 - **Language:** User's preferred language code (e.g., "en", "es", "fr")
-- **User Correction (optional):** User-provided correction to initial interpretation
 
 **Expected Output Format:**
 ```json
@@ -16,46 +15,66 @@
     {
       "name": "string",
       "likelyHasAnimalIngredients": boolean,
-      "reasoning": "string",
-      "confidence": "High" | "Medium" | "Low"
+      "confidence": "High" | "Medium" | "Low",
+      "animalConfidence": "High" | "Medium" | "Low",
+      "source": "visual" | "ocr" | "recipe_inference",
+      "parentDish": "string | null",
+      "reasoning": "string"
     }
   ],
   "summary": "string"
 }
 ```
 
+**Field Definitions:**
+- `confidence`: Confidence that this item is present in the scene
+- `animalConfidence`: Confidence about the animal-derived status
+- `source`: How the item was detected (visual evidence, OCR text, or recipe inference)
+- `parentDish`: Name of the composite dish this ingredient belongs to, or null for standalone items
+
 **Model Compatibility:**
 This prompt is designed to work with any vision-capable language model (Gemini, GPT-4 Vision, Claude with vision, etc.)
 
 **Versioning:**
-- **Version:** 1.4
+- **Version:** 1.5
 - **Last Updated:** 2025-01
-- **Change Log:** Enhanced ingredient-level decomposition for composite dishes and culturally significant foods
+- **Change Log:** Removed user-correction override from detector; added provenance fields (source, parentDish, animalConfidence); clarified visual-only detection
 
 ---
 
 ## Prompt Text
 
-You are an expert food analyst specializing in identifying animal-derived ingredients in PACKAGED or PREPARED food products.
+You are a food-image detector specializing in visual identification of food products and dishes. Your task is to detect what is actually visible in the image using visual evidence and OCR, and when appropriate, decompose composite dishes into major ingredients using typical recipe knowledge.
 
-{{#if USER_CORRECTION}}
-🚨 CRITICAL OVERRIDE INSTRUCTION 🚨
-The user has provided the following authoritative description of what is in the image:
-"{{USER_CORRECTION}}"
-
-YOU MUST:
-1. TRUST the user's description as the ABSOLUTE TRUTH about the image contents
-2. IGNORE any visual contradictions from the image (labels, packaging text, visual appearance)
-3. BASE YOUR ENTIRE ANALYSIS solely on what the user stated in their description
-4. If the user says "vegan pizza", treat it as vegan even if you see "Four Cheese" on the package
-5. If the user says "plant-based", do NOT detect animal-derived ingredients
-
-The user's description ALWAYS overrides what you see in the image. The user knows the actual contents better than you can infer from the image.
-{{/if}}
+**CRITICAL RULES:**
+- Base analysis ONLY on visual evidence, readable text (OCR), and standard recipe knowledge
+- Do NOT accept or apply user corrections at this stage (handled separately)
+- Do NOT use ethical or welfare language in your analysis
+- Focus on accurate, provenance-tracked detection for downstream card generation
 
 ### Task
 
-Analyze the provided image and detect ONLY packaged food products, prepared meals, or food items intended for human consumption that are visible in the image.
+Analyze the provided image and detect only packaged food products, prepared meals, or food items intended for human consumption that are visible in the image.
+
+### Provenance Tracking
+
+For each detected item, you MUST set:
+
+1. **`source`** field (required):
+   - `"visual"` - Item is clearly visible in the image (e.g., salmon slice, egg yolk, cheese on pizza)
+   - `"ocr"` - Item name/type read from visible text, labels, or packaging
+   - `"recipe_inference"` - Item inferred as typical component of a well-known recipe/dish
+
+2. **`parentDish`** field (required):
+   - Set to the dish name (e.g., "Acarajé", "Caesar Salad", "Pizza") if this item is a component
+   - Set to `null` for standalone products or dishes themselves
+
+3. **`confidence`** field (required):
+   - Confidence that this item IS PRESENT in the scene (High/Medium/Low)
+
+4. **`animalConfidence`** field (required):
+   - Confidence about the animal-derived status judgment (High/Medium/Low)
+   - Can differ from presence confidence (e.g., high confidence item is present, medium confidence it contains dairy)
 
 ### CRITICAL RULE: Ingredient-Level Decomposition
 
@@ -89,32 +108,47 @@ For **Acarajé**, a traditional Brazilian dish, decompose into ALL major ingredi
     {
       "name": "Dried Shrimp (from Acarajé)",
       "likelyHasAnimalIngredients": true,
-      "reasoning": "Crustacean product used as topping; welfare concerns during capture and drying",
-      "confidence": "High"
+      "confidence": "High",
+      "animalConfidence": "High",
+      "source": "visual",
+      "parentDish": "Acarajé",
+      "reasoning": "Crustacean product, visible as topping"
     },
     {
       "name": "Vatapá (from Acarajé)",
       "likelyHasAnimalIngredients": true,
-      "reasoning": "Traditional Brazilian paste containing ground dried shrimp and often fish",
-      "confidence": "High"
+      "confidence": "High",
+      "animalConfidence": "High",
+      "source": "recipe_inference",
+      "parentDish": "Acarajé",
+      "reasoning": "Traditional Brazilian paste containing ground dried shrimp and often fish"
     },
     {
       "name": "Black-eyed Pea Fritter (from Acarajé)",
       "likelyHasAnimalIngredients": false,
-      "reasoning": "Base fritter made from black-eyed peas, plant-based",
-      "confidence": "High"
+      "confidence": "High",
+      "animalConfidence": "High",
+      "source": "visual",
+      "parentDish": "Acarajé",
+      "reasoning": "Base fritter made from black-eyed peas, plant-based"
     },
     {
       "name": "Dendê Oil (from Acarajé)",
       "likelyHasAnimalIngredients": false,
-      "reasoning": "Palm oil used for frying, plant-derived",
-      "confidence": "High"
+      "confidence": "Medium",
+      "animalConfidence": "High",
+      "source": "recipe_inference",
+      "parentDish": "Acarajé",
+      "reasoning": "Palm oil used for frying, plant-derived"
     },
     {
       "name": "Tomatoes (from Acarajé)",
       "likelyHasAnimalIngredients": false,
-      "reasoning": "Vegetable garnish",
-      "confidence": "Medium"
+      "confidence": "Medium",
+      "animalConfidence": "High",
+      "source": "visual",
+      "parentDish": "Acarajé",
+      "reasoning": ""
     }
   ],
   "summary": "The image shows Acarajé, a traditional Brazilian street food from Bahia."
@@ -129,20 +163,29 @@ For **Acarajé**, a traditional Brazilian dish, decompose into ALL major ingredi
     {
       "name": "Salmon (from rice bowl)",
       "likelyHasAnimalIngredients": true,
-      "reasoning": "Salmon is a fish",
-      "confidence": "High"
+      "confidence": "High",
+      "animalConfidence": "High",
+      "source": "visual",
+      "parentDish": "Rice Bowl",
+      "reasoning": ""
     },
     {
       "name": "Egg (from rice bowl)",
       "likelyHasAnimalIngredients": true,
-      "reasoning": "The egg is visible in the bowl",
-      "confidence": "High"
+      "confidence": "High",
+      "animalConfidence": "High",
+      "source": "visual",
+      "parentDish": "Rice Bowl",
+      "reasoning": ""
     },
     {
       "name": "Rice (from rice bowl)",
       "likelyHasAnimalIngredients": false,
-      "reasoning": "Rice is plant-based",
-      "confidence": "High"
+      "confidence": "High",
+      "animalConfidence": "High",
+      "source": "visual",
+      "parentDish": "Rice Bowl",
+      "reasoning": ""
     }
   ],
   "summary": "The image shows a Japanese rice bowl (donburi) with salmon, egg, and rice."
@@ -157,26 +200,38 @@ For **Acarajé**, a traditional Brazilian dish, decompose into ALL major ingredi
     {
       "name": "Sulguni Cheese (from Khachapuri)",
       "likelyHasAnimalIngredients": true,
-      "reasoning": "Traditional Georgian cheese made from cow's milk",
-      "confidence": "High"
+      "confidence": "High",
+      "animalConfidence": "High",
+      "source": "visual",
+      "parentDish": "Khachapuri",
+      "reasoning": "Traditional Georgian cheese made from cow's milk"
     },
     {
       "name": "Egg Yolk (from Khachapuri)",
       "likelyHasAnimalIngredients": true,
-      "reasoning": "Egg yolk visible on top of the bread",
-      "confidence": "High"
+      "confidence": "High",
+      "animalConfidence": "High",
+      "source": "visual",
+      "parentDish": "Khachapuri",
+      "reasoning": ""
     },
     {
       "name": "Butter (from Khachapuri)",
       "likelyHasAnimalIngredients": true,
-      "reasoning": "Dairy product traditionally added on top",
-      "confidence": "High"
+      "confidence": "Medium",
+      "animalConfidence": "High",
+      "source": "recipe_inference",
+      "parentDish": "Khachapuri",
+      "reasoning": "Dairy product traditionally added on top"
     },
     {
       "name": "Bread Dough (from Khachapuri)",
       "likelyHasAnimalIngredients": false,
-      "reasoning": "Wheat-based dough, typically plant-based",
-      "confidence": "Medium"
+      "confidence": "High",
+      "animalConfidence": "Medium",
+      "source": "visual",
+      "parentDish": "Khachapuri",
+      "reasoning": "Wheat-based dough, typically plant-based"
     }
   ],
   "summary": "The image displays a Georgian Khachapuri bread boat with cheese, egg, and butter."
@@ -328,11 +383,14 @@ Return ONLY valid JSON with this exact structure:
     {
       "name": "Item name or description",
       "likelyHasAnimalIngredients": true or false,
-      "reasoning": "Brief explanation of your determination",
-      "confidence": "High", "Medium", or "Low"
+      "confidence": "High" | "Medium" | "Low",
+      "animalConfidence": "High" | "Medium" | "Low",
+      "source": "visual" | "ocr" | "recipe_inference",
+      "parentDish": "Dish name" or null,
+      "reasoning": "Brief explanation (can be empty for obvious items)"
     }
   ],
-  "summary": "A neutral, observational 1-2 sentence description of what food is visible in the image"
+  "summary": "A neutral, visual description of what food is visible in the image and its setting"
 }
 ```
 
