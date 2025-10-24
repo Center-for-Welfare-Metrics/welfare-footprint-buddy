@@ -95,7 +95,20 @@ serve(async (req) => {
 
     initAIHandler(GEMINI_API_KEY);
 
-    console.log(`Generating ethical swap suggestions for: ${productName}, ethical lens: ${ethicalLens}`);
+    const ethicalLensNames = {
+      1: 'Concerned Omnivore (Same Product, High Welfare)',
+      2: 'Strong Welfare Standards',
+      3: 'Reducitarian',
+      4: 'Vegetarian',
+      5: 'Vegan (Plant-Based/Cultured Only)'
+    };
+
+    console.log(`🎯 Ethical Swap Request:`, {
+      productName,
+      ethicalLens,
+      ethicalLensName: ethicalLensNames[ethicalLens as keyof typeof ethicalLensNames],
+      animalIngredients: animalIngredients.substring(0, 100)
+    });
 
     // Ethical lens definitions are centralized in science_and_ai_prompts/ethical_lens_criteria.md
     // and implemented in the prompt template suggest_ethical_swap.md

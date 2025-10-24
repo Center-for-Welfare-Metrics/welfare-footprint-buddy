@@ -110,6 +110,19 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
       // Normalize language code (e.g., "en-GB" -> "en")
       const languageCode = i18n.language.split('-')[0];
       
+      console.log('🎯 [handleEthicalSwap] Sending request with:', {
+        productName,
+        animalIngredients,
+        ethicalLens: sliderValue[0],
+        language: languageCode,
+        sliderValue,
+        displayedLens: sliderValue[0] === 1 ? 'Concerned Omnivore' :
+                       sliderValue[0] === 2 ? 'Strong Welfare' :
+                       sliderValue[0] === 3 ? 'Reducitarian' :
+                       sliderValue[0] === 4 ? 'Vegetarian' :
+                       sliderValue[0] === 5 ? 'Vegan' : 'Unknown'
+      });
+      
       const { data: result, error } = await supabase.functions.invoke('suggest-ethical-swap', {
         body: { 
           productName,
