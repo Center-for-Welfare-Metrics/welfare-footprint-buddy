@@ -123,11 +123,6 @@ const DescriptionConfirmationScreen = ({
         </div>
       </div>
 
-      <div className="glass-card rounded-xl p-4 w-full bg-blue-500/10 border border-blue-500/30">
-        <p className="text-sm text-gray-300 text-center">
-          <strong className="text-white">Note:</strong> After confirming, the app will analyze the image to detect specific food items based on your description.
-        </p>
-      </div>
     </div>
   );
 };
