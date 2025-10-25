@@ -442,15 +442,20 @@ The summary is ONLY for describing what you SEE visually, not for analyzing ingr
 - Type of food or product (e.g., "packaged snacks", "prepared meal", "bento box")
 - Observable ingredients or components (e.g., "rice bowl with salmon and egg")
 - Cultural, regional, or culinary context (e.g., "appears to be a Japanese bento box", "Latin American grilled meat dish", "Georgian Khachapuri bread")
-- Visual setting or presentation style (e.g., "photographed in a restaurant setting", "homemade dish", "street food presentation")
+- **Contextual and environmental scene elements** that connect to human experience:
+  * Physical setting details (e.g., "placed on a decorated table", "on a veranda", "in a rustic kitchen")
+  * Table presentation (e.g., "geometric-patterned tablecloth", "wooden cutting board", "ornate serving dish")
+  * Environmental context (e.g., "outdoor dining setup", "restaurant interior", "home kitchen counter")
+  * Atmosphere indicators (e.g., "casual family meal setting", "formal presentation", "street food stand")
 
-**Example CORRECT Summaries (Visual & Descriptive):**
-- "The image shows a pizza with anchovies and a glass of white wine, likely photographed in a restaurant setting."
-- "The image shows a Japanese rice bowl (donburi) with salmon, egg, and rice."
-- "The image contains three packaged chocolate bars with visible brand labels."
-- "The image displays a Georgian Khachapuri bread boat with cheese and egg."
-- "The image shows tamales on a plate with salsa on the side."
-- "The image shows a pasta dish with visible sauce."
+**Example CORRECT Summaries (Contextual & Culturally Rich):**
+- "The image shows two packaged cakes placed on a table with a distinctive geometric pattern, alongside what appears to be a dairy product containing cheese."
+- "This photo depicts a pizza with anchovies and a glass of white wine on a rustic wooden table, likely photographed in a cozy restaurant setting."
+- "The image shows a Japanese rice bowl (donburi) with salmon, egg, and rice, presented on a traditional ceramic bowl against a dark tablecloth."
+- "The image displays three packaged chocolate bars arranged on a marble countertop with visible brand labels."
+- "This depicts a Georgian Khachapuri bread boat with melted cheese and egg, served on a decorative ceramic platter in what appears to be a home dining setting."
+- "The image shows tamales wrapped in corn husks on a colorful plate with salsa on the side, photographed on a festive tablecloth."
+- "This shows a creamy pasta dish garnished with fresh herbs, placed on a white tablecloth in what appears to be an Italian restaurant."
 
 **Example FORBIDDEN Summaries (Contain Welfare Language):**
 - "The image shows a pizza with anchovies and a glass of white wine. The pizza likely contains animal-derived ingredients due to the presence of anchovies." ❌
