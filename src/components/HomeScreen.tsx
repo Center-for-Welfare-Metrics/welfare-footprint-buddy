@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import { User, Info } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import LanguageSelector from "@/components/LanguageSelector";
+import peopleDining from "@/assets/people-dining-illustration.png";
+import foodPattern from "@/assets/food-pattern.png";
 
 interface HomeScreenProps {
   onStartScan: () => void;
@@ -22,8 +24,26 @@ const HomeScreen = ({ onStartScan }: HomeScreenProps) => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen text-center bg-gradient-radial-forest">
-      <div className="absolute top-4 right-4 flex items-center gap-2">
+    <div className="flex flex-col min-h-screen text-center bg-gradient-radial-forest relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute inset-0 opacity-10 pointer-events-none">
+        <img 
+          src={foodPattern} 
+          alt="" 
+          className="absolute top-0 left-0 w-full h-full object-cover animate-float"
+          style={{ mixBlendMode: 'multiply' }}
+        />
+      </div>
+      <div className="absolute bottom-0 left-0 right-0 opacity-20 pointer-events-none">
+        <img 
+          src={peopleDining} 
+          alt="" 
+          className="w-full max-w-4xl mx-auto"
+          style={{ mixBlendMode: 'multiply' }}
+        />
+      </div>
+      
+      <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
         <LanguageSelector />
         {user ? (
           <Button
@@ -50,32 +70,32 @@ const HomeScreen = ({ onStartScan }: HomeScreenProps) => {
         )}
       </div>
       
-      <div className="flex-grow flex flex-col items-center justify-center px-4">
-        <header className="mb-8">
-          <h1 className="text-5xl font-bold text-white">{t('home.title')}</h1>
-          <h2 className="text-4xl font-bold text-emerald-400">{t('home.subtitle')}</h2>
+      <div className="flex-grow flex flex-col items-center justify-center px-4 relative z-10">
+        <header className="mb-8 animate-fade-in">
+          <h1 className="text-5xl font-bold text-primary drop-shadow-sm">{t('home.title')}</h1>
+          <h2 className="text-4xl font-bold text-accent drop-shadow-sm">{t('home.subtitle')}</h2>
         </header>
         <main className="w-full max-w-2xl">
-          <p className="mb-8 text-xl font-medium text-foreground/90">
+          <p className="mb-8 text-xl font-medium text-foreground/90 drop-shadow-sm">
             {t('home.description')}
           </p>
           <Button 
             onClick={onStartScan}
-            className="w-full max-w-xs bg-emerald-500 hover:bg-emerald-400 text-gray-900 font-bold py-3 px-6 rounded-lg shadow-[0_0_30px_rgba(16,185,129,0.3),0_0_15px_rgba(16,185,129,0.2),0_4px_12px_rgba(0,0,0,0.4)] hover:animate-[gentle-pulse_1.5s_ease-in-out_infinite] transition-colors duration-300"
+            className="w-full max-w-xs bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl hover:animate-[gentle-pulse_1.5s_ease-in-out_infinite] transition-all duration-300 animate-bounce-gentle"
           >
             {t('home.startScan')}
           </Button>
         </main>
       </div>
-      <footer className="w-full py-4 px-4 pb-40 space-y-3">
-        <p className="text-xs whitespace-pre-line" style={{ color: '#B0B8B6' }}>
+      <footer className="w-full py-4 px-4 pb-40 space-y-3 relative z-10">
+        <p className="text-xs whitespace-pre-line text-muted-foreground">
           {t('home.footer')}
         </p>
         <Button
           variant="ghost"
           size="sm"
           onClick={() => navigate('/about')}
-          className="text-emerald-400/70 hover:text-emerald-400"
+          className="text-primary/70 hover:text-primary"
         >
           <Info className="mr-2 h-4 w-4" />
           About this App

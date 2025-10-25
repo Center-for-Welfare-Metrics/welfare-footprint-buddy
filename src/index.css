@@ -8,39 +8,39 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Elegant Gastronomic Design - Deep Teal Foundation */
-    --background: 180 65% 12%;           /* Deep teal #0B3838 */
-    --foreground: 36 32% 91%;            /* Warm off-white #F2EDE4 */
+    /* Vibrant and Joyful Color Palette - Warm and Cheerful */
+    --background: 40 100% 97%;           /* Warm cream #FFFDF5 */
+    --foreground: 25 35% 20%;            /* Warm dark brown #4D3A2E */
 
-    --card: 180 60% 15%;                 /* Slightly lighter teal */
-    --card-foreground: 36 32% 91%;       /* Warm off-white */
+    --card: 0 0% 100%;                   /* Pure white for cards */
+    --card-foreground: 25 35% 20%;       /* Warm dark brown */
 
-    --popover: 180 60% 14%;
-    --popover-foreground: 36 32% 91%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 25 35% 20%;
 
-    /* Warmer organic green for primary actions */
-    --primary: 152 35% 48%;              /* Organic green #4FA67A */
-    --primary-foreground: 36 32% 91%;
+    /* Cheerful Orange Primary - Energetic and friendly */
+    --primary: 25 95% 55%;               /* Vibrant orange #F57D3B */
+    --primary-foreground: 0 0% 100%;
 
-    /* Warm coral/orange for CTAs */
-    --secondary: 16 85% 58%;             /* Coral/orange #EB6D42 */
-    --secondary-foreground: 0 0% 100%;
+    /* Soft Peach Secondary - Warm and welcoming */
+    --secondary: 35 85% 88%;             /* Soft peach #FAECD2 */
+    --secondary-foreground: 25 85% 35%;  /* Dark orange */
 
-    --muted: 180 40% 20%;                /* Muted teal */
-    --muted-foreground: 120 10% 78%;     /* Muted gray-green #C7D0C5 */
+    --muted: 40 60% 95%;                 /* Light cream */
+    --muted-foreground: 25 40% 45%;      /* Medium brown */
 
-    /* Warmer green accent for emphasis */
-    --accent: 152 42% 55%;               /* Warm green #5CB391 */
-    --accent-foreground: 180 65% 12%;    /* Dark teal text on accent */
+    /* Sunny Yellow Accent - Joyful highlights */
+    --accent: 45 100% 70%;               /* Sunny yellow #FFD966 */
+    --accent-foreground: 25 60% 25%;     /* Dark warm brown */
 
-    --destructive: 0 65% 50%;
-    --destructive-foreground: 36 32% 91%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 180 30% 25%;               /* Thin elegant teal border */
-    --input: 180 50% 18%;
-    --ring: 152 42% 55%;                 /* Warm green ring */
+    --border: 35 40% 88%;                /* Soft peach border */
+    --input: 35 40% 88%;
+    --ring: 25 95% 55%;                  /* Orange ring */
 
-    --radius: 0.5rem;
+    --radius: 1rem;
 
     /* Sidebar with gastronomic aesthetic */
     --sidebar-background: 180 65% 12%;
@@ -54,34 +54,34 @@ All colors MUST be HSL.
   }
 
   .dark {
-    /* Same elegant palette for dark mode */
-    --background: 180 65% 12%;
-    --foreground: 36 32% 91%;
+    /* Warm dark mode - cozy and inviting */
+    --background: 25 20% 12%;            /* Dark warm brown */
+    --foreground: 40 30% 92%;            /* Warm off-white */
 
-    --card: 180 60% 15%;
-    --card-foreground: 36 32% 91%;
+    --card: 25 15% 15%;                  /* Slightly lighter warm brown */
+    --card-foreground: 40 30% 92%;
 
-    --popover: 180 60% 14%;
-    --popover-foreground: 36 32% 91%;
+    --popover: 25 15% 15%;
+    --popover-foreground: 40 30% 92%;
 
-    --primary: 152 35% 48%;
-    --primary-foreground: 36 32% 91%;
+    --primary: 25 90% 60%;               /* Lighter orange for dark mode */
+    --primary-foreground: 25 20% 12%;
 
-    --secondary: 16 85% 58%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 25 30% 22%;             /* Dark warm secondary */
+    --secondary-foreground: 40 30% 92%;
 
-    --muted: 180 40% 20%;
-    --muted-foreground: 120 10% 78%;
+    --muted: 25 20% 18%;                 /* Dark muted */
+    --muted-foreground: 35 20% 70%;
 
-    --accent: 152 42% 55%;
-    --accent-foreground: 180 65% 12%;
+    --accent: 45 80% 50%;                /* Warm yellow accent */
+    --accent-foreground: 25 20% 12%;
 
-    --destructive: 0 65% 50%;
-    --destructive-foreground: 36 32% 91%;
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 40 30% 92%;
 
-    --border: 180 30% 25%;
-    --input: 180 50% 18%;
-    --ring: 152 42% 55%;
+    --border: 25 20% 25%;
+    --input: 25 20% 25%;
+    --ring: 25 90% 60%;
     
     --sidebar-background: 180 65% 12%;
     --sidebar-foreground: 36 32% 91%;
@@ -123,52 +123,52 @@ All colors MUST be HSL.
 }
 
 @layer utilities {
-  /* Elegant glass card with deep teal foundation and subtle depth */
+  /* Cheerful glass card with warm foundation and playful depth */
   .glass-card {
     background: linear-gradient(135deg, 
-      hsl(180 60% 15% / 0.95) 0%, 
-      hsl(180 65% 13% / 0.98) 100%
+      hsl(0 0% 100% / 0.95) 0%, 
+      hsl(40 60% 98% / 0.98) 100%
     );
     backdrop-filter: blur(12px);
-    border: 1px solid hsl(180 30% 35% / 0.3);
+    border: 1px solid hsl(35 60% 85% / 0.5);
     box-shadow: 
-      0 8px 32px hsl(0 0% 0% / 0.4),
-      0 2px 8px hsl(152 42% 55% / 0.08),
-      inset 0 1px 0 hsl(180 30% 35% / 0.15);
+      0 8px 32px hsl(25 95% 55% / 0.15),
+      0 2px 8px hsl(45 100% 70% / 0.1),
+      inset 0 1px 0 hsl(0 0% 100% / 0.5);
   }
   
-  /* Mysterious gradient backgrounds for landing page */
+  /* Cheerful gradient backgrounds - warm and inviting */
   .bg-gradient-radial-forest {
     background: radial-gradient(ellipse at center, 
-      hsl(158 55% 11%) 0%,     /* Deep forest green #0b2e24 center */
-      hsl(166 45% 18%) 50%,    /* Muted teal transition */
-      hsl(152 38% 22%) 100%    /* Emerald green edges */
+      hsl(35 100% 90%) 0%,     /* Warm peachy center */
+      hsl(25 90% 85%) 50%,     /* Orange transition */
+      hsl(45 95% 88%) 100%     /* Sunny yellow edges */
     );
     animation: gradient-shift 20s ease-in-out infinite;
   }
   
   .bg-gradient-vertical-forest {
     background: linear-gradient(180deg,
-      hsl(163 60% 15%) 0%,     /* Dark green #0e3c32 top */
-      hsl(158 50% 23%) 100%    /* Brighter green #1f5e4b bottom */
+      hsl(45 100% 92%) 0%,     /* Light yellow top */
+      hsl(35 95% 85%) 100%     /* Warm peach bottom */
     );
     animation: gradient-shift 20s ease-in-out infinite;
   }
   
   .bg-gradient-diagonal-mystery {
     background: linear-gradient(135deg,
-      hsl(158 58% 10%) 0%,     /* Very deep forest green */
-      hsl(166 48% 16%) 50%,    /* Muted teal middle */
-      hsl(152 42% 20%) 100%    /* Warm emerald */
+      hsl(25 100% 88%) 0%,     /* Soft orange */
+      hsl(35 90% 90%) 50%,     /* Peach middle */
+      hsl(45 100% 85%) 100%    /* Warm yellow */
     );
     animation: gradient-shift 20s ease-in-out infinite;
   }
   
   .bg-gradient-radial-ethereal {
     background: radial-gradient(circle at top center,
-      hsl(152 45% 18%) 0%,     /* Softer emerald center */
-      hsl(166 52% 14%) 50%,    /* Deep teal middle */
-      hsl(158 60% 11%) 100%    /* Forest green edges */
+      hsl(45 95% 88%) 0%,      /* Sunny yellow center */
+      hsl(35 90% 86%) 50%,     /* Warm peach middle */
+      hsl(25 85% 82%) 100%     /* Soft orange edges */
     );
     animation: gradient-shift 20s ease-in-out infinite;
   }
@@ -179,13 +179,31 @@ All colors MUST be HSL.
       filter: hue-rotate(0deg) brightness(1);
     }
     25% {
-      filter: hue-rotate(5deg) brightness(1.05);
+      filter: hue-rotate(3deg) brightness(1.03);
     }
     50% {
-      filter: hue-rotate(-3deg) brightness(0.98);
+      filter: hue-rotate(-2deg) brightness(0.98);
     }
     75% {
-      filter: hue-rotate(3deg) brightness(1.02);
+      filter: hue-rotate(2deg) brightness(1.01);
+    }
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-20px) rotate(3deg);
+    }
+  }
+  
+  @keyframes bounce-gentle {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
     }
   }
   
@@ -193,15 +211,23 @@ All colors MUST be HSL.
     animation: fadeIn 0.5s ease-out forwards;
   }
   
-  /* Gentle pulse animation for primary CTA */
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .animate-bounce-gentle {
+    animation: bounce-gentle 2s ease-in-out infinite;
+  }
+  
+  /* Gentle pulse animation for primary CTA - updated for warm orange */
   @keyframes gentle-pulse {
     0%, 100% { 
       transform: scale(1);
-      box-shadow: 0 0 30px rgba(16,185,129,0.3), 0 0 15px rgba(16,185,129,0.2), 0 4px 12px rgba(0,0,0,0.4);
+      box-shadow: 0 0 30px hsl(25 95% 55% / 0.4), 0 0 15px hsl(25 95% 55% / 0.3), 0 4px 12px rgba(0,0,0,0.2);
     }
     50% { 
       transform: scale(1.02);
-      box-shadow: 0 0 40px rgba(16,185,129,0.4), 0 0 20px rgba(16,185,129,0.3), 0 4px 12px rgba(0,0,0,0.4);
+      box-shadow: 0 0 40px hsl(25 95% 55% / 0.5), 0 0 20px hsl(25 95% 55% / 0.4), 0 4px 12px rgba(0,0,0,0.2);
     }
   }
   
@@ -226,36 +252,36 @@ input[type="range"]::-webkit-slider-runnable-track {
   width: 100%;
   height: 4px;
   cursor: pointer;
-  background: hsl(180 30% 25%);
+  background: hsl(35 40% 88%);
   border-radius: 5px;
 }
 
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  border: 2px solid hsl(180 65% 12%);
+  border: 2px solid hsl(0 0% 100%);
   height: 18px;
   width: 18px;
   border-radius: 50%;
-  background: hsl(152 42% 55%);  /* Warm organic green */
+  background: hsl(25 95% 55%);  /* Vibrant orange */
   cursor: pointer;
   margin-top: -7px;
-  box-shadow: 0 2px 8px hsl(152 42% 55% / 0.4);
+  box-shadow: 0 2px 8px hsl(25 95% 55% / 0.4);
 }
 
 input[type="range"]::-moz-range-track {
   width: 100%;
   height: 4px;
   cursor: pointer;
-  background: hsl(180 30% 25%);
+  background: hsl(35 40% 88%);
   border-radius: 5px;
 }
 
 input[type="range"]::-moz-range-thumb {
-  border: 2px solid hsl(180 65% 12%);
+  border: 2px solid hsl(0 0% 100%);
   height: 18px;
   width: 18px;
   border-radius: 50%;
-  background: hsl(152 42% 55%);
+  background: hsl(25 95% 55%);
   cursor: pointer;
-  box-shadow: 0 2px 8px hsl(152 42% 55% / 0.4);
+  box-shadow: 0 2px 8px hsl(25 95% 55% / 0.4);
 }
