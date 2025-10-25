@@ -304,27 +304,33 @@ For each FOOD item or INGREDIENT you detect:
      * Rice bowl with salmon → MUST include "Salmon (from rice bowl)" as separate item
    - DO NOT assume visible/obvious ingredients are "covered" by other items
    - Each distinct animal ingredient must have its own item entry
-4. Provide INTELLIGENT, SELECTIVE reasoning:
-   - **ONLY provide reasoning if there is something specific, informative, or culturally relevant to say**
-   - **For obvious animal-derived items** (tuna, salmon, beef, chicken, cod, anchovies, etc.): Leave reasoning EMPTY or minimal unless there's cultural/contextual value to add
-   - **DO provide reasoning when:**
-     * The item is uncommon, exotic, or culturally specific (e.g., "Bottarga is a Mediterranean delicacy made from salted fish roe")
-     * The origin or production method is notable (e.g., "Wild-caught Alaskan salmon", "Free-range organic eggs")
-     * The culinary context adds value (e.g., "Traditional Georgian cheese used in Khachapuri", "Mozzarella di Bufala made from water buffalo milk")
-     * There's ambiguity that needs clarification (e.g., "May contain dairy in the breading")
-   - **NEVER provide redundant reasoning** like:
-     * ❌ "Tuna is a fish product, therefore it is animal-derived"
-     * ❌ "Salmon is a type of fish, so this contains animal-derived ingredients"
-     * ❌ "Dried cod is a fish product"
-     * ❌ "Cheese is a dairy product made from milk"
-     * ❌ "Anchovies are fish"
-     * ❌ "[X] is a [animal type], therefore animal-derived"
-   - **Example good reasoning** (add value):
-     * ✓ "Bottom-dwelling finfish, typically wild-caught. Popular in East Asian cuisines."
-     * ✓ "Bottarga is a Mediterranean delicacy made from salted fish roe, common in Italian and Greek cuisine."
-     * ✓ "Traditional Georgian sulguni cheese made from cow's milk."
-     * ✓ "Small saltwater fish commonly used as pizza toppings and in Caesar dressing."
-     * ✓ "" (empty is acceptable for obvious items like "Tuna", "Salmon", "Chicken breast", "Anchovies")
+4. Provide INTELLIGENT, SELECTIVE, PRODUCT-SPECIFIC reasoning:
+   - **CRITICAL: Provide context-aware, educational descriptions that reflect actual product knowledge**
+   - **NEVER state the obvious** (e.g., "honey is produced by bees" or "salmon is a fish")
+   - **DO provide reasoning that adds real value:**
+     * **For honey varieties**: Describe flavor, texture, crystallization properties, floral source, regional origin, traditional uses
+       - ✓ "Rapeseed honey crystallizes quickly with a light, creamy texture. Harvested in early spring, valued for mild flavor."
+       - ✓ "Linden honey known for floral aroma and soothing properties, commonly used in herbal teas."
+       - ✓ "Multifloral honey blends nectar from diverse blossoms, color and taste vary with season."
+       - ❌ "Honey is produced by bees, which are animals."
+     * **For specific meats/fish**: Cooking method, cut type, regional preparation, flavor profile
+       - ✓ "Wild-caught Pacific salmon, rich in omega-3 fatty acids."
+       - ✓ "Dry-aged beef, typically 21-28 days for enhanced flavor."
+       - ❌ "Salmon is a fish product."
+     * **For cheese varieties**: Milk source, aging process, texture, regional origin, culinary uses
+       - ✓ "Parmigiano-Reggiano aged minimum 12 months, hard texture ideal for grating."
+       - ✓ "Fresh mozzarella di bufala, soft texture from water buffalo milk."
+       - ❌ "Cheese is a dairy product."
+     * **For eggs**: Production method, grade, specialty attributes if visible
+       - ✓ "Free-range eggs with deeper yolk color from varied diet."
+       - ✓ "" (empty acceptable for standard eggs)
+       - ❌ "Eggs are animal products."
+     * **For cultural/specialty items**: Traditional preparation, cultural significance, regional context
+       - ✓ "Bottarga is a Mediterranean delicacy of salted fish roe, common in Italian and Greek cuisine."
+       - ✓ "Traditional Polish artisanal honey, cold-extracted to preserve enzymes."
+   - **Use sensory and contextual language:** flavor, aroma, texture, color, crystallization, production method, regional origin, seasonal variation, traditional uses
+   - **Avoid redundant statements:** Never simply restate that something is animal-derived
+   - **For obvious standard items:** Leave reasoning empty rather than stating the obvious
    - For plant-based items: Brief explanation only if there's potential confusion or it's not obvious
 5. Rate your confidence level (High/Medium/Low)
 
