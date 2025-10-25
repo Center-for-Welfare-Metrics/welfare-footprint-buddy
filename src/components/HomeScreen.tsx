@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { User, Info } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import LanguageSelector from "@/components/LanguageSelector";
-import peopleDining from "@/assets/people-dining-illustration.png";
+import diversePeopleDining from "@/assets/diverse-people-dining.png";
 import foodPattern from "@/assets/food-pattern.png";
 
 interface HomeScreenProps {
@@ -36,7 +36,7 @@ const HomeScreen = ({ onStartScan }: HomeScreenProps) => {
       </div>
       <div className="absolute bottom-0 left-0 right-0 opacity-20 pointer-events-none">
         <img 
-          src={peopleDining} 
+          src={diversePeopleDining} 
           alt="" 
           className="w-full max-w-4xl mx-auto"
           style={{ mixBlendMode: 'multiply' }}
@@ -72,8 +72,8 @@ const HomeScreen = ({ onStartScan }: HomeScreenProps) => {
       
       <div className="flex-grow flex flex-col items-center justify-center px-4 relative z-10">
         <header className="mb-8 animate-fade-in">
-          <h1 className="text-5xl font-bold text-primary drop-shadow-sm">{t('home.title')}</h1>
-          <h2 className="text-4xl font-bold text-accent drop-shadow-sm">{t('home.subtitle')}</h2>
+          <h1 className="text-5xl font-bold text-white drop-shadow-md">{t('home.title')}</h1>
+          <h2 className="text-4xl font-bold text-accent drop-shadow-md">{t('home.subtitle')}</h2>
         </header>
         <main className="w-full max-w-2xl">
           <p className="mb-8 text-xl font-medium text-foreground/90 drop-shadow-sm">
@@ -81,21 +81,21 @@ const HomeScreen = ({ onStartScan }: HomeScreenProps) => {
           </p>
           <Button 
             onClick={onStartScan}
-            className="w-full max-w-xs bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl hover:animate-[gentle-pulse_1.5s_ease-in-out_infinite] transition-all duration-300 animate-bounce-gentle"
+            className="w-full max-w-xs bg-accent hover:bg-accent/90 text-accent-foreground font-bold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl hover:animate-[gentle-pulse_1.5s_ease-in-out_infinite] transition-all duration-300 animate-bounce-gentle"
           >
             {t('home.startScan')}
           </Button>
         </main>
       </div>
       <footer className="w-full py-4 px-4 pb-40 space-y-3 relative z-10">
-        <p className="text-xs whitespace-pre-line text-muted-foreground">
+        <p className="text-xs whitespace-pre-line" style={{ color: '#B0B8B6' }}>
           {t('home.footer')}
         </p>
         <Button
           variant="ghost"
           size="sm"
           onClick={() => navigate('/about')}
-          className="text-primary/70 hover:text-primary"
+          className="text-accent/70 hover:text-accent"
         >
           <Info className="mr-2 h-4 w-4" />
           About this App
