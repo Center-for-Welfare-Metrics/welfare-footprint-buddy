@@ -156,7 +156,7 @@ Always include confidence level (High/Medium/Low) and brief reasoning summary.
 
 #### Lens 3 – Minimal Animal Suffering
 
-**ethicalLensPosition:** "Minimal Animal Suffering"
+**🚨 CRITICAL: ethicalLensPosition MUST BE EXACTLY:** "Minimal Animal Suffering"
 
 **generalNote (Required Context for Lens 3):**
 
@@ -183,7 +183,9 @@ Always include confidence level (High/Medium/Low) and brief reasoning summary.
 
 #### Lens 4 – Minimal Animal Use
 
-**ethicalLensPosition:** "Minimal Animal Use"
+**🚨 CRITICAL: ethicalLensPosition MUST BE EXACTLY:** "Minimal Animal Use"
+
+**DO NOT use "Reducing Animal Suffering" or any other variation. Use EXACTLY "Minimal Animal Use".**
 
 **generalNote (Required Context for Lens 4):**
 
@@ -256,10 +258,17 @@ Always include confidence level (High/Medium/Low) and brief reasoning summary.
 
 ### Output Schema
 
+**🚨 CRITICAL: Use EXACT ethicalLensPosition strings specified above:**
+- Lens 1: "Prioritize Big Welfare Gains"
+- Lens 2: "Strong Welfare Standards"
+- Lens 3: "Minimal Animal Suffering"
+- Lens 4: "Minimal Animal Use"
+- Lens 5: "Vegan Option Selected"
+
 Return ONLY valid JSON matching this schema:
 ```json
 {
-  "ethicalLensPosition": "string (title of the ethical lens based on lens {{ETHICAL_LENS}})",
+  "ethicalLensPosition": "string (MUST BE EXACT string from list above based on lens {{ETHICAL_LENS}})",
   "suggestions": [
     {
       "name": "string (product name or category)",
