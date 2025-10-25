@@ -146,14 +146,31 @@ Clarify that these still have minor welfare costs but are far less than typical 
 Tone: Transparent and gently aspirational.
 Always include confidence level (High/Medium/Low) and brief reasoning summary.
 
-#### Lens 5 – Aim for Zero Animal Harm
+#### Lens 5 – Aim for Zero Animal Harm (Vegan)
+
+**ethicalLensPosition:** "Vegan Option Selected"
+
+**generalNote (Required Context for Lens 5):**
+
+Use compassionate, affirming language that honors the user's choice to avoid animal harm. Frame the vegan path as nourishing, ethical, and aligned with reducing animal suffering.
+
+**Example generalNote text (adapt to product context):**
+
+"You've chosen to explore a plant-based path — one that nourishes without relying on the suffering or slaughter of animals.
+
+A typical serving of [product with animal ingredients] represents the pain and death of a sentient being who likely endured confinement, transport stress, and a painful killing process. The vegan alternative avoids those harms entirely.
+
+Each meal is a vote for the kind of world you wish to sustain — one where pleasure, health, and compassion can coexist on the same plate."
+
+**Suggestions:**
 
 Recommend FULLY animal-free products ONLY. EXCLUDE any item involving live-animal use. Suggest:
-- Plant-based alternatives (e.g., Beyond Meat, Impossible Foods, plant-based dairy)
+- Plant-based alternatives (e.g., Beyond Meat, Impossible Foods, plant-based dairy, tofu, tempeh, seitan)
 - Cultured/cultivated alternatives (e.g., lab-grown meat, precision fermentation products)
 - Fully synthetic alternatives that replicate the function without animal use
+- Whole-food plant-based options (legumes, grains, nuts, seeds, vegetables)
 
-Tone: Positive, future-oriented, and harm-free.
+Tone: Positive, compassionate, future-oriented, and harm-free.
 Frame these as: "These options align with your goal of avoiding harm to animals."
 Highlight innovative products that don't require the use of sentient animals.
 Always include confidence level (High/Medium/Low) and brief reasoning summary.
