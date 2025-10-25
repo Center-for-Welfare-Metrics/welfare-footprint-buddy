@@ -1,6 +1,6 @@
 /**
  * Ethical Lens Messaging System
- * Generates contextual, empathetic messages for each ethical lens level
+ * Provides practical guidance for each ethical lens level
  * Based on the Welfare Footprint Institute's ethical framework
  */
 
@@ -10,127 +10,126 @@ interface MessageContext {
   alternativeType?: string;
 }
 
-interface EthicalLensMessage {
-  template: string;
-  notes: string;
+interface EthicalLensGuidance {
+  focus: string;
+  examples: string[];
+  tone: string;
+  uiHint: string;
 }
 
-const ETHICAL_LENS_SCHEMA: Record<number, EthicalLensMessage> = {
-  1: {
-    template: "You've chosen to care about how life is lived — not just how food tastes. By selecting {{product}} from farms with stronger welfare practices, you're helping animals experience less pain, more space, and moments of calm before the end. Each step toward higher welfare matters.",
-    notes: "Focus on conscious improvement within meat consumption. Avoid judgment. Highlight empathy, welfare awareness, and incremental change."
+const ETHICAL_LENS_GUIDANCE: Record<number, EthicalLensGuidance> = {
+  1: { // Concerned Omnivore
+    focus: "Choose the same product, but from higher-welfare sources.",
+    examples: [
+      "Look for labels such as Certified Humane, RSPCA Assured, Global Animal Partnership, or pasture-raised certifications.",
+      "Prefer suppliers that provide outdoor access, enrichments, and avoid painful procedures like debeaking or tail docking.",
+      "For meat or eggs, prioritize smaller-scale or transparent farms with clear welfare documentation."
+    ],
+    tone: "Practical and compassionate — encourages improvement without moral judgment.",
+    uiHint: "Display welfare labels or trusted certification logos near this section."
   },
-  2: {
-    template: "This choice supports producers raising animals with dignity — not as units of production but as sentient beings whose comfort and freedom matter. Animals raised under certified high-welfare systems suffer less from confinement, stress, and painful handling. You're rewarding better practices — and that creates change.",
-    notes: "Highlight certification, transparency, and measurable welfare gains. Maintain scientific grounding: e.g., reduced stocking density, enriched environments, better stunning methods."
+  2: { // Strong Welfare Standards
+    focus: "Support producers with transparent and science-based welfare programs.",
+    examples: [
+      "Seek producers who perform independent audits and publish measurable welfare outcomes (e.g., mortality, space allowance).",
+      "Choose suppliers that improve slaughter methods, reduce transport stress, and follow recognized welfare standards.",
+      "When buying processed foods, prefer brands sourcing from certified high-welfare systems."
+    ],
+    tone: "Confident and informative — emphasizes measurable welfare progress.",
+    uiHint: "Highlight animal welfare metrics and certification summaries."
   },
-  3: {
-    template: "You've taken a balanced step — enjoying the flavor of {{product}} while reducing its animal content. Blended or hybrid options significantly cut animal suffering and environmental impact while keeping culinary pleasure alive. Compassion grows through progress, not perfection.",
-    notes: "Emphasize reduction, incremental ethics, and data-driven impact (e.g., fewer animals raised or slaughtered). Keep it positive and forward-looking."
+  3: { // Reducitarian
+    focus: "Reduce total animal use while maintaining food enjoyment.",
+    examples: [
+      "Look for hybrid or blended products that combine animal and plant ingredients (e.g., 50% dairy and 50% oat-based cheese).",
+      "Choose smaller portion sizes of animal-based products and complement with plant proteins like legumes, tofu, or nuts.",
+      "Try meat or dairy alternatives a few times a week to gradually reduce demand for animal products."
+    ],
+    tone: "Encouraging and progress-oriented — emphasizes balanced steps rather than elimination.",
+    uiHint: "Include sliders or visual indicators showing reduced animal content."
   },
-  4: {
-    template: "You've chosen a version of {{product}} that nourishes without taking life. While trace animal ingredients may remain, this choice already spares most of the suffering tied to conventional meat. It's an act of empathy — proof that enjoyment and conscience can share the same plate.",
-    notes: "Acknowledge small residual animal use but celebrate ethical intent. Encourage curiosity about ingredient sourcing and culinary creativity."
+  4: { // Vegetarian - Minimal Animal Use
+    focus: "Avoid meat and fish while maintaining foods with minimal animal byproducts (e.g., dairy or eggs).",
+    examples: [
+      "Replace meat with eggs, cheese, or plant-based protein sources.",
+      "When using dairy, prefer organic or pasture-based milk and cheese certified for higher welfare.",
+      "Explore vegetarian versions of common meals (e.g., veggie burgers, lentil stews, vegetable lasagna)."
+    ],
+    tone: "Empathetic and educational — recognizes continuity while promoting reduced harm.",
+    uiHint: "Suggest vegetarian alternatives of the detected product."
   },
-  5: {
-    template: "You've chosen a path of kindness — honoring life while celebrating flavor. Where {{product}} once symbolized suffering, this plant-based alternative brings nourishment without harm. Each meal becomes a quiet act of compassion — proof that pleasure, health, and empathy can coexist beautifully.",
-    notes: "Highlight complete elimination of animal harm. Use emotionally warm yet scientifically grounded language (e.g., avoids slaughter, confinement stress, transport pain)."
+  5: { // Vegan
+    focus: "Eliminate all animal ingredients by selecting plant-based or cultured alternatives.",
+    examples: [
+      "Choose plant-based milks, yogurts, cheeses, and meats made from soy, oats, or nuts.",
+      "Verify vegan certifications (e.g., Vegan Society, Certified Plant-Based) to ensure no hidden animal derivatives.",
+      "Explore cultured or fermentation-based foods that avoid animal farming entirely."
+    ],
+    tone: "Inspiring and future-focused — celebrates innovation and compassion.",
+    uiHint: "Show plant-based brands or product swaps directly beneath the explanation."
   }
 };
 
 /**
- * Generates a contextual ethical lens message
+ * Gets the focus message for a specific ethical lens level
  * @param level - Ethical lens level (1-5)
- * @param context - Optional context for dynamic variable replacement
- * @returns Generated message with variable substitution
+ * @returns Focus message for the lens
  */
-export function generateEthicalLensMessage(
-  level: number,
-  context: MessageContext = {}
-): string {
-  const schema = ETHICAL_LENS_SCHEMA[level];
-  if (!schema) {
-    return "Your choice reflects your values and creates meaningful impact.";
-  }
-
-  let message = schema.template;
-
-  // Replace variables with contextual data or defaults
-  const product = context.product || "this product";
-  const animal = context.animal || "animals";
-  const alternativeType = context.alternativeType || "alternative";
-
-  message = message.replace(/\{\{product\}\}/g, product);
-  message = message.replace(/\{\{animal\}\}/g, animal);
-  message = message.replace(/\{\{alternative_type\}\}/g, alternativeType);
-
-  return message;
+export function getEthicalLensFocus(level: number): string {
+  const guidance = ETHICAL_LENS_GUIDANCE[level];
+  return guidance?.focus || "Choose products aligned with your values.";
 }
 
 /**
- * Get the ethical lens level name
+ * Gets the examples for a specific ethical lens level
+ * @param level - Ethical lens level (1-5)
+ * @returns Array of example guidelines
+ */
+export function getEthicalLensExamples(level: number): string[] {
+  const guidance = ETHICAL_LENS_GUIDANCE[level];
+  return guidance?.examples || [];
+}
+
+/**
+ * Gets complete guidance for a specific ethical lens level
+ * @param level - Ethical lens level (1-5)
+ * @returns Complete guidance object
+ */
+export function getEthicalLensGuidance(level: number): EthicalLensGuidance | null {
+  return ETHICAL_LENS_GUIDANCE[level] || null;
+}
+
+/**
+ * Returns a human-readable name for the ethical lens level
+ * @param level - Ethical lens level (1-5)
+ * @returns Descriptive name for the lens
  */
 export function getEthicalLensName(level: number): string {
   const names: Record<number, string> = {
     1: "Concerned Omnivore",
     2: "Strong Welfare Standards",
     3: "Reducitarian",
-    4: "Vegetarian",
-    5: "Vegan"
+    4: "Vegetarian – Minimal Animal Use",
+    5: "Vegan – No Animal Use"
   };
   return names[level] || "Unknown";
 }
 
 /**
- * Generate variations of the message to avoid repetition
- * Uses creative reframing while maintaining the ethical framework
+ * DEPRECATED: Use getEthicalLensFocus() and getEthicalLensExamples() instead.
+ * This function is kept for backward compatibility but now returns practical guidance.
+ * 
+ * Generates varied ethical lens messages
+ * @param level - Ethical lens level (1-5)
+ * @param context - Optional context for variable replacement
+ * @param variant - Variation number (ignored in new implementation)
+ * @returns Practical guidance message
  */
 export function generateVariedEthicalLensMessage(
   level: number,
   context: MessageContext = {},
   variant: number = 0
 ): string {
-  const variations: Record<number, string[]> = {
-    1: [
-      "You've chosen to care about how life is lived — not just how food tastes. By selecting {{product}} from farms with stronger welfare practices, you're helping animals experience less pain, more space, and moments of calm before the end. Each step toward higher welfare matters.",
-      "Your choice to seek better-raised {{product}} honors the life behind the meal. Animals raised with care experience fewer moments of distress, more natural behaviors, and a gentler path. Consciousness matters — and so does this step.",
-      "Behind every meal lies a life. By choosing {{product}} from higher-welfare sources, you're reducing suffering for animals who still feel fear, pain, and comfort. Progress begins with awareness — and continues with choices like this."
-    ],
-    2: [
-      "This choice supports producers raising animals with dignity — not as units of production but as sentient beings whose comfort and freedom matter. Animals raised under certified high-welfare systems suffer less from confinement, stress, and painful handling. You're rewarding better practices — and that creates change.",
-      "You're choosing {{product}} raised under verified standards where animals have space to move, freedom from chronic pain, and reduced fear. Certified welfare systems aren't perfect — but they measurably reduce suffering. Your choice supports accountability.",
-      "This isn't just {{product}} — it's a system where welfare is measured, monitored, and improved. Animals under strong welfare standards experience less confinement stress, better health, and more humane treatment. You're voting for transparency with your choice."
-    ],
-    3: [
-      "You've taken a balanced step — enjoying the flavor of {{product}} while reducing its animal content. Blended or hybrid options significantly cut animal suffering and environmental impact while keeping culinary pleasure alive. Compassion grows through progress, not perfection.",
-      "This hybrid approach lets you enjoy {{product}} while reducing the number of animals raised and slaughtered. Every percentage of plant-based content translates to fewer lives confined, fewer journeys to slaughter. Impact scales with every meal.",
-      "You've chosen moderation over extremes. By blending plant and animal ingredients in {{product}}, you're reducing welfare harm without sacrificing satisfaction. Small shifts create big impact when practiced consistently."
-    ],
-    4: [
-      "You've chosen a version of {{product}} that nourishes without taking life. While trace animal ingredients may remain, this choice already spares most of the suffering tied to conventional meat. It's an act of empathy — proof that enjoyment and conscience can share the same plate.",
-      "Your selection of {{product}} reflects deep ethical care — nourishment without slaughter. Though small amounts of animal ingredients may linger, this path avoids the immense suffering of factory farming and industrial killing. Compassion in practice.",
-      "This {{product}} offers sustenance without ending lives. Any residual animal content is minimal — the core suffering of breeding, confinement, and slaughter is absent. Your choice shows that ethics and enjoyment aren't opposites."
-    ],
-    5: [
-      "You've chosen a path of kindness — honoring life while celebrating flavor. Where {{product}} once symbolized suffering, this plant-based alternative brings nourishment without harm. Each meal becomes a quiet act of compassion — proof that pleasure, health, and empathy can coexist beautifully.",
-      "This fully plant-based {{product}} carries zero animal suffering — no confinement, no transport fear, no slaughter. It's a celebration of possibility: that food can be delicious, nourishing, and entirely free from harm. Your plate reflects your values.",
-      "You've chosen {{product}} that honors sentient life completely. No animals were bred, confined, or killed for this meal. It's a small act with profound meaning — proof that we can nourish ourselves while extending compassion to all beings."
-    ]
-  };
-
-  const levelVariations = variations[level] || [ETHICAL_LENS_SCHEMA[level]?.template || ""];
-  const selectedVariation = levelVariations[variant % levelVariations.length];
-
-  let message = selectedVariation;
-
-  // Replace variables
-  const product = context.product || "this product";
-  const animal = context.animal || "animals";
-  const alternativeType = context.alternativeType || "alternative";
-
-  message = message.replace(/\{\{product\}\}/g, product);
-  message = message.replace(/\{\{animal\}\}/g, animal);
-  message = message.replace(/\{\{alternative_type\}\}/g, alternativeType);
-
-  return message;
+  // Return focus message for backward compatibility
+  return getEthicalLensFocus(level);
 }

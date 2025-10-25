@@ -12,7 +12,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "react-i18next";
 import { appConfig } from "@/config/app.config";
 import { ErrorHandler, withRetry } from "@/lib/errorHandler";
-import { generateVariedEthicalLensMessage } from "@/lib/ethicalLensMessaging";
+import { getEthicalLensFocus, getEthicalLensExamples } from "@/lib/ethicalLensMessaging";
 
 interface AnalysisData {
   productName?: { value: string; confidence: string };
@@ -504,21 +504,37 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
                 <span className="text-right" style={{ color: appConfig.ethicalLens.colors[5] }}>{t('ethicalLens.rangeEnd')}</span>
               </div>
             </div>
-            <p 
-              className="text-xs text-center font-medium transition-colors duration-300 leading-relaxed"
-              style={{
-                color: appConfig.ethicalLens.colors[sliderValue[0] as 1 | 2 | 3 | 4 | 5]
-              }}
-            >
-              {generateVariedEthicalLensMessage(
-                sliderValue[0],
-                {
-                  product: data.productName?.value || "this product",
-                  animal: data.animalIngredients?.value?.split(',')[0]?.trim() || "animals"
-                },
-                0 // Use variant 0 (main template), can be randomized or cycled
-              )}
-            </p>
+            {/* Ethical Lens Guidance - Focus */}
+            <div className="space-y-3">
+              <p 
+                className="text-sm font-semibold text-center transition-colors duration-300"
+                style={{
+                  color: appConfig.ethicalLens.colors[sliderValue[0] as 1 | 2 | 3 | 4 | 5]
+                }}
+              >
+                {getEthicalLensFocus(sliderValue[0])}
+              </p>
+              
+              {/* Ethical Lens Guidance - Examples */}
+              <div className="space-y-2">
+                {getEthicalLensExamples(sliderValue[0]).map((example, index) => (
+                  <div 
+                    key={index}
+                    className="flex gap-2 items-start text-xs text-gray-300 bg-gray-800/30 p-2 rounded"
+                  >
+                    <span 
+                      className="text-lg leading-none mt-0.5 flex-shrink-0"
+                      style={{
+                        color: appConfig.ethicalLens.colors[sliderValue[0] as 1 | 2 | 3 | 4 | 5]
+                      }}
+                    >
+                      •
+                    </span>
+                    <span className="leading-relaxed">{example}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 
