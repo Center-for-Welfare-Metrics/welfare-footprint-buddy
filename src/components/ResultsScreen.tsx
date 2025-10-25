@@ -12,6 +12,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "react-i18next";
 import { appConfig } from "@/config/app.config";
 import { ErrorHandler, withRetry } from "@/lib/errorHandler";
+import { generateVariedEthicalLensMessage } from "@/lib/ethicalLensMessaging";
 
 interface AnalysisData {
   productName?: { value: string; confidence: string };
@@ -504,16 +505,19 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
               </div>
             </div>
             <p 
-              className="text-xs text-center font-medium transition-colors duration-300"
+              className="text-xs text-center font-medium transition-colors duration-300 leading-relaxed"
               style={{
                 color: appConfig.ethicalLens.colors[sliderValue[0] as 1 | 2 | 3 | 4 | 5]
               }}
             >
-              {sliderValue[0] === 1 && t('ethicalLens.desc1')}
-              {sliderValue[0] === 2 && t('ethicalLens.desc2')}
-              {sliderValue[0] === 3 && t('ethicalLens.desc3')}
-              {sliderValue[0] === 4 && t('ethicalLens.desc4')}
-              {sliderValue[0] === 5 && t('ethicalLens.desc5')}
+              {generateVariedEthicalLensMessage(
+                sliderValue[0],
+                {
+                  product: data.productName?.value || "this product",
+                  animal: data.animalIngredients?.value?.split(',')[0]?.trim() || "animals"
+                },
+                0 // Use variant 0 (main template), can be randomized or cycled
+              )}
             </p>
           </div>
         </div>
