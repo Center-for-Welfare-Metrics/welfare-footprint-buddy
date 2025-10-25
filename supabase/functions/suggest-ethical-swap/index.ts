@@ -110,6 +110,18 @@ serve(async (req) => {
       animalIngredients: animalIngredients.substring(0, 100)
     });
 
+    // CRITICAL DEBUG: Verify lens value before prompt
+    if (ethicalLens < 1 || ethicalLens > 5) {
+      console.error('❌ INVALID ETHICAL LENS VALUE:', ethicalLens);
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: { message: `Invalid ethical lens value: ${ethicalLens}` }
+        }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Ethical lens definitions are centralized in science_and_ai_prompts/ethical_lens_criteria.md
     // and implemented in the prompt template suggest_ethical_swap.md
     
@@ -134,6 +146,12 @@ serve(async (req) => {
       ANIMAL_INGREDIENTS: animalIngredients,
       ETHICAL_LENS: ethicalLens.toString(),
       OUTPUT_LANGUAGE: outputLanguage,
+    });
+
+    console.log(`📝 Prompt variables:`, {
+      PRODUCT_NAME: productName,
+      ETHICAL_LENS: ethicalLens.toString(),
+      OUTPUT_LANGUAGE: outputLanguage
     });
 
     const aiResponse = await callAI({
@@ -161,9 +179,31 @@ serve(async (req) => {
     let cleanedText = text;
     try {
       cleanedText = text.replace(/```(json)?/gi, '').trim();
-      JSON.parse(cleanedText);
+      const parsedResponse = JSON.parse(cleanedText);
+      
+      // CRITICAL VALIDATION: Check if AI returned correct ethical lens
+      console.log(`✅ AI Response parsed successfully:`, {
+        ethicalLensPosition: parsedResponse.ethicalLensPosition,
+        requestedLens: ethicalLens,
+        suggestionsCount: parsedResponse.suggestions?.length || 0
+      });
+
+      // Validate that response matches requested lens
+      const expectedPositions = {
+        1: 'Prioritize Big Welfare Gains',
+        2: 'Strong Welfare Standards',
+        3: 'Minimal Animal Suffering',
+        4: 'Minimal Animal Use',
+        5: 'Vegan Option Selected'
+      };
+
+      if (parsedResponse.ethicalLensPosition !== expectedPositions[ethicalLens as keyof typeof expectedPositions]) {
+        console.warn(`⚠️ LENS MISMATCH: Requested ${ethicalLens} (${expectedPositions[ethicalLens as keyof typeof expectedPositions]}), got ${parsedResponse.ethicalLensPosition}`);
+      }
+
     } catch (parseError) {
       console.error('JSON parse error:', parseError);
+      console.error('Raw AI response:', text.substring(0, 500));
       return new Response(
         JSON.stringify({ 
           success: false, 
