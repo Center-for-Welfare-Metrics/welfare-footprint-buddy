@@ -28,7 +28,7 @@ const DescriptionConfirmationScreen = ({
   return (
     <div className="flex flex-col items-center pb-32 max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-4 text-center text-white">
-        {t('itemSelection.title')}
+        Description Confirmed
       </h1>
 
       {/* Image Preview - only show if image exists */}
@@ -46,7 +46,7 @@ const DescriptionConfirmationScreen = ({
       {!imagePreview && (
         <div className="w-full max-w-md mb-6 p-4 glass-card rounded-xl border border-emerald-500/20">
           <p className="text-sm text-gray-300 text-center italic">
-            You described this manually. The app will now analyze its ingredients.
+            No image uploaded — using your text description for analysis.
           </p>
         </div>
       )}
@@ -62,7 +62,12 @@ const DescriptionConfirmationScreen = ({
             
             {!isEditing ? (
               <>
-                <p className="text-gray-200 leading-relaxed mb-4 break-words max-w-full">{description}</p>
+                <p className="text-gray-200 leading-relaxed mb-4 break-words max-w-full">
+                  {imagePreview 
+                    ? `The image shows ${description.charAt(0).toLowerCase() + description.slice(1)}`
+                    : `You described ${description.charAt(0).toLowerCase() + description.slice(1)}`
+                  }
+                </p>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Button
                     variant="outline"

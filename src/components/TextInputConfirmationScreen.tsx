@@ -25,7 +25,7 @@ const TextInputConfirmationScreen = ({
   return (
     <div className="flex flex-col items-center pb-32 max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-4 text-center text-white">
-        Describe Food Item
+        Describe the Product or Dish
       </h1>
       
       <p className="text-gray-300 text-center mb-8 max-w-2xl">
