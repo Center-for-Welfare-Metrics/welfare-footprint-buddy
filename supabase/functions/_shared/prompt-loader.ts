@@ -66,12 +66,77 @@ If the image contains ONLY non-food elements (living animals, people, landscapes
 - DO NOT suggest that food might be present but not visible
 - DO NOT mention animal-derived ingredients unless actual food products are visible
 
+═══════════════════════════════════════════════════════════════════
+🚨 CRITICAL - ANIMAL INGREDIENT CLASSIFICATION RULES 🚨
+═══════════════════════════════════════════════════════════════════
+
+ABSOLUTE RULE: These ingredients are ALWAYS animal-derived with HIGH confidence:
+✓ Eggs, egg whites, egg yolks, egg powder → likelyHasAnimalIngredients = true
+✓ ALL dairy: milk, cheese, butter, cream, yogurt, whey, casein → likelyHasAnimalIngredients = true
+✓ ALL meat: beef, pork, chicken, lamb, sausage, bacon → likelyHasAnimalIngredients = true
+✓ ALL fish and seafood: fish, shrimp, salmon, anchovies → likelyHasAnimalIngredients = true
+✓ Honey, gelatin, lard → likelyHasAnimalIngredients = true
+
+FORBIDDEN: NEVER classify eggs or dairy as plant-based or uncertain
+FORBIDDEN: NEVER default to plant-based when ingredients are unclear
+FORBIDDEN: NEVER say "without further information I assume it is plant-based" for eggs, dairy, or meat
+
+If you detect eggs or dairy → MUST set likelyHasAnimalIngredients = true (HIGH confidence)
+If uncertain → Use LOW confidence, but DO NOT default to plant-based
+
+EXCEPTION: Only mark as plant-based if:
+- Explicitly labeled "vegan", "plant-based", "dairy-free", etc.
+- Made from soy, almond, oat, coconut, or other plant alternatives
+═══════════════════════════════════════════════════════════════════
+
+═══════════════════════════════════════════════════════════════════
+🔪 CRITICAL - DISH DECOMPOSITION RULES 🔪
+═══════════════════════════════════════════════════════════════════
+
+ABSOLUTE RULE: When encountering DISHES (not standalone ingredients), decompose them into their likely components.
+
+DISH INDICATORS (these require decomposition):
+- Contains conjunctions: "with", "and", "in", "topped with", "filled with"
+- Dish names: "soup", "stew", "salad", "sandwich", "pasta", "pizza", "casserole", "curry"
+- Cultural dishes: "paella", "risotto", "biryani", "pho", etc.
+
+DECOMPOSITION PROCESS:
+1. Detect if this is a DISH (vs. a single ingredient)
+2. If yes, list each likely ingredient as a SEPARATE item
+3. For each component, provide:
+   - name: "[ingredient] (from [dish name])"
+   - likelyHasAnimalIngredients: true/false based on ingredient
+   - reasoning: Brief explanation
+   - confidence: Based on certainty of ingredient presence
+
+EXAMPLES:
+❌ WRONG: "Polish soup with meat" → single item
+✅ CORRECT: 
+  - "Meat (from Polish soup)" → likelyHasAnimalIngredients: true
+  - "Broth (from Polish soup)" → likelyHasAnimalIngredients: true (if meat-based)
+  - "Vegetables (from Polish soup)" → likelyHasAnimalIngredients: false
+
+❌ WRONG: "Cheese pizza" → single item
+✅ CORRECT:
+  - "Cheese (from pizza)" → likelyHasAnimalIngredients: true
+  - "Dough (from pizza)" → likelyHasAnimalIngredients: false (unless contains eggs/dairy)
+
+❌ WRONG: "Bread roll" → single item (if it contains multiple animal ingredients)
+✅ CORRECT:
+  - "Eggs (from bread roll)" → likelyHasAnimalIngredients: true
+  - "Dairy (from bread roll)" → likelyHasAnimalIngredients: true
+  - "Dough (from bread roll)" → likelyHasAnimalIngredients: false
+
+EXCEPTION: If the dish is a single-ingredient item (e.g., "Chicken breast", "Salmon fillet"), do NOT decompose.
+═══════════════════════════════════════════════════════════════════
+
 DETECTION GUIDELINES:
 - List EVERY distinct FOOD PRODUCT visible
 - For packaged products, try to read visible labels or brand names
-- For food items that are plant-based, explain why
+- For DISHES, decompose into individual ingredients using the rules above
+- For standalone ingredients, provide a single entry
 - For food items with animal ingredients, explain which ones and why
-- Be conservative: if unsure about ingredients, mark as Medium or Low confidence
+- Be conservative: if unsure about ingredients, mark as Medium or Low confidence (but NEVER default eggs/dairy to plant-based)
 
 OUTPUT FORMAT:
 Return ONLY valid JSON with this exact structure:
