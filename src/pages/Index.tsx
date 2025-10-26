@@ -78,6 +78,51 @@ const Index = () => {
 
   const handleStartScan = () => navigateToScreen('scanner');
   
+  const handleManualInput = async (text: string) => {
+    console.log('[Manual Input] Processing text:', text);
+    setIsAnalyzingItem(true);
+    
+    try {
+      const { data: functionData, error: functionError } = await supabase.functions.invoke('analyze-image', {
+        body: { 
+          mode: 'detect',
+          additionalInfo: text,
+          language: i18n.language
+        }
+      });
+
+      if (functionError) throw functionError;
+
+      const responseText = functionData?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!responseText) throw new Error('No response from AI');
+
+      const cleanedText = sanitizeJson(responseText.replace(/```json|```/g, '').trim());
+      const result = JSON.parse(cleanedText);
+      
+      setCacheMetadata(functionData?._metadata);
+
+      if (result.items && Array.isArray(result.items)) {
+        setDetectedItems(result.items);
+        setItemsSummary(result.summary || text);
+        setScannedImageData("");
+        setCurrentImagePreview("");
+        setHasNoFoodItems(result.items.length === 0);
+        navigateToScreen('itemSelection');
+      } else {
+        throw new Error('Invalid response format');
+      }
+    } catch (error) {
+      console.error('[Manual Input] Error:', error);
+      toast({
+        title: t('errors.analysisFailed'),
+        description: error instanceof Error ? error.message : 'Unknown error',
+        variant: "destructive",
+      });
+    } finally {
+      setIsAnalyzingItem(false);
+    }
+  };
+  
   const handleConfirmationNeeded = (items: any[], summary: string, imageData: string, imagePreview: string, noFoodItems: boolean = false) => {
     // Store the initial detection results (Step 1)
     setDetectedItems(items);
@@ -299,7 +344,7 @@ const Index = () => {
     <div className="container mx-auto max-w-4xl px-4">
       {currentScreen === 'home' && (
         <div className="p-4">
-          <HomeScreen onStartScan={handleStartScan} />
+          <HomeScreen onStartScan={handleStartScan} onManualInput={handleManualInput} />
         </div>
       )}
       

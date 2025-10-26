@@ -1,21 +1,25 @@
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { User, Info } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
 import LanguageSelector from "@/components/LanguageSelector";
 import diversePeopleDining from "@/assets/diverse-people-dining.png";
 import foodPattern from "@/assets/food-pattern.png";
 
 interface HomeScreenProps {
   onStartScan: () => void;
+  onManualInput: (text: string) => void;
 }
 
-const HomeScreen = ({ onStartScan }: HomeScreenProps) => {
+const HomeScreen = ({ onStartScan, onManualInput }: HomeScreenProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const [manualText, setManualText] = useState("");
 
   const getUserInitials = () => {
     if (!user?.email) return "U";
@@ -75,7 +79,7 @@ const HomeScreen = ({ onStartScan }: HomeScreenProps) => {
           <h1 className="text-5xl font-bold text-white drop-shadow-md">{t('home.title')}</h1>
           <h2 className="text-4xl font-bold text-accent drop-shadow-md">{t('home.subtitle')}</h2>
         </header>
-        <main className="w-full max-w-2xl">
+        <main className="w-full max-w-2xl space-y-6">
           <p className="mb-8 text-xl font-medium text-foreground/90 drop-shadow-sm">
             {t('home.description')}
           </p>
@@ -85,6 +89,29 @@ const HomeScreen = ({ onStartScan }: HomeScreenProps) => {
           >
             {t('home.startScan')}
           </Button>
+          
+          <div className="w-full max-w-2xl space-y-3">
+            <p className="text-sm text-foreground/70">{t('home.orWriteHere')}</p>
+            <Textarea
+              value={manualText}
+              onChange={(e) => setManualText(e.target.value)}
+              placeholder={t('home.manualInputPlaceholder')}
+              className="min-h-[100px] bg-background/80 backdrop-blur-sm border-accent/30 focus:border-accent"
+            />
+            <Button
+              onClick={() => {
+                if (manualText.trim()) {
+                  onManualInput(manualText.trim());
+                  setManualText("");
+                }
+              }}
+              disabled={!manualText.trim()}
+              variant="outline"
+              className="w-full max-w-xs border-accent/50 hover:bg-accent/10"
+            >
+              {t('home.analyzeText')}
+            </Button>
+          </div>
         </main>
       </div>
       <footer className="w-full py-4 px-4 pb-40 space-y-3 relative z-10">
