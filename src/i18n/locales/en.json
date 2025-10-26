@@ -19,7 +19,7 @@
     "title": "Welfare",
     "subtitle": "Footprint",
     "description": "Instant AI-powered welfare analysis of food products.",
-    "startScan": "Start Scan",
+    "startScan": "Upload or Take a Photo",
     "orWriteHere": "...or describe what you're eating",
     "manualInputPlaceholder": "e.g., Valencian paella, grilled salmon, cheese pizza...",
     "analyzeText": "Analyze",

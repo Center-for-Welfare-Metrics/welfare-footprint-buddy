@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { User, Info } from "lucide-react";
+import { User, Info, Camera } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import LanguageSelector from "@/components/LanguageSelector";
@@ -85,8 +85,9 @@ const HomeScreen = ({ onStartScan, onManualInput }: HomeScreenProps) => {
           </p>
           <Button 
             onClick={onStartScan}
-            className="w-full max-w-xs bg-accent hover:bg-accent/90 text-accent-foreground font-bold py-3 px-6 rounded-lg shadow-lg hover:shadow-xl hover:animate-[gentle-pulse_1.5s_ease-in-out_infinite] transition-all duration-300 animate-bounce-gentle"
+            className="w-full max-w-md bg-accent hover:bg-accent/90 text-accent-foreground font-bold py-4 px-8 rounded-xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 text-lg flex items-center justify-center gap-3 group"
           >
+            <Camera className="h-6 w-6 group-hover:animate-pulse" />
             {t('home.startScan')}
           </Button>
           
