@@ -47,8 +47,10 @@ const HomeScreen = ({ onStartScan, onManualInput }: HomeScreenProps) => {
         />
       </div>
       
-      <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
-        <LanguageSelector />
+      <div className="absolute top-4 right-4 left-4 flex items-center justify-between gap-4 z-10">
+        <div className="flex-1" />
+        <div className="flex items-center gap-2">
+          <LanguageSelector />
         {user ? (
           <Button
             variant="ghost"
@@ -72,16 +74,16 @@ const HomeScreen = ({ onStartScan, onManualInput }: HomeScreenProps) => {
             {t('common.signIn')}
           </Button>
         )}
+        </div>
       </div>
       
-      <div className="flex-grow flex flex-col items-center justify-center px-4 relative z-10">
-        <header className="mb-8 animate-fade-in">
-          <h1 className="text-5xl font-bold text-white drop-shadow-md">{t('home.title')}</h1>
-          <h2 className="text-4xl font-bold text-accent drop-shadow-md">{t('home.subtitle')}</h2>
+      <div className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-8 sm:py-12 relative z-10 max-w-4xl mx-auto w-full">
+        <header className="mb-6 sm:mb-8 md:mb-12 animate-fade-in space-y-2 sm:space-y-3">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white drop-shadow-md px-4">{t('home.title')}</h1>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-accent drop-shadow-md px-4">{t('home.subtitle')}</h2>
         </header>
-        <main className="w-full max-w-2xl space-y-6">
-          <p className="mb-8 text-xl font-medium text-foreground/90 drop-shadow-sm">
-            {t('home.description')}
+        <main className="w-full space-y-6 sm:space-y-8">
+          <p className="mb-6 sm:mb-8 text-lg sm:text-xl font-medium text-foreground/90 drop-shadow-sm px-4">{t('home.description')}
           </p>
           <Button 
             onClick={onStartScan}
@@ -91,13 +93,13 @@ const HomeScreen = ({ onStartScan, onManualInput }: HomeScreenProps) => {
             {t('home.startScan')}
           </Button>
           
-          <div className="w-full max-w-2xl space-y-3">
-            <p className="text-sm text-foreground/70">{t('home.orWriteHere')}</p>
+          <div className="w-full space-y-4 sm:space-y-5 mt-8 sm:mt-10 px-4">
+            <p className="text-sm sm:text-base text-foreground/70">{t('home.orWriteHere')}</p>
             <Textarea
               value={manualText}
               onChange={(e) => setManualText(e.target.value)}
               placeholder={t('home.manualInputPlaceholder')}
-              className="min-h-[100px] bg-background/80 backdrop-blur-sm border-accent/30 focus:border-accent"
+              className="min-h-[100px] sm:min-h-[120px] bg-background/80 backdrop-blur-sm border-accent/30 focus:border-accent max-w-2xl mx-auto"
             />
             <Button
               onClick={() => {
@@ -108,22 +110,22 @@ const HomeScreen = ({ onStartScan, onManualInput }: HomeScreenProps) => {
               }}
               disabled={!manualText.trim()}
               variant="outline"
-              className="w-full max-w-xs border-accent/50 hover:bg-accent/10"
+              className="w-full max-w-md mx-auto border-accent/50 hover:bg-accent/10 py-3"
             >
               {t('home.analyzeText')}
             </Button>
           </div>
         </main>
       </div>
-      <footer className="w-full py-4 px-4 pb-40 space-y-3 relative z-10">
-        <p className="text-xs whitespace-pre-line" style={{ color: '#B0B8B6' }}>
+      <footer className="w-full py-6 sm:py-8 px-4 sm:px-6 pb-32 sm:pb-40 space-y-4 sm:space-y-5 relative z-10">
+        <p className="text-xs sm:text-sm whitespace-pre-line max-w-3xl mx-auto leading-relaxed" style={{ color: '#B0B8B6' }}>
           {t('home.footer')}
         </p>
         <Button
           variant="ghost"
           size="sm"
           onClick={() => navigate('/about')}
-          className="text-accent/70 hover:text-accent"
+          className="text-accent/70 hover:text-accent mx-auto"
         >
           <Info className="mr-2 h-4 w-4" />
           About this App
