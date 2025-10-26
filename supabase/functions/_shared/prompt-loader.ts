@@ -90,67 +90,102 @@ EXCEPTION: Only mark as plant-based if:
 ═══════════════════════════════════════════════════════════════════
 
 ═══════════════════════════════════════════════════════════════════
-🔪 CRITICAL - DISH DECOMPOSITION RULES 🔪
+🔪 CRITICAL - ITEM DEFINITION AND DISH DECOMPOSITION RULES 🔪
 ═══════════════════════════════════════════════════════════════════
 
-ABSOLUTE RULE: When encountering DISHES (not standalone ingredients), decompose them into their likely components.
+📌 WHAT IS AN "ITEM"?
 
-DISH INDICATORS (these require decomposition):
+An "item" is:
+✓ An INGREDIENT or animal-derived COMPONENT within a dish
+  (e.g., chicken, shrimp, egg, milk, cheese, honey, etc.)
+✓ A STANDALONE PRODUCT that represents one dominant ingredient
+  (e.g., "canned sardines," "smoked salmon," "cow milk cheese")
+
+An "item" is NOT:
+✗ A prepared multi-ingredient DISH
+  (e.g., paella, pizza, curry, soup, sandwich, ramen, etc.)
+✗ Such dishes must be DECOMPOSED into their main animal-derived ingredients
+
+═══════════════════════════════════════════════════════════════════
+
+DISH INDICATORS (these REQUIRE decomposition):
 - Contains conjunctions: "with", "and", "in", "topped with", "filled with"
-- Dish names: "soup", "stew", "salad", "sandwich", "pasta", "pizza", "casserole", "curry"
-- Cultural dishes: "paella", "risotto", "biryani", "pho", etc.
+- Dish names: "soup", "stew", "salad", "sandwich", "pasta", "pizza", "casserole", "curry", "ramen"
+- Cultural/regional dishes: "paella", "risotto", "biryani", "pho", etc.
 
 DECOMPOSITION PROCESS:
-1. Detect if this is a DISH (vs. a single ingredient)
-2. If yes, list each likely ingredient as a SEPARATE item
-3. For each component, provide:
-   - name: "[ingredient] (from [dish name])"
-   - likelyHasAnimalIngredients: true/false based on ingredient
-   - reasoning: Brief explanation
-   - confidence: Based on certainty of ingredient presence
+1. Detect if this is a COMPOSITE DISH (vs. a single ingredient or dominant-ingredient product)
+2. If yes, identify and list each likely INGREDIENT as a SEPARATE item
+3. For each ingredient, provide:
+   - name: "[Ingredient] (from [Dish Name])"
+   - likelyHasAnimalIngredients: true (for animal ingredients) / false (for plant ingredients)
+   - reasoning: Brief explanation of ingredient presence and confidence
+   - confidence: High/Medium/Low based on certainty of ingredient presence
+   - source: "recipe_inference" (when inferring from common recipes)
+   - parentDish: "[Dish Name]" (to track where ingredient came from)
+
+CRITICAL: List ONLY ingredients that are likely present — focus on main components, not minor spices or garnishes.
 
 EXAMPLES:
+
+❌ WRONG: "Paella" → single item
+✅ CORRECT: 
+  - name: "Chicken (from Paella)", likelyHasAnimalIngredients: true, source: "recipe_inference", parentDish: "Paella"
+  - name: "Shrimp (from Paella)", likelyHasAnimalIngredients: true, source: "recipe_inference", parentDish: "Paella"
+  - name: "Mussels (from Paella)", likelyHasAnimalIngredients: true, source: "recipe_inference", parentDish: "Paella"
+
 ❌ WRONG: "Polish soup with meat" → single item
 ✅ CORRECT: 
-  - "Meat (from Polish soup)" → likelyHasAnimalIngredients: true
-  - "Broth (from Polish soup)" → likelyHasAnimalIngredients: true (if meat-based)
-  - "Vegetables (from Polish soup)" → likelyHasAnimalIngredients: false
+  - name: "Meat (from Polish soup)", likelyHasAnimalIngredients: true, source: "recipe_inference", parentDish: "Polish soup"
+  - name: "Broth (from Polish soup)", likelyHasAnimalIngredients: true, reasoning: "likely meat-based", parentDish: "Polish soup"
 
-❌ WRONG: "Cheese pizza" → single item
+❌ WRONG: "Cheese Pizza" → single item
 ✅ CORRECT:
-  - "Cheese (from pizza)" → likelyHasAnimalIngredients: true
-  - "Dough (from pizza)" → likelyHasAnimalIngredients: false (unless contains eggs/dairy)
+  - name: "Cheese (from Pizza)", likelyHasAnimalIngredients: true, source: "recipe_inference", parentDish: "Pizza"
+  - name: "Dough (from Pizza)", likelyHasAnimalIngredients: false (unless visibly contains eggs/dairy), parentDish: "Pizza"
 
-❌ WRONG: "Bread roll" → single item (if it contains multiple animal ingredients)
+❌ WRONG: "Ramen" → single item
 ✅ CORRECT:
-  - "Eggs (from bread roll)" → likelyHasAnimalIngredients: true
-  - "Dairy (from bread roll)" → likelyHasAnimalIngredients: true
-  - "Dough (from bread roll)" → likelyHasAnimalIngredients: false
+  - name: "Egg (from Ramen)", likelyHasAnimalIngredients: true, source: "visual_detection", parentDish: "Ramen"
+  - name: "Pork (from Ramen)", likelyHasAnimalIngredients: true, source: "recipe_inference", parentDish: "Ramen"
+  - name: "Broth (from Ramen)", likelyHasAnimalIngredients: true, reasoning: "likely pork-based", parentDish: "Ramen"
 
-EXCEPTION: If the dish is a single-ingredient item (e.g., "Chicken breast", "Salmon fillet"), do NOT decompose.
+EXCEPTION: Single-ingredient or dominant-ingredient products DO NOT require decomposition:
+✓ "Chicken breast" → single item (it IS the ingredient)
+✓ "Smoked Salmon" → single item (dominant ingredient)
+✓ "Canned Sardines" → single item (dominant ingredient)
+✓ "Cow Milk Cheese" → single item (dominant ingredient)
+
 ═══════════════════════════════════════════════════════════════════
 
 DETECTION GUIDELINES:
-- List EVERY distinct FOOD PRODUCT visible
-- For packaged products, try to read visible labels or brand names
-- For DISHES, decompose into individual ingredients using the rules above
-- For standalone ingredients, provide a single entry
-- For food items with animal ingredients, explain which ones and why
+- For COMPOSITE DISHES: Decompose into individual ingredients using the rules above
+- For STANDALONE PRODUCTS or single ingredients: Provide a single entry
+- For PACKAGED PRODUCTS: Try to read visible labels or brand names
+- Focus on ANIMAL-DERIVED ingredients when decomposing dishes
 - Be conservative: if unsure about ingredients, mark as Medium or Low confidence (but NEVER default eggs/dairy to plant-based)
+- When ingredients are inferred probabilistically, set source: "recipe_inference"
 
 OUTPUT FORMAT:
 Return ONLY valid JSON with this exact structure:
 {
   "items": [
     {
-      "name": "Item name or description",
+      "name": "Ingredient name (from Dish Name)" or "Product name",
       "likelyHasAnimalIngredients": true or false,
       "reasoning": "Brief explanation of your determination",
-      "confidence": "High", "Medium", or "Low"
+      "confidence": "High", "Medium", or "Low",
+      "source": "visual_detection", "recipe_inference", or "label_text",
+      "parentDish": "Dish Name" (ONLY if this ingredient is from a decomposed dish; otherwise omit or set to null)
     }
   ],
-  "summary": "A 1-2 sentence overview of what FOOD PRODUCTS you found. If no food products are present, describe what non-food items are shown WITHOUT using food-related terminology."
+  "summary": "A 1-2 sentence overview describing the DISH(ES) or PRODUCT(S) detected. If no food products are present, describe what non-food items are shown WITHOUT using food-related terminology."
 }
+
+IMPORTANT NOTES:
+- The "summary" should describe the DISH or PRODUCT (e.g., "The image shows paella with mixed seafood and chicken.")
+- The "items" array should contain ONLY the INGREDIENTS or SINGLE-INGREDIENT PRODUCTS
+- If ingredients are inferred from common recipes, add a note in reasoning: "Inferred based on common recipes for this dish."
 
 ABSOLUTELY FORBIDDEN:
 - NEVER call furniture, seats, clothing, or any non-food object a "food-related item" or "food item"
