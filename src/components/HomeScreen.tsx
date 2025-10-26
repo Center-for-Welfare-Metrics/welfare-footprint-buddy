@@ -1,25 +1,22 @@
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { User, Info, Camera } from "lucide-react";
+import { User, Info, Camera, PenLine } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
 import LanguageSelector from "@/components/LanguageSelector";
 import diversePeopleDining from "@/assets/diverse-people-dining.png";
 import foodPattern from "@/assets/food-pattern.png";
 
 interface HomeScreenProps {
   onStartScan: () => void;
-  onManualInput: (text: string) => void;
+  onDescribeFood: () => void;
 }
 
-const HomeScreen = ({ onStartScan, onManualInput }: HomeScreenProps) => {
+const HomeScreen = ({ onStartScan, onDescribeFood }: HomeScreenProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const [manualText, setManualText] = useState("");
 
   const getUserInitials = () => {
     if (!user?.email) return "U";
@@ -88,43 +85,32 @@ const HomeScreen = ({ onStartScan, onManualInput }: HomeScreenProps) => {
           <h2 className="text-xl sm:text-2xl md:text-3xl font-medium text-accent drop-shadow-md px-2">
             {t('home.subtitle')}
           </h2>
+          <p className="text-base sm:text-lg text-white/90 drop-shadow-sm px-2 max-w-2xl mx-auto">
+            Choose how you'd like to start — upload a photo or describe your meal.
+          </p>
         </header>
         
-        <main className="w-full space-y-6 sm:space-y-7">
+        <main className="w-full space-y-5 sm:space-y-6">
           <p className="text-base sm:text-lg md:text-xl font-normal text-foreground/85 drop-shadow-sm px-2 max-w-2xl mx-auto leading-relaxed">
             {t('home.description')}
           </p>
           
-          {/* Primary CTA Button */}
-          <Button 
-            onClick={onStartScan}
-            className="btn-primary-cta w-full max-w-md mx-auto py-6 px-8 text-lg sm:text-xl flex items-center justify-center gap-3 group"
-          >
-            <Camera className="h-6 w-6 sm:h-7 sm:w-7 group-hover:scale-110 transition-transform" />
-            {t('home.startScan')}
-          </Button>
-          
-          {/* Manual Input Section */}
-          <div className="w-full space-y-4 sm:space-y-5 mt-10 sm:mt-12 px-2">
-            <p className="text-sm sm:text-base text-foreground/60 font-light">{t('home.orWriteHere')}</p>
-            <Textarea
-              value={manualText}
-              onChange={(e) => setManualText(e.target.value)}
-              placeholder={t('home.manualInputPlaceholder')}
-              className="min-h-[120px] sm:min-h-[140px] bg-background/80 backdrop-blur-sm border-border/50 focus:border-accent/70 focus-visible:ring-accent/30 max-w-2xl mx-auto text-base"
-            />
-            <Button
-              onClick={() => {
-                if (manualText.trim()) {
-                  onManualInput(manualText.trim());
-                  setManualText("");
-                }
-              }}
-              disabled={!manualText.trim()}
-              variant="outline"
-              className="w-full max-w-md mx-auto border-accent/40 hover:bg-accent/10 hover:border-accent/60 py-3.5 text-base transition-all"
+          {/* Primary Action Buttons */}
+          <div className="w-full space-y-4 sm:space-y-5 max-w-md mx-auto px-2">
+            <Button 
+              onClick={onStartScan}
+              className="btn-primary-cta w-full py-6 px-8 text-lg sm:text-xl flex items-center justify-center gap-3 group"
             >
-              {t('home.analyzeText')}
+              <Camera className="h-6 w-6 sm:h-7 sm:w-7 group-hover:scale-110 transition-transform" />
+              {t('home.startScan')}
+            </Button>
+            
+            <Button 
+              onClick={onDescribeFood}
+              className="btn-primary-cta w-full py-6 px-8 text-lg sm:text-xl flex items-center justify-center gap-3 group"
+            >
+              <PenLine className="h-6 w-6 sm:h-7 sm:w-7 group-hover:scale-110 transition-transform" />
+              Describe the Food
             </Button>
           </div>
         </main>

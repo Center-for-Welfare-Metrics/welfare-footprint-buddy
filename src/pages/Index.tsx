@@ -79,11 +79,11 @@ const Index = () => {
 
   const handleStartScan = () => navigateToScreen('scanner');
   
-  const handleManualInput = async (text: string) => {
-    console.log('[Manual Input] Processing text description:', text);
+  const handleDescribeFood = () => {
+    console.log('[Describe Food] Navigating to text input screen');
     
     // Navigate to text confirmation screen (Step 1 for text mode)
-    setItemsSummary(text);
+    setItemsSummary("");
     setDetectedItems([]);
     setScannedImageData("");
     setCurrentImagePreview("");
@@ -409,7 +409,7 @@ const Index = () => {
     <div className="container mx-auto max-w-4xl px-4">
       {currentScreen === 'home' && (
         <div className="p-4">
-          <HomeScreen onStartScan={handleStartScan} onManualInput={handleManualInput} />
+          <HomeScreen onStartScan={handleStartScan} onDescribeFood={handleDescribeFood} />
         </div>
       )}
       
