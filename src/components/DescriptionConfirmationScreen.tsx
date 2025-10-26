@@ -31,14 +31,25 @@ const DescriptionConfirmationScreen = ({
         {t('itemSelection.title')}
       </h1>
 
-      {/* Image Preview */}
-      <div className="w-full max-w-md mb-6">
-        <img 
-          src={imagePreview} 
-          alt="Uploaded products" 
-          className="w-full h-60 object-contain rounded-xl border-2 border-gray-700"
-        />
-      </div>
+      {/* Image Preview - only show if image exists */}
+      {imagePreview && (
+        <div className="w-full max-w-md mb-6">
+          <img 
+            src={imagePreview} 
+            alt="Uploaded products" 
+            className="w-full h-60 object-contain rounded-xl border-2 border-gray-700"
+          />
+        </div>
+      )}
+      
+      {/* Text-only mode indicator */}
+      {!imagePreview && (
+        <div className="w-full max-w-md mb-6 p-4 glass-card rounded-xl border border-emerald-500/20">
+          <p className="text-sm text-gray-300 text-center italic">
+            You described this manually. The app will now analyze its ingredients.
+          </p>
+        </div>
+      )}
 
       {/* Description Confirmation */}
       <div className="glass-card rounded-2xl p-6 mb-6 w-full border-2 border-emerald-500/30">
@@ -46,7 +57,7 @@ const DescriptionConfirmationScreen = ({
           <Sparkles className="h-6 w-6 text-emerald-400 flex-shrink-0 mt-1" />
           <div className="flex-1 min-w-0">
             <h3 className="text-lg font-semibold text-white mb-3">
-              AI-Generated Description
+              {imagePreview ? 'AI-Generated Description' : 'Description Analyzed'}
             </h3>
             
             {!isEditing ? (

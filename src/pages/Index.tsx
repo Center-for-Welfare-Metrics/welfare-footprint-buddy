@@ -79,48 +79,19 @@ const Index = () => {
   const handleStartScan = () => navigateToScreen('scanner');
   
   const handleManualInput = async (text: string) => {
-    console.log('[Manual Input] Processing text:', text);
-    setIsAnalyzingItem(true);
+    console.log('[Manual Input] Processing text description:', text);
     
-    try {
-      const { data: functionData, error: functionError } = await supabase.functions.invoke('analyze-image', {
-        body: { 
-          mode: 'detect',
-          additionalInfo: text,
-          language: i18n.language
-        }
-      });
-
-      if (functionError) throw functionError;
-
-      const responseText = functionData?.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!responseText) throw new Error('No response from AI');
-
-      const cleanedText = sanitizeJson(responseText.replace(/```json|```/g, '').trim());
-      const result = JSON.parse(cleanedText);
-      
-      setCacheMetadata(functionData?._metadata);
-
-      if (result.items && Array.isArray(result.items)) {
-        setDetectedItems(result.items);
-        setItemsSummary(result.summary || text);
-        setScannedImageData("");
-        setCurrentImagePreview("");
-        setHasNoFoodItems(result.items.length === 0);
-        navigateToScreen('itemSelection');
-      } else {
-        throw new Error('Invalid response format');
-      }
-    } catch (error) {
-      console.error('[Manual Input] Error:', error);
-      toast({
-        title: t('errors.analysisFailed'),
-        description: error instanceof Error ? error.message : 'Unknown error',
-        variant: "destructive",
-      });
-    } finally {
-      setIsAnalyzingItem(false);
-    }
+    // For text input, treat it as a description that needs confirmation
+    // Store the text as the summary and navigate to description confirmation
+    setItemsSummary(text);
+    setDetectedItems([]); // No items detected yet
+    setScannedImageData(""); // No image data
+    setCurrentImagePreview(""); // No image preview
+    setHasNoFoodItems(false);
+    setCacheMetadata(null);
+    
+    // Navigate to description confirmation screen (text-only mode)
+    navigateToScreen('descriptionConfirmation');
   };
   
   const handleConfirmationNeeded = (items: any[], summary: string, imageData: string, imagePreview: string, noFoodItems: boolean = false) => {
@@ -135,25 +106,24 @@ const Index = () => {
     navigateToScreen('descriptionConfirmation');
   };
   
-  // Step 1 → Step 2 transition: User confirms description, proceed to items list
+  // Step 1 → Step 2 transition: User confirms description, proceed to item detection
   const handleDescriptionConfirmed = async (confirmedDescription: string) => {
     console.log('[Step 1→2] Description confirmed:', confirmedDescription);
+    setIsAnalyzingItem(true);
     
-    // If user edited the description, we need to re-detect items with the new context
-    if (confirmedDescription !== itemsSummary) {
-      console.log('[Step 1→2] Description was edited - re-analyzing with new context');
-      setIsAnalyzingItem(true);
+    try {
+      const isTextOnlyMode = !scannedImageData || scannedImageData === "";
       
-      try {
-        const imageData = JSON.parse(scannedImageData);
+      if (isTextOnlyMode) {
+        // Text-only mode: detect items from description
+        console.log('[Step 1→2] Text-only mode - detecting items from description');
         
         const { data, error } = await withRetry(async () => {
           const res = await supabase.functions.invoke('analyze-image', {
             body: { 
-              imageData,
-              language: i18n.language,
               mode: 'detect',
-              additionalInfo: confirmedDescription // Pass edited description as context
+              additionalInfo: confirmedDescription,
+              language: i18n.language
             }
           });
           if (res.error) throw res.error;
@@ -168,7 +138,44 @@ const Index = () => {
           
           try {
             const detectionJson = JSON.parse(sanitizedText);
-            // Update items with re-detected results based on user's description
+            setDetectedItems(detectionJson.items || []);
+            setItemsSummary(confirmedDescription);
+            setHasNoFoodItems((detectionJson.items || []).length === 0);
+            setCacheMetadata(data._metadata);
+            
+            console.log('[Step 1→2] Text-only detection complete');
+          } catch (parseError) {
+            console.error('[ERROR][handleDescriptionConfirmed] JSON Parse Error:', parseError);
+            throw new Error(`JSON Parse error: ${parseError instanceof Error ? parseError.message : 'Invalid JSON'}`);
+          }
+        }
+      } else if (confirmedDescription !== itemsSummary) {
+        // Image mode: user edited description, re-detect with new context
+        console.log('[Step 1→2] Image mode - description was edited, re-analyzing');
+        
+        const imageData = JSON.parse(scannedImageData);
+        
+        const { data, error } = await withRetry(async () => {
+          const res = await supabase.functions.invoke('analyze-image', {
+            body: { 
+              imageData,
+              language: i18n.language,
+              mode: 'detect',
+              additionalInfo: confirmedDescription
+            }
+          });
+          if (res.error) throw res.error;
+          return res;
+        }, 2, 1000);
+
+        if (error) throw error;
+
+        if (data?.candidates?.[0]?.content?.parts[0]?.text) {
+          const rawText = data.candidates[0].content.parts[0].text;
+          const sanitizedText = sanitizeJson(rawText);
+          
+          try {
+            const detectionJson = JSON.parse(sanitizedText);
             setDetectedItems(detectionJson.items || []);
             setItemsSummary(confirmedDescription);
             
@@ -178,22 +185,22 @@ const Index = () => {
             throw new Error(`JSON Parse error: ${parseError instanceof Error ? parseError.message : 'Invalid JSON'}`);
           }
         }
-      } catch (error) {
-        const appError = ErrorHandler.parseSupabaseError(error, 'handleDescriptionConfirmed');
-        toast({
-          title: "Re-analysis Failed",
-          description: appError.userMessage,
-          variant: "destructive",
-        });
-        setIsAnalyzingItem(false);
-        return; // Don't navigate if re-analysis failed
-      } finally {
-        setIsAnalyzingItem(false);
+      } else {
+        // Image mode: description not changed, use existing items
+        setItemsSummary(confirmedDescription);
       }
+      
+      navigateToScreen('itemSelection');
+    } catch (error) {
+      const appError = ErrorHandler.parseSupabaseError(error, 'handleDescriptionConfirmed');
+      toast({
+        title: "Detection Failed",
+        description: appError.userMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setIsAnalyzingItem(false);
     }
-    
-    setItemsSummary(confirmedDescription);
-    navigateToScreen('itemSelection');
   };
   
   // Handle description edits - update summary and proceed to items
