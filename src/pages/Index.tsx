@@ -10,10 +10,11 @@ import ResultsScreen from "@/components/ResultsScreen";
 import ItemSelectionScreen from "@/components/ItemSelectionScreen";
 import ConfirmationScreen from "@/components/ConfirmationScreen";
 import DescriptionConfirmationScreen from "@/components/DescriptionConfirmationScreen";
+import TextInputConfirmationScreen from "@/components/TextInputConfirmationScreen";
 import NavigationWrapper from "@/components/NavigationWrapper";
 import { ErrorHandler, withRetry } from "@/lib/errorHandler";
 
-type Screen = 'home' | 'scanner' | 'confirmation' | 'descriptionConfirmation' | 'itemSelection' | 'results';
+type Screen = 'home' | 'scanner' | 'confirmation' | 'textConfirmation' | 'descriptionConfirmation' | 'itemSelection' | 'results';
 
 // Utility function to sanitize JSON from AI responses
 const sanitizeJson = (text: string): string => {
@@ -81,17 +82,69 @@ const Index = () => {
   const handleManualInput = async (text: string) => {
     console.log('[Manual Input] Processing text description:', text);
     
-    // For text input, treat it as a description that needs confirmation
-    // Store the text as the summary and navigate to description confirmation
+    // Navigate to text confirmation screen (Step 1 for text mode)
     setItemsSummary(text);
-    setDetectedItems([]); // No items detected yet
-    setScannedImageData(""); // No image data
-    setCurrentImagePreview(""); // No image preview
+    setDetectedItems([]);
+    setScannedImageData("");
+    setCurrentImagePreview("");
     setHasNoFoodItems(false);
     setCacheMetadata(null);
     
-    // Navigate to description confirmation screen (text-only mode)
-    navigateToScreen('descriptionConfirmation');
+    navigateToScreen('textConfirmation');
+  };
+  
+  // Handle text confirmation and generate AI description
+  const handleTextConfirmed = async (confirmedText: string) => {
+    console.log('[Text Confirmation] Generating AI description for:', confirmedText);
+    setIsAnalyzingItem(true);
+    
+    try {
+      // Call AI to generate descriptive summary from text
+      const { data, error } = await withRetry(async () => {
+        const res = await supabase.functions.invoke('analyze-image', {
+          body: { 
+            mode: 'detect',
+            additionalInfo: confirmedText,
+            language: i18n.language
+          }
+        });
+        if (res.error) throw res.error;
+        return res;
+      }, 2, 1000);
+
+      if (error) throw error;
+
+      if (data?.candidates?.[0]?.content?.parts[0]?.text) {
+        const rawText = data.candidates[0].content.parts[0].text;
+        const sanitizedText = sanitizeJson(rawText);
+        
+        try {
+          const detectionJson = JSON.parse(sanitizedText);
+          // Store the AI-generated summary and detected items
+          setItemsSummary(detectionJson.summary || confirmedText);
+          setDetectedItems(detectionJson.items || []);
+          setHasNoFoodItems((detectionJson.items || []).length === 0);
+          setCacheMetadata(data._metadata);
+          
+          console.log('[Text Confirmation] AI description generated');
+          
+          // Navigate to description confirmation screen to show AI description
+          navigateToScreen('descriptionConfirmation');
+        } catch (parseError) {
+          console.error('[ERROR][handleTextConfirmed] JSON Parse Error:', parseError);
+          throw new Error(`JSON Parse error: ${parseError instanceof Error ? parseError.message : 'Invalid JSON'}`);
+        }
+      }
+    } catch (error) {
+      const appError = ErrorHandler.parseSupabaseError(error, 'handleTextConfirmed');
+      toast({
+        title: "Analysis Failed",
+        description: appError.userMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setIsAnalyzingItem(false);
+    }
   };
   
   const handleConfirmationNeeded = (items: any[], summary: string, imageData: string, imagePreview: string, noFoodItems: boolean = false) => {
@@ -115,39 +168,44 @@ const Index = () => {
       const isTextOnlyMode = !scannedImageData || scannedImageData === "";
       
       if (isTextOnlyMode) {
-        // Text-only mode: detect items from description
-        console.log('[Step 1→2] Text-only mode - detecting items from description');
-        
-        const { data, error } = await withRetry(async () => {
-          const res = await supabase.functions.invoke('analyze-image', {
-            body: { 
-              mode: 'detect',
-              additionalInfo: confirmedDescription,
-              language: i18n.language
-            }
-          });
-          if (res.error) throw res.error;
-          return res;
-        }, 2, 1000);
-
-        if (error) throw error;
-
-        if (data?.candidates?.[0]?.content?.parts[0]?.text) {
-          const rawText = data.candidates[0].content.parts[0].text;
-          const sanitizedText = sanitizeJson(rawText);
+        // Text-only mode: items already detected in handleTextConfirmed
+        // If user edited description, re-detect
+        if (confirmedDescription !== itemsSummary) {
+          console.log('[Step 1→2] Text-only mode - re-detecting with edited description');
           
-          try {
-            const detectionJson = JSON.parse(sanitizedText);
-            setDetectedItems(detectionJson.items || []);
-            setItemsSummary(confirmedDescription);
-            setHasNoFoodItems((detectionJson.items || []).length === 0);
-            setCacheMetadata(data._metadata);
+          const { data, error } = await withRetry(async () => {
+            const res = await supabase.functions.invoke('analyze-image', {
+              body: { 
+                mode: 'detect',
+                additionalInfo: confirmedDescription,
+                language: i18n.language
+              }
+            });
+            if (res.error) throw res.error;
+            return res;
+          }, 2, 1000);
+
+          if (error) throw error;
+
+          if (data?.candidates?.[0]?.content?.parts[0]?.text) {
+            const rawText = data.candidates[0].content.parts[0].text;
+            const sanitizedText = sanitizeJson(rawText);
             
-            console.log('[Step 1→2] Text-only detection complete');
-          } catch (parseError) {
-            console.error('[ERROR][handleDescriptionConfirmed] JSON Parse Error:', parseError);
-            throw new Error(`JSON Parse error: ${parseError instanceof Error ? parseError.message : 'Invalid JSON'}`);
+            try {
+              const detectionJson = JSON.parse(sanitizedText);
+              setDetectedItems(detectionJson.items || []);
+              setItemsSummary(confirmedDescription);
+              setHasNoFoodItems((detectionJson.items || []).length === 0);
+              
+              console.log('[Step 1→2] Text-only re-detection complete');
+            } catch (parseError) {
+              console.error('[ERROR][handleDescriptionConfirmed] JSON Parse Error:', parseError);
+              throw new Error(`JSON Parse error: ${parseError instanceof Error ? parseError.message : 'Invalid JSON'}`);
+            }
           }
+        } else {
+          // Description not changed, use existing items from handleTextConfirmed
+          setItemsSummary(confirmedDescription);
         }
       } else if (confirmedDescription !== itemsSummary) {
         // Image mode: user edited description, re-detect with new context
@@ -372,6 +430,22 @@ const Index = () => {
         </NavigationWrapper>
       )}
       
+      {currentScreen === 'textConfirmation' && (
+        <NavigationWrapper 
+          onBack={handleBack}
+          onHome={handleGoHome}
+          showHome={showHomeIcon}
+          isProcessing={isAnalyzingItem}
+        >
+          <div className="p-4">
+            <TextInputConfirmationScreen
+              initialText={itemsSummary}
+              onContinue={handleTextConfirmed}
+              isProcessing={isAnalyzingItem}
+            />
+          </div>
+        </NavigationWrapper>
+      )}
       
       {currentScreen === 'descriptionConfirmation' && (
         <NavigationWrapper 
