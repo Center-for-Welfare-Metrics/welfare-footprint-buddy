@@ -88,6 +88,20 @@ User Correction: "Also add chicken breast"
 ```
 Result: Add new item with name "Chicken breast", `source: "user_correction"`, `userEdited: true`
 
+**CRITICAL: Reasoning Quality for Added/Modified Items**
+When adding or modifying items, generate meaningful, specific reasoning that:
+- Describes the ingredient's function or role in the dish (not just what it is)
+- Provides cultural or production context when relevant
+- Avoids redundant statements like "contains X" or "is made from Y"
+- Focuses on objective, informative details
+
+Examples:
+- ✓ "A key protein in this dish, typically pan-fried before assembly."
+- ✓ "Used as a topping in Georgian cheese breads, typically baked directly on the dough."
+- ✓ "Traditional filling component, usually made from cow's milk cheese (Sulguni or Imeruli)."
+- ❌ "This item contains eggs." (redundant)
+- ❌ "Made from pork." (too generic)
+
 #### 2. Removing Items
 If the user says to remove an item:
 - Keep the item in the array

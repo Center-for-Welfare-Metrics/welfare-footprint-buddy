@@ -332,6 +332,14 @@ For each FOOD item or INGREDIENT you detect:
    - **Use sensory and contextual language:** flavor, aroma, texture, color, crystallization, production method, regional origin, seasonal variation, traditional uses
    - **Avoid redundant statements:** Never simply restate that something is animal-derived
    - **For obvious standard items:** Leave reasoning empty rather than stating the obvious
+   - **For decomposed ingredients from composite dishes:** Focus on the ingredient's function or role in the specific dish, cultural context, or typical production method:
+     - ✓ "Used as a topping in Georgian cheese breads, typically baked directly on the dough before serving."
+     - ✓ "The cheese component of this Georgian bread, traditionally made from cow's milk and used as the filling."
+     - ✓ "A key protein in this dish, typically pan-fried before assembly."
+     - ✓ "Traditional Georgian cheese (Sulguni or Imeruli), stretched and melted into the dough."
+     - ❌ "This item contains eggs." (redundant)
+     - ❌ "Cheese bread, typically filled with cheese and topped with an egg." (describes the whole dish, not the ingredient)
+     - ❌ "Made from milk." (too generic)
    - For plant-based items: Brief explanation only if there's potential confusion or it's not obvious
 5. Rate your confidence level (High/Medium/Low)
 
