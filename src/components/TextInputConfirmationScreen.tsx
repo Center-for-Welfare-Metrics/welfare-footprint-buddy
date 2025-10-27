@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Edit3, ArrowRight } from "lucide-react";
@@ -10,6 +10,21 @@ interface TextInputConfirmationScreenProps {
   isProcessing?: boolean;
 }
 
+const EXAMPLE_DESCRIPTIONS = [
+  "Grilled salmon with rice and vegetables",
+  "Cheese pizza with tomato sauce",
+  "Chicken curry with coconut milk and spices",
+  "Scrambled eggs with toast and butter",
+  "Omelet made with eggs from a certified cage-free producer",
+  "Beef burger with cheese and lettuce",
+  "Paella with chicken, rabbit, and vegetables",
+  "Roast chicken from a high-welfare farm with potatoes",
+  "Yogurt made with milk from pasture-raised cows",
+  "Sushi roll with salmon and avocado",
+  "Pasta with shrimp and garlic sauce",
+  "Ice cream made from organic dairy ingredients"
+];
+
 const TextInputConfirmationScreen = ({ 
   initialText, 
   onContinue,
@@ -17,6 +32,11 @@ const TextInputConfirmationScreen = ({
 }: TextInputConfirmationScreenProps) => {
   const { t } = useTranslation();
   const [text, setText] = useState(initialText);
+  
+  const randomExample = useMemo(() => {
+    const randomIndex = Math.floor(Math.random() * EXAMPLE_DESCRIPTIONS.length);
+    return `Example: ${EXAMPLE_DESCRIPTIONS[randomIndex]}`;
+  }, []);
 
   const handleContinue = () => {
     onContinue(text.trim());
@@ -43,7 +63,7 @@ const TextInputConfirmationScreen = ({
             <Textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="Example: Valencian paella with chicken, rabbit, and vegetables"
+              placeholder={randomExample}
               className="min-h-[120px] bg-white/10 text-white border-gray-600 mb-4"
               disabled={isProcessing}
             />
