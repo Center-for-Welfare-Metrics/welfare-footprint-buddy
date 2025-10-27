@@ -58,6 +58,90 @@ function validateInput(body: any): { valid: boolean; data?: ValidatedInput; erro
   };
 }
 
+/**
+ * Validate that AI suggestions respect lens boundaries
+ * Returns array of violation messages (empty if valid)
+ */
+function validateLensBoundaries(response: any, ethicalLens: number): string[] {
+  const violations: string[] = [];
+  const suggestions = response.suggestions || [];
+  
+  // Define forbidden keywords for each lens
+  const forbiddenPatterns: Record<number, RegExp[]> = {
+    1: [
+      /plant-based/i,
+      /vegan/i,
+      /vegetarian/i,
+      /beyond meat/i,
+      /impossible/i,
+      /tofu/i,
+      /tempeh/i,
+      /seitan/i,
+      /soy milk/i,
+      /almond milk/i,
+      /oat milk/i,
+      /lab-grown/i,
+      /cultured meat/i,
+      /reduce.*consumption/i,
+      /eliminate.*animal/i,
+    ],
+    2: [
+      /plant-based/i,
+      /vegan/i,
+      /vegetarian/i,
+      /beyond meat/i,
+      /impossible/i,
+      /tofu/i,
+      /tempeh/i,
+      /seitan/i,
+      /lab-grown/i,
+      /cultured meat/i,
+    ],
+    3: [
+      /fully plant-based/i,
+      /100% vegan/i,
+      /beyond meat/i,
+      /impossible burger/i,
+      /no animal.*ingredient/i,
+      /zero animal/i,
+    ],
+    4: [
+      /fully plant-based/i,
+      /100% vegan/i,
+      /zero animal/i,
+      /completely plant/i,
+    ],
+  };
+  
+  const patterns = forbiddenPatterns[ethicalLens];
+  if (!patterns) return violations; // Lens 5 has no restrictions
+  
+  // Check each suggestion
+  suggestions.forEach((suggestion: any, index: number) => {
+    const textToCheck = `${suggestion.name} ${suggestion.description} ${suggestion.reasoning}`.toLowerCase();
+    
+    patterns.forEach(pattern => {
+      if (pattern.test(textToCheck)) {
+        violations.push(
+          `Suggestion ${index + 1} ("${suggestion.name}") contains forbidden content for Lens ${ethicalLens}: matched pattern ${pattern}`
+        );
+      }
+    });
+  });
+  
+  // Also check generalNote
+  const generalNote = (response.generalNote || '').toLowerCase();
+  patterns.forEach(pattern => {
+    if (pattern.test(generalNote)) {
+      violations.push(
+        `generalNote contains forbidden content for Lens ${ethicalLens}: matched pattern ${pattern}`
+      );
+    }
+  });
+  
+  return violations;
+}
+
 // Initialize AI Handler once
 const initAIHandler = (apiKey: string) => {
   if (!(globalThis as any).__aiHandler) {
@@ -199,6 +283,24 @@ serve(async (req) => {
 
       if (parsedResponse.ethicalLensPosition !== expectedPositions[ethicalLens as keyof typeof expectedPositions]) {
         console.warn(`⚠️ LENS MISMATCH: Requested ${ethicalLens} (${expectedPositions[ethicalLens as keyof typeof expectedPositions]}), got ${parsedResponse.ethicalLensPosition}`);
+      }
+
+      
+      // CRITICAL VALIDATION: Check for lens boundary violations
+      const violations = validateLensBoundaries(parsedResponse, ethicalLens);
+      if (violations.length > 0) {
+        console.error(`❌ LENS BOUNDARY VIOLATIONS DETECTED FOR LENS ${ethicalLens}:`, violations);
+        return new Response(
+          JSON.stringify({ 
+            success: false, 
+            error: { 
+              message: 'Lens boundary violation',
+              details: `AI generated suggestions that violate Lens ${ethicalLens} boundaries. Please try again.`,
+              violations
+            }
+          }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
 
     } catch (parseError) {
