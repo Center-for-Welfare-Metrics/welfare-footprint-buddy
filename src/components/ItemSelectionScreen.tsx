@@ -258,17 +258,19 @@ const ItemSelectionScreen = ({
   return (
     <div className="flex flex-col items-center pb-32 max-w-4xl mx-auto">
       <h1 className="text-3xl font-bold mb-4 text-center text-white">
-        {t('itemSelection.title')}
+      {t('itemSelection.title')}
       </h1>
 
-      {/* Image Preview */}
-      <div className="w-full max-w-md mb-6">
-        <img 
-          src={imagePreview} 
-          alt="Uploaded products" 
-          className="w-full h-60 object-contain rounded-xl border-2 border-gray-700"
-        />
-      </div>
+      {/* Image Preview - only show if image exists */}
+      {imagePreview && (
+        <div className="w-full max-w-md mb-6">
+          <img 
+            src={imagePreview} 
+            alt="Uploaded products" 
+            className="w-full h-60 object-contain rounded-xl border-2 border-gray-700"
+          />
+        </div>
+      )}
 
       {/* Confirmed Description Display */}
       <div className="glass-card rounded-2xl p-6 mb-6 w-full border-2 border-emerald-500/30">

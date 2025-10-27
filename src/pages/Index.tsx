@@ -120,15 +120,15 @@ const Index = () => {
         
         try {
           const detectionJson = JSON.parse(sanitizedText);
-          // Store the AI-generated summary and detected items
-          setItemsSummary(detectionJson.summary || confirmedText);
+          // Store the user's description as the primary source, with AI summary as fallback
+          setItemsSummary(confirmedText);
           setDetectedItems(detectionJson.items || []);
           setHasNoFoodItems((detectionJson.items || []).length === 0);
           setCacheMetadata(data._metadata);
           
-          console.log('[Text Confirmation] AI description generated');
+          console.log('[Text Confirmation] AI description generated, using user text as summary');
           
-          // Navigate to description confirmation screen to show AI description
+          // Navigate to description confirmation screen to show user's description
           navigateToScreen('descriptionConfirmation');
         } catch (parseError) {
           console.error('[ERROR][handleTextConfirmed] JSON Parse Error:', parseError);
