@@ -77,15 +77,15 @@ const HomeScreen = ({ onStartScan, onDescribeFood }: HomeScreenProps) => {
           <h2 className="text-xl sm:text-2xl md:text-3xl font-medium text-accent drop-shadow-md px-2">
             {t('home.subtitle')}
           </h2>
+          <p className="text-base sm:text-lg md:text-xl font-normal text-foreground/85 drop-shadow-sm px-2 max-w-2xl mx-auto leading-relaxed">
+            {t('home.description')}
+          </p>
           <p className="text-base sm:text-lg text-white/90 drop-shadow-sm px-2 max-w-2xl mx-auto">
             Choose how you'd like to start — upload a photo or describe your meal.
           </p>
         </header>
         
         <main className="w-full space-y-5 sm:space-y-6">
-          <p className="text-base sm:text-lg md:text-xl font-normal text-foreground/85 drop-shadow-sm px-2 max-w-2xl mx-auto leading-relaxed">
-            {t('home.description')}
-          </p>
           
           {/* Primary Action Buttons */}
           <div className="w-full space-y-4 sm:space-y-5 max-w-md mx-auto px-2">
