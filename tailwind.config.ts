@@ -18,6 +18,8 @@ export default {
         'inter': ['Inter', 'sans-serif'],
         'sans': ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
         'serif': ['Playfair Display', 'serif'],
+        'heading': ['Playfair Display', 'serif'],
+        'body': ['Inter', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",

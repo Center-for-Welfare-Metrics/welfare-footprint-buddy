@@ -8,7 +8,7 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Elegant Gastronomic Design - Deep Teal Foundation */
+    /* Elegant Welfare-Conscious Design - Deep Teal Foundation */
     --background: 180 65% 12%;           /* Deep teal #0B3838 */
     --foreground: 36 32% 91%;            /* Warm off-white #F2EDE4 */
 
@@ -18,20 +18,37 @@ All colors MUST be HSL.
     --popover: 180 60% 14%;
     --popover-foreground: 36 32% 91%;
 
-    /* Warmer organic green for primary actions */
+    /* Organic green - conscious care */
     --primary: 152 35% 48%;              /* Organic green #4FA67A */
     --primary-foreground: 36 32% 91%;
 
-    /* Warm coral/orange for CTAs */
-    --secondary: 16 85% 58%;             /* Coral/orange #EB6D42 */
+    /* Harvest amber - ethical warmth */
+    --secondary: 16 85% 58%;             /* Harvest amber #EB6D42 */
     --secondary-foreground: 0 0% 100%;
 
     --muted: 180 40% 20%;                /* Muted teal */
     --muted-foreground: 120 10% 78%;     /* Muted gray-green #C7D0C5 */
 
-    /* Warmer green accent for emphasis */
-    --accent: 152 42% 55%;               /* Warm green #5CB391 */
+    /* Earth stone - natural accent */
+    --accent: 152 42% 55%;               /* Earth stone #5CB391 */
     --accent-foreground: 180 65% 12%;    /* Dark teal text on accent */
+
+    /* Themed Color Tokens - Welfare & Nature */
+    --organic-green: 152 35% 48%;        /* Conscious care */
+    --harvest-amber: 16 85% 58%;         /* Ethical warmth */
+    --earth-stone: 152 42% 55%;          /* Natural grounding */
+    
+    /* Gradient Definitions */
+    --gradient-hero: linear-gradient(135deg, hsl(152 35% 48%) 0%, hsl(152 42% 55%) 50%, hsl(152 35% 48%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(180 60% 15% / 0.95) 0%, hsl(180 65% 13% / 0.98) 100%);
+    --gradient-adventure: linear-gradient(135deg, hsl(152 35% 48%) 0%, hsl(16 85% 58%) 100%);
+    
+    /* Shadow Definitions */
+    --shadow-glow: 0 8px 32px hsl(152 35% 48% / 0.3), 0 4px 16px hsl(152 42% 55% / 0.2);
+    --shadow-card: 0 8px 32px hsl(0 0% 0% / 0.4), 0 2px 8px hsl(152 42% 55% / 0.08);
+    
+    /* Animation Timing */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     /* Primary CTA Button Gradient - Mint to Deep Teal */
     --cta-start: 162 56% 56%;            /* Mint green #30C59B */
@@ -46,7 +63,7 @@ All colors MUST be HSL.
 
     --radius: 0.5rem;
 
-    /* Sidebar with gastronomic aesthetic */
+    /* Sidebar with welfare aesthetic */
     --sidebar-background: 180 65% 12%;
     --sidebar-foreground: 36 32% 91%;
     --sidebar-primary: 152 35% 48%;
@@ -79,10 +96,27 @@ All colors MUST be HSL.
 
     --accent: 152 42% 55%;
     --accent-foreground: 180 65% 12%;
+    
+    /* Themed Color Tokens - Welfare & Nature */
+    --organic-green: 152 35% 48%;
+    --harvest-amber: 16 85% 58%;
+    --earth-stone: 152 42% 55%;
+    
+    /* Gradient Definitions */
+    --gradient-hero: linear-gradient(135deg, hsl(152 35% 48%) 0%, hsl(152 42% 55%) 50%, hsl(152 35% 48%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(180 60% 15% / 0.95) 0%, hsl(180 65% 13% / 0.98) 100%);
+    --gradient-adventure: linear-gradient(135deg, hsl(152 35% 48%) 0%, hsl(16 85% 58%) 100%);
+    
+    /* Shadow Definitions */
+    --shadow-glow: 0 8px 32px hsl(152 35% 48% / 0.3), 0 4px 16px hsl(152 42% 55% / 0.2);
+    --shadow-card: 0 8px 32px hsl(0 0% 0% / 0.4), 0 2px 8px hsl(152 42% 55% / 0.08);
+    
+    /* Animation Timing */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     /* Primary CTA Button Gradient - Mint to Deep Teal */
-    --cta-start: 162 56% 56%;            /* Mint green #30C59B */
-    --cta-end: 168 63% 34%;              /* Deep teal #208B72 */
+    --cta-start: 162 56% 56%;
+    --cta-end: 168 63% 34%;
 
     --destructive: 0 65% 50%;
     --destructive-foreground: 36 32% 91%;
@@ -111,10 +145,40 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     letter-spacing: 0.01em;
+    position: relative;
   }
   
-  /* Modern sans-serif for headings with refined hierarchy */
-  h1, h2, h3, h4, h5, h6 {
+  /* Subtle background pattern for depth */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.03;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    z-index: 0;
+  }
+  
+  /* Radial gradient overlay for depth */
+  body {
+    background: 
+      radial-gradient(circle at 20% 80%, hsl(152 35% 48% / 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, hsl(16 85% 58% / 0.08) 0%, transparent 50%),
+      hsl(var(--background));
+  }
+  
+  /* Elegant serif for headings - conveys authority */
+  h1, h2, h3 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  
+  /* Clean sans-serif for smaller headings */
+  h4, h5, h6 {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-weight: 600;
     letter-spacing: -0.01em;
@@ -231,11 +295,24 @@ All colors MUST be HSL.
   @keyframes gentle-pulse {
     0%, 100% { 
       transform: scale(1);
-      box-shadow: 0 0 30px rgba(16,185,129,0.3), 0 0 15px rgba(16,185,129,0.2), 0 4px 12px rgba(0,0,0,0.4);
+      box-shadow: var(--shadow-glow);
     }
     50% { 
       transform: scale(1.02);
-      box-shadow: 0 0 40px rgba(16,185,129,0.4), 0 0 20px rgba(16,185,129,0.3), 0 4px 12px rgba(0,0,0,0.4);
+      box-shadow: 0 12px 40px hsl(152 35% 48% / 0.4), 0 6px 20px hsl(152 42% 55% / 0.3);
+    }
+  }
+  
+  /* Slow-moving gradient animation for buttons */
+  @keyframes gradient-flow {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
     }
   }
   
@@ -254,7 +331,7 @@ All colors MUST be HSL.
       0 4px 16px hsl(168 63% 34% / 0.3),
       0 2px 8px hsl(162 56% 56% / 0.2),
       inset 0 1px 0 hsl(0 0% 100% / 0.15);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: var(--transition-smooth);
   }
   
   .btn-primary-cta:hover {
@@ -267,6 +344,25 @@ All colors MUST be HSL.
   
   .btn-primary-cta:active {
     transform: translateY(0) scale(0.98);
+  }
+  
+  /* Animated gradient button - slow-moving compass effect */
+  .compass-hover {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary)) 0%,
+      hsl(var(--accent)) 50%,
+      hsl(var(--primary)) 100%
+    );
+    background-size: 200% 200%;
+    animation: gradient-flow 20s linear infinite;
+    transition: var(--transition-smooth);
+  }
+  
+  .compass-hover:hover {
+    animation-play-state: paused;
+    transform: rotate(2deg) scale(1.02);
+    box-shadow: var(--shadow-glow);
   }
 }
 
