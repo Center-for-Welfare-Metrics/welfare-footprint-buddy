@@ -80,7 +80,7 @@ const HomeScreen = ({ onStartScan, onDescribeFood }: HomeScreenProps) => {
           <p className="text-base sm:text-lg md:text-xl font-normal text-foreground/85 drop-shadow-sm px-2 max-w-2xl mx-auto leading-relaxed">
             {t('home.description')}
           </p>
-          <p className="text-base sm:text-lg text-white/90 drop-shadow-sm px-2 max-w-2xl mx-auto">
+          <p className="text-xs sm:text-sm whitespace-pre-line max-w-3xl mx-auto leading-relaxed opacity-70" style={{ color: '#B0B8B6' }}>
             Choose how you'd like to start — upload a photo or describe your meal.
           </p>
         </header>
