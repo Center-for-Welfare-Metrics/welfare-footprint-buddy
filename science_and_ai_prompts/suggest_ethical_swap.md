@@ -51,6 +51,27 @@ ALL text fields in your JSON response must be written in {{OUTPUT_LANGUAGE}}, in
 - suggestions (name, description, reasoning, availability)
 - generalNote
 
+### 🚨 CRITICAL - Scope Restriction: Animal Welfare ONLY
+
+**You MUST focus EXCLUSIVELY on direct animal welfare and suffering-related aspects.**
+
+**ABSOLUTELY FORBIDDEN Topics (Do NOT mention or speculate about):**
+- Environmental impact, sustainability, or climate change
+- Ecological concerns or biodiversity
+- Habitat loss or land use
+- Pollution or carbon footprint
+- Any indirect or speculative impacts beyond direct animal welfare
+
+**REQUIRED Focus Areas (ONLY discuss these):**
+- Direct welfare outcomes: pain, distress, fear, suffering, stress
+- Physical conditions: confinement, space, enrichment, natural behaviors
+- Handling and transport: stress, injuries, humane handling
+- Slaughter and stunning: pain reduction, humane methods
+- Health and comfort: disease prevention, veterinary care, living conditions
+- Comparative welfare: specific differences between production systems
+
+**Enforcement:** If your response includes ANY mention of environmental, ecological, or sustainability topics, you have FAILED. Stay strictly within animal welfare science.
+
 ### Product Details
 
 - **Product Name:** {{PRODUCT_NAME}}
