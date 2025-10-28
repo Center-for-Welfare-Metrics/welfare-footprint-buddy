@@ -37,6 +37,7 @@ const Index = () => {
   const [hasNoFoodItems, setHasNoFoodItems] = useState(false);
   const [isAnalyzingItem, setIsAnalyzingItem] = useState(false);
   const [cacheMetadata, setCacheMetadata] = useState<any>(null);
+  const [enrichedDescription, setEnrichedDescription] = useState<string>("");
   
   const { toast } = useToast();
   const { i18n, t } = useTranslation();
@@ -75,6 +76,7 @@ const Index = () => {
     setScannedImageData("");
     setHasNoFoodItems(false);
     setCacheMetadata(null);
+    setEnrichedDescription("");
   };
 
   const handleStartScan = () => navigateToScreen('scanner');
@@ -88,6 +90,7 @@ const Index = () => {
     setScannedImageData("");
     setCurrentImagePreview("");
     setHasNoFoodItems(false);
+    setEnrichedDescription("");
     setCacheMetadata(null);
     
     navigateToScreen('textConfirmation');
@@ -99,36 +102,53 @@ const Index = () => {
     setIsAnalyzingItem(true);
     
     try {
-      // Call AI to generate descriptive summary from text
-      const { data, error } = await withRetry(async () => {
-        const res = await supabase.functions.invoke('analyze-image', {
-          body: { 
-            mode: 'detect',
-            additionalInfo: confirmedText,
-            language: i18n.language
-          }
-        });
-        if (res.error) throw res.error;
-        return res;
-      }, 2, 1000);
+      // Call AI to enrich the description AND detect items in parallel
+      const [enrichResult, detectResult] = await Promise.all([
+        withRetry(async () => {
+          const res = await supabase.functions.invoke('enrich-description', {
+            body: { 
+              description: confirmedText,
+              language: i18n.language
+            }
+          });
+          if (res.error) throw res.error;
+          return res;
+        }, 2, 1000),
+        withRetry(async () => {
+          const res = await supabase.functions.invoke('analyze-image', {
+            body: { 
+              mode: 'detect',
+              additionalInfo: confirmedText,
+              language: i18n.language
+            }
+          });
+          if (res.error) throw res.error;
+          return res;
+        }, 2, 1000)
+      ]);
 
-      if (error) throw error;
+      if (enrichResult.error) throw enrichResult.error;
+      if (detectResult.error) throw detectResult.error;
 
-      if (data?.candidates?.[0]?.content?.parts[0]?.text) {
-        const rawText = data.candidates[0].content.parts[0].text;
+      // Set enriched description
+      const enrichedDesc = enrichResult.data?.enrichedDescription || confirmedText;
+      setEnrichedDescription(enrichedDesc);
+
+      if (detectResult.data?.candidates?.[0]?.content?.parts[0]?.text) {
+        const rawText = detectResult.data.candidates[0].content.parts[0].text;
         const sanitizedText = sanitizeJson(rawText);
         
         try {
           const detectionJson = JSON.parse(sanitizedText);
-          // Store the user's description as the primary source, with AI summary as fallback
+          // Store the user's description as the primary source
           setItemsSummary(confirmedText);
           setDetectedItems(detectionJson.items || []);
           setHasNoFoodItems((detectionJson.items || []).length === 0);
-          setCacheMetadata(data._metadata);
+          setCacheMetadata(detectResult.data._metadata);
           
-          console.log('[Text Confirmation] AI description generated, using user text as summary');
+          console.log('[Text Confirmation] Enriched description generated:', enrichedDesc);
           
-          // Navigate to description confirmation screen to show user's description
+          // Navigate to description confirmation screen
           navigateToScreen('descriptionConfirmation');
         } catch (parseError) {
           console.error('[ERROR][handleTextConfirmed] JSON Parse Error:', parseError);
@@ -460,6 +480,7 @@ const Index = () => {
               imagePreview={currentImagePreview}
               onConfirm={handleDescriptionConfirmed}
               isProcessing={isAnalyzingItem}
+              enrichedDescription={enrichedDescription}
             />
           </div>
         </NavigationWrapper>

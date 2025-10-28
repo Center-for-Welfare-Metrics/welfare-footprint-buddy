@@ -9,17 +9,22 @@ interface DescriptionConfirmationScreenProps {
   imagePreview: string;
   onConfirm: (confirmedDescription: string) => void;
   isProcessing?: boolean;
+  enrichedDescription?: string;
 }
 
 const DescriptionConfirmationScreen = ({ 
   initialDescription, 
   imagePreview,
   onConfirm,
-  isProcessing = false
+  isProcessing = false,
+  enrichedDescription
 }: DescriptionConfirmationScreenProps) => {
   const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [description, setDescription] = useState(initialDescription);
+  
+  // Use enriched description for display, fallback to initial
+  const displayDescription = enrichedDescription || initialDescription;
 
   const handleConfirm = () => {
     onConfirm(description.trim());
@@ -63,10 +68,7 @@ const DescriptionConfirmationScreen = ({
             {!isEditing ? (
               <>
                 <p className="text-gray-200 leading-relaxed mb-4 break-words max-w-full">
-                  {imagePreview 
-                    ? `The image shows ${description.charAt(0).toLowerCase() + description.slice(1)}`
-                    : `You described ${description.charAt(0).toLowerCase() + description.slice(1)}`
-                  }
+                  {displayDescription}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Button
