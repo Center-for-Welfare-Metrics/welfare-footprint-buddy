@@ -21,10 +21,10 @@ const DescriptionConfirmationScreen = ({
 }: DescriptionConfirmationScreenProps) => {
   const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
-  const [description, setDescription] = useState(initialDescription);
   
-  // Use enriched description for display, fallback to initial
+  // Use enriched description for both display and editing, fallback to initial
   const displayDescription = enrichedDescription || initialDescription;
+  const [description, setDescription] = useState(displayDescription);
 
   const handleConfirm = () => {
     onConfirm(description.trim());
@@ -113,7 +113,7 @@ const DescriptionConfirmationScreen = ({
                     variant="outline"
                     onClick={() => {
                       setIsEditing(false);
-                      setDescription(initialDescription);
+                      setDescription(displayDescription);
                     }}
                     disabled={isProcessing}
                     className="flex-1 border-gray-500 text-gray-400 hover:bg-gray-500/10"
