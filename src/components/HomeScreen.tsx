@@ -26,16 +26,6 @@ const HomeScreen = ({ onStartScan, onDescribeFood }: HomeScreenProps) => {
 
   return (
     <div className="flex flex-col min-h-screen text-center bg-gradient-radial-forest relative overflow-hidden">
-      {/* Decorative background elements */}
-      <div className="absolute bottom-0 left-0 right-0 opacity-20 pointer-events-none">
-        <img 
-          src={diversePeopleDining} 
-          alt="" 
-          className="w-full max-w-4xl mx-auto"
-          style={{ mixBlendMode: 'multiply' }}
-        />
-      </div>
-      
       {/* Header with Language Selector and Sign In */}
       <div className="absolute top-3 sm:top-4 right-3 sm:right-4 left-3 sm:left-4 flex items-center justify-between gap-2 sm:gap-4 z-10">
         <div className="flex-1" />
