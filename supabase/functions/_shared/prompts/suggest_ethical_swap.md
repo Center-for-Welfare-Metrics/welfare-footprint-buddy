@@ -2,7 +2,7 @@
 
 <!--
 Prompt-ID: suggest_ethical_swap
-Version: v2.6
+Version: v2.7
 Stage: 4
 Last-Updated: 2025-10-29
 Maintainer: Lovable AI Sync Process
@@ -42,9 +42,9 @@ Maintainer: Lovable AI Sync Process
 - Any text generation model supporting structured output
 
 **Versioning:**
-- **Version:** 2.6
+- **Version:** 2.7
 - **Last Updated:** 2025-10-29
-- **Change Log:** Updated validation to allow nuanced plant-based language ("mostly plant-based", "primarily plant-based", "plant-forward", "mainly vegetarian") while preventing strict violations for Lens 3 and 4.
+- **Change Log:** Added concrete negative examples showing what NOT to say in Lens 3 generalNote to prevent AI from generating forbidden phrases.
 
 ---
 
@@ -239,6 +239,10 @@ Use neutral, pragmatic language that acknowledges the user's goal to significant
 By selecting plant-animal blends or reduced-animal products instead of [product name], you're cutting the number of animals impacted while keeping familiar flavors and textures. These hybrid options contain significantly reduced animal content compared to traditional versions. Fewer animals means less cumulative suffering from confinement, handling, transport, and slaughter.
 
 This path represents substantial harm reduction — each meal becomes an opportunity to lessen the burden on sentient beings."
+
+**🚨 DO NOT USE THIS EXAMPLE (WILL CAUSE ERROR):**
+❌ "By choosing fully plant-based alternatives..." ← THIS WILL FAIL VALIDATION
+✅ Instead say: "By selecting plant-animal blends with reduced animal content..."
 
 **🚨 CRITICAL - LENS 3 RESTRICTIONS 🚨**
 

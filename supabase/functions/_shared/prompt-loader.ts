@@ -53,7 +53,7 @@ const PROMPT_VERSIONS: Record<string, string> = {
   confirm_refine_items: 'v1.1',
   analyze_focused_item: 'v1.2',
   analyze_product: 'v1.2',
-  suggest_ethical_swap: 'v2.6',
+  suggest_ethical_swap: 'v2.7',
   user_context_template: 'v1.0',
 };
 
@@ -574,7 +574,11 @@ Focus EXCLUSIVELY on direct animal welfare and suffering-related aspects.
 ❌ DO NOT use: "fully plant-based", "100% vegan", "100% plant-based", "completely plant-based", "entirely plant-based", "all plant-based", "zero animal", "no animal ingredients", "animal-free", "Beyond Meat", "Impossible"
 ✅ DO use: "mostly plant-based", "primarily plant-based", "plant-forward", "mainly vegetarian", "plant-animal blend", "reduced animal content", "hybrid product", "significantly reduced animal content", "reduced-animal", "blended", "mixed plant and animal"
 
-**⚠️ ENFORCEMENT:** Every suggestion MUST contain SOME animal ingredients. Never suggest 100% plant-based products.
+**Example SAFE generalNote for Lens 3:**
+"By selecting plant-animal blends with reduced animal content, you're cutting the number of animals impacted..."
+
+**Example UNSAFE generalNote (WILL FAIL):**
+❌ "By choosing fully plant-based alternatives..." ← DO NOT USE THIS PHRASE
 
 #### Lens 4 – Minimal Animal Use
 **ethicalLensPosition:** "Minimal Animal Use"
