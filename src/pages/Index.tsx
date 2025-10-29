@@ -363,18 +363,32 @@ const Index = () => {
   const handleItemSelect = async (itemName: string) => {
     setIsAnalyzingItem(true);
     try {
-      const imageData = JSON.parse(scannedImageData);
+      // Check if we're in text-only mode (no image data)
+      const isTextOnlyMode = !scannedImageData || scannedImageData === "";
       
-      console.log('[handleItemSelect] Analyzing item:', itemName);
+      console.log('[handleItemSelect] Analyzing item:', itemName, 'Text-only mode:', isTextOnlyMode);
+      
+      const requestBody: any = {
+        language: i18n.language,
+        mode: 'analyze',
+        focusItem: itemName
+      };
+
+      // Only include imageData if we have it (image scan mode)
+      if (!isTextOnlyMode) {
+        requestBody.imageData = JSON.parse(scannedImageData);
+      }
+
+      // Include the enriched description or summary as additional context
+      if (enrichedDescription) {
+        requestBody.additionalInfo = enrichedDescription;
+      } else if (itemsSummary) {
+        requestBody.additionalInfo = itemsSummary;
+      }
       
       const { data, error } = await withRetry(async () => {
         const res = await supabase.functions.invoke('analyze-image', {
-          body: { 
-            imageData,
-            language: i18n.language,
-            mode: 'analyze',
-            focusItem: itemName
-          }
+          body: requestBody
         });
         if (res.error) throw res.error;
         return res;
