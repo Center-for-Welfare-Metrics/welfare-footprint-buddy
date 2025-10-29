@@ -1,3 +1,8 @@
+<!--
+NOTE: Runtime source of truth. Embedded during build for Supabase Edge deployment.
+This file is the authoritative prompt definition used at runtime.
+-->
+
 # Focused Item Welfare Analysis Prompt
 
 ## Metadata

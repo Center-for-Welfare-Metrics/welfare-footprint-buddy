@@ -1,3 +1,8 @@
+<!--
+NOTE: Runtime source of truth. Embedded during build for Supabase Edge deployment.
+This file is the authoritative prompt fragment used at runtime.
+-->
+
 ### ⚠️ Critical - User-Provided Context
 
 The user has provided the following verified information about this product:
