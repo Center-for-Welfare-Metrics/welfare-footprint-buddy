@@ -447,6 +447,31 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
         <div className="border-b border-gray-700 pb-4">
           <div className="flex items-center justify-center gap-2 mb-4">
             <h1 className="text-3xl font-bold text-white">{t('ethicalLens.title')}</h1>
+            <Dialog>
+              <DialogTrigger asChild>
+                <button className="text-emerald-400/70 hover:text-emerald-400 transition-colors">
+                  <HelpCircle className="h-4 w-4" />
+                </button>
+              </DialogTrigger>
+              <DialogContent className="glass-card max-w-md bg-background/95 border border-emerald-500/30">
+                <DialogHeader>
+                  <DialogTitle className="text-xl font-bold text-emerald-400">
+                    {t('ethicalLens.title')}
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 text-gray-200">
+                  <p className="leading-relaxed">
+                    The Ethical Lens lets you explore how your food choices align with different levels of concern for animal welfare.
+                  </p>
+                  <p className="leading-relaxed">
+                    You can select the approach that best reflects your values — from Concerned Omnivore (seeking higher-welfare animal products) to Vegan (avoiding all animal use).
+                  </p>
+                  <p className="leading-relaxed">
+                    The app then tailors its recommendations and messages to that perspective, helping you make informed and compassionate choices — without judgment.
+                  </p>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
           <div className="space-y-4 bg-gray-800/50 p-4 rounded-lg">
             <div className="text-center space-y-1">
