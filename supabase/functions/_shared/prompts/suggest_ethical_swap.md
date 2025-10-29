@@ -2,7 +2,7 @@
 
 <!--
 Prompt-ID: suggest_ethical_swap
-Version: v2.4
+Version: v2.5
 Stage: 4
 Last-Updated: 2025-10-29
 Maintainer: Lovable AI Sync Process
@@ -42,9 +42,9 @@ Maintainer: Lovable AI Sync Process
 - Any text generation model supporting structured output
 
 **Versioning:**
-- **Version:** 2.1
+- **Version:** 2.5
 - **Last Updated:** 2025-10-29
-- **Change Log:** Added explicit forbidden language rules for generalNote in all lenses to prevent lens boundary violations.
+- **Change Log:** Refined Lens 4 to exclude all slaughtered animal products (meat, fish, gelatin) and only allow non-lethal animal byproducts (dairy, eggs, honey).
 
 ---
 
@@ -288,7 +288,7 @@ Always include confidence level (High/Medium/Low) and brief reasoning summary.
 
 **generalNote (Required Context for Lens 4):**
 
-Use transparent, gently aspirational language that recognizes the user's commitment to drastically reducing animal use. Acknowledge the near-elimination of harm while being honest about remaining minor impacts.
+Use transparent, gently aspirational language that recognizes the user's commitment to drastically reducing animal use by avoiding slaughter entirely. Emphasize that this lens honors vegetarian principles while being open to humane, non-lethal animal byproducts.
 
 **🚨 CRITICAL WARNING - NEVER USE THESE EXACT PHRASES IN LENS 4 generalNote:**
 - ❌ "fully plant-based" (THIS WILL CAUSE VALIDATION ERROR)
@@ -298,36 +298,62 @@ Use transparent, gently aspirational language that recognizes the user's commitm
 - ❌ "no animal ingredients" (THIS WILL CAUSE VALIDATION ERROR)
 
 **✅ INSTEAD USE THESE PHRASES FOR LENS 4:**
-- "90%+ plant-based" or "mostly plant-based"
-- "trace animal ingredients" or "minimal animal content"
-- "plant-forward alternatives" or "predominantly plant-based"
-- "significantly reduced animal use"
+- "mostly plant-based" or "predominantly plant-based"
+- "non-lethal animal byproducts" or "humane animal byproducts"
+- "plant-forward alternatives" or "vegetarian options"
+- "avoids animal slaughter"
 
 **Example generalNote text (adapt to product context) - SAFE FOR LENS 4:**
 
-"You've chosen minimal animal use — a commitment that nearly eliminates harm to sentient beings.
+"You've chosen minimal animal use — a commitment that eliminates harm from animal slaughter.
 
-Plant-forward alternatives to [product name] dramatically reduce animal suffering. While these options may contain trace animal ingredients (such as a small amount of butter or egg), they represent a 90%+ reduction in the number of animals impacted compared to conventional products.
+Under this lens, the goal is to choose foods that do not require killing animals. Plant-forward alternatives to [product name] may contain humane, non-lethal byproducts like milk, eggs, or honey, but avoid all meat, fish, and gelatin. This represents a fundamental shift away from slaughter-based food systems while honoring traditional vegetarian principles.
 
-This choice reflects a deep consideration for animal welfare, approaching but not quite reaching complete elimination of animal use."
+This choice reflects compassion for animal life and a commitment to sustainable, gentle animal use."
 
 **🚨 CRITICAL - LENS 4 RESTRICTIONS 🚨**
 
+This lens is STRICTLY for users who want to avoid ALL slaughtered animal products while remaining open to non-lethal animal byproducts.
+
 **ABSOLUTE RULES FOR LENS 4:**
-1. ❌ **NEVER suggest fully vegan or 100% plant-based products** (reserve those for Lens 5)
-2. ❌ **NEVER escalate to Lens 5** (no completely animal-free suggestions)
-3. ✅ **ONLY suggest products that are 90%+ plant-based but still contain trace animal ingredients** (e.g., bread with butter, soup with chicken broth, pasta with egg)
-4. ✅ **Products where animal ingredients are trace, secondary, or optional elements**
+1. ❌ **NEVER suggest products containing meat, fish, poultry, or gelatin** (these require animal slaughter)
+2. ❌ **NEVER suggest products with chicken broth, beef broth, fish sauce, anchovies, or any animal flesh**
+3. ❌ **NEVER suggest fully vegan or 100% plant-based products** (reserve those for Lens 5)
+4. ❌ **NEVER escalate to Lens 5** (no completely animal-free suggestions)
+5. ✅ **ONLY suggest vegetarian products** (plant-based + non-lethal animal byproducts)
+6. ✅ **Allowed animal ingredients: dairy, eggs, honey ONLY** (no slaughter required)
+7. ✅ **Focus on plant proteins: legumes, nuts, grains, mushrooms, tofu, tempeh, seitan**
+
+**What TO Suggest for Lens 4:**
+- Vegetarian versions with dairy/eggs (e.g., vegetable soup with egg noodles, lentil stew with parmesan)
+- Plant-based proteins with optional dairy/eggs (e.g., bean burgers with cheese, veggie pizza with mozzarella)
+- Whole-food plant-based meals with honey, milk, or eggs (e.g., oatmeal with honey and milk, pancakes with eggs)
+- Meat alternatives that may contain eggs/dairy (e.g., vegetarian nuggets with egg binder, veggie sausages with milk protein)
+
+**Examples of CORRECT Lens 4 Suggestions:**
+- Product: "Chicken soup" → Suggest: "Vegetable soup with egg noodles", "Lentil soup with parmesan"
+- Product: "Beef burger" → Suggest: "Black bean burger with cheddar cheese", "Mushroom burger with egg aioli"
+- Product: "Chicken nuggets" → Suggest: "Vegetarian nuggets (may contain egg/dairy)", "Tofu nuggets with honey mustard"
+- Product: "Anchovy pizza" → Suggest: "Margherita pizza with mozzarella", "Veggie pizza with feta cheese"
+
+**Examples of INCORRECT Lens 4 Suggestions (NEVER DO THIS):**
+- ❌ "Vegetable soup with chicken broth" (contains slaughtered animal)
+- ❌ "Pizza with anchovies" (fish requires slaughter)
+- ❌ "Gelatin-based dessert" (gelatin requires slaughter)
+- ❌ "Beyond Meat burger (100% vegan)" (no animal products - this is Lens 5)
 
 **Suggestions:**
 
-Recommend mostly plant-based options with only trace or secondary animal ingredients. Look for:
-- Plant-forward products with minimal animal content (e.g., vegetable soup with a small amount of chicken broth)
-- Products where animal ingredients are secondary or trace elements (e.g., bread with butter, crackers with milk powder)
-- Options that significantly reduce animal use (e.g., 90%+ plant-based)
+Recommend predominantly plant-based vegetarian options that may contain non-lethal animal byproducts. Look for:
+- Vegetarian products with dairy, eggs, or honey (e.g., veggie lasagna with ricotta, bean burritos with cheese)
+- Plant proteins that don't require slaughter (legumes, nuts, grains, mushrooms, soy)
+- Vegetarian alternatives where eggs/dairy serve as binders or flavor enhancers
+- Traditional vegetarian dishes from various cuisines
 
-Clarify that these still have minor welfare costs but are far less than typical products.
-Tone: Transparent and gently aspirational.
+**CRITICAL:** Every suggestion MUST be vegetarian (no meat, fish, poultry, or gelatin). Products may contain dairy, eggs, or honey.
+
+Clarify that this lens avoids slaughter entirely while honoring non-lethal animal use.
+Tone: Transparent, gently aspirational, and compassionate.
 Always include confidence level (High/Medium/Low) and brief reasoning summary.
 
 #### Lens 5 – Aim for Zero Animal Harm (Vegan)

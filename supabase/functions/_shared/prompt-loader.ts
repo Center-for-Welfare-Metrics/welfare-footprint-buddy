@@ -53,7 +53,7 @@ const PROMPT_VERSIONS: Record<string, string> = {
   confirm_refine_items: 'v1.1',
   analyze_focused_item: 'v1.2',
   analyze_product: 'v1.2',
-  suggest_ethical_swap: 'v2.4',
+  suggest_ethical_swap: 'v2.5',
   user_context_template: 'v1.0',
 };
 
@@ -583,16 +583,23 @@ Focus EXCLUSIVELY on direct animal welfare and suffering-related aspects.
 ❌ "zero animal" ← NEVER USE THIS
 ❌ "completely plant-based" ← NEVER USE THIS
 ❌ "no animal ingredients" ← NEVER USE THIS
-✅ Instead say: "90%+ plant-based", "mostly plant-based", "trace animal ingredients", "minimal animal content"
+✅ Instead say: "mostly plant-based", "non-lethal animal byproducts", "vegetarian options", "avoids animal slaughter"
 
 **🚨 ABSOLUTE RULES:**
-❌ NEVER suggest fully vegan or 100% plant-based products (reserve for Lens 5)
-✅ ONLY suggest 90%+ plant-based with trace animal ingredients
-- Vegetable soup with small chicken broth, bread with butter, pasta with egg
+❌ NEVER suggest products with meat, fish, poultry, gelatin, or any slaughtered animal products
+❌ NEVER suggest chicken broth, beef broth, fish sauce, anchovies, or animal flesh
+❌ NEVER suggest fully vegan products (reserve for Lens 5)
+✅ ONLY suggest vegetarian products with plant-based ingredients + non-lethal animal byproducts (dairy, eggs, honey)
+✅ Focus on plant proteins: legumes, nuts, grains, mushrooms, tofu, tempeh
 
-**🚨 FORBIDDEN LANGUAGE in generalNote for Lens 4:**
-❌ DO NOT use: "fully plant-based", "100% vegan", "zero animal", "completely plant-based", "no animal ingredients"
-✅ DO use: "90%+ plant-based", "mostly plant-based", "trace animal ingredients", "minimal animal content"
+**Examples:**
+✅ Vegetable soup with egg noodles, lentil stew with parmesan, bean burger with cheese
+❌ Vegetable soup with chicken broth, pizza with anchovies, gelatin desserts
+
+**Suggestions:**
+Recommend vegetarian options that may contain dairy, eggs, or honey but avoid all slaughter-based ingredients.
+Emphasize plant proteins and non-lethal animal use.
+Tone: Compassionate, vegetarian-focused, transparent.
 
 #### Lens 5 – Aim for Zero Animal Harm
 **ethicalLensPosition:** "Vegan Option Selected"
