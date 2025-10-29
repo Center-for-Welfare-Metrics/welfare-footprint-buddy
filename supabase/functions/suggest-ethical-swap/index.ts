@@ -87,14 +87,19 @@ function validateLensBoundaries(response: any, ethicalLens: number): { violation
       /eliminate.*animal/i,
     ],
     2: [
-      /plant-based/i,
-      /vegan/i,
-      /vegetarian/i,
+      // Lens 2 only blocks FULL replacement with plant-based/vegan options
+      // Complementary mentions (e.g., "add plant-based sides") are allowed
+      /\bfully\s+plant[-\s]?based\b/i,
+      /\b100%\s+plant[-\s]?based\b/i,
+      /\bcompletely\s+plant[-\s]?based\b/i,
+      /\bentirely\s+plant[-\s]?based\b/i,
+      /\bswitch\s+to\s+plant[-\s]?based\b/i,
+      /\breplace\s+with\s+plant[-\s]?based\b/i,
+      /\bstrictly\s+vegan\b/i,
+      /\bgo\s+vegan\b/i,
+      /\bbecome\s+vegan\b/i,
       /beyond meat/i,
       /impossible/i,
-      /tofu/i,
-      /tempeh/i,
-      /seitan/i,
       /lab-grown/i,
       /cultured meat/i,
     ],
@@ -124,6 +129,16 @@ function validateLensBoundaries(response: any, ethicalLens: number): { violation
   
   // Define ALLOWED patterns (these should NOT trigger violations or warnings)
   const allowedPatterns: Record<number, RegExp[]> = {
+    2: [
+      // Lens 2 allows complementary plant-based mentions
+      /\bmostly\s+plant[-\s]?based\b/i,
+      /\bmore\s+plant[-\s]?based\b/i,
+      /\badd\s+(more\s+)?plant[-\s]?based/i,
+      /\binclude\s+plant[-\s]?based/i,
+      /\bplant[-\s]?forward\b/i,
+      /\bplant[-\s]?based\s+(sides|options|meals|dishes)\b/i,
+      /\bcomplement\s+with\s+plant/i,
+    ],
     3: [
       /mostly\s+plant[-\s]?based/i,
       /primarily\s+plant[-\s]?based/i,

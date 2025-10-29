@@ -2,7 +2,7 @@
 
 <!--
 Prompt-ID: suggest_ethical_swap
-Version: v2.7
+Version: v2.8
 Stage: 4
 Last-Updated: 2025-10-29
 Maintainer: Lovable AI Sync Process
@@ -42,9 +42,9 @@ Maintainer: Lovable AI Sync Process
 - Any text generation model supporting structured output
 
 **Versioning:**
-- **Version:** 2.7
+- **Version:** 2.8
 - **Last Updated:** 2025-10-29
-- **Change Log:** Added concrete negative examples showing what NOT to say in Lens 3 generalNote to prevent AI from generating forbidden phrases.
+- **Change Log:** Refined Lens 2 to allow complementary plant-based mentions (e.g., "add plant-based sides") while blocking full replacements ("switch to vegan").
 
 ---
 
@@ -174,8 +174,14 @@ Always include confidence level (High/Medium/Low) and brief reasoning summary ba
 Use informative, reassuring language that honors the user's commitment to robust animal welfare standards. Emphasize the tangible improvements certified products offer.
 
 **🚨 FORBIDDEN LANGUAGE in generalNote for Lens 2:**
-❌ DO NOT use: "plant-based", "vegan", "vegetarian", "tofu", "tempeh", "Beyond Meat", "Impossible", "lab-grown"
+❌ DO NOT suggest: "fully plant-based", "switch to vegan", "replace with plant-based alternatives", "go vegan", "Beyond Meat", "Impossible", "lab-grown"
+✅ Complementary mentions ARE allowed: "add more plant-based sides", "include plant-forward options", "more plant-based meals", "plant-based dishes as complements"
 ✅ DO use: "certified humane", "welfare certified", "pasture-raised", "enriched environments", "verified welfare"
+
+**Clarification on Plant-Based Mentions:**
+- It's acceptable to mention adding plant-based options AS COMPLEMENTS to high-welfare animal products
+- Example: "Choose certified humane chicken and add more plant-based sides for variety"
+- NEVER suggest replacing animal products entirely with plant-based alternatives in Lens 2
 
 **Example generalNote text (adapt to product context):**
 

@@ -53,7 +53,7 @@ const PROMPT_VERSIONS: Record<string, string> = {
   confirm_refine_items: 'v1.1',
   analyze_focused_item: 'v1.2',
   analyze_product: 'v1.2',
-  suggest_ethical_swap: 'v2.7',
+  suggest_ethical_swap: 'v2.8',
   user_context_template: 'v1.0',
 };
 
@@ -542,11 +542,13 @@ Focus EXCLUSIVELY on direct animal welfare and suffering-related aspects.
 **ethicalLensPosition:** "Strong Welfare Standards"
 
 **🚨 ABSOLUTE RULES:**
-❌ NEVER suggest plant-based/vegan/vegetarian/lab-grown products
+❌ NEVER suggest fully plant-based/vegan replacements (no "switch to vegan", "replace with plant-based", "Beyond Meat", "Impossible", "lab-grown")
+✅ Complementary plant-based mentions ARE allowed: "add plant-based sides", "include more plant-forward options"
 ✅ ONLY suggest certified high-welfare or pasture-raised versions of SAME animal product
 
 **🚨 FORBIDDEN LANGUAGE in generalNote for Lens 2:**
-❌ DO NOT use: "plant-based", "vegan", "vegetarian", "tofu", "tempeh", "Beyond Meat", "Impossible"
+❌ DO NOT suggest: "fully plant-based", "switch to vegan", "replace with plant-based", "go vegan", "Beyond Meat", "Impossible", "lab-grown"
+✅ Complementary mentions OK: "add plant-based sides", "more plant-forward meals as complements"
 ✅ DO use: "certified humane", "welfare certified", "pasture-raised", "enriched environments"
 
 #### Lens 3 – Minimal Animal Suffering
