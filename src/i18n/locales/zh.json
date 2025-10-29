@@ -78,7 +78,7 @@
   "preferences": {
     "title": "您的偏好设置",
     "description": "使用个性化设置自定义您的体验",
-    "ethicalLens": "伦理视角 ⚖️",
+    "ethicalLens": "伦理视角",
     "ethicalLensDescription": "选择最符合您价值观的视角。这将指导建议哪些替代产品。",
     "preferredLanguage": "首选语言",
     "preferredRegion": "首选地区",
@@ -160,7 +160,7 @@
     "noItemsDetected": "此图像中未检测到任何项目。请尝试上传更清晰的照片。"
   },
   "ethicalLens": {
-    "title": "伦理视角 ⚖️",
+    "title": "伦理视角",
     "level1": "优先考虑重大福利收益",
     "level2": "强有力的福利标准",
     "level3": "最小化动物痛苦",

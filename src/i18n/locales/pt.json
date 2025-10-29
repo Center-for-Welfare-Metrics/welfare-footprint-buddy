@@ -92,7 +92,7 @@
   "preferences": {
     "title": "Suas Preferências",
     "description": "Personalize sua experiência com configurações personalizadas",
-    "ethicalLens": "Lente Ética ⚖️",
+    "ethicalLens": "Lente Ética",
     "ethicalLensDescription": "Escolha a perspectiva que melhor corresponde aos seus valores. Isso orientará quais produtos alternativos são sugeridos.",
     "preferredLanguage": "Idioma Preferido",
     "preferredRegion": "Região Preferida",
@@ -174,7 +174,7 @@
     "noItemsDetected": "Nenhum item foi detectado nesta imagem. Por favor, tente enviar uma foto mais clara."
   },
   "ethicalLens": {
-    "title": "Lente Ética ⚖️",
+    "title": "Lente Ética",
     "persona1": "Onívoro Consciente",
     "persona2": "Bem-Estarista",
     "persona3": "Reducionista",

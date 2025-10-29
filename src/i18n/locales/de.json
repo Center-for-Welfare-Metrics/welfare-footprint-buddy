@@ -78,7 +78,7 @@
   "preferences": {
     "title": "Ihre Einstellungen",
     "description": "Passen Sie Ihre Erfahrung mit personalisierten Einstellungen an",
-    "ethicalLens": "Ethische Linse ⚖️",
+    "ethicalLens": "Ethische Linse",
     "ethicalLensDescription": "Wählen Sie die Perspektive, die am besten zu Ihren Werten passt. Dies bestimmt, welche alternativen Produkte vorgeschlagen werden.",
     "preferredLanguage": "Bevorzugte Sprache",
     "preferredRegion": "Bevorzugte Region",
@@ -173,7 +173,7 @@
     "noItemsDetected": "In diesem Bild wurden keine Artikel erkannt. Bitte versuchen Sie, ein klareres Foto hochzuladen."
   },
   "ethicalLens": {
-    "title": "Ethische Linse ⚖️",
+    "title": "Ethische Linse",
     "level1": "Große Tierwohl-Gewinne Priorisieren",
     "level2": "Starke Tierwohl-Standards",
     "level3": "Minimales Tierleid",

@@ -95,7 +95,7 @@
   "preferences": {
     "title": "Your Preferences",
     "description": "Customize your experience with personalized settings",
-    "ethicalLens": "Ethical Lens ⚖️",
+    "ethicalLens": "Ethical Lens",
     "ethicalLensDescription": "Choose the perspective that best matches your values. This will guide which alternative products are suggested.",
     "preferredLanguage": "Preferred Language",
     "preferredRegion": "Preferred Region",
@@ -212,7 +212,7 @@
     "noItemsDetected": "No items were detected in this image. Please try uploading a clearer photo."
   },
   "ethicalLens": {
-    "title": "Ethical Lens ⚖️",
+    "title": "Ethical Lens",
     "persona1": "Concerned Omnivore",
     "persona2": "Welfarist",
     "persona3": "Reducitarian",

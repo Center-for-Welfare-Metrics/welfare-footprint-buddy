@@ -78,7 +78,7 @@
   "preferences": {
     "title": "Vos Préférences",
     "description": "Personnalisez votre expérience avec des paramètres personnalisés",
-    "ethicalLens": "Lentille Éthique ⚖️",
+    "ethicalLens": "Lentille Éthique",
     "ethicalLensDescription": "Choisissez la perspective qui correspond le mieux à vos valeurs. Cela guidera quels produits alternatifs sont suggérés.",
     "preferredLanguage": "Langue Préférée",
     "preferredRegion": "Région Préférée",
@@ -160,7 +160,7 @@
     "noItemsDetected": "Aucun article détecté dans cette image. Veuillez essayer de télécharger une photo plus claire."
   },
   "ethicalLens": {
-    "title": "Lentille Éthique ⚖️",
+    "title": "Lentille Éthique",
     "level1": "Prioriser les Grands Gains de Bien-être",
     "level2": "Normes Fortes de Bien-être",
     "level3": "Souffrance Animale Minimale",
