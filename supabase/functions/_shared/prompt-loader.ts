@@ -53,7 +53,7 @@ const PROMPT_VERSIONS: Record<string, string> = {
   confirm_refine_items: 'v1.1',
   analyze_focused_item: 'v1.2',
   analyze_product: 'v1.2',
-  suggest_ethical_swap: 'v2.1',
+  suggest_ethical_swap: 'v2.2',
   user_context_template: 'v1.0',
 };
 
@@ -552,15 +552,21 @@ Focus EXCLUSIVELY on direct animal welfare and suffering-related aspects.
 #### Lens 3 – Minimal Animal Suffering
 **ethicalLensPosition:** "Minimal Animal Suffering"
 
+**CRITICAL:** This lens is STRICTLY for HYBRID/BLENDED products containing BOTH plant AND animal ingredients.
+
 **🚨 ABSOLUTE RULES:**
-❌ NEVER suggest fully vegan or 100% plant-based products
-❌ NEVER suggest products with zero animal content
-✅ ONLY suggest hybrid/blended products (plant-animal mixes, reduced animal content)
-- 50% beef/50% mushroom blend, plant broth with small chicken amount
+❌ NEVER suggest fully vegan or 100% plant-based products (no Beyond Meat, Impossible Foods, pure tofu)
+❌ NEVER suggest products with zero animal content - ALL suggestions MUST contain SOME animal ingredients
+❌ NEVER use language implying complete elimination ("fully plant-based", "100% vegan", "no animal ingredients")
+✅ ONLY suggest hybrid/blended products (plant-animal mixes with reduced animal content)
+✅ Always frame as "reduction" not "elimination" in both suggestions AND generalNote
+- Examples: 50% beef/50% mushroom blend, yogurt with 30% dairy/70% coconut, chicken-vegetable blend nuggets
 
 **🚨 FORBIDDEN LANGUAGE in generalNote for Lens 3:**
-❌ DO NOT use: "fully plant-based", "100% vegan", "zero animal", "Beyond Meat", "Impossible", "tofu only"
-✅ DO use: "plant-animal blend", "reduced animal content", "hybrid product", "50% plant-based"
+❌ DO NOT use: "fully plant-based", "100% vegan", "100% plant-based", "zero animal", "no animal ingredients", "Beyond Meat", "Impossible", "completely plant", "all plant-based", "tofu only"
+✅ DO use: "plant-animal blend", "reduced animal content", "hybrid product", "50% plant-based", "significantly reduced", "blended", "mixed plant and animal"
+
+**⚠️ ENFORCEMENT:** Every suggestion MUST contain SOME animal ingredients. Never suggest 100% plant-based products.
 
 #### Lens 4 – Minimal Animal Use
 **ethicalLensPosition:** "Minimal Animal Use"
