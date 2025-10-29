@@ -53,7 +53,7 @@ const PROMPT_VERSIONS: Record<string, string> = {
   confirm_refine_items: 'v1.1',
   analyze_focused_item: 'v1.2',
   analyze_product: 'v1.2',
-  suggest_ethical_swap: 'v2.3',
+  suggest_ethical_swap: 'v2.4',
   user_context_template: 'v1.0',
 };
 
@@ -576,6 +576,14 @@ Focus EXCLUSIVELY on direct animal welfare and suffering-related aspects.
 
 #### Lens 4 – Minimal Animal Use
 **ethicalLensPosition:** "Minimal Animal Use"
+
+**🚨 WARNING - VALIDATION WILL FAIL IF YOU USE THESE PHRASES IN generalNote:**
+❌ "fully plant-based" ← NEVER USE THIS
+❌ "100% vegan" ← NEVER USE THIS  
+❌ "zero animal" ← NEVER USE THIS
+❌ "completely plant-based" ← NEVER USE THIS
+❌ "no animal ingredients" ← NEVER USE THIS
+✅ Instead say: "90%+ plant-based", "mostly plant-based", "trace animal ingredients", "minimal animal content"
 
 **🚨 ABSOLUTE RULES:**
 ❌ NEVER suggest fully vegan or 100% plant-based products (reserve for Lens 5)

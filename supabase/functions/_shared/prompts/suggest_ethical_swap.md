@@ -2,7 +2,7 @@
 
 <!--
 Prompt-ID: suggest_ethical_swap
-Version: v2.3
+Version: v2.4
 Stage: 4
 Last-Updated: 2025-10-29
 Maintainer: Lovable AI Sync Process
@@ -290,15 +290,24 @@ Always include confidence level (High/Medium/Low) and brief reasoning summary.
 
 Use transparent, gently aspirational language that recognizes the user's commitment to drastically reducing animal use. Acknowledge the near-elimination of harm while being honest about remaining minor impacts.
 
-**🚨 CRITICAL - FORBIDDEN LANGUAGE IN generalNote for Lens 4:**
-- DO NOT use phrases like "fully plant-based", "100% vegan", "zero animal", "completely plant-based", "no animal ingredients"
-- DO use phrases like "90%+ plant-based", "mostly plant-based", "trace animal ingredients", "minimal animal content"
+**🚨 CRITICAL WARNING - NEVER USE THESE EXACT PHRASES IN LENS 4 generalNote:**
+- ❌ "fully plant-based" (THIS WILL CAUSE VALIDATION ERROR)
+- ❌ "100% vegan" (THIS WILL CAUSE VALIDATION ERROR)
+- ❌ "zero animal" (THIS WILL CAUSE VALIDATION ERROR)
+- ❌ "completely plant-based" (THIS WILL CAUSE VALIDATION ERROR)
+- ❌ "no animal ingredients" (THIS WILL CAUSE VALIDATION ERROR)
 
-**Example generalNote text (adapt to product context):**
+**✅ INSTEAD USE THESE PHRASES FOR LENS 4:**
+- "90%+ plant-based" or "mostly plant-based"
+- "trace animal ingredients" or "minimal animal content"
+- "plant-forward alternatives" or "predominantly plant-based"
+- "significantly reduced animal use"
+
+**Example generalNote text (adapt to product context) - SAFE FOR LENS 4:**
 
 "You've chosen minimal animal use — a commitment that nearly eliminates harm to sentient beings.
 
-Plant-forward alternatives to [product name] dramatically reduce animal suffering. While these options may contain trace animal ingredients, they represent a 90%+ reduction in the number of animals impacted compared to conventional products.
+Plant-forward alternatives to [product name] dramatically reduce animal suffering. While these options may contain trace animal ingredients (such as a small amount of butter or egg), they represent a 90%+ reduction in the number of animals impacted compared to conventional products.
 
 This choice reflects a deep consideration for animal welfare, approaching but not quite reaching complete elimination of animal use."
 
