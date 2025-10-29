@@ -22,10 +22,20 @@
  */
 export async function loadFragment(fragmentName: string): Promise<string> {
   try {
-    const fragmentPath = new URL(`./prompts/fragments/${fragmentName}.md`, import.meta.url);
+    const fragmentPath = new URL(`../_shared/prompts/fragments/${fragmentName}.md`, import.meta.url);
     console.log(`[loadFragment] Attempting to load fragment: ${fragmentName}`);
-    console.log(`[loadFragment] Resolved path: ${fragmentPath.pathname}`);
-    console.log(`[loadFragment] Full URL: ${fragmentPath.href}`);
+    console.log(`[loadFragment] Resolved URL: ${fragmentPath.href}`);
+    console.log(`[loadFragment] Resolved pathname: ${fragmentPath.pathname}`);
+    console.log(`[loadFragment] CWD: ${Deno.cwd()}`);
+    
+    // Check if file exists before reading
+    try {
+      const stat = await Deno.stat(fragmentPath.pathname);
+      console.log(`[loadFragment] File exists: ${stat.isFile}, size: ${stat.size} bytes`);
+    } catch (statError) {
+      console.error(`[loadFragment] File does not exist or cannot be accessed at: ${fragmentPath.pathname}`);
+      throw statError;
+    }
     
     const fragment = await Deno.readTextFile(fragmentPath.pathname);
     
@@ -56,10 +66,20 @@ export async function loadFragment(fragmentName: string): Promise<string> {
  */
 export async function loadPromptTemplate(promptName: string): Promise<string> {
   try {
-    const promptPath = new URL(`./prompts/${promptName}.md`, import.meta.url);
+    const promptPath = new URL(`../_shared/prompts/${promptName}.md`, import.meta.url);
     console.log(`[loadPromptTemplate] Attempting to load prompt: ${promptName}`);
-    console.log(`[loadPromptTemplate] Resolved path: ${promptPath.pathname}`);
-    console.log(`[loadPromptTemplate] Full URL: ${promptPath.href}`);
+    console.log(`[loadPromptTemplate] Resolved URL: ${promptPath.href}`);
+    console.log(`[loadPromptTemplate] Resolved pathname: ${promptPath.pathname}`);
+    console.log(`[loadPromptTemplate] CWD: ${Deno.cwd()}`);
+    
+    // Check if file exists before reading
+    try {
+      const stat = await Deno.stat(promptPath.pathname);
+      console.log(`[loadPromptTemplate] File exists: ${stat.isFile}, size: ${stat.size} bytes`);
+    } catch (statError) {
+      console.error(`[loadPromptTemplate] File does not exist or cannot be accessed at: ${promptPath.pathname}`);
+      throw statError;
+    }
     
     const template = await Deno.readTextFile(promptPath.pathname);
     
