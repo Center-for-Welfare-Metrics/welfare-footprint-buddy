@@ -28,7 +28,10 @@ User corrections and ingredient/ethical inferences are handled separately in **S
       "confidence": "High" | "Medium" | "Low",
       "source": "visual" | "ocr" | "recipe_inference",
       "parentDish": "string | null",
-      "reasoning": "string"
+      "reasoning": "string",
+      "brand": "string | null",
+      "labelText": "string | null",
+      "welfareClaim": "string | null"
     }
   ],
   "summary": "string"
@@ -43,6 +46,9 @@ User corrections and ingredient/ethical inferences are handled separately in **S
 - **confidence**: Confidence that this item is present in the scene  
 - **source**: How the item was detected (visual evidence, OCR text, or recipe inference)  
 - **parentDish**: Name of the composite dish this ingredient belongs to, or `null` for standalone items  
+- **brand** (optional): Brand or producer name identified on the label (e.g., "Red Baron", "Nestlé")
+- **labelText** (optional): Additional descriptive or marketing text found on packaging
+- **welfareClaim** (optional): Ethical or welfare-related certification or claim (e.g., "Pollo Ecológico", "Certified Humane", "Cage-Free")
 
 > *Note:* Ingredient classification fields such as `likelyHasAnimalIngredients` are **not used** at this stage.
 
@@ -56,11 +62,11 @@ Compatible with any vision-capable language model (e.g., Gemini, GPT-4 Vision, C
 
 ## Versioning
 
-- **Version:** 1.8  
-- **File ID:** `analyze_user_material_v1.8`  
+- **Version:** 1.9  
+- **File ID:** `analyze_user_material_v1.9`  
 - **Last Updated:** 2025-10-29  
 - **Maintainer:** Wladimir  
-- **Change Log:** Added mandatory decomposition rules for branded/packaged composite foods to ensure ingredient-level detection instead of single product listings.
+- **Change Log:** Added metadata fields (brand, labelText, welfareClaim) and label/brand filtering rules to prevent misclassification of packaging text as food items.
 
 ---
 
@@ -118,6 +124,40 @@ For each detected item, you MUST set:
 5. **Include ALL significant ingredients** - both animal-derived AND plant-based for transparency
 6. **Only include items with reasonable certainty** about their presence in the dish
 
+### CRITICAL RULE: Label and Brand Filtering
+
+🚨 **MANDATORY: Filter Out Labels, Brands, and Non-Food Text** 🚨
+
+When analyzing OCR or visual data, **DO NOT classify text elements that represent brands, logos, labels, certifications, or marketing phrases as food items**.
+
+**Examples of text to exclude as independent items:**
+- Brand names (Red Baron, Nestlé, Kraft, Sadia, El Granero)
+- Certifications (Ecológico, Organic, Cage-Free, Certified Humane, USDA Organic)
+- Logo or seal text (EU Organic Leaf, Non-GMO Project Verified)
+- Marketing phrases ("Premium Quality", "Ready to Eat", "Family Size")
+- Quantity labels ("Net Weight 500g", "Serves 4")
+
+**Detection rule:**
+If detected text does NOT match known edible categories but appears in brand, marketing, or certification contexts, treat it as **metadata**, not as an item.
+
+**Metadata Attachment Rules:**
+When such label elements are detected, attach them to the corresponding food item using these optional fields:
+- **`brand`** → for manufacturer/brand names (e.g., "Red Baron", "El Granero")
+- **`labelText`** → for general descriptive text on packaging (e.g., "Premium Quality Chicken")
+- **`welfareClaim`** → for certification or ethical/production information (e.g., "Pollo Ecológico", "Cage-Free", "Certified Humane")
+
+**Example:**
+```json
+{
+  "name": "whole chicken",
+  "category": "animal_derived",
+  "brand": "El Granero",
+  "welfareClaim": "Pollo Ecológico (organic-certified high welfare)",
+  "labelText": "Packaged whole chicken labeled 'Pollo Ecológico'",
+  "confidence": "High"
+}
+```
+
 ### CRITICAL RULE: Branded/Packaged Composite Foods
 
 🚨 **MANDATORY: Decompose Branded Packaged Foods Into Ingredients** 🚨
@@ -125,8 +165,8 @@ For each detected item, you MUST set:
 When you detect a **branded or packaged composite food product** (e.g., frozen pizza, canned soup, frozen meals, sandwiches, burgers, lasagna, prepared entrees):
 
 1. **DO NOT list the brand name or product name as a single item**
-   - ❌ WRONG: "Red Baron Classic Crust Four Cheese Pizza"
-   - ✅ CORRECT: Decompose into cheese, wheat crust, tomato sauce, oil
+   - ❌ WRONG: "Red Baron Classic Crust Four Cheese Pizza" (single item)
+   - ✅ CORRECT: Decompose into cheese, wheat crust, tomato sauce, oil (with brand as metadata)
 
 2. **Parse descriptive keywords from product names to infer ingredients:**
    - "Four Cheese" → cheese (milk products)
@@ -135,9 +175,10 @@ When you detect a **branded or packaged composite food product** (e.g., frozen p
    - "Beef Burrito" → beef, tortilla (wheat/corn), beans, cheese
    - "Three Meat Lasagna" → beef, pork, cheese, pasta, tomato sauce
 
-3. **Include brand/packaging information as metadata only:**
-   - Attach brand name in the `reasoning` field if relevant
-   - Example: `"reasoning": "From Red Baron brand frozen pizza, typically contains mozzarella and cheddar blend"`
+3. **Attach brand/packaging information as metadata:**
+   - Use `brand` field for brand names: `"brand": "Red Baron"`
+   - Use `labelText` for descriptive packaging text: `"labelText": "Classic Crust Four Cheese"`
+   - Use `welfareClaim` for welfare certifications: `"welfareClaim": "Organic"`
 
 4. **Use typical recipe knowledge to infer standard ingredients:**
    - Pizza → cheese, crust (wheat flour), tomato sauce, oil/butter, toppings
@@ -152,7 +193,7 @@ When you detect a **branded or packaged composite food product** (e.g., frozen p
 
 #### Example: Red Baron Four Cheese Pizza
 
-✅ **CORRECT decomposition:**
+✅ **CORRECT decomposition with metadata:**
 ```json
 {
   "items": [
@@ -163,7 +204,10 @@ When you detect a **branded or packaged composite food product** (e.g., frozen p
       "animalConfidence": "High",
       "source": "ocr",
       "parentDish": "Four Cheese Pizza",
-      "reasoning": "Mozzarella, cheddar, parmesan, and romano cheese blend typical of four-cheese pizzas"
+      "reasoning": "Mozzarella, cheddar, parmesan, and romano cheese blend typical of four-cheese pizzas",
+      "brand": "Red Baron",
+      "labelText": "Classic Crust Four Cheese Pizza",
+      "welfareClaim": null
     },
     {
       "name": "Pizza Crust (from Four Cheese Pizza)",
@@ -172,7 +216,10 @@ When you detect a **branded or packaged composite food product** (e.g., frozen p
       "animalConfidence": "Medium",
       "source": "visual",
       "parentDish": "Four Cheese Pizza",
-      "reasoning": "Wheat flour-based crust, typically plant-based though may contain dairy in some brands"
+      "reasoning": "Wheat flour-based crust, typically plant-based though may contain dairy in some brands",
+      "brand": "Red Baron",
+      "labelText": null,
+      "welfareClaim": null
     },
     {
       "name": "Tomato Sauce (from Four Cheese Pizza)",
@@ -181,7 +228,10 @@ When you detect a **branded or packaged composite food product** (e.g., frozen p
       "animalConfidence": "High",
       "source": "recipe_inference",
       "parentDish": "Four Cheese Pizza",
-      "reasoning": "Tomato-based pizza sauce, plant-derived"
+      "reasoning": "Tomato-based pizza sauce, plant-derived",
+      "brand": null,
+      "labelText": null,
+      "welfareClaim": null
     }
   ],
   "summary": "The image shows a frozen four-cheese pizza with multiple cheese varieties on a wheat crust."
@@ -199,6 +249,20 @@ When you detect a **branded or packaged composite food product** (e.g., frozen p
       "source": "ocr",
       "parentDish": null,
       "reasoning": "Packaged frozen pizza containing cheese"
+    }
+  ]
+}
+```
+
+❌ **WRONG - brand as separate item:**
+```json
+{
+  "items": [
+    {
+      "name": "Red Baron",
+      "likelyHasAnimalIngredients": false,
+      "confidence": "High",
+      "source": "ocr"
     }
   ]
 }

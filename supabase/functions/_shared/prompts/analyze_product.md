@@ -44,8 +44,9 @@ This file is the authoritative prompt definition used at runtime.
 This prompt is designed to work with any vision-capable language model (Gemini, GPT-4 Vision, Claude with vision, etc.)
 
 **Versioning:**
-- **Version:** 1.0
-- **Last Updated:** 2025-10-10
+- **Version:** 1.1
+- **Last Updated:** 2025-10-29
+- **Change Log:** Added support for metadata fields (brand, labelText, welfareClaim) from detection stage.
 
 ---
 

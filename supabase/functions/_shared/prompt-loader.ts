@@ -49,7 +49,11 @@ The user has provided the following verified information about this product:
 
 // Embedded prompt templates (first 500 lines to stay within limits)
 const PROMPTS: Record<string, string> = {
-  analyze_user_material: `You are a food-image detector specializing in visual identification of food products and dishes. Your task is to detect what is actually visible in the image using visual evidence and OCR, and when appropriate, decompose composite dishes into major ingredients using typical recipe knowledge.
+  analyze_user_material: `<!--
+NOTE: Runtime source of truth. Embedded during build for Supabase Edge deployment.
+-->
+
+You are a food-image detector specializing in visual identification of food products and dishes. Your task is to detect what is actually visible in the image using visual evidence and OCR, and when appropriate, decompose composite dishes into major ingredients using typical recipe knowledge.
 
 **CRITICAL RULES:**
 - Base analysis ONLY on visual evidence, readable text (OCR), and standard recipe knowledge
@@ -62,12 +66,27 @@ const PROMPTS: Record<string, string> = {
 
 Analyze the provided image and detect only packaged food products, prepared meals, or food items intended for human consumption that are visible in the image.
 
-**PACKAGING TEXT RULE:**
-When OCR or text parsing detects words on packaging such as brand names, labels, certifications (e.g., "organic," "cage-free," "eco," "free-range," "humane," "certified," "bio," "ecológico"), or product descriptions:
-- Do NOT create these as separate items
-- Instead, incorporate them as descriptive attributes or contextual information for the main detected product
-- Only treat text as a separate item if it explicitly represents an actual food ingredient (e.g., "tomato," "rice," "olive oil")
-- Example: "Pollo Ecológico" on chicken packaging should be noted as a certification attribute of the chicken, not as a separate plant-based item
+### CRITICAL RULE: Label and Brand Filtering
+
+🚨 **MANDATORY: Filter Out Labels, Brands, and Non-Food Text** 🚨
+
+When analyzing OCR or visual data, **DO NOT classify text elements that represent brands, logos, labels, certifications, or marketing phrases as food items**.
+
+**Examples of text to exclude as independent items:**
+- Brand names (Red Baron, Nestlé, Kraft, Sadia, El Granero)
+- Certifications (Ecológico, Organic, Cage-Free, Certified Humane, USDA Organic)
+- Logo or seal text (EU Organic Leaf, Non-GMO Project Verified)
+- Marketing phrases ("Premium Quality", "Ready to Eat", "Family Size")
+- Quantity labels ("Net Weight 500g", "Serves 4")
+
+**Detection rule:**
+If detected text does NOT match known edible categories but appears in brand, marketing, or certification contexts, treat it as **metadata**, not as an item.
+
+**Metadata Attachment Rules:**
+When such label elements are detected, attach them to the corresponding food item using these optional fields:
+- **\`brand\`** → for manufacturer/brand names (e.g., "Red Baron", "El Granero")
+- **\`labelText\`** → for general descriptive text on packaging (e.g., "Premium Quality Chicken")
+- **\`welfareClaim\`** → for certification or ethical/production information (e.g., "Pollo Ecológico", "Cage-Free", "Certified Humane")
 
 ### Provenance Tracking
 
@@ -102,8 +121,8 @@ For each detected item, you MUST set:
 When you detect a **branded or packaged composite food product** (e.g., frozen pizza, canned soup, frozen meals, sandwiches, burgers, lasagna, prepared entrees):
 
 1. **DO NOT list the brand name or product name as a single item**
-   - ❌ WRONG: "Red Baron Classic Crust Four Cheese Pizza"
-   - ✅ CORRECT: Decompose into cheese, wheat crust, tomato sauce, oil
+   - ❌ WRONG: "Red Baron Classic Crust Four Cheese Pizza" (single item)
+   - ✅ CORRECT: Decompose into cheese, wheat crust, tomato sauce, oil (with brand as metadata)
 
 2. **Parse descriptive keywords from product names to infer ingredients:**
    - "Four Cheese" → cheese (milk products)
@@ -112,9 +131,10 @@ When you detect a **branded or packaged composite food product** (e.g., frozen p
    - "Beef Burrito" → beef, tortilla (wheat/corn), beans, cheese
    - "Three Meat Lasagna" → beef, pork, cheese, pasta, tomato sauce
 
-3. **Include brand/packaging information as metadata only:**
-   - Attach brand name in the \`reasoning\` field if relevant
-   - Example: \`"reasoning": "From Red Baron brand frozen pizza, typically contains mozzarella and cheddar blend"\`
+3. **Attach brand/packaging information as metadata:**
+   - Use \`brand\` field for brand names: \`"brand": "Red Baron"\`
+   - Use \`labelText\` for descriptive packaging text: \`"labelText": "Classic Crust Four Cheese"\`
+   - Use \`welfareClaim\` for welfare certifications: \`"welfareClaim": "Organic"\`
 
 4. **Use typical recipe knowledge to infer standard ingredients:**
    - Pizza → cheese, crust (wheat flour), tomato sauce, oil/butter, toppings
@@ -128,9 +148,9 @@ When you detect a **branded or packaged composite food product** (e.g., frozen p
    - Sauces and oils (when significant)
 
 **Example decomposition for "Red Baron Four Cheese Pizza":**
-- Cheese blend (from Four Cheese Pizza) - mozzarella, cheddar, parmesan, romano
-- Pizza Crust (from Four Cheese Pizza) - wheat flour-based
-- Tomato Sauce (from Four Cheese Pizza) - tomato-based sauce
+- Cheese blend (from Four Cheese Pizza) with \`brand: "Red Baron"\`, \`labelText: "Classic Crust Four Cheese Pizza"\`
+- Pizza Crust (from Four Cheese Pizza) with \`brand: "Red Baron"\`
+- Tomato Sauce (from Four Cheese Pizza)
 
 {{INCLUDE:user_context_template}}
 
@@ -148,7 +168,10 @@ Return ONLY valid JSON with NO markdown formatting, NO code blocks, NO backticks
       "confidence": "High" | "Medium" | "Low",
       "source": "visual" | "ocr" | "recipe_inference",
       "parentDish": "string | null",
-      "reasoning": "string"
+      "reasoning": "string",
+      "brand": "string | null",
+      "labelText": "string | null",
+      "welfareClaim": "string | null"
     }
   ],
   "summary": "string"

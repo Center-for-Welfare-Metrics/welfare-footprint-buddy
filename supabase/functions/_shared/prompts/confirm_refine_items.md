@@ -29,7 +29,10 @@ This file is the authoritative prompt definition used at runtime.
       "parentDish": "string | null",
       "reasoning": "string",
       "suppressedByUser": boolean,
-      "userEdited": boolean
+      "userEdited": boolean,
+      "brand": "string | null",
+      "labelText": "string | null",
+      "welfareClaim": "string | null"
     }
   ],
   "userEdits": [
@@ -48,14 +51,17 @@ This file is the authoritative prompt definition used at runtime.
 - `suppressedByUser`: `true` if user explicitly removed this item (don't delete for auditability)
 - `userEdited`: `true` if user modified this item in any way
 - `userEdits`: Log of all user actions applied to the detection results
+- `brand` (optional): Brand or producer name identified on the label
+- `labelText` (optional): Additional descriptive or marketing text found on packaging
+- `welfareClaim` (optional): Ethical or welfare-related certification or claim
 
 **Model Compatibility:**
 This prompt works with any language model (no vision required - text-only reasoning)
 
 **Versioning:**
-- **Version:** 1.0
-- **Last Updated:** 2025-01
-- **Change Log:** Initial creation. Separated user correction logic from detection prompt for better modularity and auditability.
+- **Version:** 1.1
+- **Last Updated:** 2025-10-29
+- **Change Log:** Added metadata fields (brand, labelText, welfareClaim) to support label/brand information preservation.
 
 ---
 

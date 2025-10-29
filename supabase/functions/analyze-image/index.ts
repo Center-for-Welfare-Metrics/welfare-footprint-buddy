@@ -96,8 +96,8 @@ function validateInput(body: any): { valid: boolean; data?: ValidatedInput; erro
 
 // Prompt versions (update these when prompts change to auto-invalidate cache)
 const PROMPT_VERSIONS = {
-  analyze_user_material: 'v1.8',  // Updated to v1.8: Added mandatory decomposition for branded/packaged composite foods
-  confirm_refine_items: 'v1.0',   // Step 2: handles user corrections with auditability
+  analyze_user_material: 'v1.9',  // Updated to v1.9: Added metadata fields (brand, labelText, welfareClaim) and label/brand filtering rules
+  confirm_refine_items: 'v1.1',   // Updated to v1.1: Added metadata fields support
   analyze_focused_item: 'v2.0',
   analyze_product: 'v2.0',
 };
