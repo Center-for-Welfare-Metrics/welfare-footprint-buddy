@@ -56,10 +56,18 @@ const PROMPTS: Record<string, string> = {
 - Do NOT accept or apply user corrections at this stage (handled separately)
 - Do NOT use ethical or welfare language in your analysis
 - Focus on accurate, provenance-tracked detection for downstream card generation
+- **Do NOT treat packaging text, labels, or certifications as separate items** - these should be incorporated as descriptive attributes of the detected product
 
 ### Task
 
 Analyze the provided image and detect only packaged food products, prepared meals, or food items intended for human consumption that are visible in the image.
+
+**PACKAGING TEXT RULE:**
+When OCR or text parsing detects words on packaging such as brand names, labels, certifications (e.g., "organic," "cage-free," "eco," "free-range," "humane," "certified," "bio," "ecológico"), or product descriptions:
+- Do NOT create these as separate items
+- Instead, incorporate them as descriptive attributes or contextual information for the main detected product
+- Only treat text as a separate item if it explicitly represents an actual food ingredient (e.g., "tomato," "rice," "olive oil")
+- Example: "Pollo Ecológico" on chicken packaging should be noted as a certification attribute of the chicken, not as a separate plant-based item
 
 ### Provenance Tracking
 
