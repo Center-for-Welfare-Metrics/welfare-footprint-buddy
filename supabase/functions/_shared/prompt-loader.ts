@@ -53,7 +53,7 @@ const PROMPT_VERSIONS: Record<string, string> = {
   confirm_refine_items: 'v1.1',
   analyze_focused_item: 'v1.2',
   analyze_product: 'v1.2',
-  suggest_ethical_swap: 'v2.5',
+  suggest_ethical_swap: 'v2.6',
   user_context_template: 'v1.0',
 };
 
@@ -557,8 +557,10 @@ Focus EXCLUSIVELY on direct animal welfare and suffering-related aspects.
 **🚨 WARNING - VALIDATION WILL FAIL IF YOU USE THESE PHRASES IN generalNote:**
 ❌ "fully plant-based" ← NEVER USE THIS
 ❌ "100% plant-based" ← NEVER USE THIS
-❌ "completely plant" ← NEVER USE THIS
-✅ Instead say: "plant-animal blends", "reduced-animal products", "hybrid options with reduced animal content"
+❌ "completely plant-based" ← NEVER USE THIS
+❌ "entirely plant-based" ← NEVER USE THIS
+❌ "all plant-based" ← NEVER USE THIS
+✅ Instead say: "mostly plant-based", "primarily plant-based", "plant-forward", "plant-animal blends", "reduced-animal products", "hybrid options with reduced animal content"
 
 **🚨 ABSOLUTE RULES:**
 ❌ NEVER suggest fully vegan or 100% plant-based products (no Beyond Meat, Impossible Foods, pure tofu)
@@ -569,8 +571,8 @@ Focus EXCLUSIVELY on direct animal welfare and suffering-related aspects.
 - Examples: 50% beef/50% mushroom blend, yogurt with 30% dairy/70% coconut, chicken-vegetable blend nuggets
 
 **🚨 FORBIDDEN LANGUAGE in generalNote for Lens 3:**
-❌ DO NOT use: "fully plant-based", "100% vegan", "100% plant-based", "zero animal", "no animal ingredients", "Beyond Meat", "Impossible", "completely plant", "all plant-based", "tofu only"
-✅ DO use: "plant-animal blend", "reduced animal content", "hybrid product", "50% plant-based", "significantly reduced", "blended", "mixed plant and animal"
+❌ DO NOT use: "fully plant-based", "100% vegan", "100% plant-based", "completely plant-based", "entirely plant-based", "all plant-based", "zero animal", "no animal ingredients", "animal-free", "Beyond Meat", "Impossible"
+✅ DO use: "mostly plant-based", "primarily plant-based", "plant-forward", "mainly vegetarian", "plant-animal blend", "reduced animal content", "hybrid product", "significantly reduced animal content", "reduced-animal", "blended", "mixed plant and animal"
 
 **⚠️ ENFORCEMENT:** Every suggestion MUST contain SOME animal ingredients. Never suggest 100% plant-based products.
 
@@ -579,11 +581,15 @@ Focus EXCLUSIVELY on direct animal welfare and suffering-related aspects.
 
 **🚨 WARNING - VALIDATION WILL FAIL IF YOU USE THESE PHRASES IN generalNote:**
 ❌ "fully plant-based" ← NEVER USE THIS
-❌ "100% vegan" ← NEVER USE THIS  
-❌ "zero animal" ← NEVER USE THIS
+❌ "100% vegan" ← NEVER USE THIS
+❌ "100% plant-based" ← NEVER USE THIS
 ❌ "completely plant-based" ← NEVER USE THIS
+❌ "entirely plant-based" ← NEVER USE THIS
+❌ "all plant-based" ← NEVER USE THIS
+❌ "zero animal" ← NEVER USE THIS
+❌ "animal-free" ← NEVER USE THIS
 ❌ "no animal ingredients" ← NEVER USE THIS
-✅ Instead say: "mostly plant-based", "non-lethal animal byproducts", "vegetarian options", "avoids animal slaughter"
+✅ Instead say: "mostly plant-based", "primarily plant-based", "plant-forward", "mainly vegetarian", "non-lethal animal byproducts", "vegetarian options", "avoids animal slaughter"
 
 **🚨 ABSOLUTE RULES:**
 ❌ NEVER suggest products with meat, fish, poultry, gelatin, or any slaughtered animal products

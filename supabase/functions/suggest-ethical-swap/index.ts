@@ -99,17 +99,25 @@ function validateLensBoundaries(response: any, ethicalLens: number): string[] {
     ],
     3: [
       /fully plant-based/i,
-      /100% vegan/i,
+      /100%\s*(plant-based|vegan)/i,
+      /completely plant-based/i,
+      /entirely plant-based/i,
+      /all plant-based/i,
       /beyond meat/i,
       /impossible burger/i,
       /no animal.*ingredient/i,
       /zero animal/i,
+      /animal-free/i,
     ],
     4: [
       /fully plant-based/i,
-      /100% vegan/i,
+      /100%\s*(plant-based|vegan)/i,
+      /completely plant-based/i,
+      /entirely plant-based/i,
+      /all plant-based/i,
       /zero animal/i,
-      /completely plant/i,
+      /animal-free/i,
+      /no animal.*ingredient/i,
     ],
   };
   

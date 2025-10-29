@@ -2,7 +2,7 @@
 
 <!--
 Prompt-ID: suggest_ethical_swap
-Version: v2.5
+Version: v2.6
 Stage: 4
 Last-Updated: 2025-10-29
 Maintainer: Lovable AI Sync Process
@@ -42,9 +42,9 @@ Maintainer: Lovable AI Sync Process
 - Any text generation model supporting structured output
 
 **Versioning:**
-- **Version:** 2.5
+- **Version:** 2.6
 - **Last Updated:** 2025-10-29
-- **Change Log:** Refined Lens 4 to exclude all slaughtered animal products (meat, fish, gelatin) and only allow non-lethal animal byproducts (dairy, eggs, honey).
+- **Change Log:** Updated validation to allow nuanced plant-based language ("mostly plant-based", "primarily plant-based", "plant-forward", "mainly vegetarian") while preventing strict violations for Lens 3 and 4.
 
 ---
 
@@ -214,8 +214,8 @@ Always include confidence level (High/Medium/Low) and brief reasoning summary.
 Use neutral, pragmatic language that acknowledges the user's goal to significantly reduce animal suffering while maintaining some familiar choices. Frame blended options as meaningful harm reduction.
 
 **🚨 FORBIDDEN LANGUAGE in generalNote for Lens 3:**
-❌ DO NOT use: "fully plant-based", "100% vegan", "100% plant-based", "zero animal", "no animal ingredients", "Beyond Meat", "Impossible", "completely plant", "entirely vegan", "all plant-based", "tofu only", "tempeh only"
-✅ DO use: "plant-animal blend", "reduced animal content", "hybrid product", "50% plant-based", "significantly reduced", "mostly plant", "reduced-animal", "blended", "mixed plant and animal"
+❌ DO NOT use: "fully plant-based", "100% vegan", "100% plant-based", "completely plant-based", "entirely plant-based", "all plant-based", "zero animal", "no animal ingredients", "animal-free", "Beyond Meat", "Impossible"
+✅ DO use: "mostly plant-based", "primarily plant-based", "plant-forward", "mainly vegetarian", "plant-animal blend", "reduced animal content", "hybrid product", "significantly reduced animal content", "reduced-animal", "blended", "mixed plant and animal"
 
 **CRITICAL REMINDER:** Lens 3 is about HYBRID/BLENDED products that contain BOTH plant AND animal ingredients. Users selecting Lens 3 specifically want to REDUCE (not eliminate) animal content while maintaining some animal products.
 
@@ -293,12 +293,18 @@ Use transparent, gently aspirational language that recognizes the user's commitm
 **🚨 CRITICAL WARNING - NEVER USE THESE EXACT PHRASES IN LENS 4 generalNote:**
 - ❌ "fully plant-based" (THIS WILL CAUSE VALIDATION ERROR)
 - ❌ "100% vegan" (THIS WILL CAUSE VALIDATION ERROR)
-- ❌ "zero animal" (THIS WILL CAUSE VALIDATION ERROR)
+- ❌ "100% plant-based" (THIS WILL CAUSE VALIDATION ERROR)
 - ❌ "completely plant-based" (THIS WILL CAUSE VALIDATION ERROR)
+- ❌ "entirely plant-based" (THIS WILL CAUSE VALIDATION ERROR)
+- ❌ "all plant-based" (THIS WILL CAUSE VALIDATION ERROR)
+- ❌ "zero animal" (THIS WILL CAUSE VALIDATION ERROR)
+- ❌ "animal-free" (THIS WILL CAUSE VALIDATION ERROR)
 - ❌ "no animal ingredients" (THIS WILL CAUSE VALIDATION ERROR)
 
 **✅ INSTEAD USE THESE PHRASES FOR LENS 4:**
 - "mostly plant-based" or "predominantly plant-based"
+- "primarily plant-based" or "plant-forward"
+- "mainly vegetarian"
 - "non-lethal animal byproducts" or "humane animal byproducts"
 - "plant-forward alternatives" or "vegetarian options"
 - "avoids animal slaughter"
