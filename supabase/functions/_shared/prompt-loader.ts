@@ -335,6 +335,9 @@ Return ONLY valid JSON:
     "value": "Detailed description of welfare concerns",
     "confidence": "High" | "Medium" | "Low"
   },
+  "brand": "string | null",
+  "labelText": "string | null",
+  "welfareClaim": "string | null",
   "disclaimer": "This analysis was generated using AI and may contain errors or inaccuracies. It is a preliminary estimate and has not been scientifically validated by the Welfare Footprint Institute. Please verify information independently before making decisions."
 }
 \`\`\`
@@ -416,6 +419,9 @@ Return ONLY valid JSON:
     "value": "Detailed description of welfare concerns",
     "confidence": "High" | "Medium" | "Low"
   },
+  "brand": "string | null",
+  "labelText": "string | null",
+  "welfareClaim": "string | null",
   "disclaimer": "This analysis was generated using AI and may contain errors or inaccuracies. It is a preliminary estimate and has not been scientifically validated by the Welfare Footprint Institute. Please verify information independently before making decisions."
 }
 \`\`\`

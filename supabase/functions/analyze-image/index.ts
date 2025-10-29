@@ -98,8 +98,8 @@ function validateInput(body: any): { valid: boolean; data?: ValidatedInput; erro
 const PROMPT_VERSIONS = {
   analyze_user_material: 'v1.9',  // Updated to v1.9: Added metadata fields (brand, labelText, welfareClaim) and label/brand filtering rules
   confirm_refine_items: 'v1.1',   // Updated to v1.1: Added metadata fields support
-  analyze_focused_item: 'v2.0',
-  analyze_product: 'v2.0',
+  analyze_focused_item: 'v1.2',   // Updated to v1.2: Added metadata fields to output schema
+  analyze_product: 'v1.2',        // Updated to v1.2: Added metadata fields to output schema
 };
 
 // Initialize AI Handler once

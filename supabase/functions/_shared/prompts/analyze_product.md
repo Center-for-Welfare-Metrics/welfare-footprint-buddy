@@ -36,6 +36,9 @@ This file is the authoritative prompt definition used at runtime.
     "value": "string",
     "confidence": "High" | "Medium" | "Low"
   },
+  "brand": "string | null",
+  "labelText": "string | null",
+  "welfareClaim": "string | null",
   "disclaimer": "string"
 }
 ```
@@ -44,9 +47,9 @@ This file is the authoritative prompt definition used at runtime.
 This prompt is designed to work with any vision-capable language model (Gemini, GPT-4 Vision, Claude with vision, etc.)
 
 **Versioning:**
-- **Version:** 1.1
+- **Version:** 1.2
 - **Last Updated:** 2025-10-29
-- **Change Log:** Added support for metadata fields (brand, labelText, welfareClaim) from detection stage.
+- **Change Log:** Added metadata fields (brand, labelText, welfareClaim) to output schema for label/brand information preservation.
 
 ---
 
@@ -156,9 +159,17 @@ Return ONLY valid JSON with this exact structure:
     "value": "Detailed description of potential welfare concerns",
     "confidence": "High", "Medium", or "Low"
   },
+  "brand": "string | null",
+  "labelText": "string | null",
+  "welfareClaim": "string | null",
   "disclaimer": "This analysis was generated using AI and may contain errors or inaccuracies. It is a preliminary estimate and has not been scientifically validated by the Welfare Footprint Institute. Please verify information independently before making decisions."
 }
 ```
+
+**Metadata Field Definitions:**
+- **brand** (optional): Brand or producer name identified on the label (e.g., "Red Baron", "Nestlé")
+- **labelText** (optional): Additional descriptive or marketing text found on packaging
+- **welfareClaim** (optional): Ethical or welfare-related certification or claim (e.g., "Pollo Ecológico", "Certified Humane", "Cage-Free")
 
 ### Language Requirement
 
