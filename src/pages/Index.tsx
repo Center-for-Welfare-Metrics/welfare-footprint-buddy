@@ -161,6 +161,7 @@ const Index = () => {
         title: "Analysis Failed",
         description: appError.userMessage,
         variant: "destructive",
+        duration: 5000, // Auto-dismiss after 5 seconds
       });
     } finally {
       setIsAnalyzingItem(false);
@@ -275,6 +276,7 @@ const Index = () => {
         title: "Detection Failed",
         description: appError.userMessage,
         variant: "destructive",
+        duration: 5000, // Auto-dismiss after 5 seconds
       });
     } finally {
       setIsAnalyzingItem(false);
@@ -343,6 +345,7 @@ const Index = () => {
         title: appError.retryable ? "Analysis Failed" : "Error",
         description: appError.userMessage,
         variant: "destructive",
+        duration: 5000, // Auto-dismiss after 5 seconds
       });
     } finally {
       setIsAnalyzingItem(false);
@@ -403,6 +406,7 @@ const Index = () => {
         title: appError.retryable ? "Analysis Failed" : "Error",
         description: appError.userMessage,
         variant: "destructive",
+        duration: 5000, // Auto-dismiss after 5 seconds
       });
       setIsAnalyzingItem(false);
     }
