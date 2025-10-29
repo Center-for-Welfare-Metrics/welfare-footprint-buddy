@@ -176,6 +176,16 @@ serve(async (req) => {
         LANGUAGE: outputLanguage
       });
       
+      console.log('═══════════════════════════════════════════════════════════════════');
+      console.log('🔍 PROMPT DEBUG - DETECT MODE');
+      console.log('═══════════════════════════════════════════════════════════════════');
+      console.log('Prompt template loaded: analyze_user_material');
+      console.log('Output language:', outputLanguage);
+      console.log('Additional info provided:', !!additionalInfo);
+      console.log('Prompt length (chars):', prompt.length);
+      console.log('Prompt preview (first 500 chars):', prompt.substring(0, 500));
+      console.log('═══════════════════════════════════════════════════════════════════');
+      
       // If user provided additional context (edited description), inject it
       if (additionalInfo && additionalInfo.trim()) {
         const userDescriptionContext = `
@@ -225,7 +235,17 @@ Apply the user correction to the original detection results following the rules 
       
       prompt = refinementContext + '\n\n' + prompt;
       isTextOnlyMode = true; // No image needed for refinement
-      console.log('[analyze-image] Step 2: Refinement mode (user corrections)');
+      
+      console.log('═══════════════════════════════════════════════════════════════════');
+      console.log('🔍 PROMPT DEBUG - REFINE MODE');
+      console.log('═══════════════════════════════════════════════════════════════════');
+      console.log('Prompt template loaded: confirm_refine_items');
+      console.log('Output language:', outputLanguage);
+      console.log('Original detection results length:', originalDetectionResults?.length || 0);
+      console.log('User correction:', userCorrection);
+      console.log('Final prompt length (chars):', prompt.length);
+      console.log('Prompt preview (first 500 chars):', prompt.substring(0, 500));
+      console.log('═══════════════════════════════════════════════════════════════════');
       
     } else if (mode === 'analyze' && focusItem) {
       prompt = await loadAndProcessPrompt('analyze_focused_item', {
@@ -267,6 +287,17 @@ NOW PROCEED WITH YOUR ANALYSIS USING THE ABOVE USER CONTEXT:
         
         prompt = userContextPrefix + prompt;
       }
+      
+      console.log('═══════════════════════════════════════════════════════════════════');
+      console.log('🔍 PROMPT DEBUG - ANALYZE FOCUSED MODE');
+      console.log('═══════════════════════════════════════════════════════════════════');
+      console.log('Prompt template loaded: analyze_focused_item');
+      console.log('Output language:', outputLanguage);
+      console.log('Focus item:', focusItem);
+      console.log('Additional info provided:', !!additionalInfo);
+      console.log('Final prompt length (chars):', prompt.length);
+      console.log('Prompt preview (first 500 chars):', prompt.substring(0, 500));
+      console.log('═══════════════════════════════════════════════════════════════════');
     } else {
       prompt = await loadAndProcessPrompt('analyze_product', {
         LANGUAGE: outputLanguage,
@@ -306,6 +337,16 @@ NOW PROCEED WITH YOUR ANALYSIS USING THE ABOVE USER CONTEXT:
         
         prompt = userContextPrefix + prompt;
       }
+      
+      console.log('═══════════════════════════════════════════════════════════════════');
+      console.log('🔍 PROMPT DEBUG - ANALYZE PRODUCT MODE');
+      console.log('═══════════════════════════════════════════════════════════════════');
+      console.log('Prompt template loaded: analyze_product');
+      console.log('Output language:', outputLanguage);
+      console.log('Additional info provided:', !!additionalInfo);
+      console.log('Final prompt length (chars):', prompt.length);
+      console.log('Prompt preview (first 500 chars):', prompt.substring(0, 500));
+      console.log('═══════════════════════════════════════════════════════════════════');
     }
 
     // CRITICAL: Always bypass cache to ensure fresh AI calls for each upload
@@ -326,6 +367,21 @@ NOW PROCEED WITH YOUR ANALYSIS USING THE ABOVE USER CONTEXT:
       focusItem: focusItem || undefined,
     };
 
+    console.log('═══════════════════════════════════════════════════════════════════');
+    console.log('🚀 FULL PROMPT BEING SENT TO AI MODEL');
+    console.log('═══════════════════════════════════════════════════════════════════');
+    console.log('Mode:', mode);
+    console.log('Language:', language);
+    console.log('Has image data:', !isTextOnlyMode && !!imageData);
+    console.log('Cache strategy:', cacheOptions.strategy);
+    console.log('Prompt template ID:', cacheOptions.promptTemplateId);
+    console.log('Prompt version:', cacheOptions.promptVersion);
+    console.log('─────────────────────────────────────────────────────────────────');
+    console.log('FULL PROMPT TEXT:');
+    console.log('─────────────────────────────────────────────────────────────────');
+    console.log(prompt);
+    console.log('═══════════════════════════════════════════════════════════════════');
+    
     const aiResponse = await callAI({
       prompt,
       imageData: isTextOnlyMode ? undefined : imageData, // Skip image for text-only modes like refine
