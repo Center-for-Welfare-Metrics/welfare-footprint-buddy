@@ -204,6 +204,10 @@ When you detect a **branded or packaged composite food product** (e.g., frozen p
 }
 ```
 
+{{#if ADDITIONAL_INFO}}
+{{INCLUDE:user_context_template}}
+{{/if}}
+
 ### JSON Output Examples
 
 #### Example 1: Acarajé (Brazilian Street Food)
@@ -392,15 +396,6 @@ For each FOOD item or INGREDIENT you detect:
    - Each distinct animal ingredient must have its own item entry
 4. Provide INTELLIGENT, SELECTIVE, PRODUCT-SPECIFIC reasoning:
    - **CRITICAL: Provide context-aware, educational descriptions that reflect actual product knowledge**
-   - **🚨 CRITICAL: INCORPORATE USER-PROVIDED WELFARE INFORMATION 🚨**
-     * **If the user's description includes welfare-related details** (e.g., "cage-free", "pasture-raised", "certified humane", "free-range", "wild-caught", "organic", "from a humane-certified producer"), **you MUST include this information in the item's reasoning**
-     * This welfare information should be written in a natural, factual way directly within the item description
-     * Examples:
-       - User says "omelet made with eggs from a humane-certified producer" → Eggs reasoning: "Eggs are the primary ingredient of omelets, and in this case come from a humane-certified producer."
-       - User says "pasta with cage-free eggs" → Eggs reasoning: "Cage-free eggs used in this pasta dish, indicating higher welfare production standards."
-       - User says "wild-caught salmon" → Salmon reasoning: "Wild-caught Pacific salmon, harvested from natural habitats rather than farmed."
-     * ✅ **DO include welfare details when provided by user**
-     * ❌ **DO NOT invent or speculate about welfare standards** - only include what the user explicitly mentioned
    - **NEVER state the obvious** (e.g., "honey is produced by bees" or "salmon is a fish")
    - **DO provide reasoning that adds real value:**
      * **For honey varieties**: Describe flavor, texture, crystallization properties, floral source, regional origin, traditional uses
