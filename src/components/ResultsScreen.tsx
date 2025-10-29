@@ -445,7 +445,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
         </div>
 
         <div className="border-b border-gray-700 pb-4">
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex items-center justify-center gap-2 mb-4">
             <h1 className="text-3xl font-bold text-white">{t('ethicalLens.title')}</h1>
             <Dialog>
               <DialogTrigger asChild>
