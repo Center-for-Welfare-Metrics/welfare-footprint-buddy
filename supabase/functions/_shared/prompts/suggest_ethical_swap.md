@@ -196,12 +196,11 @@ This lens is STRICTLY for users who want to keep consuming animal products but s
 Tone: Practical and encouraging - "This version improves conditions for animals while keeping similar products."
 Always include confidence level (High/Medium/Low) and brief reasoning summary based on specific welfare criteria.
 
-#### Lens 2 – Reducetarian (Lower Consumption)
+#### Lens 2 – Strong Welfare Standards (Certified Higher-Welfare Animal Products)
 
-Actively reduce animal product consumption — e.g., halve meat intake or skip it several days a week.  
-- Focus first on high-suffering or high-volume products (e.g., industrial chicken, pork, or farmed fish).  
-- Reduce frequency and quantity rather than blending animal and non-animal products.  
-- Logic of impact: lowering demand means fewer animals bred into suffering conditions.
+Prioritize certified, verifiably higher-welfare versions of the same animal product (no replacements with plant-only items).
+- Focus on independently verified improvements (e.g., lower stocking density, enriched environments, gentler handling, better stunning).
+- Reduce harm by upgrading welfare conditions within animal-based systems (not by eliminating animal ingredients).
 
 **ethicalLensPosition:** "Strong Welfare Standards"
 
