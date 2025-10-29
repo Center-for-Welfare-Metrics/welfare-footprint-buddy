@@ -477,3 +477,8 @@ Before authorizing changes, confirm whether the welfare details in Step 1 reason
 - `/supabase/functions/suggest-ethical-swap/index.ts` (lens validation)
 
 **Total Lines Analyzed:** ~4,500+ lines of prompt content across 23 sources
+
+
+# Version: X.Y
+# Stage: 3 (Detection)
+# Source: /supabase/functions/_shared/prompts/analyze_user_material.md
