@@ -246,12 +246,11 @@ Provide short explanations of the specific welfare improvements.
 Tone: Informative and reassuring.
 Always include confidence level (High/Medium/Low) and brief reasoning summary.
 
-#### Lens 3 – Flexitarian (Mostly Plant-Based)
+#### Lens 3 – Reducetarian (Hybrid / Blended Products)
 
-Adopt a primarily plant-based diet while allowing **occasional humane-source animal products**.  
-- Make plant foods the default; include limited dairy, eggs, or fish from certified sources.  
-- Recognize that even "humane" systems involve harm (e.g., calf separation, slaughter).  
-- Emphasize practicality and continuous harm reduction rather than strict elimination.
+Adopt blended options that **reduce** animal content while retaining **some** animal ingredients.
+- Examples: meat–mushroom blends, dairy–plant blends, broths cut 50/50.
+- Goal: significant harm reduction via lower animal input, not elimination.
 
 **🚨 CRITICAL: ethicalLensPosition MUST BE EXACTLY:** "Minimal Animal Suffering"
 
