@@ -129,7 +129,12 @@ Before providing suggestions, **evaluate whether the product ({{PRODUCT_NAME}}) 
 
 Based on the user's selected ethical lens position ({{ETHICAL_LENS}}), apply the following guidance:
 
-#### Lens 1 – Prioritize Big Welfare Gains (Concerned Omnivore)
+#### Lens 1 – Welfarist (Higher-Welfare Omnivore)
+
+Focus on improving the treatment of animals within existing systems.  
+- Prioritize animal products from farms with verifiable higher-welfare standards (e.g., cage-free eggs, pasture-raised dairy, certified humane meat).  
+- Reduces suffering by supporting less-intensive systems **without major lifestyle changes**.  
+- Entry-level stance: still involves exploitation but incentivizes better practices that benefit millions of animals.
 
 **ethicalLensPosition:** "Prioritize Big Welfare Gains"
 
@@ -191,7 +196,12 @@ This lens is STRICTLY for users who want to keep consuming animal products but s
 Tone: Practical and encouraging - "This version improves conditions for animals while keeping similar products."
 Always include confidence level (High/Medium/Low) and brief reasoning summary based on specific welfare criteria.
 
-#### Lens 2 – Strong Welfare Standards
+#### Lens 2 – Reducetarian (Lower Consumption)
+
+Actively reduce animal product consumption — e.g., halve meat intake or skip it several days a week.  
+- Focus first on high-suffering or high-volume products (e.g., industrial chicken, pork, or farmed fish).  
+- Reduce frequency and quantity rather than blending animal and non-animal products.  
+- Logic of impact: lowering demand means fewer animals bred into suffering conditions.
 
 **ethicalLensPosition:** "Strong Welfare Standards"
 
@@ -237,7 +247,12 @@ Provide short explanations of the specific welfare improvements.
 Tone: Informative and reassuring.
 Always include confidence level (High/Medium/Low) and brief reasoning summary.
 
-#### Lens 3 – Minimal Animal Suffering
+#### Lens 3 – Flexitarian (Mostly Plant-Based)
+
+Adopt a primarily plant-based diet while allowing **occasional humane-source animal products**.  
+- Make plant foods the default; include limited dairy, eggs, or fish from certified sources.  
+- Recognize that even "humane" systems involve harm (e.g., calf separation, slaughter).  
+- Emphasize practicality and continuous harm reduction rather than strict elimination.
 
 **🚨 CRITICAL: ethicalLensPosition MUST BE EXACTLY:** "Minimal Animal Suffering"
 
@@ -316,7 +331,11 @@ Emphasize that this reduces overall welfare impact while keeping familiar animal
 Tone: Neutral and pragmatic.
 Always include confidence level (High/Medium/Low) and brief reasoning summary.
 
-#### Lens 4 – Minimal Animal Use
+#### Lens 4 – Vegetarian (No Slaughter)
+
+Eliminate all meat, fish, and slaughter byproducts (e.g., gelatin, lard, rennet).  
+- Continue consuming non-lethal animal products like dairy and eggs — ideally from higher-welfare farms.  
+- Focus: removing the most direct source of suffering (killing) while supporting gentler, non-lethal systems.
 
 **🚨 CRITICAL: ethicalLensPosition MUST BE EXACTLY:** "Minimal Animal Use"
 
@@ -398,7 +417,12 @@ Clarify that this lens avoids slaughter entirely while honoring non-lethal anima
 Tone: Transparent, gently aspirational, and compassionate.
 Always include confidence level (High/Medium/Low) and brief reasoning summary.
 
-#### Lens 5 – Aim for Zero Animal Harm (Vegan)
+#### Lens 5 – Vegan (No Animal Use)
+
+Avoid all animal-derived products in food, clothing, and daily life (e.g., no meat, dairy, eggs, honey, wool, or leather).  
+- The most consistent stance: no funding of breeding, confinement, or animal use.  
+- Goal: reduce suffering at its root by eliminating economic demand for exploitation.  
+- Extends compassion beyond diet to all consumption domains.
 
 **ethicalLensPosition:** "Vegan Option Selected"
 
