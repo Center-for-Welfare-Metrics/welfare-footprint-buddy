@@ -306,6 +306,15 @@ For each FOOD item or INGREDIENT you detect:
    - Each distinct animal ingredient must have its own item entry
 4. Provide INTELLIGENT, SELECTIVE, PRODUCT-SPECIFIC reasoning:
    - **CRITICAL: Provide context-aware, educational descriptions that reflect actual product knowledge**
+   - **🚨 CRITICAL: INCORPORATE USER-PROVIDED WELFARE INFORMATION 🚨**
+     * **If the user's description includes welfare-related details** (e.g., "cage-free", "pasture-raised", "certified humane", "free-range", "wild-caught", "organic", "from a humane-certified producer"), **you MUST include this information in the item's reasoning**
+     * This welfare information should be written in a natural, factual way directly within the item description
+     * Examples:
+       - User says "omelet made with eggs from a humane-certified producer" → Eggs reasoning: "Eggs are the primary ingredient of omelets, and in this case come from a humane-certified producer."
+       - User says "pasta with cage-free eggs" → Eggs reasoning: "Cage-free eggs used in this pasta dish, indicating higher welfare production standards."
+       - User says "wild-caught salmon" → Salmon reasoning: "Wild-caught Pacific salmon, harvested from natural habitats rather than farmed."
+     * ✅ **DO include welfare details when provided by user**
+     * ❌ **DO NOT invent or speculate about welfare standards** - only include what the user explicitly mentioned
    - **NEVER state the obvious** (e.g., "honey is produced by bees" or "salmon is a fish")
    - **DO provide reasoning that adds real value:**
      * **For honey varieties**: Describe flavor, texture, crystallization properties, floral source, regional origin, traditional uses
@@ -313,29 +322,33 @@ For each FOOD item or INGREDIENT you detect:
        - ✓ "Linden honey known for floral aroma and soothing properties, commonly used in herbal teas."
        - ✓ "Multifloral honey blends nectar from diverse blossoms, color and taste vary with season."
        - ❌ "Honey is produced by bees, which are animals."
-     * **For specific meats/fish**: Cooking method, cut type, regional preparation, flavor profile
+     * **For specific meats/fish**: Cooking method, cut type, regional preparation, flavor profile, **and any user-mentioned welfare details**
        - ✓ "Wild-caught Pacific salmon, rich in omega-3 fatty acids."
        - ✓ "Dry-aged beef, typically 21-28 days for enhanced flavor."
+       - ✓ "Pasture-raised chicken breast, indicating birds were raised with outdoor access." (when user mentions pasture-raised)
        - ❌ "Salmon is a fish product."
      * **For cheese varieties**: Milk source, aging process, texture, regional origin, culinary uses
        - ✓ "Parmigiano-Reggiano aged minimum 12 months, hard texture ideal for grating."
        - ✓ "Fresh mozzarella di bufala, soft texture from water buffalo milk."
        - ❌ "Cheese is a dairy product."
-     * **For eggs**: Production method, grade, specialty attributes if visible
+     * **For eggs**: Production method, grade, specialty attributes if visible, **and especially user-mentioned welfare standards**
        - ✓ "Free-range eggs with deeper yolk color from varied diet."
-       - ✓ "" (empty acceptable for standard eggs)
+       - ✓ "Eggs from a humane-certified producer, meeting third-party animal welfare standards." (when user mentions certification)
+       - ✓ "Certified organic eggs, indicating hens were raised without antibiotics and with organic feed." (when user mentions organic)
+       - ✓ "" (empty acceptable for standard eggs without welfare info)
        - ❌ "Eggs are animal products."
      * **For cultural/specialty items**: Traditional preparation, cultural significance, regional context
        - ✓ "Bottarga is a Mediterranean delicacy of salted fish roe, common in Italian and Greek cuisine."
        - ✓ "Traditional Polish artisanal honey, cold-extracted to preserve enzymes."
-   - **Use sensory and contextual language:** flavor, aroma, texture, color, crystallization, production method, regional origin, seasonal variation, traditional uses
+   - **Use sensory and contextual language:** flavor, aroma, texture, color, crystallization, production method, regional origin, seasonal variation, traditional uses, **welfare standards when provided by user**
    - **Avoid redundant statements:** Never simply restate that something is animal-derived
    - **For obvious standard items:** Leave reasoning empty rather than stating the obvious
-   - **For decomposed ingredients from composite dishes:** Focus on the ingredient's function or role in the specific dish, cultural context, or typical production method:
+   - **For decomposed ingredients from composite dishes:** Focus on the ingredient's function or role in the specific dish, cultural context, typical production method, **or user-mentioned welfare details**:
      - ✓ "Used as a topping in Georgian cheese breads, typically baked directly on the dough before serving."
      - ✓ "The cheese component of this Georgian bread, traditionally made from cow's milk and used as the filling."
      - ✓ "A key protein in this dish, typically pan-fried before assembly."
      - ✓ "Traditional Georgian cheese (Sulguni or Imeruli), stretched and melted into the dough."
+     - ✓ "Eggs are the primary ingredient of omelets, and in this case come from a humane-certified producer." (when user mentions welfare certification)
      - ❌ "This item contains eggs." (redundant)
      - ❌ "Cheese bread, typically filled with cheese and topped with an egg." (describes the whole dish, not the ingredient)
      - ❌ "Made from milk." (too generic)
