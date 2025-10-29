@@ -16,6 +16,11 @@ Maintainer: Lovable AI Sync Process
 This prompt instructs the AI to detect and **visually describe** all food items or products visible in an uploaded image.  
 It focuses purely on **what can be seen** — appearance, composition, and context — without any ethical or ingredient interpretation.
 
+**Item Definition:**  
+An **"item"** is defined as an **ingredient** or **dominant product component**, NOT a dish name or recipe title.
+- ✅ CORRECT: "Mozzarella cheese", "Beef patty", "Rice"
+- ❌ WRONG: "Pizza", "Burger", "Paella" (these are dish names, not items)
+
 **Expected Inputs:**
 - **Image:** A photo of one or more food products or dishes (required)  
 - **Language:** User's preferred language code (e.g., `"en"`, `"es"`, `"fr"`) (required)
@@ -125,6 +130,36 @@ For each detected item, you MUST set:
 - Packaged prepared meals
 - Restaurant dishes and home-cooked meals
 
+### Decision Framework: Single Item vs. Decomposition
+
+Use this **hierarchical reasoning** to decide how to handle detected food:
+
+**STEP 1: Is this a composite dish or single product?**
+
+✅ **DECOMPOSE INTO INGREDIENTS** if it's:
+- A prepared multi-ingredient dish (paella, lasagna, burger, salad, stir-fry)
+- A culturally significant recipe (Acarajé, Khachapuri, bibimbap)
+- A branded composite product with identifiable components (frozen pizza, prepared meal)
+- A dish where individual animal ingredients are visible (salmon rice bowl, egg sandwich)
+
+✅ **TREAT AS SINGLE ITEM** if it's:
+- A single animal product (whole chicken, salmon fillet, block of cheese, carton of milk)
+- A single ingredient (honey jar, butter stick, egg carton)
+- A processed single-source product (can of sardines, package of bacon)
+- An item where decomposition would not reveal additional distinct ingredients
+
+**STEP 2: For composite dishes - what are the major components?**
+
+Focus on **primary ingredients** that contribute significantly to the dish:
+- Main animal proteins (meat, fish, eggs, dairy in substantial amounts)
+- Foundational plant components (grains, primary vegetables, legumes)
+- Significant sauces or cooking media (when they represent major ingredients)
+
+**STEP 3: Apply confidence levels based on evidence:**
+- **High confidence**: Ingredient is visually clear or explicitly mentioned in product name
+- **Medium confidence**: Ingredient is typical in this recipe type but not directly visible
+- **Low confidence**: Ingredient might be present but uncertain without more information
+
 ### Decomposition Process:
 
 1. **Identify all major ingredients** in the dish (use your culinary knowledge of typical recipes)
@@ -140,15 +175,24 @@ For each detected item, you MUST set:
 
 When analyzing OCR or visual data, **DO NOT classify text elements that represent brands, logos, labels, certifications, or marketing phrases as food items**.
 
-**Examples of text to exclude as independent items:**
-- Brand names (Red Baron, Nestlé, Kraft, Sadia, El Granero)
-- Certifications (Ecológico, Organic, Cage-Free, Certified Humane, USDA Organic)
-- Logo or seal text (EU Organic Leaf, Non-GMO Project Verified)
-- Marketing phrases ("Premium Quality", "Ready to Eat", "Family Size")
-- Quantity labels ("Net Weight 500g", "Serves 4")
+**Enhanced False-Positive Filtering Logic:**
+
+**ALWAYS EXCLUDE as items (attach as metadata instead):**
+1. **Brand names** - Red Baron, Nestlé, Kraft, Sadia, El Granero, Tyson, Perdue
+2. **Certifications** - Ecológico, Organic, Cage-Free, Certified Humane, USDA Organic, Fair Trade
+3. **Logo or seal text** - EU Organic Leaf, Non-GMO Project Verified, Certified B Corporation
+4. **Marketing phrases** - "Premium Quality", "Ready to Eat", "Family Size", "New & Improved", "Now With More"
+5. **Quantity/measurement text** - "Net Weight 500g", "Serves 4", "12 oz", "1 lb"
+6. **Instructional text** - "Keep Refrigerated", "Cook Thoroughly", "Microwave Safe"
+7. **Decorative or contextual text** - Menu items, recipe names on packaging, cooking suggestions
+8. **Company slogans** - "Made with Love", "Farm Fresh", "Since 1950"
 
 **Detection rule:**
-If detected text does NOT match known edible categories but appears in brand, marketing, or certification contexts, treat it as **metadata**, not as an item.
+If detected text does NOT match **known edible categories** (meat, dairy, grains, vegetables, etc.) but appears in brand, marketing, certification, or instructional contexts, treat it as **metadata**, not as an item.
+
+**Decision test:** Ask yourself:
+- "Is this text describing an actual food ingredient/product, or is it describing the brand/quality/origin?"
+- If it's the latter → metadata only, not an item
 
 **Metadata Attachment Rules:**
 When such label elements are detected, attach them to the corresponding food item using these optional fields:
@@ -307,7 +351,7 @@ For **Acarajé**, a traditional Brazilian dish, decompose into ALL major ingredi
       "animalConfidence": "High",
       "source": "recipe_inference",
       "parentDish": "Acarajé",
-      "reasoning": "Traditional Brazilian paste containing ground dried shrimp and often fish"
+      "reasoning": "Inferred from recipe knowledge; vatapá paste traditionally contains ground dried shrimp and fish in Bahian cuisine"
     },
     {
       "name": "Black-eyed Pea Fritter (from Acarajé)",
@@ -334,7 +378,7 @@ For **Acarajé**, a traditional Brazilian dish, decompose into ALL major ingredi
       "animalConfidence": "High",
       "source": "visual",
       "parentDish": "Acarajé",
-      "reasoning": ""
+      "reasoning": "Visually identified dried shrimp as topping; crustacean product common in traditional Bahian preparation"
     }
   ],
   "summary": "The image shows Acarajé, a traditional Brazilian street food from Bahia."
@@ -353,7 +397,7 @@ For **Acarajé**, a traditional Brazilian dish, decompose into ALL major ingredi
       "animalConfidence": "High",
       "source": "visual",
       "parentDish": "Rice Bowl",
-      "reasoning": ""
+      "reasoning": "Clearly visible salmon fillet; appears to be grilled or pan-seared based on color and texture"
     },
     {
       "name": "Egg (from rice bowl)",
@@ -362,7 +406,7 @@ For **Acarajé**, a traditional Brazilian dish, decompose into ALL major ingredi
       "animalConfidence": "High",
       "source": "visual",
       "parentDish": "Rice Bowl",
-      "reasoning": ""
+      "reasoning": "Visually identified whole egg or egg yolk; typical donburi topping"
     },
     {
       "name": "Rice (from rice bowl)",
@@ -371,7 +415,7 @@ For **Acarajé**, a traditional Brazilian dish, decompose into ALL major ingredi
       "animalConfidence": "High",
       "source": "visual",
       "parentDish": "Rice Bowl",
-      "reasoning": ""
+      "reasoning": "White rice visible as base; plant-based grain foundation of donburi"
     }
   ],
   "summary": "The image shows a Japanese rice bowl (donburi) with salmon, egg, and rice."
@@ -390,7 +434,7 @@ For **Acarajé**, a traditional Brazilian dish, decompose into ALL major ingredi
       "animalConfidence": "High",
       "source": "visual",
       "parentDish": "Khachapuri",
-      "reasoning": "Traditional Georgian cheese made from cow's milk"
+      "reasoning": "Visually identified melted white cheese; Sulguni is traditional Georgian cow's milk cheese used in Khachapuri"
     },
     {
       "name": "Egg Yolk (from Khachapuri)",
@@ -399,7 +443,7 @@ For **Acarajé**, a traditional Brazilian dish, decompose into ALL major ingredi
       "animalConfidence": "High",
       "source": "visual",
       "parentDish": "Khachapuri",
-      "reasoning": ""
+      "reasoning": "Clearly visible raw egg yolk in center; traditional Adjarian-style Khachapuri preparation"
     },
     {
       "name": "Butter (from Khachapuri)",
@@ -408,7 +452,7 @@ For **Acarajé**, a traditional Brazilian dish, decompose into ALL major ingredi
       "animalConfidence": "High",
       "source": "recipe_inference",
       "parentDish": "Khachapuri",
-      "reasoning": "Dairy product traditionally added on top"
+      "reasoning": "Inferred from recipe knowledge; butter commonly added on top of Adjarian Khachapuri before serving"
     },
     {
       "name": "Bread Dough (from Khachapuri)",
@@ -417,7 +461,7 @@ For **Acarajé**, a traditional Brazilian dish, decompose into ALL major ingredi
       "animalConfidence": "Medium",
       "source": "visual",
       "parentDish": "Khachapuri",
-      "reasoning": "Wheat-based dough, typically plant-based"
+      "reasoning": "Visually identified boat-shaped bread; wheat-based dough is plant-derived, though some recipes may include dairy"
     }
   ],
   "summary": "The image displays a Georgian Khachapuri bread boat with cheese, egg, and butter."
@@ -468,8 +512,12 @@ For each FOOD item or INGREDIENT you detect:
      * Rice bowl with salmon → MUST include "Salmon (from rice bowl)" as separate item
    - DO NOT assume visible/obvious ingredients are "covered" by other items
    - Each distinct animal ingredient must have its own item entry
-4. Provide INTELLIGENT, SELECTIVE, PRODUCT-SPECIFIC reasoning:
-   - **CRITICAL: Provide context-aware, educational descriptions that reflect actual product knowledge**
+4. Provide INTELLIGENT, SELECTIVE, STRUCTURED reasoning:
+   - **CRITICAL: Generate a compact reasoning chain for each detected item**
+   - **Structure your reasoning in this priority order:**
+     1. **Detection method** - How was this item identified? (visual observation, OCR text, recipe knowledge)
+     2. **Context-specific details** - Product-specific information that adds value (variety, production method, cultural context)
+     3. **Confidence justification** - Why this confidence level? (clearly visible vs. inferred from recipe)
    - **NEVER state the obvious** (e.g., "honey is produced by bees" or "salmon is a fish")
    - **DO provide reasoning that adds real value:**
      * **For honey varieties**: Describe flavor, texture, crystallization properties, floral source, regional origin, traditional uses
