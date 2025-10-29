@@ -1,11 +1,8 @@
 /**
  * Prompt Loader Utility
  * 
- * This utility provides functions to process AI prompt templates
- * by loading them from markdown files. It supports:
- * - Dynamic loading from /supabase/functions/_shared/prompts/
- * - Template variable substitution
- * - Model-agnostic prompt management
+ * This utility provides functions to process AI prompt templates.
+ * Prompts are embedded directly in the code to work with Supabase Edge Runtime.
  * 
  * Usage:
  *   const prompt = await loadAndProcessPrompt('analyze_user_material', { 
@@ -14,92 +11,159 @@
  *   });
  */
 
+// Embedded prompt fragments
+const FRAGMENTS: Record<string, string> = {
+  user_context_template: `### ⚠️ Critical - User-Provided Context
+
+The user has provided the following verified information about this product:
+"{{ADDITIONAL_INFO}}"
+
+#### Mandatory Instructions for Interpreting User Context
+
+**🔒 Ingredient Detection (Must Preserve):**
+- User context about welfare/production methods (e.g., "high-welfare", "pasture-raised", "organic", "cage-free") does NOT change ingredient classification
+- If you have ALREADY detected animal ingredients from the image, they REMAIN present regardless of welfare context
+- ONLY override ingredient detection if the user EXPLICITLY contradicts it (e.g., "this is actually vegan", "contains no animal products")
+- Examples that should NOT change hasAnimalIngredients from true to false:
+  * "All animal ingredients come from high-welfare systems" → Keep hasAnimalIngredients: true
+  * "This product is pasture-raised" → Keep hasAnimalIngredients: true
+  * "Organic and cage-free" → Keep hasAnimalIngredients: true
+
+**✅ When to Add/Confirm Ingredients:**
+- If the user mentions specific NEW ingredients not visible in image (e.g., "soup with sausage", "contains eggs", "made with chicken"), you MUST:
+  * Set hasAnimalIngredients to true
+  * List those ingredients in the animalIngredients array with HIGH confidence
+  * Provide welfare analysis for those specific animals
+- If the user provides cultural/regional context (e.g., "Polish Żurek soup traditionally contains sausage and eggs"), use this knowledge to inform your analysis
+
+**🎯 Production System (Update with Context):**
+- If the user mentions production methods (e.g., "cage-free", "organic", "pasture-raised", "high-welfare"), incorporate this into productionSystem with HIGH confidence
+- Update productionSystem.value to reflect the user-provided welfare context
+- Adjust welfareConcerns based on the improved production conditions
+
+**Summary:**
+- Ingredient presence/absence = Based on VISUAL ANALYSIS + EXPLICIT ingredient mentions
+- Production methods = Based on USER CONTEXT about welfare conditions
+- Welfare concerns = Adjusted based on USER CONTEXT about production systems`
+};
+
+// Embedded prompt templates (first 500 lines to stay within limits)
+const PROMPTS: Record<string, string> = {
+  analyze_user_material: `You are a food-image detector specializing in visual identification of food products and dishes. Your task is to detect what is actually visible in the image using visual evidence and OCR, and when appropriate, decompose composite dishes into major ingredients using typical recipe knowledge.
+
+**CRITICAL RULES:**
+- Base analysis ONLY on visual evidence, readable text (OCR), and standard recipe knowledge
+- Do NOT accept or apply user corrections at this stage (handled separately)
+- Do NOT use ethical or welfare language in your analysis
+- Focus on accurate, provenance-tracked detection for downstream card generation
+
+### Task
+
+Analyze the provided image and detect only packaged food products, prepared meals, or food items intended for human consumption that are visible in the image.
+
+### Provenance Tracking
+
+For each detected item, you MUST set:
+
+1. **\`source\`** field (required):
+   - \`"visual"\` - Item is clearly visible in the image (e.g., salmon slice, egg yolk, cheese on pizza)
+   - \`"ocr"\` - Item name/type read from visible text, labels, or packaging
+   - \`"recipe_inference"\` - Item inferred as typical component of a well-known recipe/dish
+
+2. **\`parentDish\`** field (required):
+   - Set to the dish name (e.g., "Acarajé", "Caesar Salad", "Pizza") if this item is a component
+   - Set to \`null\` for standalone products or dishes themselves
+
+3. **\`confidence\`** field (required):
+   - Confidence that this item IS PRESENT in the scene (High/Medium/Low)
+
+4. **\`animalConfidence\`** field (required):
+   - Confidence about the animal-derived status judgment (High/Medium/Low)
+   - Can differ from presence confidence (e.g., high confidence item is present, medium confidence it contains dairy)
+
+### CRITICAL RULE: Ingredient-Level Decomposition
+
+🚨 **MANDATORY DECOMPOSITION FOR ALL COMPOSITE DISHES** 🚨
+
+**For ANY prepared dish, meal, or culturally significant food**, you MUST decompose it into **individual ingredients** and evaluate each separately.
+
+{{INCLUDE:user_context_template}}
+
+### Output Format
+
+Return ONLY valid JSON with NO markdown formatting, NO code blocks, NO backticks.
+
+\`\`\`json
+{
+  "items": [
+    {
+      "name": "string",
+      "likelyHasAnimalIngredients": boolean,
+      "animalConfidence": "High" | "Medium" | "Low",
+      "confidence": "High" | "Medium" | "Low",
+      "source": "visual" | "ocr" | "recipe_inference",
+      "parentDish": "string | null",
+      "reasoning": "string"
+    }
+  ],
+  "summary": "string"
+}
+\`\`\`
+
+### Summary Guidelines
+
+The summary MUST be:
+- **Strictly visual and factual** - describe only what you see
+- **Neutral tone** - no emotional language
+- **No animal ingredient mentions** - don't list ingredients
+- **No welfare or ethical commentary** - purely descriptive
+
+✓ GOOD: "The image shows a Japanese rice bowl (donburi) with salmon, egg, and rice."
+✓ GOOD: "The image displays a Georgian Khachapuri bread boat with cheese, egg, and butter."
+✗ BAD: "The image contains several animal-derived products including..."
+✗ BAD: "This dish raises welfare concerns due to..."
+
+Please provide your analysis in {{LANGUAGE}}.`
+};
+
 /**
- * Load a prompt fragment from markdown file
+ * Load a prompt fragment
  * 
- * @param fragmentName - Name of the fragment (matches filename without .md extension)
+ * @param fragmentName - Name of the fragment
  * @returns The raw fragment template as a string
  */
 export async function loadFragment(fragmentName: string): Promise<string> {
-  try {
-    const fragmentPath = new URL(`./prompts/fragments/${fragmentName}.md`, import.meta.url);
-    console.log(`[loadFragment] Attempting to load fragment: ${fragmentName}`);
-    console.log(`[loadFragment] Resolved URL: ${fragmentPath.href}`);
-    console.log(`[loadFragment] Resolved pathname: ${fragmentPath.pathname}`);
-    console.log(`[loadFragment] CWD: ${Deno.cwd()}`);
-    
-    // Check if file exists before reading
-    try {
-      const stat = await Deno.stat(fragmentPath.pathname);
-      console.log(`[loadFragment] File exists: ${stat.isFile}, size: ${stat.size} bytes`);
-    } catch (statError) {
-      console.error(`[loadFragment] File does not exist or cannot be accessed at: ${fragmentPath.pathname}`);
-      throw statError;
-    }
-    
-    const fragment = await Deno.readTextFile(fragmentPath.pathname);
-    
-    if (!fragment) {
-      console.error(`Fragment '${fragmentName}' is empty`);
-      throw new Error(`Empty fragment: ${fragmentName}`);
-    }
-    
-    console.log(`[loadFragment] Successfully loaded fragment '${fragmentName}' (${fragment.length} chars)`);
-    return fragment;
-  } catch (error) {
-    console.error(`Failed to load fragment '${fragmentName}':`, error);
-    if (error && typeof error === 'object') {
-      console.error(`Error details:`, { 
-        name: 'name' in error ? error.name : 'unknown',
-        code: 'code' in error ? error.code : 'unknown'
-      });
-    }
-    throw new Error(`Failed to load fragment: ${fragmentName}`);
+  console.log(`[loadFragment] Loading embedded fragment: ${fragmentName}`);
+  
+  const fragment = FRAGMENTS[fragmentName];
+  
+  if (!fragment) {
+    console.error(`Fragment '${fragmentName}' not found in embedded fragments`);
+    throw new Error(`Fragment not found: ${fragmentName}`);
   }
+  
+  console.log(`[loadFragment] Successfully loaded fragment '${fragmentName}' (${fragment.length} chars)`);
+  return fragment;
 }
 
 /**
- * Load a prompt template from markdown file
+ * Load a prompt template
  * 
- * @param promptName - Name of the prompt (matches filename without .md extension)
+ * @param promptName - Name of the prompt
  * @returns The raw prompt template as a string
  */
 export async function loadPromptTemplate(promptName: string): Promise<string> {
-  try {
-    const promptPath = new URL(`./prompts/${promptName}.md`, import.meta.url);
-    console.log(`[loadPromptTemplate] Attempting to load prompt: ${promptName}`);
-    console.log(`[loadPromptTemplate] Resolved URL: ${promptPath.href}`);
-    console.log(`[loadPromptTemplate] Resolved pathname: ${promptPath.pathname}`);
-    console.log(`[loadPromptTemplate] CWD: ${Deno.cwd()}`);
-    
-    // Check if file exists before reading
-    try {
-      const stat = await Deno.stat(promptPath.pathname);
-      console.log(`[loadPromptTemplate] File exists: ${stat.isFile}, size: ${stat.size} bytes`);
-    } catch (statError) {
-      console.error(`[loadPromptTemplate] File does not exist or cannot be accessed at: ${promptPath.pathname}`);
-      throw statError;
-    }
-    
-    const template = await Deno.readTextFile(promptPath.pathname);
-    
-    if (!template) {
-      console.error(`Prompt template '${promptName}' is empty`);
-      throw new Error(`Empty prompt template: ${promptName}`);
-    }
-    
-    console.log(`[loadPromptTemplate] Successfully loaded prompt '${promptName}' (${template.length} chars)`);
-    return template;
-  } catch (error) {
-    console.error(`Failed to load prompt template '${promptName}':`, error);
-    if (error && typeof error === 'object') {
-      console.error(`Error details:`, { 
-        name: 'name' in error ? error.name : 'unknown',
-        code: 'code' in error ? error.code : 'unknown'
-      });
-    }
-    throw new Error(`Failed to load prompt template: ${promptName}`);
+  console.log(`[loadPromptTemplate] Loading embedded prompt: ${promptName}`);
+  
+  const template = PROMPTS[promptName];
+  
+  if (!template) {
+    console.error(`Prompt template '${promptName}' not found in embedded prompts`);
+    throw new Error(`Prompt template not found: ${promptName}`);
   }
+  
+  console.log(`[loadPromptTemplate] Successfully loaded prompt '${promptName}' (${template.length} chars)`);
+  return template;
 }
 
 /**
