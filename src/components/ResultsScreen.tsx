@@ -493,11 +493,11 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
                   color: appConfig.ethicalLens.colors[sliderValue[0] as 1 | 2 | 3 | 4 | 5]
                 }}
               >
-                {sliderValue[0] === 1 ? t('ethicalLens.level1') :
-                 sliderValue[0] === 2 ? t('ethicalLens.level2') :
-                 sliderValue[0] === 3 ? t('ethicalLens.level3') :
-                 sliderValue[0] === 4 ? t('ethicalLens.level4') :
-                 t('ethicalLens.level5')}
+                {sliderValue[0] === 1 ? t('ethicalLens.desc1') :
+                 sliderValue[0] === 2 ? t('ethicalLens.desc2') :
+                 sliderValue[0] === 3 ? t('ethicalLens.desc3') :
+                 sliderValue[0] === 4 ? t('ethicalLens.desc4') :
+                 t('ethicalLens.desc5')}
               </p>
             </div>
             <div className="relative">
