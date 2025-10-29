@@ -2,8 +2,8 @@
 
 <!--
 Prompt-ID: suggest_ethical_swap
-Version: v2.8
-Stage: 4
+Version: v2.9
+Stage: 5
 Last-Updated: 2025-10-29
 Maintainer: Lovable AI Sync Process
 -->
