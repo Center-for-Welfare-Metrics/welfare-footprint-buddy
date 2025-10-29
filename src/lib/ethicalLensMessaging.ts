@@ -18,7 +18,7 @@ interface EthicalLensGuidance {
 }
 
 const ETHICAL_LENS_GUIDANCE: Record<number, EthicalLensGuidance> = {
-  1: { // Concerned Omnivore
+  1: { // Welfarist (Higher-Welfare Omnivore)
     focus: "Choose the same product, but from higher-welfare sources.",
     examples: [
       "Look for labels such as Certified Humane, RSPCA Assured, Global Animal Partnership, or pasture-raised certifications.",
@@ -28,42 +28,42 @@ const ETHICAL_LENS_GUIDANCE: Record<number, EthicalLensGuidance> = {
     tone: "Practical and compassionate — encourages improvement without moral judgment.",
     uiHint: "Display welfare labels or trusted certification logos near this section."
   },
-  2: { // Strong Welfare Standards
-    focus: "Support producers with transparent and science-based welfare programs.",
+  2: { // Reducetarian (Lower Consumption)
+    focus: "Actively reduce animal product consumption — e.g., halve meat intake or skip it several days a week.",
     examples: [
-      "Seek producers who perform independent audits and publish measurable welfare outcomes (e.g., mortality, space allowance).",
-      "Choose suppliers that improve slaughter methods, reduce transport stress, and follow recognized welfare standards.",
-      "When buying processed foods, prefer brands sourcing from certified high-welfare systems."
+      "Focus first on high-suffering or high-volume products (e.g., industrial chicken, pork, or farmed fish).",
+      "Reduce frequency and quantity rather than blending animal and non-animal products.",
+      "Lowering demand means fewer animals bred into suffering conditions."
     ],
     tone: "Confident and informative — emphasizes measurable welfare progress.",
-    uiHint: "Highlight animal welfare metrics and certification summaries."
+    uiHint: "Highlight reduction strategies and impact metrics."
   },
-  3: { // Reducitarian
-    focus: "Reduce total animal use while maintaining food enjoyment.",
+  3: { // Flexitarian (Mostly Plant-Based)
+    focus: "Adopt a primarily plant-based diet while allowing occasional humane-source animal products.",
     examples: [
-      "Look for hybrid or blended products that combine animal and plant ingredients (e.g., 50% dairy and 50% oat-based cheese).",
-      "Choose smaller portion sizes of animal-based products and complement with plant proteins like legumes, tofu, or nuts.",
-      "Try meat or dairy alternatives a few times a week to gradually reduce demand for animal products."
+      "Make plant foods the default; include limited dairy, eggs, or fish from certified sources.",
+      "Recognize that even 'humane' systems involve harm (e.g., calf separation, slaughter).",
+      "Emphasize practicality and continuous harm reduction rather than strict elimination."
     ],
     tone: "Encouraging and progress-oriented — emphasizes balanced steps rather than elimination.",
     uiHint: "Include sliders or visual indicators showing reduced animal content."
   },
-  4: { // Vegetarian - Minimal Animal Use
-    focus: "Avoid meat and fish while maintaining foods with minimal animal byproducts (e.g., dairy or eggs).",
+  4: { // Vegetarian (No Slaughter)
+    focus: "Eliminate all meat, fish, and slaughter byproducts while continuing non-lethal animal products.",
     examples: [
-      "Replace meat with eggs, cheese, or plant-based protein sources.",
-      "When using dairy, prefer organic or pasture-based milk and cheese certified for higher welfare.",
+      "Continue consuming dairy and eggs — ideally from higher-welfare farms.",
+      "Remove the most direct source of suffering (killing) while supporting gentler systems.",
       "Explore vegetarian versions of common meals (e.g., veggie burgers, lentil stews, vegetable lasagna)."
     ],
     tone: "Empathetic and educational — recognizes continuity while promoting reduced harm.",
     uiHint: "Suggest vegetarian alternatives of the detected product."
   },
-  5: { // Vegan
-    focus: "Eliminate all animal ingredients by selecting plant-based or cultured alternatives.",
+  5: { // Vegan (No Animal Use)
+    focus: "Avoid all animal-derived products in food, clothing, and daily life.",
     examples: [
+      "No funding of breeding, confinement, or animal use — the most consistent stance.",
       "Choose plant-based milks, yogurts, cheeses, and meats made from soy, oats, or nuts.",
-      "Verify vegan certifications (e.g., Vegan Society, Certified Plant-Based) to ensure no hidden animal derivatives.",
-      "Explore cultured or fermentation-based foods that avoid animal farming entirely."
+      "Verify vegan certifications (e.g., Vegan Society, Certified Plant-Based) to ensure no hidden animal derivatives."
     ],
     tone: "Inspiring and future-focused — celebrates innovation and compassion.",
     uiHint: "Show plant-based brands or product swaps directly beneath the explanation."
@@ -106,11 +106,11 @@ export function getEthicalLensGuidance(level: number): EthicalLensGuidance | nul
  */
 export function getEthicalLensName(level: number): string {
   const names: Record<number, string> = {
-    1: "Concerned Omnivore",
-    2: "Strong Welfare Standards",
-    3: "Reducitarian",
-    4: "Vegetarian – Minimal Animal Use",
-    5: "Vegan – No Animal Use"
+    1: "Welfarist",
+    2: "Reducetarian",
+    3: "Flexitarian",
+    4: "Vegetarian",
+    5: "Vegan"
   };
   return names[level] || "Unknown";
 }
