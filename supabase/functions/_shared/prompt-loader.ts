@@ -15,6 +15,29 @@
  */
 
 /**
+ * Load a prompt fragment from markdown file
+ * 
+ * @param fragmentName - Name of the fragment (matches filename without .md extension)
+ * @returns The raw fragment template as a string
+ */
+export async function loadFragment(fragmentName: string): Promise<string> {
+  try {
+    const path = new URL(`./prompts/fragments/${fragmentName}.md`, import.meta.url).pathname;
+    const fragment = await Deno.readTextFile(path);
+    
+    if (!fragment) {
+      console.error(`Fragment '${fragmentName}' is empty`);
+      throw new Error(`Empty fragment: ${fragmentName}`);
+    }
+    
+    return fragment;
+  } catch (error) {
+    console.error(`Failed to load fragment '${fragmentName}':`, error);
+    throw new Error(`Failed to load fragment: ${fragmentName}`);
+  }
+}
+
+/**
  * Load a prompt template from markdown file
  * 
  * @param promptName - Name of the prompt (matches filename without .md extension)
@@ -73,9 +96,10 @@ export function substituteVariables(
 }
 
 /**
- * Load a prompt template and substitute variables
+ * Load a prompt template and substitute variables, including fragment inclusion
  * 
  * This is the main function you'll use to get a ready-to-use prompt.
+ * Supports fragment inclusion via {{INCLUDE:fragment_name}} syntax.
  * 
  * @param promptName - Name of the prompt
  * @param variables - Object containing variable name-value pairs
@@ -91,6 +115,22 @@ export async function loadAndProcessPrompt(
   promptName: string,
   variables: Record<string, string | boolean | undefined> = {}
 ): Promise<string> {
-  const template = await loadPromptTemplate(promptName);
+  let template = await loadPromptTemplate(promptName);
+  
+  // Process fragment includes: {{INCLUDE:fragment_name}}
+  const includeRegex = /\{\{INCLUDE:(\w+)\}\}/g;
+  const includeMatches = template.matchAll(includeRegex);
+  
+  for (const match of includeMatches) {
+    const fragmentName = match[1];
+    try {
+      const fragment = await loadFragment(fragmentName);
+      template = template.replace(match[0], fragment);
+    } catch (error) {
+      console.error(`Failed to include fragment '${fragmentName}':`, error);
+      // Leave the include directive in place if fragment can't be loaded
+    }
+  }
+  
   return substituteVariables(template, variables);
 }
