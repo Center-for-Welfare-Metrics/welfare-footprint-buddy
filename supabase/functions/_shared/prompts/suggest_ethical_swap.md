@@ -347,17 +347,38 @@ Always include confidence level (High/Medium/Low) and brief reasoning summary.
 
 #### Lens 4 – Vegetarian (No Slaughter)
 
-Eliminate all meat, fish, and slaughter byproducts (e.g., gelatin, lard, rennet).  
-- Continue consuming non-lethal animal products like dairy and eggs — ideally from higher-welfare farms.  
-- Focus: removing the most direct source of suffering (killing) while supporting gentler, non-lethal systems.
+Eliminate all meat, fish, and slaughter by-products while continuing the use of non-lethal animal products such as dairy, eggs, or honey — **prioritizing high-welfare, certified sources**.
 
-**🚨 CRITICAL: ethicalLensPosition MUST BE EXACTLY:** "Minimal Animal Use"
-
-**DO NOT use "Reducing Animal Suffering" or any other variation. Use EXACTLY "Minimal Animal Use".**
+**ethicalLensPosition:** "Minimal Animal Use"
 
 **generalNote (Required Context for Lens 4):**
 
-Use transparent, gently aspirational language that recognizes the user's commitment to drastically reducing animal use by avoiding slaughter entirely. Emphasize that this lens honors vegetarian principles while being open to humane, non-lethal animal byproducts.
+This lens focuses on avoiding slaughter entirely while encouraging consumption of verified high-welfare non-lethal animal by-products. The primary goal is not culinary similarity, but **improving the welfare conditions of the animals providing those by-products**.
+
+**Examples of what counts as improved welfare:**
+- Dairy from certified humane or pasture-based farms with low-stress milking and calf-care protocols.  
+- Eggs from enriched or cage-free environments where hens retain mobility and natural behaviors.  
+- Honey from bee-keepers using low-stress extraction and hive welfare certifications.
+
+**For products like ricotta, paneer, yogurt, or honey:**
+- Recommend versions with welfare certifications (e.g., Certified Humane Dairy, AHA Certified Eggs).  
+- When relevant, specify welfare-related production aspects (e.g., no forced weaning, grazing access, gentle handling).  
+- Avoid listing alternative food categories (e.g., other cheeses) unless they illustrate distinct welfare standards within the same category.
+
+**What TO Suggest for Lens 4:**
+- Same product type from certified or high-welfare dairies or apiaries.  
+- Vegetarian dishes prepared with verified high-welfare eggs or milk.  
+- Plant-forward but still vegetarian items (contains dairy/eggs/honey) when no certification exists.
+
+**Examples of CORRECT Lens 4 Suggestions:**
+- Product: "Ricotta cheese" → Suggest "Certified Humane ricotta," "Organic pasture-based ricotta," "Ricotta from low-stress milking dairies."  
+- Product: "Honey" → Suggest "Honey from bee-friendly apiaries with low-stress harvesting."  
+- Product: "Egg pasta" → Suggest "Pasta made with Certified Humane eggs" or "Free-range egg pasta."
+
+**Reasoning Quality for Lens 4:**  
+Focus on *how* each suggested source mitigates the key welfare concern (handling stress, confinement, milking pain, etc.), not on culinary similarity.  
+
+Tone: Transparent, gentle, and welfare-anchored — "These options preserve vegetarian values while improving the lives of the animals providing non-lethal products."
 
 **🚨 CRITICAL WARNING - NEVER USE THESE EXACT PHRASES IN LENS 4 generalNote:**
 - ❌ "fully plant-based" (THIS WILL CAUSE VALIDATION ERROR)
@@ -398,32 +419,6 @@ This lens is STRICTLY for users who want to avoid ALL slaughtered animal product
 5. ✅ **ONLY suggest vegetarian products** (plant-based + non-lethal animal byproducts)
 6. ✅ **Allowed animal ingredients: dairy, eggs, honey ONLY** (no slaughter required)
 7. ✅ **Focus on plant proteins: legumes, nuts, grains, mushrooms, tofu, tempeh, seitan**
-
-**What TO Suggest for Lens 4:**
-- Vegetarian versions with dairy/eggs (e.g., vegetable soup with egg noodles, lentil stew with parmesan)
-- Plant-based proteins with optional dairy/eggs (e.g., bean burgers with cheese, veggie pizza with mozzarella)
-- Whole-food plant-based meals with honey, milk, or eggs (e.g., oatmeal with honey and milk, pancakes with eggs)
-- Meat alternatives that may contain eggs/dairy (e.g., vegetarian nuggets with egg binder, veggie sausages with milk protein)
-
-**Examples of CORRECT Lens 4 Suggestions:**
-- Product: "Chicken soup" → Suggest: "Vegetable soup with egg noodles", "Lentil soup with parmesan"
-- Product: "Beef burger" → Suggest: "Black bean burger with cheddar cheese", "Mushroom burger with egg aioli"
-- Product: "Chicken nuggets" → Suggest: "Vegetarian nuggets (may contain egg/dairy)", "Tofu nuggets with honey mustard"
-- Product: "Anchovy pizza" → Suggest: "Margherita pizza with mozzarella", "Veggie pizza with feta cheese"
-
-**Examples of INCORRECT Lens 4 Suggestions (NEVER DO THIS):**
-- ❌ "Vegetable soup with chicken broth" (contains slaughtered animal)
-- ❌ "Pizza with anchovies" (fish requires slaughter)
-- ❌ "Gelatin-based dessert" (gelatin requires slaughter)
-- ❌ "Beyond Meat burger (100% vegan)" (no animal products - this is Lens 5)
-
-**Suggestions:**
-
-Recommend predominantly plant-based vegetarian options that may contain non-lethal animal byproducts. Look for:
-- Vegetarian products with dairy, eggs, or honey (e.g., veggie lasagna with ricotta, bean burritos with cheese)
-- Plant proteins that don't require slaughter (legumes, nuts, grains, mushrooms, soy)
-- Vegetarian alternatives where eggs/dairy serve as binders or flavor enhancers
-- Traditional vegetarian dishes from various cuisines
 
 **CRITICAL:** Every suggestion MUST be vegetarian (no meat, fish, poultry, or gelatin). Products may contain dairy, eggs, or honey.
 
