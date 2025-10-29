@@ -1,6 +1,11 @@
+<!-- SOURCE-OF-TRUTH: This is the canonical runtime prompt. Documentation copies under /docs/ are read-only references. -->
+
 <!--
-NOTE: Runtime source of truth. Embedded during build for Supabase Edge deployment.
-This file is the authoritative prompt definition used at runtime.
+Prompt-ID: confirm_refine_items
+Version: v1.1
+Stage: 2
+Last-Updated: 2025-10-29
+Maintainer: Lovable AI Sync Process
 -->
 
 # Confirm/Refine Items Prompt
@@ -388,3 +393,8 @@ Return ONLY valid JSON with this exact structure:
 ## Response in User's Language
 
 Output the entire JSON response in {{LANGUAGE}}, including all text fields (name, reasoning, summary, userEdits details).
+
+<!--
+DO NOT EDIT INLINE IN EDGE FUNCTIONS.
+Use loadAndProcessPrompt() to load the latest version.
+-->

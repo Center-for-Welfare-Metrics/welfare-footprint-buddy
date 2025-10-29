@@ -1,6 +1,11 @@
+<!-- SOURCE-OF-TRUTH: This is the canonical runtime prompt fragment. Documentation copies under /docs/ are read-only references. -->
+
 <!--
-NOTE: Runtime source of truth. Embedded during build for Supabase Edge deployment.
-This file is the authoritative prompt fragment used at runtime.
+Prompt-ID: user_context_template
+Version: v1.0
+Fragment: true
+Last-Updated: 2025-10-29
+Maintainer: Lovable AI Sync Process
 -->
 
 ### ⚠️ Critical - User-Provided Context
@@ -35,3 +40,8 @@ The user has provided the following verified information about this product:
 - Ingredient presence/absence = Based on VISUAL ANALYSIS + EXPLICIT ingredient mentions
 - Production methods = Based on USER CONTEXT about welfare conditions
 - Welfare concerns = Adjusted based on USER CONTEXT about production systems
+
+<!--
+DO NOT EDIT INLINE IN EDGE FUNCTIONS.
+Use loadAndProcessPrompt() to load the latest version.
+-->

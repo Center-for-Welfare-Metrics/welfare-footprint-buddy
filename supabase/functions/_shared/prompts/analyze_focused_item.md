@@ -1,6 +1,11 @@
+<!-- SOURCE-OF-TRUTH: This is the canonical runtime prompt. Documentation copies under /docs/ are read-only references. -->
+
 <!--
-NOTE: Runtime source of truth. Embedded during build for Supabase Edge deployment.
-This file is the authoritative prompt definition used at runtime.
+Prompt-ID: analyze_focused_item
+Version: v1.2
+Stage: 3
+Last-Updated: 2025-10-29
+Maintainer: Lovable AI Sync Process
 -->
 
 # Focused Item Welfare Analysis Prompt
@@ -160,3 +165,8 @@ Return ONLY valid JSON with this exact structure:
 ### Language Requirement
 
 Respond in {{LANGUAGE}} language. All text fields must be in {{LANGUAGE}}.
+
+<!--
+DO NOT EDIT INLINE IN EDGE FUNCTIONS.
+Use loadAndProcessPrompt() to load the latest version.
+-->

@@ -1,3 +1,13 @@
+<!-- SOURCE-OF-TRUTH: This is the canonical runtime prompt. Documentation copies under /docs/ are read-only references. -->
+
+<!--
+Prompt-ID: analyze_user_material
+Version: v1.9
+Stage: 1
+Last-Updated: 2025-10-29
+Maintainer: Lovable AI Sync Process
+-->
+
 # Multi-Item Detection Prompt
 
 ## Metadata
@@ -639,3 +649,8 @@ The summary is ONLY for describing what you SEE visually, not for analyzing ingr
 ### Language Requirement
 
 Respond in {{LANGUAGE}} language. All text fields (name, reasoning, summary) must be in {{LANGUAGE}}.
+
+<!--
+DO NOT EDIT INLINE IN EDGE FUNCTIONS.
+Use loadAndProcessPrompt() to load the latest version.
+-->

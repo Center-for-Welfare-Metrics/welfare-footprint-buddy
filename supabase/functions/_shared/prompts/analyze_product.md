@@ -1,6 +1,11 @@
+<!-- SOURCE-OF-TRUTH: This is the canonical runtime prompt. Documentation copies under /docs/ are read-only references. -->
+
 <!--
-NOTE: Runtime source of truth. Embedded during build for Supabase Edge deployment.
-This file is the authoritative prompt definition used at runtime.
+Prompt-ID: analyze_product
+Version: v1.2
+Stage: 3
+Last-Updated: 2025-10-29
+Maintainer: Lovable AI Sync Process
 -->
 
 # Detailed Product Welfare Analysis Prompt
@@ -180,3 +185,8 @@ Respond in {{LANGUAGE}} language. All text fields must be in {{LANGUAGE}}.
 - If this is NOT a food product, set isFood to false and provide a brief explanation
 - If the product is entirely plant-based, set hasAnimalIngredients to false
 - If you cannot determine the product from the image, indicate low confidence
+
+<!--
+DO NOT EDIT INLINE IN EDGE FUNCTIONS.
+Use loadAndProcessPrompt() to load the latest version.
+-->

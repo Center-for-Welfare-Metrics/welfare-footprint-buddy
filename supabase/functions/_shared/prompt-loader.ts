@@ -47,6 +47,16 @@ The user has provided the following verified information about this product:
 - Welfare concerns = Adjusted based on USER CONTEXT about production systems`
 };
 
+// Prompt version metadata for audit trail
+const PROMPT_VERSIONS: Record<string, string> = {
+  analyze_user_material: 'v1.9',
+  confirm_refine_items: 'v1.1',
+  analyze_focused_item: 'v1.2',
+  analyze_product: 'v1.2',
+  suggest_ethical_swap: 'v1.0',
+  user_context_template: 'v1.0',
+};
+
 // Embedded prompt templates (first 500 lines to stay within limits)
 const PROMPTS: Record<string, string> = {
   analyze_user_material: `<!--
@@ -527,7 +537,8 @@ Return ONLY valid JSON:
  * @returns The raw fragment template as a string
  */
 export async function loadFragment(fragmentName: string): Promise<string> {
-  console.log(`[loadFragment] Loading embedded fragment: ${fragmentName}`);
+  const version = PROMPT_VERSIONS[fragmentName] || 'unknown';
+  console.log(`[PromptLoader] Loading fragment ${fragmentName} ${version} from _shared/prompts/fragments/`);
   
   const fragment = FRAGMENTS[fragmentName];
   
@@ -536,7 +547,7 @@ export async function loadFragment(fragmentName: string): Promise<string> {
     throw new Error(`Fragment not found: ${fragmentName}`);
   }
   
-  console.log(`[loadFragment] Successfully loaded fragment '${fragmentName}' (${fragment.length} chars)`);
+  console.log(`[PromptLoader] Successfully loaded fragment '${fragmentName}' ${version} (${fragment.length} chars)`);
   return fragment;
 }
 
@@ -547,7 +558,8 @@ export async function loadFragment(fragmentName: string): Promise<string> {
  * @returns The raw prompt template as a string
  */
 export async function loadPromptTemplate(promptName: string): Promise<string> {
-  console.log(`[loadPromptTemplate] Loading embedded prompt: ${promptName}`);
+  const version = PROMPT_VERSIONS[promptName] || 'unknown';
+  console.log(`[PromptLoader] Loading ${promptName} ${version} from _shared/prompts/`);
   
   const template = PROMPTS[promptName];
   
@@ -556,7 +568,7 @@ export async function loadPromptTemplate(promptName: string): Promise<string> {
     throw new Error(`Prompt template not found: ${promptName}`);
   }
   
-  console.log(`[loadPromptTemplate] Successfully loaded prompt '${promptName}' (${template.length} chars)`);
+  console.log(`[PromptLoader] Successfully loaded ${promptName} ${version} (${template.length} chars)`);
   return template;
 }
 

@@ -1,6 +1,11 @@
+<!-- SOURCE-OF-TRUTH: This is the canonical runtime prompt. Documentation copies under /docs/ are read-only references. -->
+
 <!--
-NOTE: Runtime source of truth. Embedded during build for Supabase Edge deployment.
-This file is the authoritative prompt definition used at runtime.
+Prompt-ID: suggest_ethical_swap
+Version: v1.0
+Stage: 4
+Last-Updated: 2025-10-29
+Maintainer: Lovable AI Sync Process
 -->
 
 # Ethical Product Swap Suggestions Prompt
@@ -337,3 +342,8 @@ Return ONLY valid JSON matching this schema:
   "generalNote": "string (overall context about this ethical lens position and welfare science limitations)"
 }
 ```
+
+<!--
+DO NOT EDIT INLINE IN EDGE FUNCTIONS.
+Use loadAndProcessPrompt() to load the latest version.
+-->
