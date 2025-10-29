@@ -2,7 +2,7 @@
 
 <!--
 Prompt-ID: suggest_ethical_swap
-Version: v1.0
+Version: v2.1
 Stage: 4
 Last-Updated: 2025-10-29
 Maintainer: Lovable AI Sync Process
@@ -42,9 +42,9 @@ Maintainer: Lovable AI Sync Process
 - Any text generation model supporting structured output
 
 **Versioning:**
-- **Version:** 2.0
-- **Last Updated:** 2025-01-22
-- **Change Log:** Consolidated ethical lens definitions from edge function into centralized prompt
+- **Version:** 2.1
+- **Last Updated:** 2025-10-29
+- **Change Log:** Added explicit forbidden language rules for generalNote in all lenses to prevent lens boundary violations.
 
 ---
 
@@ -111,6 +111,10 @@ Based on the user's selected ethical lens position ({{ETHICAL_LENS}}), apply the
 
 Use practical, encouraging language that acknowledges the user's commitment to improving animal welfare while continuing to consume animal products. Frame higher-welfare options as meaningful progress.
 
+**🚨 FORBIDDEN LANGUAGE in generalNote for Lens 1:**
+❌ DO NOT use: "plant-based", "vegan", "vegetarian", "reduce consumption", "eliminate animal", "tofu", "tempeh", "Beyond Meat", "lab-grown"
+✅ DO use: "high-welfare", "pasture-raised", "certified humane", "free-range", "better living conditions"
+
 **Example generalNote text (adapt to product context):**
 
 "You've chosen to prioritize animal welfare improvements — a meaningful step that can significantly reduce suffering.
@@ -169,6 +173,10 @@ Always include confidence level (High/Medium/Low) and brief reasoning summary ba
 
 Use informative, reassuring language that honors the user's commitment to robust animal welfare standards. Emphasize the tangible improvements certified products offer.
 
+**🚨 FORBIDDEN LANGUAGE in generalNote for Lens 2:**
+❌ DO NOT use: "plant-based", "vegan", "vegetarian", "tofu", "tempeh", "Beyond Meat", "Impossible", "lab-grown"
+✅ DO use: "certified humane", "welfare certified", "pasture-raised", "enriched environments", "verified welfare"
+
 **Example generalNote text (adapt to product context):**
 
 "You've selected strong welfare standards — a choice that prioritizes comprehensive improvements to animal lives.
@@ -204,6 +212,10 @@ Always include confidence level (High/Medium/Low) and brief reasoning summary.
 **generalNote (Required Context for Lens 3):**
 
 Use neutral, pragmatic language that acknowledges the user's goal to significantly reduce animal suffering while maintaining some familiar choices. Frame blended options as meaningful harm reduction.
+
+**🚨 FORBIDDEN LANGUAGE in generalNote for Lens 3:**
+❌ DO NOT use: "fully plant-based", "100% vegan", "zero animal", "Beyond Meat", "Impossible", "tofu only", "tempeh only"
+✅ DO use: "plant-animal blend", "reduced animal content", "hybrid product", "50% plant-based", "significantly reduced"
 
 **Example generalNote text (adapt to product context):**
 
@@ -243,6 +255,10 @@ Always include confidence level (High/Medium/Low) and brief reasoning summary.
 **generalNote (Required Context for Lens 4):**
 
 Use transparent, gently aspirational language that recognizes the user's commitment to drastically reducing animal use. Acknowledge the near-elimination of harm while being honest about remaining minor impacts.
+
+**🚨 CRITICAL - FORBIDDEN LANGUAGE IN generalNote for Lens 4:**
+- DO NOT use phrases like "fully plant-based", "100% vegan", "zero animal", "completely plant-based", "no animal ingredients"
+- DO use phrases like "90%+ plant-based", "mostly plant-based", "trace animal ingredients", "minimal animal content"
 
 **Example generalNote text (adapt to product context):**
 

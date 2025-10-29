@@ -53,7 +53,7 @@ const PROMPT_VERSIONS: Record<string, string> = {
   confirm_refine_items: 'v1.1',
   analyze_focused_item: 'v1.2',
   analyze_product: 'v1.2',
-  suggest_ethical_swap: 'v1.0',
+  suggest_ethical_swap: 'v2.1',
   user_context_template: 'v1.0',
 };
 
@@ -471,6 +471,10 @@ Focus EXCLUSIVELY on direct animal welfare and suffering-related aspects.
 - Certified Humane, Animal Welfare Approved, GAP Step 3+
 - Cage-free/pasture-raised eggs, grass-fed dairy, MSC certified fish
 
+**🚨 FORBIDDEN LANGUAGE in generalNote for Lens 1:**
+❌ DO NOT use: "plant-based", "vegan", "vegetarian", "reduce consumption", "eliminate animal", "tofu", "tempeh", "Beyond Meat"
+✅ DO use: "high-welfare", "pasture-raised", "certified humane", "free-range", "better living conditions"
+
 **If no high-welfare version exists:** State this, describe ideal system, suggest similar products with certifications. DO NOT fallback to plant-based.
 
 #### Lens 2 – Strong Welfare Standards
@@ -479,6 +483,10 @@ Focus EXCLUSIVELY on direct animal welfare and suffering-related aspects.
 **🚨 ABSOLUTE RULES:**
 ❌ NEVER suggest plant-based/vegan/vegetarian/lab-grown products
 ✅ ONLY suggest certified high-welfare or pasture-raised versions of SAME animal product
+
+**🚨 FORBIDDEN LANGUAGE in generalNote for Lens 2:**
+❌ DO NOT use: "plant-based", "vegan", "vegetarian", "tofu", "tempeh", "Beyond Meat", "Impossible"
+✅ DO use: "certified humane", "welfare certified", "pasture-raised", "enriched environments"
 
 #### Lens 3 – Minimal Animal Suffering
 **ethicalLensPosition:** "Minimal Animal Suffering"
@@ -489,6 +497,10 @@ Focus EXCLUSIVELY on direct animal welfare and suffering-related aspects.
 ✅ ONLY suggest hybrid/blended products (plant-animal mixes, reduced animal content)
 - 50% beef/50% mushroom blend, plant broth with small chicken amount
 
+**🚨 FORBIDDEN LANGUAGE in generalNote for Lens 3:**
+❌ DO NOT use: "fully plant-based", "100% vegan", "zero animal", "Beyond Meat", "Impossible", "tofu only"
+✅ DO use: "plant-animal blend", "reduced animal content", "hybrid product", "50% plant-based"
+
 #### Lens 4 – Minimal Animal Use
 **ethicalLensPosition:** "Minimal Animal Use"
 
@@ -496,6 +508,10 @@ Focus EXCLUSIVELY on direct animal welfare and suffering-related aspects.
 ❌ NEVER suggest fully vegan or 100% plant-based products (reserve for Lens 5)
 ✅ ONLY suggest 90%+ plant-based with trace animal ingredients
 - Vegetable soup with small chicken broth, bread with butter, pasta with egg
+
+**🚨 FORBIDDEN LANGUAGE in generalNote for Lens 4:**
+❌ DO NOT use: "fully plant-based", "100% vegan", "zero animal", "completely plant-based", "no animal ingredients"
+✅ DO use: "90%+ plant-based", "mostly plant-based", "trace animal ingredients", "minimal animal content"
 
 #### Lens 5 – Aim for Zero Animal Harm
 **ethicalLensPosition:** "Vegan Option Selected"
