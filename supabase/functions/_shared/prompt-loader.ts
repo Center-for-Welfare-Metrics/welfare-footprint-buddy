@@ -22,17 +22,28 @@
  */
 export async function loadFragment(fragmentName: string): Promise<string> {
   try {
-    const path = new URL(`./prompts/fragments/${fragmentName}.md`, import.meta.url).pathname;
-    const fragment = await Deno.readTextFile(path);
+    const fragmentPath = new URL(`./prompts/fragments/${fragmentName}.md`, import.meta.url);
+    console.log(`[loadFragment] Attempting to load fragment: ${fragmentName}`);
+    console.log(`[loadFragment] Resolved path: ${fragmentPath.pathname}`);
+    console.log(`[loadFragment] Full URL: ${fragmentPath.href}`);
+    
+    const fragment = await Deno.readTextFile(fragmentPath.pathname);
     
     if (!fragment) {
       console.error(`Fragment '${fragmentName}' is empty`);
       throw new Error(`Empty fragment: ${fragmentName}`);
     }
     
+    console.log(`[loadFragment] Successfully loaded fragment '${fragmentName}' (${fragment.length} chars)`);
     return fragment;
   } catch (error) {
     console.error(`Failed to load fragment '${fragmentName}':`, error);
+    if (error && typeof error === 'object') {
+      console.error(`Error details:`, { 
+        name: 'name' in error ? error.name : 'unknown',
+        code: 'code' in error ? error.code : 'unknown'
+      });
+    }
     throw new Error(`Failed to load fragment: ${fragmentName}`);
   }
 }
@@ -45,17 +56,28 @@ export async function loadFragment(fragmentName: string): Promise<string> {
  */
 export async function loadPromptTemplate(promptName: string): Promise<string> {
   try {
-    const path = new URL(`./prompts/${promptName}.md`, import.meta.url).pathname;
-    const template = await Deno.readTextFile(path);
+    const promptPath = new URL(`./prompts/${promptName}.md`, import.meta.url);
+    console.log(`[loadPromptTemplate] Attempting to load prompt: ${promptName}`);
+    console.log(`[loadPromptTemplate] Resolved path: ${promptPath.pathname}`);
+    console.log(`[loadPromptTemplate] Full URL: ${promptPath.href}`);
+    
+    const template = await Deno.readTextFile(promptPath.pathname);
     
     if (!template) {
       console.error(`Prompt template '${promptName}' is empty`);
       throw new Error(`Empty prompt template: ${promptName}`);
     }
     
+    console.log(`[loadPromptTemplate] Successfully loaded prompt '${promptName}' (${template.length} chars)`);
     return template;
   } catch (error) {
     console.error(`Failed to load prompt template '${promptName}':`, error);
+    if (error && typeof error === 'object') {
+      console.error(`Error details:`, { 
+        name: 'name' in error ? error.name : 'unknown',
+        code: 'code' in error ? error.code : 'unknown'
+      });
+    }
     throw new Error(`Failed to load prompt template: ${promptName}`);
   }
 }
