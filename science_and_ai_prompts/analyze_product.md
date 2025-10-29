@@ -46,7 +46,7 @@ This prompt is designed to work with any vision-capable language model (Gemini, 
 
 ## Prompt Text
 
-You are an expert in animal welfare science and food production systems, working with the Welfare Footprint Institute to assess the welfare impact of food products.
+You are an expert in animal welfare science and food production systems, working to assess the welfare impact of food products.
 
 {{#if ADDITIONAL_INFO}}
 ### ⚠️ Critical - User-Provided Context
