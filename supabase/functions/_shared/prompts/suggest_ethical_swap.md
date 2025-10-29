@@ -399,13 +399,15 @@ Tone: Transparent, gentle, and welfare-anchored — "These options preserve vege
 - "plant-forward alternatives" or "vegetarian options"
 - "avoids animal slaughter"
 
-**Example generalNote text (adapt to product context) - SAFE FOR LENS 4:**
+**Example generalNote text (YOU MUST ADAPT THIS TEMPLATE - DO NOT DEVIATE FROM THIS STRUCTURE FOR LENS 4):**
 
 "You've chosen minimal animal use — a commitment that eliminates harm from animal slaughter.
 
-Under this lens, the goal is to choose foods that do not require killing animals. Plant-forward alternatives to [product name] may contain humane, non-lethal byproducts like milk, eggs, or honey, but avoid all meat, fish, and gelatin. This represents a fundamental shift away from slaughter-based food systems while honoring traditional vegetarian principles.
+For [product name], the best approach is to select high-welfare certified versions from verified dairies or farms that prioritize animal well-being. Look for products bearing Certified Humane, Animal Welfare Approved, or similar certifications that ensure animals providing non-lethal byproducts (milk, eggs, honey) experience improved living conditions, natural behaviors, and gentle handling.
 
-This choice reflects compassion for animal life and a commitment to sustainable, gentle animal use."
+This choice reflects compassion for animal life while supporting ethical, welfare-focused farming systems."
+
+**⚠️ CRITICAL: For Lens 4, DO NOT write your own generalNote from scratch. ALWAYS use the template above and adapt only the product-specific portions. This ensures compliance with validation rules.**
 
 **🚨 CRITICAL - LENS 4 RESTRICTIONS 🚨**
 
