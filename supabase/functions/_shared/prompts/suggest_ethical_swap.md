@@ -173,7 +173,7 @@ This lens is STRICTLY for users who want to keep consuming animal products but s
 - Pasture-raised chicken/beef/pork (if product contains meat)
 - Grass-fed or organic dairy (if product contains dairy)
 - Free-range or enriched environment versions
-- Regenerative agriculture versions
+- Systems with documented welfare improvements (e.g., verified outdoor access, slower-growing breeds, enriched environments)
 - Marine Stewardship Council certified (for fish/seafood)
 
 **Examples of CORRECT Lens 1 Suggestions:**
