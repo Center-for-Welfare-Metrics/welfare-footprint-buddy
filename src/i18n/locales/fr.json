@@ -171,11 +171,11 @@
     "level3": "Flexitarien",
     "level4": "Végétarien",
     "level5": "Végétalien",
-    "desc1": "Même type de produit mais d'animaux élevés dans des conditions de haut bien-être.",
-    "desc2": "Produits animaux certifiés ou vérifiablement de bien-être supérieur répondant à plusieurs critères.",
-    "desc3": "Options hybrides ou mélangées qui réduisent l'impact global sur le bien-être.",
-    "desc4": "Options principalement à base de plantes avec seulement des traces d'ingrédients animaux.",
-    "desc5": "Produits entièrement sans animaux (à base de plantes, cultivés ou synthétiques).",
+    "desc1": "Omnivore à Meilleur Bien-être",
+    "desc2": "Consommation Réduite",
+    "desc3": "Principalement Végétal",
+    "desc4": "Sans Abattage",
+    "desc5": "Sans Utilisation Animale",
     "rangeStart": "Même Produit, Haut Bien-être",
     "rangeEnd": "Végétal/Cultivé Uniquement"
   }

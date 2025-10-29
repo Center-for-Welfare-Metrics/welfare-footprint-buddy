@@ -185,11 +185,11 @@
     "level3": "Flexitariano",
     "level4": "Vegetariano",
     "level5": "Vegano",
-    "desc1": "Mismo tipo de producto pero de animales criados bajo condiciones de alto bienestar.",
-    "desc2": "Productos animales certificados o verificablemente de mayor bienestar que cumplen múltiples criterios.",
-    "desc3": "Opciones híbridas o mezcladas que reducen el impacto general en el bienestar.",
-    "desc4": "Opciones principalmente de origen vegetal con solo trazas de ingredientes animales.",
-    "desc5": "Productos completamente libres de animales (de origen vegetal, cultivados o sintéticos).",
+    "desc1": "Omnívoro de Mayor Bienestar",
+    "desc2": "Menor Consumo",
+    "desc3": "Principalmente Vegetal",
+    "desc4": "Sin Sacrificio",
+    "desc5": "Sin Uso Animal",
     "rangeStart": "Mismo Producto, Alto Bienestar",
     "rangeEnd": "Solo Vegetal/Cultivado"
   }

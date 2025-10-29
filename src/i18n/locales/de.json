@@ -184,11 +184,11 @@
     "level3": "Flexitarier",
     "level4": "Vegetarier",
     "level5": "Veganer",
-    "desc1": "Gleiche Produktart, aber von Tieren, die unter hohen Tierwohl-Bedingungen aufgezogen wurden.",
-    "desc2": "Zertifizierte oder nachweislich höhere Tierwohl-Produkte, die mehrere Kriterien erfüllen.",
-    "desc3": "Hybrid- oder gemischte Optionen, die die Gesamtauswirkung auf das Tierwohl reduzieren.",
-    "desc4": "Meist pflanzliche Optionen mit nur Spuren tierischer Zutaten.",
-    "desc5": "Vollständig tierfreie Produkte (pflanzlich, kultiviert oder synthetisch).",
+    "desc1": "Allesser mit Höherem Tierwohl",
+    "desc2": "Geringerer Verbrauch",
+    "desc3": "Überwiegend Pflanzlich",
+    "desc4": "Keine Schlachtung",
+    "desc5": "Keine Tiernutzung",
     "rangeStart": "Gleiches Produkt, Hohes Tierwohl",
     "rangeEnd": "Nur Pflanzlich/Kultiviert"
   }
