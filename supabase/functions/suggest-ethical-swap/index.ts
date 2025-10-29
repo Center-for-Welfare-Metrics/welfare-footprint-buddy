@@ -60,14 +60,15 @@ function validateInput(body: any): { valid: boolean; data?: ValidatedInput; erro
 
 /**
  * Validate that AI suggestions respect lens boundaries
- * Returns array of violation messages (empty if valid)
+ * Returns object with violations array and warnings array
  */
-function validateLensBoundaries(response: any, ethicalLens: number): string[] {
+function validateLensBoundaries(response: any, ethicalLens: number): { violations: string[], warnings: string[] } {
   const violations: string[] = [];
+  const warnings: string[] = [];
   const suggestions = response.suggestions || [];
   
-  // Define forbidden keywords for each lens
-  const forbiddenPatterns: Record<number, RegExp[]> = {
+  // Define HARD forbidden patterns (fatal violations) for each lens
+  const hardForbiddenPatterns: Record<number, RegExp[]> = {
     1: [
       /plant-based/i,
       /vegan/i,
@@ -98,11 +99,11 @@ function validateLensBoundaries(response: any, ethicalLens: number): string[] {
       /cultured meat/i,
     ],
     3: [
-      /fully plant-based/i,
+      /fully\s+plant[-\s]?based/i,
       /100%\s*(plant-based|vegan)/i,
-      /completely plant-based/i,
-      /entirely plant-based/i,
-      /all plant-based/i,
+      /completely\s+plant[-\s]?based/i,
+      /entirely\s+plant[-\s]?based/i,
+      /all\s+plant[-\s]?based/i,
       /beyond meat/i,
       /impossible burger/i,
       /no animal.*ingredient/i,
@@ -110,44 +111,86 @@ function validateLensBoundaries(response: any, ethicalLens: number): string[] {
       /animal-free/i,
     ],
     4: [
-      /fully plant-based/i,
+      /fully\s+plant[-\s]?based/i,
       /100%\s*(plant-based|vegan)/i,
-      /completely plant-based/i,
-      /entirely plant-based/i,
-      /all plant-based/i,
+      /completely\s+plant[-\s]?based/i,
+      /entirely\s+plant[-\s]?based/i,
+      /all\s+plant[-\s]?based/i,
       /zero animal/i,
       /animal-free/i,
       /no animal.*ingredient/i,
     ],
   };
   
-  const patterns = forbiddenPatterns[ethicalLens];
-  if (!patterns) return violations; // Lens 5 has no restrictions
+  // Define ALLOWED patterns (these should NOT trigger violations or warnings)
+  const allowedPatterns: Record<number, RegExp[]> = {
+    3: [
+      /mostly\s+plant[-\s]?based/i,
+      /primarily\s+plant[-\s]?based/i,
+      /plant[-\s]?forward/i,
+      /mainly\s+vegetarian/i,
+      /plant[-\s]?animal\s+blend/i,
+      /reduced[-\s]?animal/i,
+    ],
+    4: [
+      /mostly\s+plant[-\s]?based/i,
+      /primarily\s+plant[-\s]?based/i,
+      /plant[-\s]?forward/i,
+      /mainly\s+vegetarian/i,
+      /non-lethal\s+animal/i,
+    ],
+  };
+  
+  const hardPatterns = hardForbiddenPatterns[ethicalLens];
+  const allowed = allowedPatterns[ethicalLens] || [];
+  
+  if (!hardPatterns) return { violations, warnings }; // Lens 5 has no restrictions
+  
+  // Helper to check if text matches any allowed pattern
+  const isAllowedPhrase = (text: string): boolean => {
+    return allowed.some(pattern => pattern.test(text));
+  };
   
   // Check each suggestion
   suggestions.forEach((suggestion: any, index: number) => {
-    const textToCheck = `${suggestion.name} ${suggestion.description} ${suggestion.reasoning}`.toLowerCase();
+    const textToCheck = `${suggestion.name} ${suggestion.description} ${suggestion.reasoning}`;
     
-    patterns.forEach(pattern => {
-      if (pattern.test(textToCheck)) {
+    hardPatterns.forEach(pattern => {
+      const match = textToCheck.match(pattern);
+      if (match && !isAllowedPhrase(textToCheck)) {
+        const matchedPhrase = match[0];
+        console.error(`🚫 HARD VIOLATION in Suggestion ${index + 1}:`, {
+          suggestionName: suggestion.name,
+          matchedPhrase,
+          pattern: pattern.toString(),
+          lens: ethicalLens
+        });
         violations.push(
-          `Suggestion ${index + 1} ("${suggestion.name}") contains forbidden content for Lens ${ethicalLens}: matched pattern ${pattern}`
+          `Suggestion ${index + 1} ("${suggestion.name}") contains forbidden phrase "${matchedPhrase}" for Lens ${ethicalLens}: matched pattern ${pattern}`
         );
       }
     });
   });
   
-  // Also check generalNote
-  const generalNote = (response.generalNote || '').toLowerCase();
-  patterns.forEach(pattern => {
-    if (pattern.test(generalNote)) {
+  // Check generalNote
+  const generalNote = response.generalNote || '';
+  hardPatterns.forEach(pattern => {
+    const match = generalNote.match(pattern);
+    if (match && !isAllowedPhrase(generalNote)) {
+      const matchedPhrase = match[0];
+      console.error(`🚫 HARD VIOLATION in generalNote:`, {
+        matchedPhrase,
+        pattern: pattern.toString(),
+        lens: ethicalLens,
+        generalNotePreview: generalNote.substring(0, 200)
+      });
       violations.push(
-        `generalNote contains forbidden content for Lens ${ethicalLens}: matched pattern ${pattern}`
+        `generalNote contains forbidden phrase "${matchedPhrase}" for Lens ${ethicalLens}: matched pattern ${pattern}`
       );
     }
   });
   
-  return violations;
+  return { violations, warnings };
 }
 
 // Initialize AI Handler once
@@ -295,16 +338,23 @@ serve(async (req) => {
 
       
       // CRITICAL VALIDATION: Check for lens boundary violations
-      const violations = validateLensBoundaries(parsedResponse, ethicalLens);
-      if (violations.length > 0) {
-        console.error(`❌ LENS BOUNDARY VIOLATIONS DETECTED FOR LENS ${ethicalLens}:`, violations);
+      const validationResult = validateLensBoundaries(parsedResponse, ethicalLens);
+      
+      // Log warnings (soft issues) but don't block
+      if (validationResult.warnings.length > 0) {
+        console.warn(`⚠️ LENS BOUNDARY WARNINGS FOR LENS ${ethicalLens}:`, validationResult.warnings);
+      }
+      
+      // Hard violations block the response
+      if (validationResult.violations.length > 0) {
+        console.error(`❌ LENS BOUNDARY VIOLATIONS DETECTED FOR LENS ${ethicalLens}:`, validationResult.violations);
         return new Response(
           JSON.stringify({ 
             success: false, 
             error: { 
               message: 'Lens boundary violation',
               details: `AI generated suggestions that violate Lens ${ethicalLens} boundaries. Please try again.`,
-              violations
+              violations: validationResult.violations
             }
           }),
           { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
