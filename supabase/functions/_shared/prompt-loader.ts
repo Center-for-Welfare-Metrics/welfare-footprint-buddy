@@ -53,7 +53,7 @@ const PROMPT_VERSIONS: Record<string, string> = {
   confirm_refine_items: 'v1.1',
   analyze_focused_item: 'v1.2',
   analyze_product: 'v1.2',
-  suggest_ethical_swap: 'v2.2',
+  suggest_ethical_swap: 'v2.3',
   user_context_template: 'v1.0',
 };
 
@@ -554,10 +554,16 @@ Focus EXCLUSIVELY on direct animal welfare and suffering-related aspects.
 
 **CRITICAL:** This lens is STRICTLY for HYBRID/BLENDED products containing BOTH plant AND animal ingredients.
 
+**🚨 WARNING - VALIDATION WILL FAIL IF YOU USE THESE PHRASES IN generalNote:**
+❌ "fully plant-based" ← NEVER USE THIS
+❌ "100% plant-based" ← NEVER USE THIS
+❌ "completely plant" ← NEVER USE THIS
+✅ Instead say: "plant-animal blends", "reduced-animal products", "hybrid options with reduced animal content"
+
 **🚨 ABSOLUTE RULES:**
 ❌ NEVER suggest fully vegan or 100% plant-based products (no Beyond Meat, Impossible Foods, pure tofu)
 ❌ NEVER suggest products with zero animal content - ALL suggestions MUST contain SOME animal ingredients
-❌ NEVER use language implying complete elimination ("fully plant-based", "100% vegan", "no animal ingredients")
+❌ NEVER use language implying complete elimination in generalNote or suggestions
 ✅ ONLY suggest hybrid/blended products (plant-animal mixes with reduced animal content)
 ✅ Always frame as "reduction" not "elimination" in both suggestions AND generalNote
 - Examples: 50% beef/50% mushroom blend, yogurt with 30% dairy/70% coconut, chicken-vegetable blend nuggets

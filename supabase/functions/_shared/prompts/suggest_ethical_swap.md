@@ -2,7 +2,7 @@
 
 <!--
 Prompt-ID: suggest_ethical_swap
-Version: v2.2
+Version: v2.3
 Stage: 4
 Last-Updated: 2025-10-29
 Maintainer: Lovable AI Sync Process
@@ -219,11 +219,24 @@ Use neutral, pragmatic language that acknowledges the user's goal to significant
 
 **CRITICAL REMINDER:** Lens 3 is about HYBRID/BLENDED products that contain BOTH plant AND animal ingredients. Users selecting Lens 3 specifically want to REDUCE (not eliminate) animal content while maintaining some animal products.
 
-**Example generalNote text (adapt to product context):**
+**🚨 CRITICAL WARNING - NEVER USE THESE EXACT PHRASES IN LENS 3 generalNote:**
+- ❌ "fully plant-based" (THIS WILL CAUSE VALIDATION ERROR)
+- ❌ "100% plant-based" (THIS WILL CAUSE VALIDATION ERROR)  
+- ❌ "completely plant-based" (THIS WILL CAUSE VALIDATION ERROR)
+- ❌ "all plant-based" (THIS WILL CAUSE VALIDATION ERROR)
+- ❌ "entirely plant" (THIS WILL CAUSE VALIDATION ERROR)
+
+**✅ INSTEAD USE THESE PHRASES:**
+- "plant-animal blends" or "plant-animal hybrid products"
+- "reduced-animal products" or "products with reduced animal content"
+- "significantly reduced animal content" or "lower animal content"
+- "mixed plant and animal ingredients"
+
+**Example generalNote text (adapt to product context) - SAFE FOR LENS 3:**
 
 "You've chosen to minimize animal suffering — a balanced approach that significantly reduces harm.
 
-By selecting plant-animal blends or reduced-animal products instead of [product name], you're cutting the number of animals impacted while keeping familiar flavors and textures. Fewer animals means less cumulative suffering from confinement, handling, transport, and slaughter.
+By selecting plant-animal blends or reduced-animal products instead of [product name], you're cutting the number of animals impacted while keeping familiar flavors and textures. These hybrid options contain significantly reduced animal content compared to traditional versions. Fewer animals means less cumulative suffering from confinement, handling, transport, and slaughter.
 
 This path represents substantial harm reduction — each meal becomes an opportunity to lessen the burden on sentient beings."
 
