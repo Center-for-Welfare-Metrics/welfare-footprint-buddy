@@ -446,7 +446,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
 
         <div className="border-b border-gray-700 pb-4">
           <div className="flex items-center gap-2 mb-3">
-            <h3 className="font-bold text-emerald-400">{t('ethicalLens.title')}</h3>
+            <h2 className="text-xl font-semibold text-white">{t('ethicalLens.title')}</h2>
             <Dialog>
               <DialogTrigger asChild>
                 <button className="text-emerald-400/70 hover:text-emerald-400 transition-colors">
