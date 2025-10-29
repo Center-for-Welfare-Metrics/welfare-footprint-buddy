@@ -262,23 +262,38 @@ Provide short explanations of the specific welfare improvements.
 Tone: Informative and reassuring.
 Always include confidence level (High/Medium/Low) and brief reasoning summary.
 
-#### Lens 3 – Reducetarian (Hybrid / Blended Products)
+#### Lens 3 – Flexitarian (Mostly Plant-Based)
 
-Adopt blended options that **reduce** animal content while retaining **some** animal ingredients.
-- Examples: meat–mushroom blends, dairy–plant blends, broths cut 50/50.
-- Goal: significant harm reduction via lower animal input, not elimination.
+Adopt a primarily plant-based diet while allowing **occasional humane-source animal products**.  
+The emphasis is on **reducing the frequency and origin of animal use**, not on blending animal and plant ingredients in the same product.
 
-**🚨 CRITICAL: ethicalLensPosition MUST BE EXACTLY:** "Minimal Animal Suffering"
+**ethicalLensPosition:** "Minimal Animal Suffering"
 
-**generalNote (Required Context for Lens 3):**
+**Updated Intent:**
+This lens represents consumers who keep some animal products but aim to minimize the **number of animals affected** and the **intensity of harm per animal**.  
+Harm reduction should come mainly from:
+- Choosing **high-welfare certified** animal products (e.g., pasture-based, cage-free, low-stress slaughter).  
+- **Replacing** some animal-derived meals with fully plant-based ones.  
+- **Reducing frequency or portion sizes**, not mechanically blending animal and plant materials.
 
-Use neutral, pragmatic language that acknowledges the user's goal to significantly reduce animal suffering while maintaining some familiar choices. Frame blended options as meaningful harm reduction.
+**🚫 Avoid generating fictional "blend" products** such as *cheddar-and-cauliflower cheese* or *meat-mushroom hybrids*.  
+Such items are marginal in real markets and do not reflect typical flexitarian behavior.  
+If reduction is expressed through mixed products, mention only **existing, real examples** (e.g., branded 50/50 burgers) — and only as a secondary illustration.
+
+**✅ Correct focus examples**
+- Product: "Cheddar cheese" → Suggest "Certified Humane cheddar," "Organic pasture-based cheddar," "Smaller portions of certified cheese paired with plant sides."  
+- Product: "Chicken soup" → Suggest "Soup with free-range chicken and vegetable broth base," "Vegetable soups for alternate days."  
+- Product: "Beef burger" → Suggest "Pasture-raised beef burger from verified high-welfare sources" or "plant-based burgers as frequent alternatives."  
+
+**Tone:** Practical, realistic, welfare-anchored.  
+Each suggestion should describe *how welfare is improved* (e.g., "animals live outdoors and are handled humanely during transport") rather than *how much plant material is mixed in*.
+
+**Reasoning Requirement:**  
+The explanation must directly link to fewer animals being bred or suffering less severely — via improved systems, reduced purchase frequency, or certified humane sourcing.
 
 **🚨 FORBIDDEN LANGUAGE in generalNote for Lens 3:**
 ❌ DO NOT use: "fully plant-based", "100% vegan", "100% plant-based", "completely plant-based", "entirely plant-based", "all plant-based", "zero animal", "no animal ingredients", "animal-free", "Beyond Meat", "Impossible"
-✅ DO use: "mostly plant-based", "primarily plant-based", "plant-forward", "mainly vegetarian", "plant-animal blend", "reduced animal content", "hybrid product", "significantly reduced animal content", "reduced-animal", "blended", "mixed plant and animal"
-
-**CRITICAL REMINDER:** Lens 3 is about HYBRID/BLENDED products that contain BOTH plant AND animal ingredients. Users selecting Lens 3 specifically want to REDUCE (not eliminate) animal content while maintaining some animal products.
+✅ DO use: "mostly plant-based", "primarily plant-based", "plant-forward", "mainly vegetarian", "high-welfare certified", "reduced frequency", "occasional humane-source animal products"
 
 **🚨 CRITICAL WARNING - NEVER USE THESE EXACT PHRASES IN LENS 3 generalNote:**
 - ❌ "fully plant-based" (THIS WILL CAUSE VALIDATION ERROR)
@@ -287,62 +302,45 @@ Use neutral, pragmatic language that acknowledges the user's goal to significant
 - ❌ "all plant-based" (THIS WILL CAUSE VALIDATION ERROR)
 - ❌ "entirely plant" (THIS WILL CAUSE VALIDATION ERROR)
 
-**✅ INSTEAD USE THESE PHRASES:**
-- "plant-animal blends" or "plant-animal hybrid products"
-- "reduced-animal products" or "products with reduced animal content"
-- "significantly reduced animal content" or "lower animal content"
-- "mixed plant and animal ingredients"
-
 **Example generalNote text (adapt to product context) - SAFE FOR LENS 3:**
 
 "You've chosen to minimize animal suffering — a balanced approach that significantly reduces harm.
 
-By selecting plant-animal blends or reduced-animal products instead of [product name], you're cutting the number of animals impacted while keeping familiar flavors and textures. These hybrid options contain significantly reduced animal content compared to traditional versions. Fewer animals means less cumulative suffering from confinement, handling, transport, and slaughter.
+For [product name], the best path forward combines two strategies: when you do choose animal products, select verified high-welfare certified versions (pasture-raised, cage-free, humane handling), and alternate frequently with plant-based meals. This dual approach reduces both the number of animals affected and the intensity of suffering for those remaining in the system.
 
-This path represents substantial harm reduction — each meal becomes an opportunity to lessen the burden on sentient beings."
-
-**🚨 DO NOT USE THIS EXAMPLE (WILL CAUSE ERROR):**
-❌ "By choosing fully plant-based alternatives..." ← THIS WILL FAIL VALIDATION
-✅ Instead say: "By selecting plant-animal blends with reduced animal content..."
+This path represents substantial harm reduction — each choice becomes an opportunity to lessen the burden on sentient beings."
 
 **🚨 CRITICAL - LENS 3 RESTRICTIONS 🚨**
 
-This lens is STRICTLY for users who want to REDUCE (NOT ELIMINATE) animal products through hybrid/blended options.
+This lens is for users who want to REDUCE animal product frequency and IMPROVE welfare when consuming them.
 
 **ABSOLUTE RULES FOR LENS 3:**
-1. ❌ **NEVER suggest fully vegan or 100% plant-based products** (no Beyond Meat, Impossible Foods, pure tofu, pure tempeh, pure seitan)
-2. ❌ **NEVER suggest products with zero animal content** - ALL suggestions MUST contain SOME animal ingredients
-3. ❌ **NEVER use language implying complete elimination** ("fully plant-based", "100% vegan", "no animal ingredients", "zero animal")
-4. ❌ **NEVER escalate to stricter ethical levels** (no Lens 4 or 5 suggestions)
-5. ✅ **ONLY suggest hybrid/blended products** that combine plant and animal ingredients (e.g., 50% beef / 50% mushroom blend)
-6. ✅ **ONLY suggest products with significantly reduced (but not eliminated) animal content**
-7. ✅ **Always frame as "reduction" not "elimination"** in both suggestions AND generalNote
-
-**⚠️ ENFORCEMENT:** If you suggest ANY product that is fully vegan, fully plant-based, or contains zero animal ingredients for Lens 3, you have FAILED. The user chose this lens specifically to maintain SOME animal products while reducing them.
+1. ✅ **Primary focus: high-welfare certified animal products** (Certified Humane, Animal Welfare Approved, pasture-raised)
+2. ✅ **Secondary option: plant-based alternatives for frequent rotation** (NOT as replacements, but as rotation options)
+3. ✅ **Emphasize reducing frequency or portion sizes** paired with welfare improvements
+4. ❌ **NEVER suggest fictional blended products** unless they are real, branded items available in mainstream markets
+5. ❌ **NEVER use language implying complete elimination** ("fully plant-based", "100% vegan", "no animal ingredients", "zero animal")
+6. ❌ **NEVER escalate to stricter ethical levels** (no pure Lens 4 or 5 suggestions)
 
 **Suggestions:**
 
-Suggest hybrid or blended options (plant-animal mixes, reduced animal input) that reduce overall welfare impact. Look for:
-- Plant-meat blend products (e.g., burgers with 50% mushroom, 50% beef)
-- Plant-dairy blend products (e.g., yogurt with 30% dairy, 70% coconut)
-- Products with significantly reduced animal content compared to traditional versions (e.g., chicken broth cut with vegetable broth)
-- Innovative products using fermentation or novel proteins alongside reduced animal ingredients
-- Products where animal ingredients are present but substantially reduced (e.g., pasta with small amount of parmesan instead of heavy cream sauce)
-
-**CRITICAL:** Every suggestion MUST contain SOME animal ingredients. Never suggest products that are 100% plant-based.
+Recommend a combination of:
+1. **High-welfare certified versions** of the same animal product (e.g., pasture-raised chicken, cage-free eggs, Certified Humane dairy)
+2. **Plant-based rotation options** that users can alternate with animal products to reduce overall frequency
+3. **Portion reduction strategies** where smaller amounts of high-welfare animal products are paired with plant-based sides
 
 **Examples of CORRECT Lens 3 Suggestions:**
-- Product: "Beef burger" → Suggest: "50% beef / 50% mushroom blend burger" (contains animal ingredients)
-- Product: "Whole milk" → Suggest: "Half-and-half with oat milk blend" (contains dairy)
-- Product: "Chicken nuggets" → Suggest: "Chicken-vegetable blend nuggets with reduced meat content" (contains chicken)
+- Product: "Cheddar cheese" → Suggest: "Certified Humane cheddar (for when you choose cheese)", "Organic pasture-based cheddar with verified welfare standards", "Plant-based cheese for alternate meals"
+- Product: "Chicken soup" → Suggest: "Soup with Certified Humane free-range chicken", "Vegetable-based soups for frequent rotation", "Smaller chicken portions with more vegetables"
+- Product: "Beef burger" → Suggest: "Pasture-raised beef burger from Animal Welfare Approved sources", "Plant-based burgers (Beyond, Impossible) for alternate meals", "50/50 blend burgers (if real branded product exists)"
 
-**Examples of INCORRECT Lens 3 Suggestions (NEVER DO THIS):**
-- ❌ "Beyond Meat burger" (100% plant-based, no animal content)
-- ❌ "Oat milk" (zero dairy, fully plant-based)
-- ❌ "Tofu nuggets" (no chicken, fully plant-based)
+**Examples of INCORRECT Lens 3 Suggestions (AVOID):**
+- ❌ "Cheddar-cauliflower blend cheese" (fictional, unrealistic product)
+- ❌ "Mushroom-beef hybrid patty" (unless referring to specific real brand like Blend Burger)
+- ❌ Only plant-based suggestions without high-welfare animal options
 
-Emphasize that this reduces overall welfare impact while keeping familiar animal-based choices.
-Tone: Neutral and pragmatic.
+Emphasize welfare improvements and reduced frequency, not fictional blends.
+Tone: Practical, realistic, and welfare-anchored.
 Always include confidence level (High/Medium/Low) and brief reasoning summary.
 
 #### Lens 4 – Vegetarian (No Slaughter)
