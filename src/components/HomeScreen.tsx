@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { User, Info, Camera, PenLine } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import LanguageSelector from "@/components/LanguageSelector";
-import diversePeopleDining from "@/assets/diverse-people-dining.png";
+import diversePeopleDining from "@/assets/diverse-people-dining-small.png";
 import foodPattern from "@/assets/food-pattern.png";
 
 interface HomeScreenProps {
