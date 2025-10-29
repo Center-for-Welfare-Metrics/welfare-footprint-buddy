@@ -56,11 +56,11 @@ Compatible with any vision-capable language model (e.g., Gemini, GPT-4 Vision, C
 
 ## Versioning
 
-- **Version:** 1.7  
-- **File ID:** `analyze_user_material_v1.7`  
-- **Last Updated:** 2025-10-24  
+- **Version:** 1.8  
+- **File ID:** `analyze_user_material_v1.8`  
+- **Last Updated:** 2025-10-29  
 - **Maintainer:** Wladimir  
-- **Change Log:** Removed all ingredient and ethical inference logic from Step 1; restricted summary to purely visual descriptions.
+- **Change Log:** Added mandatory decomposition rules for branded/packaged composite foods to ensure ingredient-level detection instead of single product listings.
 
 ---
 
@@ -117,6 +117,92 @@ For each detected item, you MUST set:
 4. **Use parenthetical notation** to indicate the source dish (e.g., "Dried Shrimp (from Acarajé)")
 5. **Include ALL significant ingredients** - both animal-derived AND plant-based for transparency
 6. **Only include items with reasonable certainty** about their presence in the dish
+
+### CRITICAL RULE: Branded/Packaged Composite Foods
+
+🚨 **MANDATORY: Decompose Branded Packaged Foods Into Ingredients** 🚨
+
+When you detect a **branded or packaged composite food product** (e.g., frozen pizza, canned soup, frozen meals, sandwiches, burgers, lasagna, prepared entrees):
+
+1. **DO NOT list the brand name or product name as a single item**
+   - ❌ WRONG: "Red Baron Classic Crust Four Cheese Pizza"
+   - ✅ CORRECT: Decompose into cheese, wheat crust, tomato sauce, oil
+
+2. **Parse descriptive keywords from product names to infer ingredients:**
+   - "Four Cheese" → cheese (milk products)
+   - "Sausage Pizza" → sausage (pork/beef), cheese, crust, sauce
+   - "Chicken and Broccoli" → chicken, broccoli
+   - "Beef Burrito" → beef, tortilla (wheat/corn), beans, cheese
+   - "Three Meat Lasagna" → beef, pork, cheese, pasta, tomato sauce
+
+3. **Include brand/packaging information as metadata only:**
+   - Attach brand name in the `reasoning` field if relevant
+   - Example: `"reasoning": "From Red Baron brand frozen pizza, typically contains mozzarella and cheddar blend"`
+
+4. **Use typical recipe knowledge to infer standard ingredients:**
+   - Pizza → cheese, crust (wheat flour), tomato sauce, oil/butter, toppings
+   - Lasagna → pasta (wheat), cheese, tomato sauce, meat (if mentioned)
+   - Frozen burgers → beef/chicken/turkey patty, bun (wheat), condiments
+   - Canned soup → broth, vegetables, meat/beans (if mentioned), seasonings
+
+5. **Create separate items for each major ingredient component:**
+   - Primary animal products (meat, dairy, eggs, fish)
+   - Major plant components (grains, vegetables, legumes)
+   - Sauces and oils (when significant)
+
+#### Example: Red Baron Four Cheese Pizza
+
+✅ **CORRECT decomposition:**
+```json
+{
+  "items": [
+    {
+      "name": "Cheese blend (from Four Cheese Pizza)",
+      "likelyHasAnimalIngredients": true,
+      "confidence": "High",
+      "animalConfidence": "High",
+      "source": "ocr",
+      "parentDish": "Four Cheese Pizza",
+      "reasoning": "Mozzarella, cheddar, parmesan, and romano cheese blend typical of four-cheese pizzas"
+    },
+    {
+      "name": "Pizza Crust (from Four Cheese Pizza)",
+      "likelyHasAnimalIngredients": false,
+      "confidence": "High",
+      "animalConfidence": "Medium",
+      "source": "visual",
+      "parentDish": "Four Cheese Pizza",
+      "reasoning": "Wheat flour-based crust, typically plant-based though may contain dairy in some brands"
+    },
+    {
+      "name": "Tomato Sauce (from Four Cheese Pizza)",
+      "likelyHasAnimalIngredients": false,
+      "confidence": "High",
+      "animalConfidence": "High",
+      "source": "recipe_inference",
+      "parentDish": "Four Cheese Pizza",
+      "reasoning": "Tomato-based pizza sauce, plant-derived"
+    }
+  ],
+  "summary": "The image shows a frozen four-cheese pizza with multiple cheese varieties on a wheat crust."
+}
+```
+
+❌ **WRONG - single item:**
+```json
+{
+  "items": [
+    {
+      "name": "Red Baron Classic Crust Four Cheese Pizza",
+      "likelyHasAnimalIngredients": true,
+      "confidence": "High",
+      "source": "ocr",
+      "parentDish": null,
+      "reasoning": "Packaged frozen pizza containing cheese"
+    }
+  ]
+}
+```
 
 ### JSON Output Examples
 

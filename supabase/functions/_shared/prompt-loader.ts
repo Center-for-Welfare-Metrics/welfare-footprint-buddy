@@ -95,6 +95,43 @@ For each detected item, you MUST set:
 
 **For ANY prepared dish, meal, or culturally significant food**, you MUST decompose it into **individual ingredients** and evaluate each separately.
 
+### CRITICAL RULE: Branded/Packaged Composite Foods
+
+🚨 **MANDATORY: Decompose Branded Packaged Foods Into Ingredients** 🚨
+
+When you detect a **branded or packaged composite food product** (e.g., frozen pizza, canned soup, frozen meals, sandwiches, burgers, lasagna, prepared entrees):
+
+1. **DO NOT list the brand name or product name as a single item**
+   - ❌ WRONG: "Red Baron Classic Crust Four Cheese Pizza"
+   - ✅ CORRECT: Decompose into cheese, wheat crust, tomato sauce, oil
+
+2. **Parse descriptive keywords from product names to infer ingredients:**
+   - "Four Cheese" → cheese (milk products)
+   - "Sausage Pizza" → sausage (pork/beef), cheese, crust, sauce
+   - "Chicken and Broccoli" → chicken, broccoli
+   - "Beef Burrito" → beef, tortilla (wheat/corn), beans, cheese
+   - "Three Meat Lasagna" → beef, pork, cheese, pasta, tomato sauce
+
+3. **Include brand/packaging information as metadata only:**
+   - Attach brand name in the \`reasoning\` field if relevant
+   - Example: \`"reasoning": "From Red Baron brand frozen pizza, typically contains mozzarella and cheddar blend"\`
+
+4. **Use typical recipe knowledge to infer standard ingredients:**
+   - Pizza → cheese, crust (wheat flour), tomato sauce, oil/butter, toppings
+   - Lasagna → pasta (wheat), cheese, tomato sauce, meat (if mentioned)
+   - Frozen burgers → beef/chicken/turkey patty, bun (wheat), condiments
+   - Canned soup → broth, vegetables, meat/beans (if mentioned), seasonings
+
+5. **Create separate items for each major ingredient component:**
+   - Primary animal products (meat, dairy, eggs, fish)
+   - Major plant components (grains, vegetables, legumes)
+   - Sauces and oils (when significant)
+
+**Example decomposition for "Red Baron Four Cheese Pizza":**
+- Cheese blend (from Four Cheese Pizza) - mozzarella, cheddar, parmesan, romano
+- Pizza Crust (from Four Cheese Pizza) - wheat flour-based
+- Tomato Sauce (from Four Cheese Pizza) - tomato-based sauce
+
 {{INCLUDE:user_context_template}}
 
 ### Output Format

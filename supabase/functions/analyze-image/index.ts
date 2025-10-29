@@ -96,7 +96,7 @@ function validateInput(body: any): { valid: boolean; data?: ValidatedInput; erro
 
 // Prompt versions (update these when prompts change to auto-invalidate cache)
 const PROMPT_VERSIONS = {
-  analyze_user_material: 'v1.7',  // Updated to v1.7: Unified schema, removed ethical inference, visual-only description
+  analyze_user_material: 'v1.8',  // Updated to v1.8: Added mandatory decomposition for branded/packaged composite foods
   confirm_refine_items: 'v1.0',   // Step 2: handles user corrections with auditability
   analyze_focused_item: 'v2.0',
   analyze_product: 'v2.0',
