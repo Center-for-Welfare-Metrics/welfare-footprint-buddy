@@ -268,54 +268,47 @@ Always include confidence level (High/Medium/Low) and brief reasoning summary.
 
 ---
 
-# 🛑 STOP! LENS 3 RULE (READ THIS FIRST)
+# 🛑 LENS 3 RULE - PORTION & FREQUENCY ONLY
 
-**ONLY GENERATE THESE 3 TYPES OF SUGGESTIONS:**
+**FOR LENS 3, YOU CAN ONLY SUGGEST THESE 2 TYPES:**
 
-1. **BETTER ANIMAL SOURCE**: [Certification] + [SAME Animal Product]
-   - Example: "Organic Grass-Fed Butter" (NOT "Butter with Plant Oil")
-   
-2. **SMALLER PORTION**: Reduce serving size
+1. **REDUCE PORTION SIZE**
+   - Make the serving smaller
    - Example: "Use 1 tablespoon instead of 2 tablespoons"
    
-3. **LESS FREQUENT**: Consume less often
-   - Example: "Use twice weekly instead of daily"
+2. **REDUCE FREQUENCY**
+   - Consume less often
+   - Example: "Consume twice weekly instead of daily"
 
 ---
 
-# ❌ THESE WORDS = INSTANT FAILURE
+# ❌ WHAT YOU CANNOT DO FOR LENS 3
 
-**NEVER WRITE THESE WORDS IN ANY FIELD (name, description, reasoning, generalNote):**
+**YOU CANNOT SUGGEST:**
+- Different products (NO "Organic Butter", NO "Grass-Fed Butter")
+- Plant-based alternatives (NO plant words AT ALL)
+- Blends or mixes (NO "Blend", "Mix", "Hybrid")
+- Any product names different from the original
 
-- Plant, Plant-Based, Vegetable, Mushroom, Pea, Tofu, Seaweed, Cauliflower
-- Blend, Mix, Hybrid, Combined, Composite
-- Incorporates, With Added, Infused, Including
-- "and" (when connecting two ingredients)
-- Hyphens connecting ingredients (Beef-Mushroom)
-- Percentages (50%, 75%)
-- Dilute, Ratio, Transition
-
-**IF YOU USE ANY OF THESE WORDS, YOUR RESPONSE WILL BE REJECTED.**
+**ONLY suggest using LESS of the EXACT SAME product.**
 
 ---
 
-# ✅ CORRECT EXAMPLES FOR LENS 3
+# ✅ CORRECT LENS 3 SUGGESTIONS
 
 **Product: Butter**
-- ✅ "Organic Grass-Fed Butter"
-- ✅ "Pasture-Raised Butter" 
-- ✅ "Certified Humane Butter"
-- ❌ "Butter with Plant Oil" (contains "Plant")
-- ❌ "Butter Blend" (contains "Blend")
-- ❌ "Hybrid Butter" (contains "Hybrid")
 
-**generalNote Examples:**
-- ✅ "Choose butter from certified high-welfare dairy farms"
-- ✅ "Reduce butter consumption frequency"
-- ❌ "Try hybrid products" (contains "hybrid")
-- ❌ "Incorporate plant alternatives" (contains "Incorporate" + "plant")
+**Suggestion 1:**
+- **name**: "Reduce Butter Portion Size"
+- **description**: "Use smaller servings of butter"
+- **reasoning**: "Reducing portion size decreases total animal product consumption while maintaining satisfaction"
 
-**Formula:** [Welfare Certification] + [Same Animal Product]
+**Suggestion 2:**
+- **name**: "Reduce Butter Consumption Frequency"  
+- **description**: "Use butter less frequently"
+- **reasoning**: "Consuming butter on fewer occasions reduces overall animal product intake"
+
+**generalNote**: "Reducing portion sizes and frequency of butter consumption can help minimize animal welfare impact while still allowing occasional use."
 
 **Examples of VALID suggestions:**
 - "MSC-Certified Salmon" ✅
