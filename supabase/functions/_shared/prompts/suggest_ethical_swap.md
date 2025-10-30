@@ -371,7 +371,22 @@ Look at each suggestion you're about to output and verify:
 1. **Product name check:** Does it contain "and", "with", "-", "blend", "mix"? → If YES, DELETE IT and write a better-source suggestion instead
 2. **Description check:** Does it mention combining, mixing, or diluting ingredients? → If YES, DELETE IT and write a welfare-certification suggestion instead
 3. **Reality check:** Can I buy this exact product from a certified farm/fishery today? → If NO, DELETE IT
-4. **generalNote check:** Does it contain "blend", "mix", "hybrid", "combined"? → If YES, REWRITE to focus on sourcing and frequency
+4. **generalNote check:** Does it contain ANY of these words: "blend", "blending", "blended", "mix", "mixing", "mixed", "hybrid", "combined", "combining", "incorporate", "incorporating", "dilute", "diluted", "transition product", "composite"? → If YES, REWRITE to focus ONLY on sourcing and frequency without ANY mention of combining ingredients
+
+**🚨 CRITICAL: generalNote BANNED PHRASES FOR LENS 3:**
+- ❌ "blend" (any form)
+- ❌ "mix" (any form)
+- ❌ "hybrid" (any form)
+- ❌ "combined" / "combining" / "combine"
+- ❌ "transition product"
+- ❌ "composite"
+- ❌ "incorporating"
+- ❌ "dilute" / "diluted"
+
+**✅ SAFE generalNote Examples for Lens 3:**
+- "Focus on certified welfare sources and reducing consumption frequency."
+- "Choose products with third-party welfare certifications when possible."
+- "Reducing portion sizes and frequency can significantly reduce animal suffering."
 
 **You must output suggestions that follow this template:**
 
