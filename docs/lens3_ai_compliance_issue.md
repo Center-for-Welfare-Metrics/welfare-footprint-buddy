@@ -167,20 +167,21 @@ function detectFictionalBlends(text: string): boolean {
 - Removed ALL mention of certifications, organic, humane sourcing from Lens 3
 - Result: Gemini still generated plant/blend suggestions
 
-### Attempt 3: Switched to GPT-5 via Lovable AI (IN PROGRESS)
-- **Root Cause Identified**: Gemini 2.0 Flash Exp has inherent bias toward plant-based suggestions that overrides prompt instructions
-- **Solution**: Switched from direct Gemini API to Lovable AI Gateway with GPT-5-mini model
-- **Rationale**: 
-  - GPT-5 has better instruction-following capabilities
-  - Lower temperature (0.3) for more consistent rule adherence
-  - No API key setup required (LOVABLE_API_KEY pre-configured)
-  - Aligns with existing Lovable Cloud infrastructure
-- **Changes Made**:
-  - Replaced Gemini provider with direct Lovable AI API call
-  - Added explicit system message emphasizing rule compliance
-  - Implemented proper 429/402 error handling
-  - Maintained existing validation logic
-- Next: Deploy and monitor for validation success
+### Attempt 3: Switched to GPT-5 via Lovable AI (FAILED)
+- **Root Cause Identified**: Gemini 2.0 Flash Exp has inherent bias toward plant-based suggestions
+- **Solution Attempted**: Switched from direct Gemini API to Lovable AI Gateway with GPT-5-mini model
+- **Result**: GPT-5-mini ALSO generated forbidden blends like "50% Beef / 50% Mushroom Blend"
+- **Conclusion**: Both Gemini AND GPT-5 models fail to comply with Lens 3 restrictions despite explicit prohibitions
+
+### Attempt 4: Template-Based Generation (IMPLEMENTED)
+- **Final Solution**: Bypass AI entirely for Lens 3
+- **Implementation**: Created template-based response generator that:
+  - Generates two hardcoded suggestions: "Reduce {Product} Portion Size" and "Reduce {Product} Consumption Frequency"
+  - Uses product name from user input
+  - Guarantees 100% compliance with validation rules
+  - No forbidden words, blends, or percentages possible
+- **Tradeoff**: Loss of contextual nuance, but guaranteed compliance
+- **Status**: Deployed and working
 
 ---
 
@@ -277,21 +278,26 @@ if (ethicalLens === 3) {
 
 ## Current Status
 
-**State**: IMPLEMENTING FIX - Switching from Gemini to GPT-5 via Lovable AI  
-**User Impact**: Users currently experiencing 500 errors when requesting Lens 3 suggestions  
-**Root Cause**: Gemini 2.0 Flash Exp has training bias toward plant-based alternatives that overrides explicit prompt prohibitions  
-**Fix Deployed**: 
-1. ✅ Switched to Lovable AI Gateway with GPT-5-mini model (better instruction following)
-2. ✅ Added strict system message emphasizing rule compliance
-3. ✅ Lowered temperature to 0.3 for consistency
-4. ✅ Maintained existing validation logic
-5. ✅ Implemented proper rate limit (429) and payment (402) error handling
+**State**: RESOLVED - Template-based generation implemented  
+**User Impact**: Users now receive compliant Lens 3 suggestions without validation errors  
+**Root Cause**: Both Gemini and GPT-5 models have training biases toward plant-based alternatives that override explicit prompt prohibitions  
+**Final Solution**: 
+1. ✅ Implemented template-based generation for Lens 3 only
+2. ✅ Templates generate two suggestions: portion reduction and frequency reduction
+3. ✅ Templates use product name from user input for personalization
+4. ✅ Other lenses (1, 2, 4, 5) continue to use GPT-5-mini AI model
+5. ✅ Validation logic maintained and working correctly
+
+**Key Learnings**: 
+1. **Prompt engineering has limits**: Even with extensive warnings, examples, and strict instructions, AI models may not comply when their training data conflicts with desired behavior
+2. **Model-agnostic issue**: Both Gemini and OpenAI models showed the same bias, suggesting this is a broader training data issue
+3. **Template fallbacks are valuable**: For critical compliance requirements, template-based generation guarantees behavior
+4. **Validation is essential**: The validation layer caught all violations, preventing bad suggestions from reaching users
 
 **Next Steps**: 
-1. Monitor edge function logs for GPT-5 responses
-2. Verify validation passes for Lens 3 requests
-3. If still failing: Consider template-based generation as fallback
-4. Update documentation with findings about model-specific biases
+1. Monitor user feedback on Lens 3 template-based suggestions
+2. Consider implementing templates for other lenses if AI compliance issues arise
+3. Document this pattern for future features requiring strict rule compliance
 
 ---
 

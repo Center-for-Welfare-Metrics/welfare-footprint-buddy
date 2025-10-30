@@ -375,76 +375,108 @@ serve(async (req) => {
       OUTPUT_LANGUAGE: outputLanguage
     });
 
-    // Call Lovable AI (GPT-5-mini) with strict instruction following
-    console.log(`🤖 Calling Lovable AI (GPT-5-mini) for Lens ${ethicalLens}`);
+    // CRITICAL FIX: Use template-based generation for Lens 3
+    // AI models consistently fail to comply with Lens 3 restrictions
+    let text: string;
     
-    const lovableResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'openai/gpt-5-mini',
-        messages: [
+    if (ethicalLens === 3) {
+      console.log(`🎯 Using template-based generation for Lens 3 (AI compliance issue)`);
+      
+      // Generate compliant Lens 3 response using templates
+      const lens3Response = {
+        ethicalLensPosition: "Minimal Animal Suffering",
+        suggestions: [
           {
-            role: 'system',
-            content: 'You are an expert in animal welfare and food ethics. You MUST follow ALL instructions EXACTLY as written, especially forbidden word lists and product naming rules. Your responses will be validated against strict rules - ANY violation will cause complete rejection. Pay special attention to Lens 3 requirements which ONLY allow portion/frequency reduction of the exact same product.',
+            name: `Reduce ${productName} Portion Size`,
+            description: `Use smaller servings of ${productName} (e.g., reduce portion by 25-50%)`,
+            reasoning: `Consuming less ${productName} directly reduces the number of animals needed for production, thereby decreasing overall animal suffering in farming systems.`,
+            confidence: "High"
           },
           {
-            role: 'user',
-            content: prompt,
-          },
+            name: `Reduce ${productName} Consumption Frequency`,
+            description: `Consume ${productName} less often (e.g., reduce from daily to 2-3 times per week)`,
+            reasoning: `Lower frequency of consumption means reduced demand for animal products, leading to fewer animals being raised in intensive farming conditions.`,
+            confidence: "High"
+          }
         ],
-        max_completion_tokens: 4096, // GPT-5 requires max_completion_tokens instead of max_tokens
-      }),
-    });
-
-    if (!lovableResponse.ok) {
-      const errorText = await lovableResponse.text();
-      console.error(`❌ Lovable AI error:`, lovableResponse.status, errorText);
+        generalNote: `You've chosen to minimize animal suffering by reducing consumption — a practical approach that directly decreases demand for animal products. By consuming less ${productName} through smaller portions and lower frequency, you reduce the number of animals needed in production systems.`,
+        reasoning: `These suggestions focus on harm reduction through decreased consumption of the same product, which is the most effective way to reduce animal suffering while maintaining dietary preferences.`
+      };
       
-      if (lovableResponse.status === 429) {
-        return new Response(
-          JSON.stringify({
-            success: false,
-            error: {
-              message: 'Rate limit exceeded',
-              details: 'Too many requests. Please try again in a moment.',
+      text = JSON.stringify(lens3Response);
+      console.log(`✅ Generated template-based Lens 3 response for ${productName}`);
+    } else {
+      // Use AI for all other lenses
+      console.log(`🤖 Calling Lovable AI (GPT-5-mini) for Lens ${ethicalLens}`);
+      
+      const lovableResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'openai/gpt-5-mini',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are an expert in animal welfare and food ethics. You MUST follow ALL instructions EXACTLY as written, especially forbidden word lists and product naming rules. Your responses will be validated against strict rules - ANY violation will cause complete rejection.',
             },
-          }),
-          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      
-      if (lovableResponse.status === 402) {
-        return new Response(
-          JSON.stringify({
-            success: false,
-            error: {
-              message: 'Payment required',
-              details: 'Please add credits to your Lovable AI workspace.',
+            {
+              role: 'user',
+              content: prompt,
             },
-          }),
-          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      
-      throw new Error(`Lovable AI error: ${lovableResponse.status} ${errorText}`);
-    }
-
-    const lovableData = await lovableResponse.json();
-    const text = lovableData.choices?.[0]?.message?.content?.trim();
-    
-    if (!text) {
-      console.error('❌ No text response from Lovable AI');
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: { message: 'No text response from AI' }
+          ],
+          max_completion_tokens: 4096,
         }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      });
+
+      if (!lovableResponse.ok) {
+        const errorText = await lovableResponse.text();
+        console.error(`❌ Lovable AI error:`, lovableResponse.status, errorText);
+        
+        if (lovableResponse.status === 429) {
+          return new Response(
+            JSON.stringify({
+              success: false,
+              error: {
+                message: 'Rate limit exceeded',
+                details: 'Too many requests. Please try again in a moment.',
+              },
+            }),
+            { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+        
+        if (lovableResponse.status === 402) {
+          return new Response(
+            JSON.stringify({
+              success: false,
+              error: {
+                message: 'Payment required',
+                details: 'Please add credits to your Lovable AI workspace.',
+              },
+            }),
+            { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+        
+        throw new Error(`Lovable AI error: ${lovableResponse.status} ${errorText}`);
+      }
+
+      const lovableData = await lovableResponse.json();
+      text = lovableData.choices?.[0]?.message?.content?.trim();
+      
+      if (!text) {
+        console.error('❌ No text response from Lovable AI');
+        return new Response(
+          JSON.stringify({ 
+            success: false, 
+            error: { message: 'No text response from AI' }
+          }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
     }
 
     let cleanedText = text;
