@@ -275,21 +275,29 @@ Help users lower total animal suffering while keeping some animal-derived foods,
 - **Reducing frequency** or **portion sizes** of animal products.  
 - **Substituting full meals occasionally** with plant-based ones.
 
-**🚫 Enforcement Rule – No Fictional Blends:**  
-The AI must **not** generate or invent hybrid items that do not exist in real markets.  
-Examples of invalid suggestions include:
+**🚫 Enforcement Rule – No Hypothetical Blends or Synthetic Reductions:**  
+The AI must **never invent or assume** the existence of blended products that are not known commercial categories.  
+Examples of disallowed inventions include (but are not limited to):
+- ❌ "Anchovy–mushroom paste"  
 - ❌ "50% pork / 50% mushroom ham"  
-- ❌ "Cheddar cheese with pumpkin"  
 - ❌ "Cured ham with pea protein"  
+- ❌ "Cheddar–pumpkin blend"  
+- ❌ "Plant-based crumble with a small amount of anchovy"  
 - ❌ "Blended pork and plant-based ham slices"  
 - ❌ "Beef-potato hybrid burgers"  
 
-These are *synthetic culinary inventions*, not realistic welfare improvements.
+These examples are not real, standardized products and must **not** appear in the output.
 
-**✅ Instead, recommend:**
-- Verified welfare-certified products of the same type (e.g., "Certified Humane ham," "Organic pork from pasture-raised pigs").  
-- Real-world reduced-meat or smaller-portion strategies ("choose high-welfare ham occasionally, smaller slices paired with vegetables").  
-- True plant-based meals as alternate days or swaps, clearly labeled as such ("try lentil stew as a plant-based alternative once per week").  
+**✅ Instead, all Flexitarian suggestions must derive from:**
+- **Existing, verifiable categories** (e.g., "Certified Humane ham," "Pasture-raised pork," "High-welfare anchovy fisheries certified by Friend of the Sea").  
+- **Behavioral changes** (smaller portions, lower frequency, alternating plant-based meals).  
+- **Real sourcing differentials** (e.g., "anchovies sourced from purse-seine fisheries with humane slaughter protocols").  
+
+**If no realistic welfare-improved version exists**, output:  
+> "No verified higher-welfare alternative currently available; best practice is reduced frequency of consumption."
+
+**Weight adjustment:**  
+> When generating alternatives, always prefer **documented welfare improvements** (e.g., certifications, slaughter methods, handling standards) over **ingredient substitution or dilution**.
 
 **✅ Correct examples**
 - Product: "Ham" → Suggest "Pasture-raised or Certified Humane ham," "Smaller portion sizes from verifiable welfare sources."  
