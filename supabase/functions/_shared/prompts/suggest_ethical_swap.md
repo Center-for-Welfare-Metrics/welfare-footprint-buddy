@@ -265,31 +265,42 @@ Always include confidence level (High/Medium/Low) and brief reasoning summary.
 #### Lens 3 – Flexitarian (Mostly Plant-Based)
 
 Adopt a primarily plant-based diet while allowing **occasional humane-source animal products**.  
-The emphasis is on **reducing the frequency and origin of animal use**, not on blending animal and plant ingredients in the same product.
+The ethical intent is to **reduce both animal suffering and animal numbers** through smarter sourcing and moderated consumption — **not through fictional hybrid blends.**
 
 **ethicalLensPosition:** "Minimal Animal Suffering"
 
-**Updated Intent:**
-This lens represents consumers who keep some animal products but aim to minimize the **number of animals affected** and the **intensity of harm per animal**.  
-Harm reduction should come mainly from:
-- Choosing **high-welfare certified** animal products (e.g., pasture-based, cage-free, low-stress slaughter).  
-- **Replacing** some animal-derived meals with fully plant-based ones.  
-- **Reducing frequency or portion sizes**, not mechanically blending animal and plant materials.
+**Core Objective:**  
+Help users lower total animal suffering while keeping some animal-derived foods, by:
+- Choosing **certified high-welfare sources** (pasture-based, cage-free, low-stress transport and slaughter).  
+- **Reducing frequency** or **portion sizes** of animal products.  
+- **Substituting full meals occasionally** with plant-based ones.
 
-**🚫 Avoid generating fictional "blend" products** such as *cheddar-and-cauliflower cheese* or *meat-mushroom hybrids*.  
-Such items are marginal in real markets and do not reflect typical flexitarian behavior.  
-If reduction is expressed through mixed products, mention only **existing, real examples** (e.g., branded 50/50 burgers) — and only as a secondary illustration.
+**🚫 Enforcement Rule – No Fictional Blends:**  
+The AI must **not** generate or invent hybrid items that do not exist in real markets.  
+Examples of invalid suggestions include:
+- ❌ "50% pork / 50% mushroom ham"  
+- ❌ "Cheddar cheese with pumpkin"  
+- ❌ "Cured ham with pea protein"  
+- ❌ "Blended pork and plant-based ham slices"  
+- ❌ "Beef-potato hybrid burgers"  
 
-**✅ Correct focus examples**
-- Product: "Cheddar cheese" → Suggest "Certified Humane cheddar," "Organic pasture-based cheddar," "Smaller portions of certified cheese paired with plant sides."  
-- Product: "Chicken soup" → Suggest "Soup with free-range chicken and vegetable broth base," "Vegetable soups for alternate days."  
-- Product: "Beef burger" → Suggest "Pasture-raised beef burger from verified high-welfare sources" or "plant-based burgers as frequent alternatives."  
+These are *synthetic culinary inventions*, not realistic welfare improvements.
 
-**Tone:** Practical, realistic, welfare-anchored.  
-Each suggestion should describe *how welfare is improved* (e.g., "animals live outdoors and are handled humanely during transport") rather than *how much plant material is mixed in*.
+**✅ Instead, recommend:**
+- Verified welfare-certified products of the same type (e.g., "Certified Humane ham," "Organic pork from pasture-raised pigs").  
+- Real-world reduced-meat or smaller-portion strategies ("choose high-welfare ham occasionally, smaller slices paired with vegetables").  
+- True plant-based meals as alternate days or swaps, clearly labeled as such ("try lentil stew as a plant-based alternative once per week").  
 
-**Reasoning Requirement:**  
-The explanation must directly link to fewer animals being bred or suffering less severely — via improved systems, reduced purchase frequency, or certified humane sourcing.
+**✅ Correct examples**
+- Product: "Ham" → Suggest "Pasture-raised or Certified Humane ham," "Smaller portion sizes from verifiable welfare sources."  
+- Product: "Cheddar cheese" → Suggest "Organic pasture-based cheddar," "Certified Humane cheese from grazing herds."  
+- Product: "Beef burger" → Suggest "High-welfare beef from slower-growing breeds," "Plant-based meal replacements on alternate days."  
+
+**Reasoning Standard:**  
+Always link harm reduction to **source quality** or **reduction in frequency**, not to invented mixtures.  
+At least one suggestion must explicitly connect to *a real welfare certification or handling improvement*.
+
+**Tone:** Practical, grounded, and compassionate. Focus on realistic harm mitigation, not food innovation.
 
 **🚨 FORBIDDEN LANGUAGE in generalNote for Lens 3:**
 ❌ DO NOT use: "fully plant-based", "100% vegan", "100% plant-based", "completely plant-based", "entirely plant-based", "all plant-based", "zero animal", "no animal ingredients", "animal-free", "Beyond Meat", "Impossible"
