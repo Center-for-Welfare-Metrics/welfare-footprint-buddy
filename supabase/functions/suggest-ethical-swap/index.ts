@@ -70,13 +70,18 @@ function detectFictionalBlends(text: string): string[] {
     /\b(\w+)[-–]\s*pumpkin\b/i,
     /\b(\w+)[-–]\s*potato\b/i,
     /\b(\w+)[-–]\s*plant[-\s]?based\b/i,
+    /\b(\w+)[-–]\s*vegetable\b/i,
+    /\b(\w+)[-–]\s*seaweed\b/i,
+    /\b(\w+)[-–]\s*tofu\b/i,
+    /\b(\w+)\s+and\s+(vegetable|plant|mushroom|pea|tofu|seaweed|cauliflower)\s+(protein|mix|blend)/i,
     /\b\d+%\s+\w+\s*\/\s*\d+%\s+\w+\b/i, // e.g., "50% pork / 50% mushroom"
     /\bblend(ed)?\s+(with|of)\s+\w+\s+and\s+\w+/i,
     /\bmix(ed)?\s+(with|of)\s+\w+\s+and\s+\w+/i,
-    /\bcombined\s+with\s+(mushroom|pea|cauliflower|pumpkin|potato|plant)/i,
-    /\bhybrid\s+(burger|ham|cheese|product)/i,
-    /\bwith\s+added\s+(mushroom|pea|cauliflower|pumpkin|potato|plant)/i,
-    /\bincorporat(es?|ing)\s+(mushroom|pea|cauliflower|plant)/i,
+    /\bcombined\s+with\s+(mushroom|pea|cauliflower|pumpkin|potato|plant|vegetable|seaweed|tofu)/i,
+    /\bhybrid\s+(burger|ham|cheese|product|protein|mix)/i,
+    /\bwith\s+added\s+(mushroom|pea|cauliflower|pumpkin|potato|plant|vegetable|seaweed|tofu)/i,
+    /\bincorporat(es?|ing)\s+(mushroom|pea|cauliflower|plant|vegetable|seaweed|tofu)/i,
+    /\binfused\s+with\s+(mushroom|pea|cauliflower|plant|vegetable|seaweed|tofu)/i,
   ];
   
   const detected: string[] = [];
