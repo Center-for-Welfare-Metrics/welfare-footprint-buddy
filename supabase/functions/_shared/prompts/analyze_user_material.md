@@ -141,6 +141,7 @@ Use this **hierarchical reasoning** to decide how to handle detected food:
 - A culturally significant recipe (Acarajé, Khachapuri, bibimbap)
 - A branded composite product with identifiable components (frozen pizza, prepared meal)
 - A dish where individual animal ingredients are visible (salmon rice bowl, egg sandwich)
+- **Baked goods** (cakes, cookies, pastries, muffins, bread) → decompose into eggs, dairy (milk/butter), flour
 
 ✅ **TREAT AS SINGLE ITEM** if it's:
 - A single animal product (whole chicken, salmon fillet, block of cheese, carton of milk)
@@ -239,6 +240,10 @@ When you detect a **branded or packaged composite food product** (e.g., frozen p
    - Lasagna → pasta (wheat), cheese, tomato sauce, meat (if mentioned)
    - Frozen burgers → beef/chicken/turkey patty, bun (wheat), condiments
    - Canned soup → broth, vegetables, meat/beans (if mentioned), seasonings
+   - **Baked goods** (cakes, cookies, pastries, muffins, brownies):
+     - **ALWAYS decompose into:** eggs, dairy (milk/butter), wheat flour, sugar
+     - **NEVER list as:** "cake", "cookie", "muffin" (these are composite items)
+     - **Example:** Chocolate cake → eggs, milk, butter, wheat flour, sugar, cocoa
 
 5. **Create separate items for each major ingredient component:**
    - Primary animal products (meat, dairy, eggs, fish)
