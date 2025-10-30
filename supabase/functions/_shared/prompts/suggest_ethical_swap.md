@@ -268,69 +268,52 @@ Always include confidence level (High/Medium/Low) and brief reasoning summary.
 
 ---
 
-# ⛔⛔⛔ ABSOLUTE RULE FOR LENS 3 - NO EXCEPTIONS ⛔⛔⛔
+# 🛑 STOP! LENS 3 RULE (READ THIS FIRST)
 
-**LENS 3 ONLY ACCEPTS THESE 3 APPROACHES:**
-1. **Better Source Animal Product** (e.g., "MSC-Certified Salmon")
-2. **Portion Control** (e.g., "Reduce serving size to 4 oz")
-3. **Frequency Reduction** (e.g., "Consume twice weekly instead of daily")
+**ONLY GENERATE THESE 3 TYPES OF SUGGESTIONS:**
 
----
-
-# 🚫 FORBIDDEN WORDS IN PRODUCT NAMES (WILL CAUSE INSTANT REJECTION):
-
-**YOU ARE ABSOLUTELY FORBIDDEN FROM USING THESE IN ANY SUGGESTION:**
-
-❌ **Plant-Based** or **Plant** - NEVER mention plant ingredients
-❌ **Cultured Butter with Plant-Based Cream** - FORBIDDEN (contains "Plant-Based")
-❌ **Butter with Vegetable Oil** - FORBIDDEN (contains "Vegetable")
-❌ **Beef and Mushroom** - FORBIDDEN (contains "and" + plant)
-❌ **Chicken and Vegetable** - FORBIDDEN (contains "and" + plant)
-❌ **Salmon and Plant Protein** - FORBIDDEN (contains "Plant")
-❌ **Pork-Mushroom** - FORBIDDEN (hyphen connecting ingredients)
-❌ **Blend**, **Mix**, **Hybrid**, **Combined** - FORBIDDEN
-❌ **Incorporates**, **With Added**, **Infused** - FORBIDDEN
-❌ Any percentage (50%, 75%, etc.) - FORBIDDEN
-
-**WHY? Because Lens 3 (Flexitarian) does NOT allow fictional dilution products.**
+1. **BETTER ANIMAL SOURCE**: [Certification] + [SAME Animal Product]
+   - Example: "Organic Grass-Fed Butter" (NOT "Butter with Plant Oil")
+   
+2. **SMALLER PORTION**: Reduce serving size
+   - Example: "Use 1 tablespoon instead of 2 tablespoons"
+   
+3. **LESS FREQUENT**: Consume less often
+   - Example: "Use twice weekly instead of daily"
 
 ---
 
-# ✅ THE ONLY ACCEPTABLE FORMAT:
+# ❌ THESE WORDS = INSTANT FAILURE
 
-**[Welfare Certification] + [Pure Animal Product Name]**
+**NEVER WRITE THESE WORDS IN ANY FIELD (name, description, reasoning, generalNote):**
 
-**Examples of CORRECT suggestions:**
-✅ "MSC-Certified Salmon" (certification + pure animal product)
-✅ "Pasture-Raised Beef" (welfare standard + pure animal product)
-✅ "Certified Humane Chicken" (certification + pure animal product)
-✅ "Organic Grass-Fed Butter" (welfare standard + pure animal product)
+- Plant, Plant-Based, Vegetable, Mushroom, Pea, Tofu, Seaweed, Cauliflower
+- Blend, Mix, Hybrid, Combined, Composite
+- Incorporates, With Added, Infused, Including
+- "and" (when connecting two ingredients)
+- Hyphens connecting ingredients (Beef-Mushroom)
+- Percentages (50%, 75%)
+- Dilute, Ratio, Transition
 
-**Examples that WILL BE REJECTED:**
-❌ "Cultured Butter with Plant-Based Cream" (contains "Plant-Based")
-❌ "Beef and Mushroom Blend" (contains "and" + "Mushroom" + "Blend")
-❌ "Chicken-Vegetable Mix" (contains hyphen + "Vegetable" + "Mix")
-❌ "Salmon incorporating plant protein" (contains "incorporating" + "plant")
+**IF YOU USE ANY OF THESE WORDS, YOUR RESPONSE WILL BE REJECTED.**
 
 ---
 
-# 🔒 MANDATORY PRE-SUBMISSION CHECK:
+# ✅ CORRECT EXAMPLES FOR LENS 3
 
-**Before submitting your response, review EVERY field of EVERY suggestion:**
+**Product: Butter**
+- ✅ "Organic Grass-Fed Butter"
+- ✅ "Pasture-Raised Butter" 
+- ✅ "Certified Humane Butter"
+- ❌ "Butter with Plant Oil" (contains "Plant")
+- ❌ "Butter Blend" (contains "Blend")
+- ❌ "Hybrid Butter" (contains "Hybrid")
 
-For EACH suggestion, ask yourself:
-1. **Does the title contain ANY plant reference?** (plant, vegetable, mushroom, pea, tofu, cauliflower, etc.)
-   - If YES → DELETE and replace with pure animal product
-2. **Does the title contain "and" or hyphens connecting ingredients?**
-   - If YES → DELETE and replace with pure animal product
-3. **Does ANY field mention: blend, mix, hybrid, combined, incorporates, diluted, ratio, percentage?**
-   - If YES → DELETE and replace with better-source approach
-4. **Can I buy this EXACT product from a certified welfare source today?**
-   - If NO → DELETE and replace with real certified product
-
----
-
-# ✅ THE ONLY VALID SUGGESTION FORMAT FOR LENS 3
+**generalNote Examples:**
+- ✅ "Choose butter from certified high-welfare dairy farms"
+- ✅ "Reduce butter consumption frequency"
+- ❌ "Try hybrid products" (contains "hybrid")
+- ❌ "Incorporate plant alternatives" (contains "Incorporate" + "plant")
 
 **Formula:** [Welfare Certification] + [Same Animal Product]
 
