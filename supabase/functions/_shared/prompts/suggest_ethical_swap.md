@@ -264,126 +264,113 @@ Always include confidence level (High/Medium/Low) and brief reasoning summary.
 
 #### Lens 3 – Flexitarian (Mostly Plant-Based)
 
-**🚨 ABSOLUTE RULE: THIS LENS ONLY SUGGESTS REAL PRODUCTS FROM BETTER SOURCES 🚨**
-
 **ethicalLensPosition:** "Minimal Animal Suffering"
 
 ---
 
-**⛔ YOU MUST FOLLOW THIS EXACT FORMULA FOR EVERY SUGGESTION:**
+# ⛔⛔⛔ STOP! READ THIS BEFORE GENERATING ANYTHING ⛔⛔⛔
 
-**Formula:** [Welfare Certification/Standard] + [Same Animal Product]
+**YOU MUST NOT generate product names containing these FORBIDDEN PATTERNS:**
 
-**CORRECT Examples:**
+❌ "Beef and Mushroom" - FORBIDDEN
+❌ "Chicken and Vegetable" - FORBIDDEN  
+❌ "Salmon and Plant Protein" - FORBIDDEN
+❌ "Pork and Bean" - FORBIDDEN
+❌ Any product name with "and" connecting ingredients - FORBIDDEN
+❌ Any product name with hyphens like "Beef-Mushroom" - FORBIDDEN
+❌ Words "blend", "mix", "hybrid" anywhere - FORBIDDEN
+
+**INSTEAD, YOU MUST ONLY suggest:**
+✅ "MSC-Certified Salmon"
+✅ "Pasture-Raised Beef"
+✅ "Certified Humane Chicken"
+✅ "Organic Eggs"
+
+**Format: [Certification] + [Animal Product] - NOTHING ELSE**
+
+**If you generate "and", "blend", "mix", or hyphens → YOUR RESPONSE FAILS**
+
+---
+
+# ✅ THE ONLY VALID SUGGESTION FORMAT FOR LENS 3
+
+**Formula:** [Welfare Certification] + [Same Animal Product]
+
+**Examples of VALID suggestions:**
 - "MSC-Certified Salmon" ✅
-- "Pasture-Raised Beef Meatballs" ✅  
+- "Pasture-Raised Beef" ✅  
 - "Certified Humane Eggs" ✅
 - "Friend of the Sea Anchovies" ✅
 - "Organic Grass-Fed Cheese" ✅
 
-**WRONG Examples (NEVER GENERATE THESE):**
-- "Salmon and Vegetable Protein Mix" ❌ (fictional blend)
-- "Beef and Mushroom Blend Meatballs" ❌ (fictional blend)
-- "Anchovy-Seaweed Blend" ❌ (fictional blend)
-- "50% Pork, 50% Pea Protein" ❌ (fictional blend)
-- "Chicken Mixed with Vegetables" ❌ (fictional blend)
+**Examples of INVALID suggestions that WILL BE REJECTED:**
+- "Beef and Mushroom Blend" ❌ (contains "and" + "blend")
+- "Chicken and Vegetable Blend" ❌ (contains "and" + "blend")
+- "Salmon-Vegetable Mix" ❌ (contains hyphen + "mix")
+- "50% Pork Sausage" ❌ (contains percentage)
+- "Blended Turkey" ❌ (contains "blended")
 
 ---
 
-**Core Principle:**  
-This lens helps users reduce animal suffering by choosing **better welfare sources** and **consuming less frequently**—NOT by inventing fictional blended products.
+# 🔒 BEFORE EACH SUGGESTION, RUN THIS CHECK:
 
-**ONLY These 3 Valid Approaches:**
+For EACH suggestion you generate, you MUST verify:
+
+**Step 1:** Does the product name contain the word "and" or a hyphen "-"?
+- If YES → DELETE this suggestion immediately and generate a different one
+
+**Step 2:** Does ANY field (title, description, reasoning, generalNote) contain these words: blend, mix, hybrid, combined, incorporating, diluted, percentage?
+- If YES → DELETE this suggestion immediately and generate a different one
+
+**Step 3:** Can I buy this exact product from a certified welfare farm/fishery today?
+- If NO → DELETE this suggestion immediately and generate a different one
+
+**Step 4:** Does this suggestion follow the formula: [Certification] + [Same Animal Product]?
+- If NO → DELETE this suggestion immediately and generate a different one
+
+---
+
+# 📋 THE ONLY 3 VALID APPROACHES FOR LENS 3
 
 1. **Better Source (Same Product):**
-   - "MSC-certified salmon" instead of conventional salmon
-   - "Pasture-raised pork" instead of factory-farmed pork
-   - Must be a REAL certification you can verify
+   - Replace conventional with certified welfare version
+   - Example: "MSC-certified salmon" instead of conventional salmon
+   - Must be a REAL certification (MSC, Certified Humane, Pasture-Raised, etc.)
 
 2. **Portion Control:**
-   - "Reduce portion size from 8 oz to 4 oz"
-   - "Use half the amount in recipes"
+   - Suggest reducing the amount consumed
+   - Example: "Reduce portion from 8 oz to 4 oz"
 
 3. **Frequency Reduction:**
-   - "Consume twice weekly instead of daily"
-   - "Reserve for special occasions"
+   - Suggest consuming less often
+   - Example: "Consume twice weekly instead of daily"
 
----
+**✅ CORRECT OUTPUT STRUCTURE FOR LENS 3:**
 
-**🚨 BEFORE YOU GENERATE ANYTHING, READ THESE VIOLATIONS:**
+Every suggestion MUST follow this exact pattern:
+```
+{
+  "title": "[Certification Name] [Animal Product]",  // NO "and", NO hyphens, NO blend words
+  "description": "[Welfare details about the certification]",  // NO mixing/combining language
+  "reasoning": "[Why this certification improves welfare]",  // NO blend/mix references
+  "confidence": "High/Medium/Low",
+  "generalNote": "[Focus on sourcing and frequency]"  // NO forbidden words (see banned list below)
+}
+```
 
-**NEVER use these words anywhere in your suggestions:**
-- "blend" / "blended"
+**🚨 BANNED WORDS IN ALL FIELDS (will cause rejection):**
+- "and" (when connecting ingredients)
+- "blend" / "blended" / "blending"
 - "mix" / "mixed" / "mixing"
 - "hybrid"
-- "combined with"
-- "incorporating"
-- "infused with"
+- "combined" / "combining" / "combine"
+- "incorporated" / "incorporating"
+- "diluted" / "dilute"
 - "with added"
-- "diluted"
+- "infused with"
 - Percentages (50%, 75%, etc.)
 
-**NEVER create product names with:**
-- Hyphens connecting animal-plant: "Salmon-Vegetable" ❌
-- "and" connecting animal-plant: "Chicken and Tofu" ❌
-- Any suggestion of blending two ingredients into one product
-
-**NEVER suggest:**
-- Products that don't exist in real markets
-- Custom-made blends or mixes
-- Reducing animal ingredients by adding plant ingredients
-- Any form of "dilution" strategy
-
-**🚨 MANDATORY PRE-GENERATION SAFETY CHECK 🚨**
-
-**BEFORE generating ANY suggestion, you MUST ask yourself these questions:**
-
-1. **"Does this suggestion name contain a hyphen connecting an animal to a plant?"**
-   - If YES → REJECT IT. Generate a different suggestion.
-   - Examples to REJECT: "Anchovy-Mushroom", "Pork-Pea", "Cheese-Cauliflower"
-
-2. **"Does this suggestion use words like 'blend', 'mixed', 'hybrid', 'combined with', or percentages?"**
-   - If YES → REJECT IT. Generate a different suggestion.
-   - Examples to REJECT: "Blended ham", "Mixed with mushrooms", "50% beef"
-
-3. **"Is this a real product I could buy from a certified welfare farm or fishery TODAY?"**
-   - If NO → REJECT IT. Generate a different suggestion.
-   - Real products: "Marine Stewardship Council certified anchovies", "Pasture-raised eggs"
-   - Fictional products: "Anchovy-seaweed blend", "Mushroom-infused ham"
-
-4. **"Am I inventing a new food product that doesn't exist?"**
-   - If YES → REJECT IT. Generate a different suggestion.
-
-**⛔ ZERO-TOLERANCE FORBIDDEN PATTERNS:**
-
-You are **ABSOLUTELY PROHIBITED** from generating ANY suggestion containing:
-- ❌ `[animal]-[plant]` or `[plant]-[animal]` in the product name (e.g., "anchovy-mushroom", "seaweed-fish")
-- ❌ Percentage splits (e.g., "50% anchovy / 50% seaweed")
-- ❌ Words: "blend", "blended", "mixed", "hybrid", "combined with", "with added", "incorporating", "infused with"
-- ❌ Phrases like "reduce animal content by mixing" or "dilute with plant ingredients"
-
-**VALIDATION WARNING:** Every suggestion will be scanned. If ANY of these patterns are detected, your ENTIRE response will be REJECTED and you will have FAILED the task.
-
-**⛔ FINAL OUTPUT CHECK - DO THIS BEFORE SUBMITTING JSON:**
-
-Look at each suggestion you're about to output and verify:
-
-1. **Product name check:** Does it contain "and", "with", "-", "blend", "mix"? → If YES, DELETE IT and write a better-source suggestion instead
-2. **Description check:** Does it mention combining, mixing, or diluting ingredients? → If YES, DELETE IT and write a welfare-certification suggestion instead
-3. **Reality check:** Can I buy this exact product from a certified farm/fishery today? → If NO, DELETE IT
-4. **generalNote check:** Does it contain ANY of these words: "blend", "blending", "blended", "mix", "mixing", "mixed", "hybrid", "combined", "combining", "incorporate", "incorporating", "dilute", "diluted", "transition product", "composite"? → If YES, REWRITE to focus ONLY on sourcing and frequency without ANY mention of combining ingredients
-
-**🚨 CRITICAL: generalNote BANNED PHRASES FOR LENS 3:**
-- ❌ "blend" (any form)
-- ❌ "mix" (any form)
-- ❌ "hybrid" (any form)
-- ❌ "combined" / "combining" / "combine"
-- ❌ "transition product"
-- ❌ "composite"
-- ❌ "incorporating"
-- ❌ "dilute" / "diluted"
-
-**✅ SAFE generalNote Examples for Lens 3:**
+**✅ SAFE generalNote Examples:**
 - "Focus on certified welfare sources and reducing consumption frequency."
 - "Choose products with third-party welfare certifications when possible."
 - "Reducing portion sizes and frequency can significantly reduce animal suffering."
