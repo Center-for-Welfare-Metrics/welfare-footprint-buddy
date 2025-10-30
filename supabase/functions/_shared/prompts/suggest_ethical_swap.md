@@ -268,27 +268,65 @@ Always include confidence level (High/Medium/Low) and brief reasoning summary.
 
 ---
 
-# ⛔⛔⛔ STOP! READ THIS BEFORE GENERATING ANYTHING ⛔⛔⛔
+# ⛔⛔⛔ ABSOLUTE RULE FOR LENS 3 - NO EXCEPTIONS ⛔⛔⛔
 
-**YOU MUST NOT generate product names containing these FORBIDDEN PATTERNS:**
+**LENS 3 ONLY ACCEPTS THESE 3 APPROACHES:**
+1. **Better Source Animal Product** (e.g., "MSC-Certified Salmon")
+2. **Portion Control** (e.g., "Reduce serving size to 4 oz")
+3. **Frequency Reduction** (e.g., "Consume twice weekly instead of daily")
 
-❌ "Beef and Mushroom" - FORBIDDEN
-❌ "Chicken and Vegetable" - FORBIDDEN  
-❌ "Salmon and Plant Protein" - FORBIDDEN
-❌ "Pork and Bean" - FORBIDDEN
-❌ Any product name with "and" connecting ingredients - FORBIDDEN
-❌ Any product name with hyphens like "Beef-Mushroom" - FORBIDDEN
-❌ Words "blend", "mix", "hybrid" anywhere - FORBIDDEN
+---
 
-**INSTEAD, YOU MUST ONLY suggest:**
-✅ "MSC-Certified Salmon"
-✅ "Pasture-Raised Beef"
-✅ "Certified Humane Chicken"
-✅ "Organic Eggs"
+# 🚫 FORBIDDEN WORDS IN PRODUCT NAMES (WILL CAUSE INSTANT REJECTION):
 
-**Format: [Certification] + [Animal Product] - NOTHING ELSE**
+**YOU ARE ABSOLUTELY FORBIDDEN FROM USING THESE IN ANY SUGGESTION:**
 
-**If you generate "and", "blend", "mix", or hyphens → YOUR RESPONSE FAILS**
+❌ **Plant-Based** or **Plant** - NEVER mention plant ingredients
+❌ **Cultured Butter with Plant-Based Cream** - FORBIDDEN (contains "Plant-Based")
+❌ **Butter with Vegetable Oil** - FORBIDDEN (contains "Vegetable")
+❌ **Beef and Mushroom** - FORBIDDEN (contains "and" + plant)
+❌ **Chicken and Vegetable** - FORBIDDEN (contains "and" + plant)
+❌ **Salmon and Plant Protein** - FORBIDDEN (contains "Plant")
+❌ **Pork-Mushroom** - FORBIDDEN (hyphen connecting ingredients)
+❌ **Blend**, **Mix**, **Hybrid**, **Combined** - FORBIDDEN
+❌ **Incorporates**, **With Added**, **Infused** - FORBIDDEN
+❌ Any percentage (50%, 75%, etc.) - FORBIDDEN
+
+**WHY? Because Lens 3 (Flexitarian) does NOT allow fictional dilution products.**
+
+---
+
+# ✅ THE ONLY ACCEPTABLE FORMAT:
+
+**[Welfare Certification] + [Pure Animal Product Name]**
+
+**Examples of CORRECT suggestions:**
+✅ "MSC-Certified Salmon" (certification + pure animal product)
+✅ "Pasture-Raised Beef" (welfare standard + pure animal product)
+✅ "Certified Humane Chicken" (certification + pure animal product)
+✅ "Organic Grass-Fed Butter" (welfare standard + pure animal product)
+
+**Examples that WILL BE REJECTED:**
+❌ "Cultured Butter with Plant-Based Cream" (contains "Plant-Based")
+❌ "Beef and Mushroom Blend" (contains "and" + "Mushroom" + "Blend")
+❌ "Chicken-Vegetable Mix" (contains hyphen + "Vegetable" + "Mix")
+❌ "Salmon incorporating plant protein" (contains "incorporating" + "plant")
+
+---
+
+# 🔒 MANDATORY PRE-SUBMISSION CHECK:
+
+**Before submitting your response, review EVERY field of EVERY suggestion:**
+
+For EACH suggestion, ask yourself:
+1. **Does the title contain ANY plant reference?** (plant, vegetable, mushroom, pea, tofu, cauliflower, etc.)
+   - If YES → DELETE and replace with pure animal product
+2. **Does the title contain "and" or hyphens connecting ingredients?**
+   - If YES → DELETE and replace with pure animal product
+3. **Does ANY field mention: blend, mix, hybrid, combined, incorporates, diluted, ratio, percentage?**
+   - If YES → DELETE and replace with better-source approach
+4. **Can I buy this EXACT product from a certified welfare source today?**
+   - If NO → DELETE and replace with real certified product
 
 ---
 
