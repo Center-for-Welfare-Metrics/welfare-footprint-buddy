@@ -281,14 +281,12 @@ function validateLensBoundaries(response: any, ethicalLens: number): { violation
   return { violations, warnings };
 }
 
-// Initialize AI Handler once
-const initAIHandler = (apiKey: string) => {
+// Initialize AI Handler with Lovable AI (GPT-5)
+const initAIHandler = () => {
   if (!(globalThis as any).__aiHandler) {
-    const handler = new AIHandler();
-    const geminiProvider = new GeminiProvider(apiKey);
-    handler.registerProvider(geminiProvider);
-    handler.setDefaultProvider('gemini');
-    (globalThis as any).__aiHandler = handler;
+    console.log('🔧 Initializing AI Handler with Lovable AI (GPT-5)');
+    // Lovable AI will be called directly via fetch, no provider registration needed
+    (globalThis as any).__aiHandler = true; // Mark as initialized
   }
 };
 
@@ -311,12 +309,12 @@ serve(async (req) => {
 
     const { productName, animalIngredients, ethicalLens, language } = validation.data!;
 
-    const GEMINI_API_KEY = Deno.env.get('GEMINI_API_KEY');
-    if (!GEMINI_API_KEY) {
-      throw new Error('GEMINI_API_KEY is not configured');
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    if (!LOVABLE_API_KEY) {
+      throw new Error('LOVABLE_API_KEY is not configured');
     }
 
-    initAIHandler(GEMINI_API_KEY);
+    initAIHandler();
 
     const ethicalLensNames = {
       1: 'Concerned Omnivore (Same Product, High Welfare)',
@@ -377,19 +375,70 @@ serve(async (req) => {
       OUTPUT_LANGUAGE: outputLanguage
     });
 
-    const aiResponse = await callAI({
-      prompt,
-      language,
-      timeout: 30000,
+    // Call Lovable AI (GPT-5-mini) with strict instruction following
+    console.log(`🤖 Calling Lovable AI (GPT-5-mini) for Lens ${ethicalLens}`);
+    
+    const lovableResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'openai/gpt-5-mini', // Better instruction following than Gemini
+        messages: [
+          {
+            role: 'system',
+            content: 'You are an expert in animal welfare and food ethics. You MUST follow ALL instructions EXACTLY as written, especially forbidden word lists and product naming rules. Your responses will be validated against strict rules - ANY violation will cause complete rejection. Pay special attention to Lens 3 requirements.',
+          },
+          {
+            role: 'user',
+            content: prompt,
+          },
+        ],
+        temperature: 0.3, // Lower temperature for more consistent rule-following
+        max_tokens: 4096,
+      }),
     });
 
-    if (!aiResponse.success) {
-      console.error('AI Handler error:', aiResponse.error);
-      throw new Error(aiResponse.error?.message || 'AI request failed');
+    if (!lovableResponse.ok) {
+      const errorText = await lovableResponse.text();
+      console.error(`❌ Lovable AI error:`, lovableResponse.status, errorText);
+      
+      if (lovableResponse.status === 429) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: {
+              message: 'Rate limit exceeded',
+              details: 'Too many requests. Please try again in a moment.',
+            },
+          }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      if (lovableResponse.status === 402) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: {
+              message: 'Payment required',
+              details: 'Please add credits to your Lovable AI workspace.',
+            },
+          }),
+          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      throw new Error(`Lovable AI error: ${lovableResponse.status} ${errorText}`);
     }
 
-    const text = aiResponse.data?.text?.trim();
+    const lovableData = await lovableResponse.json();
+    const text = lovableData.choices?.[0]?.message?.content?.trim();
+    
     if (!text) {
+      console.error('❌ No text response from Lovable AI');
       return new Response(
         JSON.stringify({ 
           success: false, 
