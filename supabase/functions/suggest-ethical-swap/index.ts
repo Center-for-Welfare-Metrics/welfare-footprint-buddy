@@ -59,6 +59,38 @@ function validateInput(body: any): { valid: boolean; data?: ValidatedInput; erro
 }
 
 /**
+ * Detect fictional blend products in suggestions
+ * Returns array of detected blend patterns
+ */
+function detectFictionalBlends(text: string): string[] {
+  const blendPatterns = [
+    /\b(\w+)[-–]\s*mushroom\b/i,
+    /\b(\w+)[-–]\s*pea\s+protein\b/i,
+    /\b(\w+)[-–]\s*cauliflower\b/i,
+    /\b(\w+)[-–]\s*pumpkin\b/i,
+    /\b(\w+)[-–]\s*potato\b/i,
+    /\b(\w+)[-–]\s*plant[-\s]?based\b/i,
+    /\b\d+%\s+\w+\s*\/\s*\d+%\s+\w+\b/i, // e.g., "50% pork / 50% mushroom"
+    /\bblend(ed)?\s+(with|of)\s+\w+\s+and\s+\w+/i,
+    /\bmix(ed)?\s+(with|of)\s+\w+\s+and\s+\w+/i,
+    /\bcombined\s+with\s+(mushroom|pea|cauliflower|pumpkin|potato|plant)/i,
+    /\bhybrid\s+(burger|ham|cheese|product)/i,
+    /\bwith\s+added\s+(mushroom|pea|cauliflower|pumpkin|potato|plant)/i,
+    /\bincorporat(es?|ing)\s+(mushroom|pea|cauliflower|plant)/i,
+  ];
+  
+  const detected: string[] = [];
+  blendPatterns.forEach(pattern => {
+    const match = text.match(pattern);
+    if (match) {
+      detected.push(match[0]);
+    }
+  });
+  
+  return detected;
+}
+
+/**
  * Validate that AI suggestions respect lens boundaries
  * Returns object with violations array and warnings array
  */
@@ -66,6 +98,42 @@ function validateLensBoundaries(response: any, ethicalLens: number): { violation
   const violations: string[] = [];
   const warnings: string[] = [];
   const suggestions = response.suggestions || [];
+  
+  // Check for fictional blends in Lens 3
+  if (ethicalLens === 3) {
+    suggestions.forEach((suggestion: any, index: number) => {
+      const textToCheck = `${suggestion.name} ${suggestion.description} ${suggestion.reasoning}`;
+      const blends = detectFictionalBlends(textToCheck);
+      
+      if (blends.length > 0) {
+        blends.forEach(blend => {
+          console.error(`🚫 FICTIONAL BLEND DETECTED in Suggestion ${index + 1}:`, {
+            suggestionName: suggestion.name,
+            blendPhrase: blend,
+            lens: ethicalLens
+          });
+          violations.push(
+            `Suggestion ${index + 1} ("${suggestion.name}") contains fictional blend pattern "${blend}" which is forbidden for Lens 3`
+          );
+        });
+      }
+    });
+    
+    // Check generalNote for blends
+    const generalNote = response.generalNote || '';
+    const generalBlends = detectFictionalBlends(generalNote);
+    if (generalBlends.length > 0) {
+      generalBlends.forEach(blend => {
+        console.error(`🚫 FICTIONAL BLEND in generalNote:`, {
+          blendPhrase: blend,
+          lens: ethicalLens
+        });
+        violations.push(
+          `generalNote contains fictional blend pattern "${blend}" which is forbidden for Lens 3`
+        );
+      });
+    }
+  }
   
   // Define HARD forbidden patterns (fatal violations) for each lens
   const hardForbiddenPatterns: Record<number, RegExp[]> = {
