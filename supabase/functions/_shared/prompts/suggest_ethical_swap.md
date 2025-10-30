@@ -248,7 +248,7 @@ Your choice supports farming systems where animal welfare is measured, monitored
 1. ❌ **NEVER suggest plant-based alternatives** (e.g., no soy milk, almond milk, vegan cheese, Beyond Meat, Impossible Foods, etc.)
 2. ❌ **NEVER suggest vegan or vegetarian products**
 3. ❌ **NEVER suggest cultured/lab-grown meat or dairy**
-4. ❌ **NEVER escalate to stricter ethical levels** (no , 4, or 5 suggestions)
+4. ❌ **NEVER escalate to stricter ethical levels** (no Lens 3, 4, or 5 suggestions)
 5. ✅ **ONLY suggest certified high-welfare or pasture-raised versions of the SAME animal product**
 
 **Suggestions:**
@@ -262,81 +262,82 @@ Provide short explanations of the specific welfare improvements.
 Tone: Informative and reassuring.
 Always include confidence level (High/Medium/Low) and brief reasoning summary.
 
-#### Lens 3 – Flexitarian (Minimal Animal Suffering)
+#### Lens 3 – Reducitarian (Minimal Animal Suffering)
 
 **ethicalLensPosition:** "Minimal Animal Suffering"
 
-Focus on harm reduction while continuing to consume animal products responsibly.
+Focus on harm reduction by consuming less of the same animal products.
 
-✅ Allowed strategies:
-- Use certified humane or high-welfare sources for the same product  
-- Reduce portion sizes  
-- Reduce frequency of consumption  
+✅ ONLY allowed strategies:
+- Reduce portion sizes of the SAME product
+- Reduce frequency of consumption of the SAME product
 
-❌ Do not suggest plant-based, vegetarian, vegan, blended, or hybrid products.
+❌ FORBIDDEN - You CANNOT suggest:
+- Different products or certifications
+- Plant-based, vegetarian, vegan alternatives
+- Blended or hybrid products
+- Any product names different from the original
 
-
----
-
-# 🛑 LENS 3 RULE – CERTIFIED SOURCE OR USE LESS
-
-**FOR , YOU CAN ONLY SUGGEST THESE OPTIONS:**
-
-1. **CERTIFIED SOURCE (SAME PRODUCT)**
-   - Swap conventional for a verified humane certification
-   - Example: "Certified Humane butter"
-
-2. **REDUCE PORTION SIZE**
-   - Make the serving smaller
-   - Example: "Use 1 tablespoon instead of 2 tablespoons"
-
-3. **REDUCE FREQUENCY**
-   - Consume less often
-   - Example: "Consume twice weekly instead of daily"
 
 ---
 
-# ❌ WHAT YOU CANNOT DO FOR 
+# 🛑 LENS 3 RULE – PORTION AND FREQUENCY REDUCTION ONLY
 
-**YOU CANNOT SUGGEST:**
-- Different animal products (NO switching species or product types)
-- Plant-based alternatives (NO plant words AT ALL)
-- Blends or mixes (NO "Blend", "Mix", "Hybrid")
-- Fictional or unavailable items
+**FOR LENS 3, YOU CAN ONLY SUGGEST THESE 2 TYPES:**
 
-**Focus ONLY on certified sources of the same product OR using less of it.**
+1. **REDUCE PORTION SIZE**
+   - Make the serving smaller of the EXACT SAME PRODUCT
+   - Example: "Use 1 tablespoon of butter instead of 2 tablespoons of butter"
+   - The product name MUST stay identical
+
+2. **REDUCE FREQUENCY**
+   - Consume the EXACT SAME PRODUCT less often
+   - Example: "Consume cheese twice weekly instead of daily"
+   - The product name MUST stay identical
 
 ---
 
-# ✅ CORRECT  SUGGESTIONS
+# ❌ WHAT YOU CANNOT DO FOR LENS 3
 
-**Product: Butter**
+**YOU ABSOLUTELY CANNOT SUGGEST:**
+- ❌ Different products (the product name MUST stay identical to the original)
+- ❌ Plant-based alternatives (NO "plant", "vegetable", "mushroom", "pea", "soy", etc.)
+- ❌ Blends or mixes (NO "Blend", "Mix", "Hybrid", "Combined", "Incorporates")
+- ❌ Percentages (NO "50%", "75%", "ratio", etc.)
+- ❌ Any words like "with", "and", "-" connecting food items
+- ❌ Certifications or different sourcing (NO "Organic", "Certified Humane", "Pasture-Raised")
+
+**ONLY suggest using LESS of the EXACT SAME product the user mentioned.**
+
+---
+
+# ✅ CORRECT LENS 3 SUGGESTIONS
+
+**Product: Cheese**
 
 **Suggestion 1:**
-- **name**: "Certified Humane Butter"
-- **description**: "Choose butter from farms audited for humane handling and ample cow pasture access"
-- **reasoning**: "Verified humane certification reduces suffering through better housing, gentler handling, and stress-minimizing milking routines"
+- **name**: "Reduce Cheese Portion Size"
+- **description**: "Use smaller servings of cheese (e.g., 1 oz instead of 2 oz)"
+- **reasoning**: "Consuming less cheese directly reduces the number of dairy cows needed for production"
 
 **Suggestion 2:**
-- **name**: "Reduce Butter Portion Size"
-- **description**: "Use smaller servings of butter"
-- **reasoning**: "Reducing portion size decreases total animal product consumption while maintaining satisfaction"
+- **name**: "Reduce Cheese Consumption Frequency"
+- **description**: "Consume cheese less often (e.g., twice weekly instead of daily)"
+- **reasoning**: "Lower frequency means fewer animals are raised in intensive farming systems"
 
-**generalNote**: "Combining certified humane sourcing with smaller servings reduces the number of animals exposed to stressful systems while still allowing the same favorite product."
+**generalNote**: "Reducing portion sizes and consumption frequency directly decreases demand for animal products, leading to fewer animals in production systems."
 
-**Examples of VALID suggestions:**
-- "MSC-Certified Salmon" ✅
-- "Pasture-Raised Beef" ✅
-- "Certified Humane Eggs" ✅
-- "Friend of the Sea Anchovies" ✅
-- "Reduce cheese portions to 1 oz" ✅
+**Examples of VALID Lens 3 suggestions:**
+- "Reduce milk portions to 4 oz" ✅ (portion reduction)
+- "Consume eggs twice weekly instead of daily" ✅ (frequency reduction)
+- "Use 1 tablespoon of butter instead of 2" ✅ (portion reduction)
 
 **Examples of INVALID suggestions that WILL BE REJECTED:**
-- "Beef and Mushroom Blend" ❌ (contains "and" + "blend")
-- "Chicken and Vegetable Blend" ❌ (contains "and" + "blend")
-- "Salmon-Vegetable Mix" ❌ (contains hyphen + "mix")
-- "50% Pork Sausage" ❌ (contains percentage)
-- "Blended Turkey" ❌ (contains "blended")
+- "Organic Cheese" ❌ (different product/certification)
+- "Cheese and Mushroom Blend" ❌ (contains "and" + "blend")
+- "50% Cheese, 50% Plant-Based" ❌ (contains percentage + plant)
+- "Reduced-Fat Cheese with Plant Fiber" ❌ (contains "with" + "plant")
+- "Certified Humane Cheese" ❌ (different certification/sourcing)
 
 ---
 
@@ -361,22 +362,19 @@ For EACH suggestion you generate, you MUST verify:
 
 ---
 
-# 📋 THE VALID APPROACHES FOR 
+# 📋 THE ONLY 2 VALID APPROACHES FOR LENS 3
 
-1. **Better Source (Same Product):**
-   - Replace conventional with certified welfare version
-   - Example: "MSC-certified salmon" instead of conventional salmon
-   - Must be a REAL certification (MSC, Certified Humane, Pasture-Raised, etc.)
+1. **Portion Control:**
+   - Suggest reducing the amount consumed OF THE EXACT SAME PRODUCT
+   - Example: "Reduce cheese portion from 2 oz to 1 oz"
+   - Product name MUST remain unchanged
 
-2. **Portion Control:**
-   - Suggest reducing the amount consumed
-   - Example: "Reduce portion from 8 oz to 4 oz"
+2. **Frequency Reduction:**
+   - Suggest consuming THE EXACT SAME PRODUCT less often
+   - Example: "Consume milk twice weekly instead of daily"
+   - Product name MUST remain unchanged
 
-3. **Frequency Reduction:**
-   - Suggest consuming less often
-   - Example: "Consume twice weekly instead of daily"
-
-**✅ CORRECT OUTPUT STRUCTURE FOR :**
+**✅ CORRECT OUTPUT STRUCTURE FOR LENS 3:**
 
 Every suggestion MUST follow this exact pattern:
 ```
@@ -471,20 +469,20 @@ Every suggestion MUST cite a real welfare certification, handling improvement, o
 
 **Tone:** Practical, grounded, and compassionate. Focus on realistic harm mitigation, not food innovation.
 
-**🚨 FORBIDDEN LANGUAGE in generalNote for :**
-❌ DO NOT use: "fully plant-based", "100% vegan", "100% plant-based", "completely plant-based", "entirely plant-based", "all plant-based", "zero animal", "no animal ingredients", "animal-free", "Beyond Meat", "Impossible"
-✅ DO use: "high-welfare certified", "reduced frequency", "smaller portions", "certified humane", "animal welfare standards"
+**🚨 FORBIDDEN LANGUAGE in generalNote for Lens 3:**
+❌ DO NOT use: "plant-based", "vegan", "vegetable", "mushroom", "blend", "mix", "hybrid", "certified", "humane", "organic", "pasture-raised", "with", "and", percentages
+✅ DO use: "reduced frequency", "smaller portions", "less consumption", "lower intake"
 
-**🚨 CRITICAL WARNING - NEVER USE THESE EXACT PHRASES IN  generalNote:**
-- ❌ "fully plant-based" (THIS WILL CAUSE VALIDATION ERROR)
-- ❌ "100% plant-based" (THIS WILL CAUSE VALIDATION ERROR)  
-- ❌ "completely plant-based" (THIS WILL CAUSE VALIDATION ERROR)
-- ❌ "all plant-based" (THIS WILL CAUSE VALIDATION ERROR)
-- ❌ "entirely plant" (THIS WILL CAUSE VALIDATION ERROR)
+**🚨 CRITICAL WARNING - NEVER USE THESE EXACT PHRASES IN LENS 3 generalNote:**
+- ❌ "plant-based" (THIS WILL CAUSE VALIDATION ERROR)
+- ❌ "blend", "mix", "hybrid" (THIS WILL CAUSE VALIDATION ERROR)
+- ❌ "certified", "organic", "humane" (THIS WILL CAUSE VALIDATION ERROR)
+- ❌ "50%", "75%", any percentages (THIS WILL CAUSE VALIDATION ERROR)
+- ❌ "with", "and", "incorporates" (THIS WILL CAUSE VALIDATION ERROR)
 
-**Example generalNote text (adapt to product context) - SAFE FOR :**
+**Example generalNote text (adapt to product context) - SAFE FOR LENS 3:**
 
-"You've chosen to minimize animal suffering — a balanced approach that significantly reduces harm.
+"You've chosen to minimize animal suffering by reducing consumption — a practical approach that directly reduces harm.
 
 For [product name], focus on two strategies: select verified high-welfare certified versions (pasture-raised, cage-free, humane handling) and deliberately use smaller portions or longer gaps between servings. These adjustments reduce both the number of animals exposed to stressful systems and the intensity of the practices they endure.
 

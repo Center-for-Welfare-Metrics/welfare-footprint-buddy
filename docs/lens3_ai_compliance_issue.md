@@ -154,11 +154,23 @@ function detectFictionalBlends(text: string): boolean {
 
 **Result**: Failed. AI continues to generate forbidden content.
 
-## Remediation
+## Remediation Steps Taken
 
-- Rewrote the Lens 3 prompt section to eliminate the conflicting plant/blend guidance.
-- Focused instructions solely on portion and frequency adjustments so the model aligns with validator expectations.
-- Deployed the revised prompt and confirmed Lens 3 validation passes with production traffic.
+### Attempt 1: Initial Simplification (FAILED)
+- Removed "better animal source" option
+- Focused only on portion/frequency
+- Result: AI still generated blends
+
+### Attempt 2: Fixed Corrupted References (IN PROGRESS)
+- Issue discovered: "Lens 3" text was corrupted to empty strings in several places
+- Fixed all corrupted references in prompt
+- Removed ALL mention of certifications, organic, humane sourcing from Lens 3
+- Changed allowed strategies to ONLY:
+  - Reduce portion size of exact same product
+  - Reduce frequency of exact same product
+- Updated forbidden language list to include "certified", "organic", "humane"
+- Strengthened examples showing only portion/frequency reductions
+- Next: Deploy and monitor for validation success
 
 ---
 
@@ -255,10 +267,13 @@ if (ethicalLens === 3) {
 
 ## Current Status
 
-**State**: Prompt rewrite deployed; Lens 3 suggestions now pass validation in production monitoring.  
-**User Impact**: Users receive compliant portion/frequency guidance without validation errors.  
-**Workaround**: Not required  
-**Next Steps**: Continue monitoring and schedule postmortem review to prevent future prompt/validator conflicts
+**State**: IN PROGRESS - Fixing corrupted prompt references and removing certification guidance entirely  
+**User Impact**: Users currently experiencing 500 errors when requesting Lens 3 suggestions  
+**Root Cause**: Prompt file had corrupted "Lens 3" references (showing as empty strings) AND still contained certification/sourcing guidance that conflicts with validator rules  
+**Next Steps**: 
+1. Deploy fixed prompt with ONLY portion/frequency reduction
+2. Monitor edge function logs for validation success
+3. If still failing, implement auto-retry logic or switch to GPT-5
 
 ---
 
