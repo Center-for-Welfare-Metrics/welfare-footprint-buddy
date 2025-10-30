@@ -625,7 +625,14 @@ e.g., `"Additional vegetables (from Paella)"`, to keep the output concise and re
   * Standard yogurt contains dairy unless labeled as plant-based
 - For food items that are plant-based, explain why (e.g., "explicitly labeled vegan", "dark chocolate without milk")
 - For food items with animal ingredients, explain which specific animal ingredient it is OR why it's inferred (e.g., "white chocolate typically contains milk", "standard chocolate formulation includes dairy")
-- Be conservative: if unsure about ingredients, mark as Medium or Low confidence
+- **CRITICAL: Avoid False Positives for Plant-Based Foods**:
+  * **DO NOT flag traditionally plant-based foods as "may contain" animal ingredients without clear evidence**
+  * Examples of traditionally plant-based items: vegetable dips (beet dip, hummus, guacamole), vegetable spreads, fruit preparations, grain dishes, legume dishes
+  * **ONLY flag as `likelyHasAnimalIngredients: true` with medium/low confidence when**:
+    - Product name explicitly mentions animal ingredients but details are unclear (e.g., "chicken dish" with unclear sauce)
+    - Label partially visible showing animal content keywords (e.g., "Contains: Milk" but can't see full list)
+    - Recipe traditionally uses animal products (e.g., traditional Caesar dressing with anchovies)
+  * **DEFAULT to `likelyHasAnimalIngredients: false` for items that are commonly plant-based** unless you have specific visual evidence or label text indicating animal content
 - When decomposing, maintain high confidence for visible ingredients (e.g., a visible egg yolk should be "High" confidence)
 - **CONTEXTUAL REASONING**: Consider the product category and typical ingredients even when specific ingredients are not visible on the label
 
