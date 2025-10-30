@@ -385,19 +385,18 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'openai/gpt-5-mini', // Better instruction following than Gemini
+        model: 'openai/gpt-5-mini',
         messages: [
           {
             role: 'system',
-            content: 'You are an expert in animal welfare and food ethics. You MUST follow ALL instructions EXACTLY as written, especially forbidden word lists and product naming rules. Your responses will be validated against strict rules - ANY violation will cause complete rejection. Pay special attention to Lens 3 requirements.',
+            content: 'You are an expert in animal welfare and food ethics. You MUST follow ALL instructions EXACTLY as written, especially forbidden word lists and product naming rules. Your responses will be validated against strict rules - ANY violation will cause complete rejection. Pay special attention to Lens 3 requirements which ONLY allow portion/frequency reduction of the exact same product.',
           },
           {
             role: 'user',
             content: prompt,
           },
         ],
-        temperature: 0.3, // Lower temperature for more consistent rule-following
-        max_tokens: 4096,
+        max_completion_tokens: 4096, // GPT-5 requires max_completion_tokens instead of max_tokens
       }),
     });
 
