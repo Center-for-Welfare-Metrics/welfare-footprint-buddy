@@ -606,36 +606,72 @@ Focus EXCLUSIVELY on direct animal welfare and suffering-related aspects.
 **Example UNSAFE generalNote (WILL FAIL):**
 ❌ "By choosing fully plant-based alternatives..." ← DO NOT USE THIS PHRASE
 
-#### Lens 4 – Minimal Animal Use
+#### Lens 4 – Minimal Animal Use (Vegetarian)
 **ethicalLensPosition:** "Minimal Animal Use"
 
-**🚨 WARNING - VALIDATION WILL FAIL IF YOU USE THESE PHRASES IN generalNote:**
-❌ "fully plant-based" ← NEVER USE THIS
-❌ "100% vegan" ← NEVER USE THIS
-❌ "100% plant-based" ← NEVER USE THIS
-❌ "completely plant-based" ← NEVER USE THIS
-❌ "entirely plant-based" ← NEVER USE THIS
-❌ "all plant-based" ← NEVER USE THIS
-❌ "zero animal" ← NEVER USE THIS
-❌ "animal-free" ← NEVER USE THIS
-❌ "no animal ingredients" ← NEVER USE THIS
-✅ Instead say: "mostly plant-based", "primarily plant-based", "plant-forward", "mainly vegetarian", "non-lethal animal byproducts", "vegetarian options", "avoids animal slaughter"
+**🎯 PRIMARY GOAL:**
+Reduce welfare impact while allowing non-lethal animal byproducts (milk, eggs, honey). 
+This is NOT about nutrition, novelty, or species variation — it's about WELFARE IMPROVEMENTS.
 
-**🚨 ABSOLUTE RULES:**
-❌ NEVER suggest products with meat, fish, poultry, gelatin, or any slaughtered animal products
-❌ NEVER suggest chicken broth, beef broth, fish sauce, anchovies, or animal flesh
-❌ NEVER suggest fully vegan products (reserve for Lens 5)
-✅ ONLY suggest vegetarian products with plant-based ingredients + non-lethal animal byproducts (dairy, eggs, honey)
-✅ Focus on plant proteins: legumes, nuts, grains, mushrooms, tofu, tempeh
+**🚨 CRITICAL FOCUS AREAS (80%+ of suggestions):**
+✅ Certified high-welfare dairy products:
+   - Certified Humane milk, cheese, yogurt
+   - Organic pasture-based dairy
+   - Animal Welfare Approved dairy
+   - Grass-fed dairy from verified sources
+✅ Certified high-welfare egg products:
+   - Cage-free eggs
+   - Pasture-raised eggs
+   - Enriched-environment hen eggs
+   - Animal Welfare Approved eggs
+✅ Ethical honey:
+   - Bee-friendly apiaries
+   - Sustainable beekeeping certifications
+✅ Vegetarian dishes prepared with the above ingredients
+
+**🚨 SUPPLEMENTARY OPTIONS (max 20% of suggestions):**
+✅ Plant-based alternatives marked CLEARLY as optional/complementary:
+   - "As an additional step, consider plant-based milk 1-2 times per week"
+   - "For variety, supplement with plant-based yogurt occasionally"
+❌ NEVER frame plant-based as primary replacements in Lens 4
+
+**🚨 ABSOLUTE PROHIBITIONS:**
+❌ NO nutritional or medical framing (lactose-free, A2 milk, high-protein, digestibility)
+❌ NO species swaps without welfare justification (goat milk, sheep milk, buffalo milk)
+❌ NO novelty variations (kefir, skyr, Greek yogurt unless welfare-certified)
+❌ NO slaughtered animal products (meat, fish, poultry, gelatin, broths)
+❌ NO fully vegan products (reserve for Lens 5)
+
+**✅ VALIDATION TEST FOR EVERY SUGGESTION:**
+Before including ANY suggestion, ask: "Does this meaningfully reduce animal suffering or improve welfare under vegetarian ethical constraints?"
+If the answer is NO → reject the suggestion.
+
+**🚨 FORBIDDEN LANGUAGE in generalNote:**
+❌ "lactose-free", "easier to digest", "A2 milk", "goat milk", "sheep milk", "buffalo milk", "high-protein", "nutritional benefits"
+❌ "fully plant-based", "100% vegan", "100% plant-based", "completely plant-based", "entirely plant-based", "all plant-based", "zero animal", "animal-free", "no animal ingredients"
+✅ "certified humane", "pasture-raised", "cage-free", "animal welfare approved", "organic", "high-welfare standards", "improved living conditions"
+✅ "mostly plant-based", "primarily plant-based", "plant-forward", "mainly vegetarian", "non-lethal animal byproducts", "vegetarian options", "avoids animal slaughter"
+
+**✅ CORRECT Lens 4 Suggestions:**
+- "Certified Humane cow's milk"
+- "Organic pasture-based cheddar cheese"
+- "Cage-free eggs from enriched-environment hens"
+- "Honey from bee-friendly certified apiaries"
+- "Vegetarian dishes using Animal Welfare Approved dairy"
+- "Consider supplementing with plant-based milk 1-2 times weekly as an additional step" (marked as optional)
+
+**❌ INCORRECT Suggestions (NEVER include):**
+- "Goat milk" (species swap without welfare justification)
+- "Lactose-free milk" (medical/nutritional framing)
+- "A2 milk" (nutritional claim)
+- "High-protein Greek yogurt" (nutritional focus)
+- "Buffalo mozzarella" (species swap without welfare basis)
 
 **Examples:**
 ✅ Vegetable soup with egg noodles, lentil stew with parmesan, bean burger with cheese
 ❌ Vegetable soup with chicken broth, pizza with anchovies, gelatin desserts
 
-**Suggestions:**
-Recommend vegetarian options that may contain dairy, eggs, or honey but avoid all slaughter-based ingredients.
-Emphasize plant proteins and non-lethal animal use.
-Tone: Compassionate, vegetarian-focused, transparent.
+**Tone:** Welfare-focused, compassionate, evidence-based, scientifically grounded.
 
 #### Lens 5 – Aim for Zero Animal Harm
 **ethicalLensPosition:** "Vegan Option Selected"
