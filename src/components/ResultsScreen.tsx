@@ -45,6 +45,7 @@ interface ResultsScreenProps {
 
 const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems, cacheMetadata }: ResultsScreenProps) => {
   const [ethicalSwaps, setEthicalSwaps] = useState<any[]>([]);
+  const [cachedSwaps, setCachedSwaps] = useState<Record<number, any[]>>({});
   const [isLoadingSwaps, setIsLoadingSwaps] = useState(false);
   const [sliderValue, setSliderValue] = useState<number[]>([appConfig.ethicalLens.defaultValue]);
   const [initialSliderValue, setInitialSliderValue] = useState<number[]>([appConfig.ethicalLens.defaultValue]);
@@ -106,6 +107,15 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
     const animalIngredients = data.animalIngredients?.value;
     if (!productName || !animalIngredients) return;
 
+    const currentLens = sliderValue[0];
+
+    // Check cache first
+    if (cachedSwaps[currentLens]) {
+      console.log('🎯 [handleEthicalSwap] Using cached result for lens:', currentLens);
+      setEthicalSwaps(cachedSwaps[currentLens]);
+      return;
+    }
+
     setIsLoadingSwaps(true);
     try {
       // Normalize language code (e.g., "en-GB" -> "en")
@@ -114,21 +124,21 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
       console.log('🎯 [handleEthicalSwap] Sending request with:', {
         productName,
         animalIngredients,
-        ethicalLens: sliderValue[0],
+        ethicalLens: currentLens,
         language: languageCode,
         sliderValue,
-        displayedLens: sliderValue[0] === 1 ? 'Welfarist' :
-                       sliderValue[0] === 2 ? 'Reducetarian' :
-                       sliderValue[0] === 3 ? 'Flexitarian' :
-                       sliderValue[0] === 4 ? 'Vegetarian' :
-                       sliderValue[0] === 5 ? 'Vegan' : 'Unknown'
+        displayedLens: currentLens === 1 ? 'Welfarist' :
+                       currentLens === 2 ? 'Reducetarian' :
+                       currentLens === 3 ? 'Flexitarian' :
+                       currentLens === 4 ? 'Vegetarian' :
+                       currentLens === 5 ? 'Vegan' : 'Unknown'
       });
       
       const { data: result, error } = await supabase.functions.invoke('suggest-ethical-swap', {
         body: { 
           productName,
           animalIngredients,
-          ethicalLens: sliderValue[0],
+          ethicalLens: currentLens,
           language: languageCode
         }
       });
@@ -145,7 +155,11 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
       }
 
       const parsedResult = JSON.parse(result.candidates[0].content.parts[0].text);
-      setEthicalSwaps([parsedResult]);
+      const swapData = [parsedResult];
+      
+      // Store in cache
+      setCachedSwaps(prev => ({ ...prev, [currentLens]: swapData }));
+      setEthicalSwaps(swapData);
     } catch (error: any) {
       console.error('[handleEthicalSwap] Full error:', error);
       const errorMessage = error?.message || error?.error?.message || "An error occurred";
@@ -162,8 +176,13 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
   const handleSliderCommit = (value: number[]) => {
     // Only trigger action if value changed from initial
     if (value[0] !== initialSliderValue[0]) {
-      // Clear ethical swaps and reset to show button again
-      setEthicalSwaps([]);
+      // Check if we have cached result for new lens value
+      if (cachedSwaps[value[0]]) {
+        setEthicalSwaps(cachedSwaps[value[0]]);
+      } else {
+        // Clear swaps to show button again
+        setEthicalSwaps([]);
+      }
       setInitialSliderValue(value);
     }
   };
