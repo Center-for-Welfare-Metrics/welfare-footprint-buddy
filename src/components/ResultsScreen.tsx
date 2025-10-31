@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Card } from "@/components/ui/card";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "react-i18next";
 import { appConfig } from "@/config/app.config";
@@ -499,17 +500,70 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
                   positionToLens(sliderValue[0]) === 4 ? t('ethicalLens.persona4') :
                   t('ethicalLens.persona5')}"
               </p>
-              <p 
-                className="text-sm font-semibold transition-colors duration-300"
-                style={{
-                  color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 4 | 5]
-                }}
-              >
-                {positionToLens(sliderValue[0]) === 1 ? t('ethicalLens.desc1') :
-                 positionToLens(sliderValue[0]) === 2 ? t('ethicalLens.desc2') :
-                 positionToLens(sliderValue[0]) === 4 ? t('ethicalLens.desc4') :
-                 t('ethicalLens.desc5')}
-              </p>
+              <div className="flex items-center gap-2">
+                <p 
+                  className="text-sm font-semibold transition-colors duration-300 flex-1"
+                  style={{
+                    color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 4 | 5]
+                  }}
+                >
+                  {positionToLens(sliderValue[0]) === 1 ? t('ethicalLens.desc1') :
+                   positionToLens(sliderValue[0]) === 2 ? t('ethicalLens.desc2') :
+                   positionToLens(sliderValue[0]) === 4 ? t('ethicalLens.desc4') :
+                   t('ethicalLens.desc5')}
+                </p>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button
+                      className="flex items-center justify-center w-5 h-5 rounded-full border transition-all hover:scale-110"
+                      style={{
+                        borderColor: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 4 | 5],
+                        color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 4 | 5]
+                      }}
+                      aria-label="Show detailed guidance"
+                    >
+                      <HelpCircle className="w-3 h-3" />
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent 
+                    className="w-80 bg-gray-900/95 border-gray-700 backdrop-blur-sm"
+                    side="bottom"
+                    align="end"
+                  >
+                    <div className="space-y-3">
+                      <h4 
+                        className="font-semibold text-sm"
+                        style={{
+                          color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 4 | 5]
+                        }}
+                      >
+                        {positionToLens(sliderValue[0]) === 1 ? t('ethicalLens.persona1') :
+                         positionToLens(sliderValue[0]) === 2 ? t('ethicalLens.persona2') :
+                         positionToLens(sliderValue[0]) === 4 ? t('ethicalLens.persona4') :
+                         t('ethicalLens.persona5')}
+                      </h4>
+                      <div className="space-y-2">
+                        {getEthicalLensExamples(positionToLens(sliderValue[0])).map((example, index) => (
+                          <div 
+                            key={index}
+                            className="flex gap-2 items-start text-xs text-gray-300"
+                          >
+                            <span 
+                              className="text-base leading-none mt-0.5 flex-shrink-0"
+                              style={{
+                                color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 4 | 5]
+                              }}
+                            >
+                              •
+                            </span>
+                            <span className="leading-relaxed">{example}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
             </div>
             <div className="relative">
               <style>{`
@@ -550,26 +604,6 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
               >
                 {getEthicalLensFocus(positionToLens(sliderValue[0]))}
               </p>
-              
-              {/* Ethical Lens Guidance - Examples */}
-              <div className="space-y-2">
-                {getEthicalLensExamples(positionToLens(sliderValue[0])).map((example, index) => (
-                  <div 
-                    key={index}
-                    className="flex gap-2 items-start text-xs text-gray-300 bg-gray-800/30 p-2 rounded"
-                  >
-                    <span 
-                      className="text-lg leading-none mt-0.5 flex-shrink-0"
-                      style={{
-                        color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 4 | 5]
-                      }}
-                    >
-                      •
-                    </span>
-                    <span className="leading-relaxed">{example}</span>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </div>
