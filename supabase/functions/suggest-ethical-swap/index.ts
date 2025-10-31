@@ -11,7 +11,7 @@ const corsHeaders = {
 
 // Input validation constants
 const MAX_TEXT_LENGTH = 5000;
-const VALID_ETHICAL_LENS = [1, 2, 3, 4, 5] as const;
+const VALID_ETHICAL_LENS = [1, 2, 4, 5] as const; // Removed lens 3
 
 interface ValidatedInput {
   productName: string;
@@ -36,9 +36,9 @@ function validateInput(body: any): { valid: boolean; data?: ValidatedInput; erro
     return { valid: false, error: `animalIngredients is required and must be less than ${MAX_TEXT_LENGTH} characters` };
   }
 
-  // Validate ethicalLens is 1-5
+  // Validate ethicalLens is 1, 2, 4, or 5 (removed 3)
   if (!VALID_ETHICAL_LENS.includes(ethicalLens)) {
-    return { valid: false, error: 'ethicalLens must be a number between 1 and 5' };
+    return { valid: false, error: 'ethicalLens must be 1, 2, 4, or 5' };
   }
 
   // Validate language code
@@ -104,41 +104,7 @@ function validateLensBoundaries(response: any, ethicalLens: number): { violation
   const warnings: string[] = [];
   const suggestions = response.suggestions || [];
   
-  // Check for fictional blends in Lens 3
-  if (ethicalLens === 3) {
-    suggestions.forEach((suggestion: any, index: number) => {
-      const textToCheck = `${suggestion.name} ${suggestion.description} ${suggestion.reasoning}`;
-      const blends = detectFictionalBlends(textToCheck);
-      
-      if (blends.length > 0) {
-        blends.forEach(blend => {
-          console.error(`🚫 FICTIONAL BLEND DETECTED in Suggestion ${index + 1}:`, {
-            suggestionName: suggestion.name,
-            blendPhrase: blend,
-            lens: ethicalLens
-          });
-          violations.push(
-            `Suggestion ${index + 1} ("${suggestion.name}") contains fictional blend pattern "${blend}" which is forbidden for Lens 3`
-          );
-        });
-      }
-    });
-    
-    // Check generalNote for blends
-    const generalNote = response.generalNote || '';
-    const generalBlends = detectFictionalBlends(generalNote);
-    if (generalBlends.length > 0) {
-      generalBlends.forEach(blend => {
-        console.error(`🚫 FICTIONAL BLEND in generalNote:`, {
-          blendPhrase: blend,
-          lens: ethicalLens
-        });
-        violations.push(
-          `generalNote contains fictional blend pattern "${blend}" which is forbidden for Lens 3`
-        );
-      });
-    }
-  }
+  // Fictional blends check removed (Lens 3 no longer exists)
   
   // Define HARD forbidden patterns (fatal violations) for each lens
   const hardForbiddenPatterns: Record<number, RegExp[]> = {
@@ -176,18 +142,6 @@ function validateLensBoundaries(response: any, ethicalLens: number): { violation
       /lab-grown/i,
       /cultured meat/i,
     ],
-    3: [
-      /fully\s+plant[-\s]?based/i,
-      /100%\s*(plant-based|vegan)/i,
-      /completely\s+plant[-\s]?based/i,
-      /entirely\s+plant[-\s]?based/i,
-      /all\s+plant[-\s]?based/i,
-      /beyond meat/i,
-      /impossible burger/i,
-      /no animal.*ingredient/i,
-      /zero animal/i,
-      /animal-free/i,
-    ],
     4: [
       /fully\s+plant[-\s]?based/i,
       /100%\s*(plant-based|vegan)/i,
@@ -211,14 +165,6 @@ function validateLensBoundaries(response: any, ethicalLens: number): { violation
       /\bplant[-\s]?forward\b/i,
       /\bplant[-\s]?based\s+(sides|options|meals|dishes)\b/i,
       /\bcomplement\s+with\s+plant/i,
-    ],
-    3: [
-      /mostly\s+plant[-\s]?based/i,
-      /primarily\s+plant[-\s]?based/i,
-      /plant[-\s]?forward/i,
-      /mainly\s+vegetarian/i,
-      /plant[-\s]?animal\s+blend/i,
-      /reduced[-\s]?animal/i,
     ],
     4: [
       /mostly\s+plant[-\s]?based/i,
@@ -319,7 +265,6 @@ serve(async (req) => {
     const ethicalLensNames = {
       1: 'Concerned Omnivore (Same Product, High Welfare)',
       2: 'Strong Welfare Standards',
-      3: 'Reducitarian',
       4: 'Vegetarian',
       5: 'Vegan (Plant-Based/Cultured Only)'
     };
@@ -332,12 +277,12 @@ serve(async (req) => {
     });
 
     // CRITICAL DEBUG: Verify lens value before prompt
-    if (ethicalLens < 1 || ethicalLens > 5) {
+    if (!VALID_ETHICAL_LENS.includes(ethicalLens as any)) {
       console.error('❌ INVALID ETHICAL LENS VALUE:', ethicalLens);
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: { message: `Invalid ethical lens value: ${ethicalLens}` }
+          error: { message: `Invalid ethical lens value: ${ethicalLens}. Must be 1, 2, 4, or 5.` }
         }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
@@ -375,8 +320,8 @@ serve(async (req) => {
       OUTPUT_LANGUAGE: outputLanguage
     });
 
-    // Call Lovable AI (GPT-5-mini) with strict instruction following
-    console.log(`🤖 Calling Lovable AI (GPT-5-mini) for Lens ${ethicalLens}`);
+    // Call Lovable AI (Gemini) with strict instruction following
+    console.log(`🤖 Calling Lovable AI (Gemini 2.5 Flash) for Lens ${ethicalLens}`);
     
     const lovableResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -385,7 +330,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'openai/gpt-5-mini', // Better instruction following than Gemini
+        model: 'google/gemini-2.5-flash',
         messages: [
           {
             role: 'system',
@@ -464,7 +409,6 @@ serve(async (req) => {
       const expectedPositions = {
         1: 'Prioritize Big Welfare Gains',
         2: 'Strong Welfare Standards',
-        3: 'Minimal Animal Suffering',
         4: 'Minimal Animal Use',
         5: 'Vegan Option Selected'
       };

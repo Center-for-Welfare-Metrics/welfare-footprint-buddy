@@ -160,11 +160,21 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
   };
 
   const handleSliderCommit = (value: number[]) => {
+    let lensValue = value[0];
+    
+    // Skip lens 3 - adjust to lens 4 if user tries to select it
+    if (lensValue === 3) {
+      lensValue = 4;
+      setSliderValue([4]);
+      setInitialSliderValue([4]);
+      return;
+    }
+    
     // Only trigger action if value changed from initial
-    if (value[0] !== initialSliderValue[0]) {
+    if (lensValue !== initialSliderValue[0]) {
       // Clear ethical swaps and reset to show button again
       setEthicalSwaps([]);
-      setInitialSliderValue(value);
+      setInitialSliderValue([lensValue]);
     }
   };
 
