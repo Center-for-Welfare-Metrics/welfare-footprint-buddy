@@ -44,10 +44,21 @@ interface ResultsScreenProps {
 }
 
 const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems, cacheMetadata }: ResultsScreenProps) => {
+  // Map slider position to lens ID: 0->1, 1->2, 2->4, 3->5
+  const positionToLens = (position: number): number => {
+    const mapping: { [key: number]: number } = { 0: 1, 1: 2, 2: 4, 3: 5 };
+    return mapping[position] || 2;
+  };
+  
+  const lensToPosition = (lens: number): number => {
+    const mapping: { [key: number]: number } = { 1: 0, 2: 1, 4: 2, 5: 3 };
+    return mapping[lens] || 1; // Default to position 1 (lens 2)
+  };
+  
   const [ethicalSwaps, setEthicalSwaps] = useState<any[]>([]);
   const [isLoadingSwaps, setIsLoadingSwaps] = useState(false);
-  const [sliderValue, setSliderValue] = useState<number[]>([appConfig.ethicalLens.defaultValue]);
-  const [initialSliderValue, setInitialSliderValue] = useState<number[]>([appConfig.ethicalLens.defaultValue]);
+  const [sliderValue, setSliderValue] = useState<number[]>([1]); // Default position 1 (lens 2 - Reducetarian)
+  const [initialSliderValue, setInitialSliderValue] = useState<number[]>([1]);
   const [challengeOpen, setChallengeOpen] = useState(false);
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [isReanalyzing, setIsReanalyzing] = useState(false);
@@ -110,25 +121,25 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
     try {
       // Normalize language code (e.g., "en-GB" -> "en")
       const languageCode = i18n.language.split('-')[0];
+      const currentLens = positionToLens(sliderValue[0]);
       
       console.log('🎯 [handleEthicalSwap] Sending request with:', {
         productName,
         animalIngredients,
-        ethicalLens: sliderValue[0],
+        ethicalLens: currentLens,
         language: languageCode,
-        sliderValue,
-        displayedLens: sliderValue[0] === 1 ? 'Welfarist' :
-                       sliderValue[0] === 2 ? 'Reducetarian' :
-                       sliderValue[0] === 3 ? 'Flexitarian' :
-                       sliderValue[0] === 4 ? 'Vegetarian' :
-                       sliderValue[0] === 5 ? 'Vegan' : 'Unknown'
+        sliderPosition: sliderValue[0],
+        displayedLens: currentLens === 1 ? 'Welfarist' :
+                       currentLens === 2 ? 'Reducetarian' :
+                       currentLens === 4 ? 'Vegetarian' :
+                       currentLens === 5 ? 'Vegan' : 'Unknown'
       });
       
       const { data: result, error } = await supabase.functions.invoke('suggest-ethical-swap', {
         body: { 
           productName,
           animalIngredients,
-          ethicalLens: sliderValue[0],
+          ethicalLens: currentLens,
           language: languageCode
         }
       });
@@ -160,21 +171,13 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
   };
 
   const handleSliderCommit = (value: number[]) => {
-    let lensValue = value[0];
-    
-    // Skip lens 3 - adjust to lens 4 if user tries to select it
-    if (lensValue === 3) {
-      lensValue = 4;
-      setSliderValue([4]);
-      setInitialSliderValue([4]);
-      return;
-    }
+    const position = value[0];
     
     // Only trigger action if value changed from initial
-    if (lensValue !== initialSliderValue[0]) {
+    if (position !== initialSliderValue[0]) {
       // Clear ethical swaps and reset to show button again
       setEthicalSwaps([]);
-      setInitialSliderValue([lensValue]);
+      setInitialSliderValue([position]);
     }
   };
 
@@ -233,7 +236,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
         const completeAnalysis = {
           ...data,
           ethicalSwaps: ethicalSwaps.length > 0 ? ethicalSwaps : null,
-          ethicalLensValue: sliderValue[0],
+          ethicalLensValue: positionToLens(sliderValue[0]),
           cacheMetadata,
         };
 
@@ -483,39 +486,37 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
               </DialogContent>
             </Dialog>
           </div>
-          <div className="space-y-4 bg-gray-800/50 p-4 rounded-lg">
+            <div className="space-y-4 bg-gray-800/50 p-4 rounded-lg">
             <div className="text-center space-y-1">
               <p 
                 className="text-xs font-medium italic transition-colors duration-300"
                 style={{
-                  color: appConfig.ethicalLens.colors[sliderValue[0] as 1 | 2 | 3 | 4 | 5]
+                  color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 4 | 5]
                 }}
               >
-                "{sliderValue[0] === 1 ? t('ethicalLens.persona1') :
-                  sliderValue[0] === 2 ? t('ethicalLens.persona2') :
-                  sliderValue[0] === 3 ? t('ethicalLens.persona3') :
-                  sliderValue[0] === 4 ? t('ethicalLens.persona4') :
+                "{positionToLens(sliderValue[0]) === 1 ? t('ethicalLens.persona1') :
+                  positionToLens(sliderValue[0]) === 2 ? t('ethicalLens.persona2') :
+                  positionToLens(sliderValue[0]) === 4 ? t('ethicalLens.persona4') :
                   t('ethicalLens.persona5')}"
               </p>
               <p 
                 className="text-sm font-semibold transition-colors duration-300"
                 style={{
-                  color: appConfig.ethicalLens.colors[sliderValue[0] as 1 | 2 | 3 | 4 | 5]
+                  color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 4 | 5]
                 }}
               >
-                {sliderValue[0] === 1 ? t('ethicalLens.desc1') :
-                 sliderValue[0] === 2 ? t('ethicalLens.desc2') :
-                 sliderValue[0] === 3 ? t('ethicalLens.desc3') :
-                 sliderValue[0] === 4 ? t('ethicalLens.desc4') :
+                {positionToLens(sliderValue[0]) === 1 ? t('ethicalLens.desc1') :
+                 positionToLens(sliderValue[0]) === 2 ? t('ethicalLens.desc2') :
+                 positionToLens(sliderValue[0]) === 4 ? t('ethicalLens.desc4') :
                  t('ethicalLens.desc5')}
               </p>
             </div>
             <div className="relative">
               <style>{`
                 .ethical-lens-slider [role="slider"] {
-                  background-color: ${appConfig.ethicalLens.colors[sliderValue[0] as 1 | 2 | 3 | 4 | 5]} !important;
-                  border-color: ${appConfig.ethicalLens.colors[sliderValue[0] as 1 | 2 | 3 | 4 | 5]} !important;
-                  box-shadow: 0 0 20px ${appConfig.ethicalLens.colors[sliderValue[0] as 1 | 2 | 3 | 4 | 5]}80 !important;
+                  background-color: ${appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 4 | 5]} !important;
+                  border-color: ${appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 4 | 5]} !important;
+                  box-shadow: 0 0 20px ${appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 4 | 5]}80 !important;
                   transition: all 0.3s ease;
                 }
               `}</style>
@@ -523,8 +524,8 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
                 value={sliderValue}
                 onValueChange={setSliderValue}
                 onValueCommit={handleSliderCommit}
-                max={5}
-                min={1}
+                max={3}
+                min={0}
                 step={1}
                 className="w-full ethical-lens-slider"
               />
@@ -544,15 +545,15 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
               <p 
                 className="text-sm font-semibold text-center transition-colors duration-300"
                 style={{
-                  color: appConfig.ethicalLens.colors[sliderValue[0] as 1 | 2 | 3 | 4 | 5]
+                  color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 4 | 5]
                 }}
               >
-                {getEthicalLensFocus(sliderValue[0])}
+                {getEthicalLensFocus(positionToLens(sliderValue[0]))}
               </p>
               
               {/* Ethical Lens Guidance - Examples */}
               <div className="space-y-2">
-                {getEthicalLensExamples(sliderValue[0]).map((example, index) => (
+                {getEthicalLensExamples(positionToLens(sliderValue[0])).map((example, index) => (
                   <div 
                     key={index}
                     className="flex gap-2 items-start text-xs text-gray-300 bg-gray-800/30 p-2 rounded"
@@ -560,7 +561,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
                     <span 
                       className="text-lg leading-none mt-0.5 flex-shrink-0"
                       style={{
-                        color: appConfig.ethicalLens.colors[sliderValue[0] as 1 | 2 | 3 | 4 | 5]
+                        color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 4 | 5]
                       }}
                     >
                       •
@@ -581,7 +582,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
                 disabled={isLoadingSwaps}
                 className="w-full text-white font-bold transition-all duration-300"
                 style={{
-                  backgroundColor: appConfig.ethicalLens.colors[sliderValue[0] as 1 | 2 | 3 | 4 | 5]
+                  backgroundColor: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 4 | 5]
                 }}
               >
                 {isLoadingSwaps ? (
