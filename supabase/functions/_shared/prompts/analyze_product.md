@@ -91,7 +91,8 @@ From the image, focus your analysis specifically on: "{{FOCUS_ITEM}}"
 
 #### 2. Ingredient Analysis
 - Identify if the product contains animal-derived ingredients
-- List the specific animal ingredients (meat, dairy, eggs, fish, etc.)
+- List the specific animal ingredients (meat, dairy, eggs, fish, honey, etc.)
+- **CRITICAL:** Honey is an animal-derived product (made by bees) and must ALWAYS be classified as an animal ingredient
 - Rate your confidence in this determination
 
 **⚠️ Critical Language Requirement:**
