@@ -375,7 +375,7 @@ serve(async (req) => {
       OUTPUT_LANGUAGE: outputLanguage
     });
 
-    // Use AI for all lenses
+    // Call Lovable AI (GPT-5-mini) with strict instruction following
     console.log(`🤖 Calling Lovable AI (GPT-5-mini) for Lens ${ethicalLens}`);
     
     const lovableResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
@@ -385,18 +385,19 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'openai/gpt-5-mini',
+        model: 'openai/gpt-5-mini', // Better instruction following than Gemini
         messages: [
           {
             role: 'system',
-            content: 'You are an expert in animal welfare and food ethics. You MUST follow ALL instructions EXACTLY as written, especially forbidden word lists and product naming rules. Your responses will be validated against strict rules - ANY violation will cause complete rejection.',
+            content: 'You are an expert in animal welfare and food ethics. You MUST follow ALL instructions EXACTLY as written, especially forbidden word lists and product naming rules. Your responses will be validated against strict rules - ANY violation will cause complete rejection. Pay special attention to Lens 3 requirements.',
           },
           {
             role: 'user',
             content: prompt,
           },
         ],
-        max_completion_tokens: 4096,
+        temperature: 0.3, // Lower temperature for more consistent rule-following
+        max_tokens: 4096,
       }),
     });
 
