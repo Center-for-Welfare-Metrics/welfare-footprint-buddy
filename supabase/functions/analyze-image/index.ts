@@ -451,9 +451,29 @@ NOW PROCEED WITH YOUR ANALYSIS USING THE ABOVE USER CONTEXT:
     });
 
   } catch (error) {
+    // Log full error server-side for debugging
     console.error('Error in analyze-image function:', error);
+    
+    // Return safe, user-friendly error message
+    const errorStr = error instanceof Error ? error.message : String(error);
+    let safeMessage = 'Failed to analyze image. Please try again.';
+    
+    // Map known error types to safe messages
+    if (errorStr.includes('GEMINI_API_KEY') || errorStr.includes('AI') || errorStr.includes('provider')) {
+      safeMessage = 'Image analysis service temporarily unavailable. Please try again later.';
+    } else if (errorStr.includes('auth') || errorStr.includes('token') || errorStr.includes('User')) {
+      safeMessage = 'Authentication required. Please sign in and try again.';
+    } else if (errorStr.includes('storage') || errorStr.includes('upload') || errorStr.includes('image')) {
+      safeMessage = 'Image upload failed. Please check your file and try again.';
+    } else if (errorStr.includes('quota') || errorStr.includes('limit') || errorStr.includes('scan')) {
+      safeMessage = 'Scan quota exceeded. Please upgrade your plan or try again later.';
+    }
+    
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
+      JSON.stringify({ 
+        success: false,
+        error: { message: safeMessage }
+      }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

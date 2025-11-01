@@ -246,11 +246,23 @@ serve(async (req) => {
     });
 
   } catch (error) {
+    // Log full error server-side for debugging
     console.error('Admin cache control error:', error);
+    
+    // Return safe, user-friendly error message
+    const errorStr = error instanceof Error ? error.message : String(error);
+    let safeMessage = 'Cache operation failed. Please try again.';
+    
+    if (errorStr.includes('database') || errorStr.includes('connection')) {
+      safeMessage = 'Database connection error. Please try again later.';
+    } else if (errorStr.includes('Supabase')) {
+      safeMessage = 'Backend service error. Please contact support.';
+    }
+    
     return new Response(
       JSON.stringify({ 
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error' 
+        error: safeMessage
       }),
       {
         status: 500,

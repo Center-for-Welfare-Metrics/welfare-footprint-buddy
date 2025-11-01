@@ -66,9 +66,15 @@ Deno.serve(async (req) => {
     );
 
   } catch (error) {
+    // Log full error server-side for debugging
     console.error('Error in share-result function:', error);
+    
+    // Return safe, user-friendly error message
     return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
+      JSON.stringify({ 
+        success: false,
+        error: 'Failed to load shared result. Please try again.' 
+      }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }

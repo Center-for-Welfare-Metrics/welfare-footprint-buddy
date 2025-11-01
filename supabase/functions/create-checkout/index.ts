@@ -70,9 +70,22 @@ serve(async (req) => {
       status: 200,
     });
   } catch (error) {
+    // Log full error server-side for debugging
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR in create-checkout", { message: errorMessage });
-    return new Response(JSON.stringify({ error: errorMessage }), {
+    
+    // Return safe, user-friendly error message
+    let safeMessage = 'Failed to create checkout session. Please try again.';
+    
+    if (errorMessage.includes('STRIPE') || errorMessage.includes('stripe')) {
+      safeMessage = 'Payment service temporarily unavailable. Please try again later.';
+    } else if (errorMessage.includes('auth') || errorMessage.includes('User not authenticated')) {
+      safeMessage = 'Authentication required. Please sign in and try again.';
+    } else if (errorMessage.includes('Price ID')) {
+      safeMessage = 'Invalid subscription plan. Please select a valid plan.';
+    }
+    
+    return new Response(JSON.stringify({ error: safeMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });

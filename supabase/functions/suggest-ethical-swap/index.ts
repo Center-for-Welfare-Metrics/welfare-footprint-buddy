@@ -474,9 +474,27 @@ serve(async (req) => {
     });
 
   } catch (error) {
+    // Log full error server-side for debugging
     console.error('Error in suggest-ethical-swap function:', error);
+    
+    // Return safe, user-friendly error message
+    const errorStr = error instanceof Error ? error.message : String(error);
+    let safeMessage = 'Failed to generate ethical swap suggestions. Please try again.';
+    
+    // Map known error types to safe messages
+    if (errorStr.includes('LOVABLE_API_KEY') || errorStr.includes('AI')) {
+      safeMessage = 'AI service temporarily unavailable. Please try again later.';
+    } else if (errorStr.includes('auth') || errorStr.includes('token')) {
+      safeMessage = 'Authentication required. Please sign in and try again.';
+    } else if (errorStr.includes('Rate limit')) {
+      safeMessage = 'Too many requests. Please try again in a moment.';
+    }
+    
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
+      JSON.stringify({ 
+        success: false,
+        error: { message: safeMessage }
+      }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
