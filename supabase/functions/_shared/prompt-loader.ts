@@ -609,6 +609,26 @@ Focus EXCLUSIVELY on direct animal welfare and suffering-related aspects.
 #### Lens 4 – Minimal Animal Use (Vegetarian)
 **ethicalLensPosition:** "Minimal Animal Use"
 
+---
+
+# 🚨 MANDATORY TEMPLATE FOR LENS 4 generalNote 🚨
+
+**YOU MUST USE THIS EXACT TEMPLATE - DO NOT DEVIATE OR CREATE YOUR OWN TEXT**
+
+Copy this template and ONLY replace [product name] with the actual product:
+
+"""
+You've chosen minimal animal use — a commitment that eliminates harm from animal slaughter.
+
+For [product name], the best approach is to select high-welfare certified versions from verified dairies or farms that prioritize animal well-being. Look for products bearing Certified Humane, Animal Welfare Approved, or similar certifications that ensure animals providing non-lethal byproducts (milk, eggs, honey) experience improved living conditions, natural behaviors, and gentle handling.
+
+This choice reflects compassion for animal life while supporting ethical, welfare-focused farming systems.
+"""
+
+**⚠️ ENFORCEMENT:** If you write ANYTHING other than this template (with [product name] replaced), you have FAILED the validation requirements.
+
+---
+
 **🎯 PRIMARY GOAL:**
 Reduce welfare impact while allowing non-lethal animal byproducts (milk, eggs, honey). 
 This is NOT about nutrition, novelty, or species variation — it's about WELFARE IMPROVEMENTS FOR VEGETARIAN PRODUCTS.
@@ -662,7 +682,7 @@ When the user scans meat, poultry, or fish, suggest vegetarian replacements that
 **🚨 ABSOLUTE PROHIBITIONS:**
 ❌ NO language suggesting zero animal ingredients:
    - "animal-free", "vegan", "100% plant-based", "completely plant-based"
-   - "zero animal", "no animal ingredients", "entirely plant-based"
+   - "zero animal", "no animal ingredients", "entirely plant-based", "fully plant-based"
 ❌ NO nutritional or medical framing:
    - "lactose-free", "A2 milk", "high-protein", "digestibility"
 ❌ NO species swaps without welfare justification:
@@ -703,12 +723,22 @@ For meat/fish (suggest vegetarian with dairy/eggs):
 - "Lactose-free milk" → medical/nutritional framing
 - Any suggestion described as "100% plant-based" or "vegan"
 
-**🚨 FORBIDDEN LANGUAGE (will cause validation failure):**
-❌ In generalNote OR any suggestion description:
-   - "fully plant-based", "100% vegan", "100% plant-based"
-   - "completely plant-based", "entirely plant-based", "all plant-based"
-   - "zero animal", "animal-free", "no animal ingredients"
-   - "lactose-free", "A2 milk", "goat milk", "sheep milk"
+**🚨 ABSOLUTE FORBIDDEN PHRASES IN LENS 4 generalNote 🚨**
+
+**IF YOU USE ANY OF THESE PHRASES IN generalNote, YOUR RESPONSE WILL BE REJECTED:**
+- ❌ "fully plant-based"
+- ❌ "100% vegan"
+- ❌ "100% plant-based"
+- ❌ "completely plant-based"
+- ❌ "entirely plant-based"
+- ❌ "all plant-based"
+- ❌ "zero animal"
+- ❌ "animal-free"
+- ❌ "no animal ingredients"
+- ❌ "lactose-free"
+- ❌ "A2 milk"
+- ❌ "goat milk"
+- ❌ "sheep milk"
 
 **Tone:** Welfare-focused, compassionate, evidence-based, vegetarian (not vegan).
 
