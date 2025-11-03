@@ -2,9 +2,9 @@
 
 <!--
 Prompt-ID: suggest_ethical_swap
-Version: v2.9
+Version: v3.0
 Stage: 5
-Last-Updated: 2025-10-29
+Last-Updated: 2025-11-03
 Maintainer: Lovable AI Sync Process
 -->
 
