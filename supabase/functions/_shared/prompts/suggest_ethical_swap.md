@@ -565,6 +565,28 @@ Eliminate all meat, fish, and slaughter by-products while continuing the use of 
 
 **generalNote (Required Context for Lens 4):**
 
+---
+
+# 🚨 MANDATORY TEMPLATE FOR LENS 4 generalNote 🚨
+
+**YOU MUST USE THIS EXACT TEMPLATE - DO NOT DEVIATE OR CREATE YOUR OWN TEXT**
+
+Copy this template and ONLY replace [product name] with the actual product:
+
+```
+You've chosen minimal animal use — a commitment that eliminates harm from animal slaughter.
+
+For [product name], the best approach is to select high-welfare certified versions from verified dairies or farms that prioritize animal well-being. Look for products bearing Certified Humane, Animal Welfare Approved, or similar certifications that ensure animals providing non-lethal byproducts (milk, eggs, honey) experience improved living conditions, natural behaviors, and gentle handling.
+
+This choice reflects compassion for animal life while supporting ethical, welfare-focused farming systems.
+```
+
+**⚠️ ENFORCEMENT:** If you write ANYTHING other than this template (with [product name] replaced), you have FAILED the validation requirements.
+
+---
+
+**Background on Lens 4 (for context, DO NOT include this in generalNote):**
+
 This lens focuses on avoiding slaughter entirely while encouraging consumption of verified high-welfare non-lethal animal by-products. The primary goal is not culinary similarity, but **improving the welfare conditions of the animals providing those by-products**.
 
 **Examples of what counts as improved welfare:**
@@ -592,34 +614,26 @@ Focus on *how* each suggested source mitigates the key welfare concern (handling
 
 Tone: Transparent, gentle, and welfare-anchored — "These options preserve vegetarian values while improving the lives of the animals providing non-lethal products."
 
-**🚨 CRITICAL WARNING - NEVER USE THESE EXACT PHRASES IN LENS 4 generalNote:**
-- ❌ "fully plant-based" (THIS WILL CAUSE VALIDATION ERROR)
-- ❌ "100% vegan" (THIS WILL CAUSE VALIDATION ERROR)
-- ❌ "100% plant-based" (THIS WILL CAUSE VALIDATION ERROR)
-- ❌ "completely plant-based" (THIS WILL CAUSE VALIDATION ERROR)
-- ❌ "entirely plant-based" (THIS WILL CAUSE VALIDATION ERROR)
-- ❌ "all plant-based" (THIS WILL CAUSE VALIDATION ERROR)
-- ❌ "zero animal" (THIS WILL CAUSE VALIDATION ERROR)
-- ❌ "animal-free" (THIS WILL CAUSE VALIDATION ERROR)
-- ❌ "no animal ingredients" (THIS WILL CAUSE VALIDATION ERROR)
+**🚨 ABSOLUTE FORBIDDEN PHRASES IN LENS 4 generalNote 🚨**
 
-**✅ INSTEAD USE THESE PHRASES FOR LENS 4:**
+**IF YOU USE ANY OF THESE PHRASES IN generalNote, YOUR RESPONSE WILL BE REJECTED:**
+- ❌ "fully plant-based"
+- ❌ "100% vegan"
+- ❌ "100% plant-based"
+- ❌ "completely plant-based"
+- ❌ "entirely plant-based"
+- ❌ "all plant-based"
+- ❌ "zero animal"
+- ❌ "animal-free"
+- ❌ "no animal ingredients"
+
+**✅ SAFE PHRASES (if needed in suggestion descriptions, NOT in generalNote):**
 - "mostly plant-based" or "predominantly plant-based"
 - "primarily plant-based" or "plant-forward"
 - "mainly vegetarian"
 - "non-lethal animal byproducts" or "humane animal byproducts"
 - "plant-forward alternatives" or "vegetarian options"
 - "avoids animal slaughter"
-
-**Example generalNote text (YOU MUST ADAPT THIS TEMPLATE - DO NOT DEVIATE FROM THIS STRUCTURE FOR LENS 4):**
-
-"You've chosen minimal animal use — a commitment that eliminates harm from animal slaughter.
-
-For [product name], the best approach is to select high-welfare certified versions from verified dairies or farms that prioritize animal well-being. Look for products bearing Certified Humane, Animal Welfare Approved, or similar certifications that ensure animals providing non-lethal byproducts (milk, eggs, honey) experience improved living conditions, natural behaviors, and gentle handling.
-
-This choice reflects compassion for animal life while supporting ethical, welfare-focused farming systems."
-
-**⚠️ CRITICAL: For Lens 4, DO NOT write your own generalNote from scratch. ALWAYS use the template above and adapt only the product-specific portions. This ensures compliance with validation rules.**
 
 **🚨 CRITICAL - LENS 4 RESTRICTIONS 🚨**
 
