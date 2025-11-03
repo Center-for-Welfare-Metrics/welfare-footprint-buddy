@@ -48,6 +48,36 @@ Maintainer: Lovable AI Sync Process
 
 ---
 
+<!-- ============================================================
+QUICK-REFERENCE LADDER: ANIMAL PRODUCT ALTERNATIVES
+------------------------------------------------------------
+📘 PURPOSE:
+This table defines the canonical mapping between the four Ethical Lenses
+used in the Welfare Footprint Buddy App and their corresponding
+treatment of animal products across categories.
+
+⚠️ DO NOT MOVE OR MODIFY THIS SECTION MANUALLY.
+This serves as part of the model’s system-level context.
+Edits here must be synchronized with:
+- Frontend ethical-lens slider (4 positions)
+- Backend validator in `suggest_ethical_swap/index.ts`
+- Lens constants in the prompt loader
+============================================================= -->
+
+### 📘 Quick-Reference Ladder: Animal Product Alternatives  
+*(High-welfare only when used; each level adds the previous rules)*  
+
+| **Level** | **Meat / Fish** | **Dairy** | **Eggs** | **Leather / Wool** | **Honey** | **Key Gain** |
+|------------|-----------------|------------|-----------|--------------------|------------|---------------|
+| **1. Welfarist (Higher-Welfare Omnivore)** | Only Certified Humane / GAP-4+ / AGW pasture-raised | Pasture-raised milk & cheese | Pasture-raised eggs | Responsible Wool / no-mulesing | Ethical small-scale | Locks in high-welfare baseline for every animal product |
+| **2. Reducetarian (Lower Consumption)** | Same high-welfare but ≈ 50 % less | Same high-welfare but ≈ 50 % less | Same high-welfare but ≈ 50 % less | Same + 1 plant swap per item | Same + maple half the time | Halves breeding demand while keeping a welfare floor |
+| **3. Vegetarian (No Slaughter)** | Zero (use seitan / jackfruit / tempeh / tofu) | High-welfare dairy only | High-welfare eggs only | Zero leather; wool only if RWS-certified | Agave default | Eliminates slaughter; welfare now only for non-lethal |
+| **4. Vegan (No Animal Use)** | Zero | Zero (cashew / soy / oat alternatives) | Zero (mung-bean egg / cultured protein) | Mushroom / apple leather | Dandelion / maple syrup | Ends funding of any animal use |
+
+<!-- END QUICK-REFERENCE LADDER -->
+
+
+
 ## Prompt Text
 
 You are an AI assistant specializing in animal welfare and ethical food alternatives.
