@@ -1,6 +1,6 @@
 [
   {
-    "name": "Lens 1 - Slaughter Concern (larvae roasting)",
+    "name": "Lens 1 - Higher-Welfare Omnivore (larvae)",
     "input": {
       "PRODUCT_NAME": "palm weevil larvae",
       "ANIMAL_INGREDIENTS": ["larvae"],
@@ -8,50 +8,39 @@
       "OUTPUT_LANGUAGE": "English",
       "PRIMARY_WELFARE_CONCERN": "painful killing during roasting"
     },
-    "expected_behavior": "Suggestions mention humane killing or stunning (e.g., knife spiking, rapid freezing), NOT habitat or environmental aspects."
+    "expected_behavior": "Suggestions mention humane killing or stunning methods for same product type."
   },
   {
-    "name": "Lens 2 - Handling Stress (fish transport)",
+    "name": "Lens 2 - Reducetarian (portion reduction)",
     "input": {
-      "PRODUCT_NAME": "live carp",
-      "ANIMAL_INGREDIENTS": ["fish"],
+      "PRODUCT_NAME": "cheddar cheese",
+      "ANIMAL_INGREDIENTS": ["milk"],
       "ETHICAL_LENS": 2,
       "OUTPUT_LANGUAGE": "English",
-      "PRIMARY_WELFARE_CONCERN": "transport stress and handling injuries"
+      "PRIMARY_WELFARE_CONCERN": "dairy cow welfare"
     },
-    "expected_behavior": "Suggestions emphasize shorter transport, low-stress handling, or gentle transfer; no mention of plant-based or environmental topics."
+    "expected_behavior": "Suggestions focus on portion reduction and frequency reduction only, no plant-based alternatives."
   },
   {
-    "name": "Lens 3 - Confinement (laying hens)",
-    "input": {
-      "PRODUCT_NAME": "chicken eggs",
-      "ANIMAL_INGREDIENTS": ["eggs"],
-      "ETHICAL_LENS": 3,
-      "OUTPUT_LANGUAGE": "English",
-      "PRIMARY_WELFARE_CONCERN": "confinement and inability to express natural behaviors"
-    },
-    "expected_behavior": "Suggestions describe mixed or blended products with reduced animal content, emphasizing improved housing or enriched environments."
-  },
-  {
-    "name": "Lens 4 - Mutilations (pig tail docking)",
-    "input": {
-      "PRODUCT_NAME": "pork sausage",
-      "ANIMAL_INGREDIENTS": ["pork"],
-      "ETHICAL_LENS": 4,
-      "OUTPUT_LANGUAGE": "English",
-      "PRIMARY_WELFARE_CONCERN": "tail docking and castration pain"
-    },
-    "expected_behavior": "Suggestions refer to vegetarian or egg/dairy-based items that avoid slaughter, explicitly mentioning systems that do not perform mutilations."
-  },
-  {
-    "name": "Lens 5 - General Alignment Check (beef burger)",
+    "name": "Lens 3 - Vegetarian (no slaughter)",
     "input": {
       "PRODUCT_NAME": "beef burger",
       "ANIMAL_INGREDIENTS": ["beef"],
-      "ETHICAL_LENS": 5,
+      "ETHICAL_LENS": 3,
       "OUTPUT_LANGUAGE": "English",
       "PRIMARY_WELFARE_CONCERN": "slaughter pain"
     },
-    "expected_behavior": "Suggestions list fully animal-free options (plant-based or cultured), and reasoning explains that these eliminate slaughter harm entirely."
+    "expected_behavior": "Suggestions are vegetarian options (plant-based with optional dairy/eggs), no meat or fish."
+  },
+  {
+    "name": "Lens 4 - Vegan (no animal use)",
+    "input": {
+      "PRODUCT_NAME": "chicken nuggets",
+      "ANIMAL_INGREDIENTS": ["chicken"],
+      "ETHICAL_LENS": 4,
+      "OUTPUT_LANGUAGE": "English",
+      "PRIMARY_WELFARE_CONCERN": "confinement and slaughter"
+    },
+    "expected_behavior": "Suggestions list fully animal-free options (plant-based or cultured), eliminating all animal use."
   }
 ]

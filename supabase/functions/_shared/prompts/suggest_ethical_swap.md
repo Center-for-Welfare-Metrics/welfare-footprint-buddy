@@ -215,14 +215,12 @@ Before providing suggestions, **evaluate whether the product ({{PRODUCT_NAME}}) 
 
 Based on the user's selected ethical lens position ({{ETHICAL_LENS}}), apply the following guidance:
 
-#### Lens 1 – Welfarist (Higher-Welfare Omnivore)
+#### Lens 1 – Higher-Welfare Omnivore ("Welfarist")
 
-Focus on improving the treatment of animals within existing systems.  
-- Prioritize animal products from farms with verifiable higher-welfare standards (e.g., cage-free eggs, pasture-raised dairy, certified humane meat).  
-- Reduces suffering by supporting less-intensive systems **without major lifestyle changes**.  
-- Entry-level stance: still involves exploitation but incentivizes better practices that benefit millions of animals.
+Choose the same product type but from higher-welfare sources (e.g., Certified Humane, pasture-raised, cage-free, MSC-certified).  
+- Focus: improve living conditions, handling, and slaughter standards.
 
-**ethicalLensPosition:** "Prioritize Big Welfare Gains"
+**ethicalLensPosition:** "Higher-Welfare Omnivore"
 
 **generalNote (Required Context for Lens 1):**
 
@@ -282,315 +280,61 @@ This lens is STRICTLY for users who want to keep consuming animal products but s
 Tone: Practical and encouraging - "This version improves conditions for animals while keeping similar products."
 Always include confidence level (High/Medium/Low) and brief reasoning summary based on specific welfare criteria.
 
-#### Lens 2 – Strong Welfare Standards (Certified Higher-Welfare Animal Products)
+#### Lens 2 – Reducetarian ("Lower Consumption")
 
-Prioritize certified, verifiably higher-welfare versions of the same animal product (no replacements with plant-only items).
-- Focus on independently verified improvements (e.g., lower stocking density, enriched environments, gentler handling, better stunning).
-- Reduce harm by upgrading welfare conditions within animal-based systems (not by eliminating animal ingredients).
+Actively reduce animal product consumption — smaller portions, lower frequency.  
+- Focus: harm reduction by lowering total demand on animal systems.
 
-**ethicalLensPosition:** "Strong Welfare Standards"
+**ethicalLensPosition:** "Lower Consumption"
 
 **generalNote (Required Context for Lens 2):**
 
-Use informative, reassuring language that honors the user's commitment to robust animal welfare standards. Emphasize the tangible improvements certified products offer.
+Use practical, encouraging language that acknowledges the user's commitment to reducing animal product consumption while focusing on harm reduction.
 
 **🚨 FORBIDDEN LANGUAGE in generalNote for Lens 2:**
-❌ DO NOT suggest: "fully plant-based", "switch to vegan", "replace with plant-based alternatives", "go vegan", "Beyond Meat", "Impossible", "lab-grown"
-✅ Complementary mentions ARE allowed: "add more plant-based sides", "include plant-forward options", "more plant-based meals", "plant-based dishes as complements"
-✅ DO use: "certified humane", "welfare certified", "pasture-raised", "enriched environments", "verified welfare"
-
-**Clarification on Plant-Based Mentions:**
-- It's acceptable to mention adding plant-based options AS COMPLEMENTS to high-welfare animal products
-- Example: "Choose certified humane chicken and add more plant-based sides for variety"
-- NEVER suggest replacing animal products entirely with plant-based alternatives in Lens 2
+❌ DO NOT use: "fully plant-based", "vegan", "vegetarian", "completely eliminate"
+✅ DO use: "reduced frequency", "smaller portions", "less consumption", "lower intake", "moderation"
 
 **Example generalNote text (adapt to product context):**
 
-"You've selected strong welfare standards — a choice that prioritizes comprehensive improvements to animal lives.
+"You've chosen to reduce animal product consumption — a meaningful approach that directly decreases demand on animal systems.
 
-Products meeting these standards ensure animals experience multiple welfare benefits: enriched environments that allow natural behaviors, reduced stocking densities, better veterinary care, and verified humane handling. For [product name], this represents a substantial upgrade from conventional production.
+For [product name], focus on two strategies: consuming smaller portions and extending the time between servings. By reducing your overall consumption, you decrease the number of animals bred into intensive farming systems, which directly reduces total suffering.
 
-Your choice supports farming systems where animal welfare is measured, monitored, and independently certified."
+Every reduction, no matter how small, represents fewer animals experiencing the harms associated with industrial production."
 
 **🚨 CRITICAL - LENS 2 RESTRICTIONS 🚨**
 
 **ABSOLUTE RULES FOR LENS 2:**
-1. ❌ **NEVER suggest plant-based alternatives** (e.g., no soy milk, almond milk, vegan cheese, Beyond Meat, Impossible Foods, etc.)
-2. ❌ **NEVER suggest vegan or vegetarian products**
-3. ❌ **NEVER suggest cultured/lab-grown meat or dairy**
-4. ❌ **NEVER escalate to stricter ethical levels** (no Lens 3, 4, or 5 suggestions)
-5. ✅ **ONLY suggest certified high-welfare or pasture-raised versions of the SAME animal product**
+1. ✅ **Focus on portion reduction** - suggest using less of the same product
+2. ✅ **Focus on frequency reduction** - suggest consuming the same product less often
+3. ❌ **NEVER suggest plant-based alternatives** (e.g., no tofu, tempeh, plant milk, vegan cheese, Beyond Meat, Impossible Foods, etc.)
+4. ❌ **NEVER suggest vegan or vegetarian products**
+5. ❌ **NEVER suggest cultured/lab-grown meat or dairy**
+6. ❌ **NEVER suggest different products or certifications**
+7. ✅ **ONLY suggest consuming LESS of the SAME animal product**
 
 **Suggestions:**
 
-Recommend certified or verifiably higher-welfare animal products that meet multiple welfare criteria. Look for:
-- Products with recognized certifications (e.g., Animal Welfare Approved, Certified Humane, Global Animal Partnership Step 3+)
-- Products with documented welfare improvements (reduced stocking density, enrichment, better slaughter practices)
-- Products from regenerative or high-welfare farming systems
+Recommend ONLY reduction strategies for the EXACT same product:
+- Smaller portion sizes (e.g., "Use 1 oz of cheese instead of 2 oz")
+- Lower consumption frequency (e.g., "Consume eggs twice weekly instead of daily")
+- The product name MUST stay identical to the original
 
-Provide short explanations of the specific welfare improvements.
-Tone: Informative and reassuring.
+**Examples of CORRECT Lens 2 Suggestions:**
+- Product: "Cheese" → Suggest: "Reduce cheese portion to 1 oz per serving", "Consume cheese twice weekly instead of daily"
+- Product: "Chicken" → Suggest: "Use half the usual amount of chicken in recipes", "Prepare chicken meals once a week instead of three times"
+- Product: "Milk" → Suggest: "Reduce milk portions to 4 oz servings", "Limit milk consumption to mornings only"
+
+Tone: Practical and encouraging - focus on achievable reduction strategies.
 Always include confidence level (High/Medium/Low) and brief reasoning summary.
 
-#### Lens 3 – Reducitarian (Minimal Animal Suffering)
+#### Lens 3 – Vegetarian ("No Slaughter")
 
-**ethicalLensPosition:** "Minimal Animal Suffering"
+Eliminate all meat, fish, and slaughter by-products while continuing non-lethal animal products (dairy, eggs, honey).  
+- Focus: promote high-welfare certified sources for non-lethal byproducts (Certified Humane, Animal Welfare Approved).
 
-Focus on harm reduction by consuming less of the same animal products.
-
-✅ ONLY allowed strategies:
-- Reduce portion sizes of the SAME product
-- Reduce frequency of consumption of the SAME product
-
-❌ FORBIDDEN - You CANNOT suggest:
-- Different products or certifications
-- Plant-based, vegetarian, vegan alternatives
-- Blended or hybrid products
-- Any product names different from the original
-
-
----
-
-# 🛑 LENS 3 RULE – PORTION AND FREQUENCY REDUCTION ONLY
-
-**FOR LENS 3, YOU CAN ONLY SUGGEST THESE 2 TYPES:**
-
-1. **REDUCE PORTION SIZE**
-   - Make the serving smaller of the EXACT SAME PRODUCT
-   - Example: "Use 1 tablespoon of butter instead of 2 tablespoons of butter"
-   - The product name MUST stay identical
-
-2. **REDUCE FREQUENCY**
-   - Consume the EXACT SAME PRODUCT less often
-   - Example: "Consume cheese twice weekly instead of daily"
-   - The product name MUST stay identical
-
----
-
-# ❌ WHAT YOU CANNOT DO FOR LENS 3
-
-**YOU ABSOLUTELY CANNOT SUGGEST:**
-- ❌ Different products (the product name MUST stay identical to the original)
-- ❌ Plant-based alternatives (NO "plant", "vegetable", "mushroom", "pea", "soy", etc.)
-- ❌ Blends or mixes (NO "Blend", "Mix", "Hybrid", "Combined", "Incorporates")
-- ❌ Percentages (NO "50%", "75%", "ratio", etc.)
-- ❌ Any words like "with", "and", "-" connecting food items
-- ❌ Certifications or different sourcing (NO "Organic", "Certified Humane", "Pasture-Raised")
-
-**ONLY suggest using LESS of the EXACT SAME product the user mentioned.**
-
----
-
-# ✅ CORRECT LENS 3 SUGGESTIONS
-
-**Product: Cheese**
-
-**Suggestion 1:**
-- **name**: "Reduce Cheese Portion Size"
-- **description**: "Use smaller servings of cheese (e.g., 1 oz instead of 2 oz)"
-- **reasoning**: "Consuming less cheese directly reduces the number of dairy cows needed for production"
-
-**Suggestion 2:**
-- **name**: "Reduce Cheese Consumption Frequency"
-- **description**: "Consume cheese less often (e.g., twice weekly instead of daily)"
-- **reasoning**: "Lower frequency means fewer animals are raised in intensive farming systems"
-
-**generalNote**: "Reducing portion sizes and consumption frequency directly decreases demand for animal products, leading to fewer animals in production systems."
-
-**Examples of VALID Lens 3 suggestions:**
-- "Reduce milk portions to 4 oz" ✅ (portion reduction)
-- "Consume eggs twice weekly instead of daily" ✅ (frequency reduction)
-- "Use 1 tablespoon of butter instead of 2" ✅ (portion reduction)
-
-**Examples of INVALID suggestions that WILL BE REJECTED:**
-- "Organic Cheese" ❌ (different product/certification)
-- "Cheese and Mushroom Blend" ❌ (contains "and" + "blend")
-- "50% Cheese, 50% Plant-Based" ❌ (contains percentage + plant)
-- "Reduced-Fat Cheese with Plant Fiber" ❌ (contains "with" + "plant")
-- "Certified Humane Cheese" ❌ (different certification/sourcing)
-
----
-
-# 🔒 BEFORE EACH SUGGESTION, RUN THIS CHECK:
-
-For EACH suggestion you generate, you MUST verify:
-
-**Step 1:** Does the product name contain the word "and" or a hyphen "-"?
-- If YES → DELETE this suggestion immediately and generate a different one
-
-**Step 2:** Does ANY field (title, description, reasoning, generalNote) contain these words: blend, mix, hybrid, combined, incorporating, diluted, percentage?
-- If YES → DELETE this suggestion immediately and generate a different one
-
-**Step 3:** Can I buy this exact product from a certified welfare farm/fishery today?
-- If NO → DELETE this suggestion immediately and generate a different one
-
-**Step 4:** Does this suggestion clearly state either (a) a real certification for the same product **or** (b) a portion/frequency reduction of the same product?
-- If NO → DELETE this suggestion immediately and generate a different one
-
-**Step 5:** Does any field use plant-based, vegan, vegetarian, or blend language?
-- If YES → DELETE this suggestion immediately and generate a different one
-
----
-
-# 📋 THE ONLY 2 VALID APPROACHES FOR LENS 3
-
-1. **Portion Control:**
-   - Suggest reducing the amount consumed OF THE EXACT SAME PRODUCT
-   - Example: "Reduce cheese portion from 2 oz to 1 oz"
-   - Product name MUST remain unchanged
-
-2. **Frequency Reduction:**
-   - Suggest consuming THE EXACT SAME PRODUCT less often
-   - Example: "Consume milk twice weekly instead of daily"
-   - Product name MUST remain unchanged
-
-**✅ CORRECT OUTPUT STRUCTURE FOR LENS 3:**
-
-Every suggestion MUST follow this exact pattern:
-```
-{
-  "title": "[Certification Name] [Animal Product]" OR "Reduce [Product] [Portion/Frequency]",  // NO "and", NO hyphens, NO blend words
-  "description": "[Welfare details about the certification OR clear portion/frequency guidance]",  // NO mixing/combining language
-  "reasoning": "[Why this certification improves welfare OR how using less reduces total harm]",  // NO blend/mix references
-  "confidence": "High/Medium/Low",
-  "generalNote": "[Focus on sourcing and frequency]"  // NO forbidden words (see banned list below)
-}
-```
-
-**🚨 BANNED WORDS IN ALL FIELDS (will cause rejection):**
-- "and" (when connecting ingredients)
-- "blend" / "blended" / "blending"
-- "mix" / "mixed" / "mixing"
-- "hybrid"
-- "combined" / "combining" / "combine"
-- "incorporated" / "incorporating"
-- "diluted" / "dilute"
-- "with added"
-- "infused with"
-- Percentages (50%, 75%, etc.)
-
-**✅ SAFE generalNote Examples:**
-- "Focus on certified welfare sources and reducing consumption frequency."
-- "Choose products with third-party welfare certifications when possible."
-- "Reducing portion sizes and frequency can significantly reduce animal suffering."
-
-**You must output suggestions that follow this template:**
-
-```
-Name: [Certification/Standard] + [Original Product]
-Description: [Same product] from [welfare-certified source] with [specific welfare improvement]
-Reasoning: Choosing [certification] ensures [specific welfare benefit like humane slaughter, outdoor access, etc.]
-```
-
-**Examples:**
-- "MSC-Certified Salmon" (not "Salmon Protein Mix")
-- "Pasture-Raised Pork" (not "Pork-Mushroom Blend")
-- "Organic Grass-Fed Cheese" (not "Cheese-Cauliflower Mix")
-
-**📋 MANDATORY FINAL SELF-CHECK BEFORE SUBMITTING:**
-
-Before you output your JSON response, review EACH suggestion and verify:
-- [ ] Does the product name contain NO hyphens connecting animal-plant terms?
-- [ ] Does the description contain NO words: "blend", "mix", "hybrid", "combined", "with added"?
-- [ ] Is this a REAL product available from welfare-certified sources?
-- [ ] Did I cite a REAL certification or standard (MSC, Friend of the Sea, Certified Humane, etc.)?
-
-If ANY checkbox fails, REPLACE that suggestion with a better-source option or behavioral change.
-
-**Example for Anchovies:**
-
-❌ **WRONG (WILL BE REJECTED):**
-```json
-{
-  "name": "Anchovy-Mushroom Paste",
-  "description": "A blend that reduces fish content by 50%"
-}
-```
-
-✅ **CORRECT:**
-```json
-{
-  "name": "MSC-Certified Anchovies",
-  "description": "Anchovies from Marine Stewardship Council certified fisheries using pole-and-line methods with rapid ice slaughter to minimize suffering",
-  "reasoning": "Choosing MSC-certified anchovies ensures the fish come from sustainable stocks and are harvested using methods that reduce stress and pain during capture."
-}
-```
-
-**🎯 SPECIFIC EXAMPLES FOR COMMON PRODUCTS:**
-
-**For SALMON:**
-- ✅ CORRECT: "ASC-certified salmon from responsible aquaculture", "Wild-caught Alaskan salmon (MSC-certified)", "Organic salmon from welfare-audited farms"
-- ❌ FORBIDDEN: "Salmon and vegetable protein mix", "Salmon-tofu blend", "50% salmon / 50% chickpea"
-
-**For ANCHOVIES:**
-- ✅ CORRECT: "MSC-certified anchovies", "Pole-caught anchovies with rapid ice slaughter", "Friend of the Sea certified anchovies"
-- ❌ FORBIDDEN: "Anchovy-mushroom paste", "Anchovy-seaweed blend", "Mixed anchovy and umami seasoning"
-
-**For HAM/PORK:**
-- ✅ CORRECT: "Certified Humane ham from pasture-raised pigs", "Organic heritage breed pork", "Smaller portion (2 oz instead of 4 oz)"
-- ❌ FORBIDDEN: "Ham-mushroom protein", "Pork-pea blend", "50% ham / 50% plant protein"
-
-**For CHEESE:**
-- ✅ CORRECT: "Organic grass-fed cheddar", "Certified Humane dairy cheese", "Artisan cheese from pasture-based herds"
-- ❌ FORBIDDEN: "Cheddar-cauliflower blend", "Cheese mixed with nutritional yeast", "50% dairy / 50% cashew"
-
-**Reasoning Standard:**  
-Every suggestion MUST cite a real welfare certification, handling improvement, or specific behavioral change—NEVER ingredient mixing.
-
-**Tone:** Practical, grounded, and compassionate. Focus on realistic harm mitigation, not food innovation.
-
-**🚨 FORBIDDEN LANGUAGE in generalNote for Lens 3:**
-❌ DO NOT use: "plant-based", "vegan", "vegetable", "mushroom", "blend", "mix", "hybrid", "certified", "humane", "organic", "pasture-raised", "with", "and", percentages
-✅ DO use: "reduced frequency", "smaller portions", "less consumption", "lower intake"
-
-**🚨 CRITICAL WARNING - NEVER USE THESE EXACT PHRASES IN LENS 3 generalNote:**
-- ❌ "plant-based" (THIS WILL CAUSE VALIDATION ERROR)
-- ❌ "blend", "mix", "hybrid" (THIS WILL CAUSE VALIDATION ERROR)
-- ❌ "certified", "organic", "humane" (THIS WILL CAUSE VALIDATION ERROR)
-- ❌ "50%", "75%", any percentages (THIS WILL CAUSE VALIDATION ERROR)
-- ❌ "with", "and", "incorporates" (THIS WILL CAUSE VALIDATION ERROR)
-
-**Example generalNote text (adapt to product context) - SAFE FOR LENS 3:**
-
-"You've chosen to minimize animal suffering by reducing consumption — a practical approach that directly reduces harm.
-
-For [product name], focus on two strategies: select verified high-welfare certified versions (pasture-raised, cage-free, humane handling) and deliberately use smaller portions or longer gaps between servings. These adjustments reduce both the number of animals exposed to stressful systems and the intensity of the practices they endure.
-
-This path represents substantial harm reduction — each choice becomes an opportunity to lessen the burden on sentient beings."
-
-**🚨 CRITICAL - LENS 3 RESTRICTIONS 🚨**
-
-This lens is for users who want to REDUCE animal product frequency and IMPROVE welfare when consuming them.
-
-**ABSOLUTE RULES FOR LENS 3:**
-1. ✅ **Prioritize high-welfare certified animal products** (Certified Humane, Animal Welfare Approved, pasture-raised)
-2. ✅ **Offer portion or frequency reductions of the same product when helpful**
-3. ❌ **NEVER mention plant-based items, blends, or mixes**
-4. ❌ **NEVER suggest fictional or unavailable products**
-5. ❌ **NEVER use language implying complete elimination** ("fully plant-based", "100% vegan", "no animal ingredients", "zero animal")
-6. ❌ **NEVER escalate to stricter ethical levels** (no pure Lens 4 or 5 suggestions)
-
-**Suggestions:**
-
-Recommend ONLY:
-1. **High-welfare certified versions** of the same animal product (e.g., pasture-raised chicken, cage-free eggs, Certified Humane dairy)
-2. **Portion reductions or lower serving frequency** for that same product
-
-**Examples of CORRECT Lens 3 Suggestions:**
-- Product: "Cheddar cheese" → Suggest: "Certified Humane cheddar (for when you choose cheese)", "Reduce cheddar portions to 1 oz per serving", "Enjoy cheese-free meals once or twice per week"
-- Product: "Chicken soup" → Suggest: "Soup with Certified Humane free-range chicken", "Prepare chicken soup once a week instead of daily", "Use half the usual chicken in each batch"
-- Product: "Beef burger" → Suggest: "Pasture-raised beef burger from Animal Welfare Approved sources", "Limit beef burgers to weekends", "Form smaller patties to cut total beef used"
-
-**Examples of INCORRECT Lens 3 Suggestions (AVOID):**
-- ❌ "Cheddar-cauliflower blend cheese" (fictional, unrealistic product)
-- ❌ "Mushroom-beef hybrid patty" (unless referring to specific real brand like Blend Burger)
-- ❌ Only plant-based suggestions without high-welfare animal options
-
-Emphasize welfare improvements and reduced frequency, not fictional blends.
-Tone: Practical, realistic, and welfare-anchored.
-Always include confidence level (High/Medium/Low) and brief reasoning summary.
-
-#### Lens 4 – Vegetarian (No Slaughter)
+**ethicalLensPosition:** "No Slaughter"
 
 **🚨 CRITICAL REMINDER: Check if {{PRODUCT_NAME}} is a SINGLE INGREDIENT**
 - If {{PRODUCT_NAME}} is a single ingredient (fish, chicken, beef, pork, etc.) → You MUST suggest INGREDIENTS ONLY
@@ -598,102 +342,51 @@ Always include confidence level (High/Medium/Low) and brief reasoning summary.
 - ONLY suggest ingredients: tofu, tempeh, seitan, mushrooms, legumes, plant-based fish, etc.
 - See the mandatory pre-check at the top of this prompt
 
-Eliminate all meat, fish, and slaughter by-products while continuing the use of non-lethal animal products such as dairy, eggs, or honey — **prioritizing high-welfare, certified sources**.
+**generalNote (Required Context for Lens 3):**
 
-**ethicalLensPosition:** "Minimal Animal Use"
+Use transparent, encouraging language that honors the user's commitment to avoiding animal slaughter while supporting non-lethal animal byproducts.
 
-**generalNote (Required Context for Lens 4):**
+**🚨 FORBIDDEN LANGUAGE in generalNote for Lens 3:**
+❌ DO NOT use: "fully plant-based", "vegan", "100% vegan", "completely plant-based", "entirely plant-based", "animal-free"
+✅ DO use: "no slaughter", "vegetarian", "non-lethal animal products", "certified humane dairy/eggs"
 
----
+**Example generalNote text (adapt to product context):**
 
-# 🚨 MANDATORY TEMPLATE FOR LENS 4 generalNote 🚨
+"You've chosen to avoid animal slaughter — a stance that eliminates the harm from killing animals for food.
 
-**YOU MUST USE THIS EXACT TEMPLATE - DO NOT DEVIATE OR CREATE YOUR OWN TEXT**
+For [product name], focus on vegetarian options that may include high-welfare certified dairy, eggs, or honey from farms prioritizing animal well-being. Look for Certified Humane, Animal Welfare Approved, or similar certifications that ensure animals providing non-lethal byproducts experience better living conditions, natural behaviors, and gentle handling.
 
-Copy this template and ONLY replace [product name] with the actual product:
+This choice reflects compassion while supporting ethical farming systems where animals are not killed for their products."
 
-```
-You've chosen minimal animal use — a commitment that eliminates harm from animal slaughter.
-
-For [product name], the best approach is to select high-welfare certified versions from verified dairies or farms that prioritize animal well-being. Look for products bearing Certified Humane, Animal Welfare Approved, or similar certifications that ensure animals providing non-lethal byproducts (milk, eggs, honey) experience improved living conditions, natural behaviors, and gentle handling.
-
-This choice reflects compassion for animal life while supporting ethical, welfare-focused farming systems.
-```
-
-**⚠️ ENFORCEMENT:** If you write ANYTHING other than this template (with [product name] replaced), you have FAILED the validation requirements.
-
----
-
-**Background on Lens 4 (for context, DO NOT include this in generalNote):**
-
-This lens focuses on avoiding slaughter entirely while encouraging consumption of verified high-welfare non-lethal animal by-products. The primary goal is not culinary similarity, but **improving the welfare conditions of the animals providing those by-products**.
-
-**Examples of what counts as improved welfare:**
-- Dairy from certified humane or pasture-based farms with low-stress milking and calf-care protocols.  
-- Eggs from enriched or cage-free environments where hens retain mobility and natural behaviors.  
-- Honey from bee-keepers using low-stress extraction and hive welfare certifications.
-
-**For products like ricotta, paneer, yogurt, or honey:**
-- Recommend versions with welfare certifications (e.g., Certified Humane Dairy, AHA Certified Eggs).  
-- When relevant, specify welfare-related production aspects (e.g., no forced weaning, grazing access, gentle handling).  
-- Avoid listing alternative food categories (e.g., other cheeses) unless they illustrate distinct welfare standards within the same category.
-
-**What TO Suggest for Lens 4:**
-- Same product type from certified or high-welfare dairies or apiaries.  
-- Vegetarian dishes prepared with verified high-welfare eggs or milk.  
-- Plant-forward but still vegetarian items (contains dairy/eggs/honey) when no certification exists.
-
-**Examples of CORRECT Lens 4 Suggestions:**
-- Product: "Ricotta cheese" → Suggest "Certified Humane ricotta," "Organic pasture-based ricotta," "Ricotta from low-stress milking dairies."  
-- Product: "Honey" → Suggest "Honey from bee-friendly apiaries with low-stress harvesting."  
-- Product: "Egg pasta" → Suggest "Pasta made with Certified Humane eggs" or "Free-range egg pasta."
-
-**Reasoning Quality for Lens 4:**  
-Focus on *how* each suggested source mitigates the key welfare concern (handling stress, confinement, milking pain, etc.), not on culinary similarity.  
-
-Tone: Transparent, gentle, and welfare-anchored — "These options preserve vegetarian values while improving the lives of the animals providing non-lethal products."
-
-**🚨 ABSOLUTE FORBIDDEN PHRASES IN LENS 4 generalNote 🚨**
-
-**IF YOU USE ANY OF THESE PHRASES IN generalNote, YOUR RESPONSE WILL BE REJECTED:**
-- ❌ "fully plant-based"
-- ❌ "100% vegan"
-- ❌ "100% plant-based"
-- ❌ "completely plant-based"
-- ❌ "entirely plant-based"
-- ❌ "all plant-based"
-- ❌ "zero animal"
-- ❌ "animal-free"
-- ❌ "no animal ingredients"
-
-**✅ SAFE PHRASES (if needed in suggestion descriptions, NOT in generalNote):**
-- "mostly plant-based" or "predominantly plant-based"
-- "primarily plant-based" or "plant-forward"
-- "mainly vegetarian"
-- "non-lethal animal byproducts" or "humane animal byproducts"
-- "plant-forward alternatives" or "vegetarian options"
-- "avoids animal slaughter"
-
-**🚨 CRITICAL - LENS 4 RESTRICTIONS 🚨**
+**🚨 CRITICAL - LENS 3 RESTRICTIONS 🚨**
 
 This lens is STRICTLY for users who want to avoid ALL slaughtered animal products while remaining open to non-lethal animal byproducts.
 
-**ABSOLUTE RULES FOR LENS 4:**
+**ABSOLUTE RULES FOR LENS 3:**
 1. ❌ **NEVER suggest products containing meat, fish, poultry, or gelatin** (these require animal slaughter)
 2. ❌ **NEVER suggest products with chicken broth, beef broth, fish sauce, anchovies, or any animal flesh**
-3. ❌ **NEVER suggest fully vegan or 100% plant-based products** (reserve those for Lens 5)
-4. ❌ **NEVER escalate to Lens 5** (no completely animal-free suggestions)
+3. ❌ **NEVER suggest fully vegan or 100% plant-based products** (reserve those for Lens 4)
+4. ❌ **NEVER escalate to Lens 4** (no completely animal-free suggestions)
 5. ✅ **ONLY suggest vegetarian products** (plant-based + non-lethal animal byproducts)
 6. ✅ **Allowed animal ingredients: dairy, eggs, honey ONLY** (no slaughter required)
 7. ✅ **Focus on plant proteins: legumes, nuts, grains, mushrooms, tofu, tempeh, seitan**
 
 **CRITICAL:** Every suggestion MUST be vegetarian (no meat, fish, poultry, or gelatin). Products may contain dairy, eggs, or honey.
 
-Clarify that this lens avoids slaughter entirely while honoring non-lethal animal use.
-Tone: Transparent, gently aspirational, and compassionate.
+**What TO Suggest for Lens 3:**
+- Vegetarian dishes or ingredients (plant-based with optional dairy/eggs/honey)
+- High-welfare certified dairy, eggs, or honey when included
+- Plant proteins: tofu, tempeh, seitan, legumes, mushrooms
+
+**Examples of CORRECT Lens 3 Suggestions:**
+- Product: "Beef burger" → Suggest: "Veggie burger with Certified Humane cheese", "Black bean burger", "Portobello mushroom burger"
+- Product: "Chicken curry" → Suggest: "Paneer curry with Certified Humane dairy", "Tofu curry", "Chickpea curry"
+- Product: "Anchovies" → Suggest: "Nutritional yeast for umami flavor", "Capers and olives", "Kelp or nori for sea flavor"
+
+Tone: Transparent, gentle, and welfare-anchored.
 Always include confidence level (High/Medium/Low) and brief reasoning summary.
 
-#### Lens 5 – Vegan (No Animal Use)
+#### Lens 4 – Vegan ("No Animal Use")
 
 **🚨 CRITICAL REMINDER: Check if {{PRODUCT_NAME}} is a SINGLE INGREDIENT**
 - If {{PRODUCT_NAME}} is a single ingredient (fish, chicken, beef, milk, cheese, eggs, etc.) → You MUST suggest INGREDIENTS ONLY
@@ -701,24 +394,22 @@ Always include confidence level (High/Medium/Low) and brief reasoning summary.
 - ONLY suggest ingredients: tofu, tempeh, seitan, mushrooms, legumes, plant-based milk, cashew cheese, etc.
 - See the mandatory pre-check at the top of this prompt
 
-Avoid all animal-derived products in food, clothing, and daily life (e.g., no meat, dairy, eggs, honey, wool, or leather).  
-- The most consistent stance: no funding of breeding, confinement, or animal use.  
-- Goal: reduce suffering at its root by eliminating economic demand for exploitation.  
-- Extends compassion beyond diet to all consumption domains.
+Avoid all animal-derived products in food, clothing, and daily life.  
+- Focus: fully plant-based or cultured alternatives.
 
-**ethicalLensPosition:** "Vegan Option Selected"
+**ethicalLensPosition:** "No Animal Use"
 
-**generalNote (Required Context for Lens 5):**
+**generalNote (Required Context for Lens 4):**
 
-Use compassionate, affirming language that honors the user's choice to avoid animal harm. Frame the vegan path as nourishing, ethical, and aligned with reducing animal suffering.
+Use compassionate, affirming language that honors the user's choice to avoid all animal use. Frame the vegan path as nourishing, ethical, and aligned with reducing animal suffering.
 
 **Example generalNote text (adapt to product context):**
 
-"You've chosen to explore a plant-based path — one that nourishes without relying on the suffering or slaughter of animals.
+"You've chosen to avoid all animal use — a commitment that eliminates harm from breeding, confinement, and exploitation.
 
-A typical serving of [product with animal ingredients] represents the pain and death of a sentient being who likely endured confinement, transport stress, and a painful killing process. The vegan alternative avoids those harms entirely.
+For [product name], fully plant-based or cultured alternatives avoid the suffering inherent in animal agriculture. These options provide nutrition and enjoyment without requiring animals to experience confinement, painful procedures, transport stress, or slaughter.
 
-Each meal is a vote for the kind of world you wish to sustain — one where pleasure, health, and compassion can coexist on the same plate."
+Each choice reflects compassion for sentient beings and supports a food system built on plants rather than animal exploitation."
 
 **Suggestions:**
 
@@ -753,11 +444,10 @@ Always include confidence level (High/Medium/Low) and brief reasoning summary.
 ### Output Schema
 
 **🚨 CRITICAL: Use EXACT ethicalLensPosition strings specified above:**
-- Lens 1: "Prioritize Big Welfare Gains"
-- Lens 2: "Strong Welfare Standards"
-- Lens 3: "Minimal Animal Suffering"
-- Lens 4: "Minimal Animal Use"
-- Lens 5: "Vegan Option Selected"
+- Lens 1: "Higher-Welfare Omnivore"
+- Lens 2: "Lower Consumption"
+- Lens 3: "No Slaughter"
+- Lens 4: "No Animal Use"
 
 Return ONLY valid JSON matching this schema:
 ```json

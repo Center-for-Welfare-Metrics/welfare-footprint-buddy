@@ -166,8 +166,8 @@ try {
           }
         }
 
-        // Lens 5: Should have plant-based or cultured options
-        if (testCase.input.ETHICAL_LENS === 5) {
+        // Lens 4 (Vegan): Should have plant-based or cultured options
+        if (testCase.input.ETHICAL_LENS === 4) {
           const hasAnimalFree = data.suggestions.some((s: any) => 
             s.name?.toLowerCase().includes('plant') ||
             s.name?.toLowerCase().includes('cultured') ||
@@ -177,7 +177,7 @@ try {
           
           if (!hasAnimalFree) {
             result.passed = false;
-            result.issues.push('Lens 5 should include animal-free alternatives');
+            result.issues.push('Lens 4 (Vegan) should include animal-free alternatives');
           }
         }
 

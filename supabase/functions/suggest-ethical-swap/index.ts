@@ -11,7 +11,7 @@ const corsHeaders = {
 
 // Input validation constants
 const MAX_TEXT_LENGTH = 5000;
-const VALID_ETHICAL_LENS = [1, 2, 4, 5] as const; // Removed lens 3
+const VALID_ETHICAL_LENS = [1, 2, 3, 4] as const;
 
 interface ValidatedInput {
   productName: string;
@@ -36,9 +36,9 @@ function validateInput(body: any): { valid: boolean; data?: ValidatedInput; erro
     return { valid: false, error: `animalIngredients is required and must be less than ${MAX_TEXT_LENGTH} characters` };
   }
 
-  // Validate ethicalLens is 1, 2, 4, or 5 (removed 3)
+  // Validate ethicalLens is 1, 2, 3, or 4
   if (!VALID_ETHICAL_LENS.includes(ethicalLens)) {
-    return { valid: false, error: 'ethicalLens must be 1, 2, 4, or 5' };
+    return { valid: false, error: 'ethicalLens must be 1, 2, 3, or 4' };
   }
 
   // Validate language code
@@ -126,23 +126,25 @@ function validateLensBoundaries(response: any, ethicalLens: number): { violation
       /eliminate.*animal/i,
     ],
     2: [
-      // Lens 2 only blocks FULL replacement with plant-based/vegan options
-      // Complementary mentions (e.g., "add plant-based sides") are allowed
-      /\bfully\s+plant[-\s]?based\b/i,
-      /\b100%\s+plant[-\s]?based\b/i,
-      /\bcompletely\s+plant[-\s]?based\b/i,
-      /\bentirely\s+plant[-\s]?based\b/i,
-      /\bswitch\s+to\s+plant[-\s]?based\b/i,
-      /\breplace\s+with\s+plant[-\s]?based\b/i,
-      /\bstrictly\s+vegan\b/i,
-      /\bgo\s+vegan\b/i,
-      /\bbecome\s+vegan\b/i,
+      // Lens 2: Reducetarian - blocks plant-based alternatives, different products, certifications
+      /plant-based/i,
+      /vegan/i,
+      /vegetarian/i,
       /beyond meat/i,
       /impossible/i,
+      /tofu/i,
+      /tempeh/i,
+      /seitan/i,
+      /certified/i,
+      /organic/i,
+      /humane/i,
+      /pasture-raised/i,
+      /cage-free/i,
       /lab-grown/i,
       /cultured meat/i,
     ],
-    4: [
+    3: [
+      // Lens 3: Vegetarian - blocks meat/fish and fully vegan language
       /fully\s+plant[-\s]?based/i,
       /100%\s*(plant-based|vegan)/i,
       /completely\s+plant[-\s]?based/i,
@@ -156,17 +158,8 @@ function validateLensBoundaries(response: any, ethicalLens: number): { violation
   
   // Define ALLOWED patterns (these should NOT trigger violations or warnings)
   const allowedPatterns: Record<number, RegExp[]> = {
-    2: [
-      // Lens 2 allows complementary plant-based mentions
-      /\bmostly\s+plant[-\s]?based\b/i,
-      /\bmore\s+plant[-\s]?based\b/i,
-      /\badd\s+(more\s+)?plant[-\s]?based/i,
-      /\binclude\s+plant[-\s]?based/i,
-      /\bplant[-\s]?forward\b/i,
-      /\bplant[-\s]?based\s+(sides|options|meals|dishes)\b/i,
-      /\bcomplement\s+with\s+plant/i,
-    ],
-    4: [
+    3: [
+      // Lens 3: Vegetarian allows these phrases
       /mostly\s+plant[-\s]?based/i,
       /primarily\s+plant[-\s]?based/i,
       /plant[-\s]?forward/i,
@@ -178,7 +171,7 @@ function validateLensBoundaries(response: any, ethicalLens: number): { violation
   const hardPatterns = hardForbiddenPatterns[ethicalLens];
   const allowed = allowedPatterns[ethicalLens] || [];
   
-  if (!hardPatterns) return { violations, warnings }; // Lens 5 has no restrictions
+  if (!hardPatterns) return { violations, warnings }; // Lens 4 (Vegan) has no restrictions
   
   // Helper to check if text matches any allowed pattern
   const isAllowedPhrase = (text: string): boolean => {
@@ -263,10 +256,10 @@ serve(async (req) => {
     initAIHandler();
 
     const ethicalLensNames = {
-      1: 'Concerned Omnivore (Same Product, High Welfare)',
-      2: 'Strong Welfare Standards',
-      4: 'Vegetarian',
-      5: 'Vegan (Plant-Based/Cultured Only)'
+      1: 'Higher-Welfare Omnivore',
+      2: 'Lower Consumption',
+      3: 'No Slaughter',
+      4: 'No Animal Use'
     };
 
     console.log(`🎯 Ethical Swap Request:`, {
@@ -282,7 +275,7 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ 
           success: false, 
-          error: { message: `Invalid ethical lens value: ${ethicalLens}. Must be 1, 2, 4, or 5.` }
+          error: { message: `Invalid ethical lens value: ${ethicalLens}. Must be 1, 2, 3, or 4.` }
         }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
@@ -407,10 +400,10 @@ serve(async (req) => {
 
       // Validate that response matches requested lens
       const expectedPositions = {
-        1: 'Prioritize Big Welfare Gains',
-        2: 'Strong Welfare Standards',
-        4: 'Minimal Animal Use',
-        5: 'Vegan Option Selected'
+        1: 'Higher-Welfare Omnivore',
+        2: 'Lower Consumption',
+        3: 'No Slaughter',
+        4: 'No Animal Use'
       };
 
       if (parsedResponse.ethicalLensPosition !== expectedPositions[ethicalLens as keyof typeof expectedPositions]) {
