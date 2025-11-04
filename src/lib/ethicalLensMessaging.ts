@@ -29,14 +29,15 @@ const ETHICAL_LENS_GUIDANCE: Record<number, EthicalLensGuidance> = {
     uiHint: "Display welfare labels or trusted certification logos near this section."
   },
   2: { // Reducetarian (Lower Consumption)
-    focus: "Actively reduce animal product consumption — e.g., halve meat intake or skip it several days a week.",
+    focus: "Reduce frequency (e.g., halve intake, some meals per week) while choosing higher-welfare sources for remaining use. Partial plant-based substitution allowed when reduction context is explicit.",
     examples: [
-      "Focus first on high-suffering or high-volume products (e.g., industrial chicken, pork, or farmed fish).",
-      "Reduce frequency and quantity rather than blending animal and non-animal products.",
-      "Lowering demand means fewer animals bred into suffering conditions."
+      "Focus on reducing high-suffering or high-volume products (e.g., industrial chicken, pork, farmed fish) first.",
+      "Choose certified humane or pasture-raised sources for animal products you continue consuming.",
+      "Consider partial plant-based substitution (25-50% of meals) alongside high-welfare sourcing.",
+      "Lowering frequency means fewer animals bred into intensive systems."
     ],
-    tone: "Confident and informative — emphasizes measurable welfare progress.",
-    uiHint: "Highlight reduction strategies and impact metrics."
+    tone: "Practical and progress-oriented — emphasizes both reduction and welfare improvement.",
+    uiHint: "Highlight reduction strategies, welfare certifications, and partial substitution options."
   },
   3: { // Flexitarian (Mostly Plant-Based)
     focus: "Adopt a primarily plant-based diet while allowing occasional humane-source animal products.",
