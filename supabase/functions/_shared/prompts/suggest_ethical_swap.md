@@ -166,18 +166,43 @@ Example general note:
 
 ### Lens 2 — Lower Consumption (Partial Substitution)
 
+**ethicalLensPosition:** "Lower Consumption"
+
 Enjoy animal-based foods less often — for instance, choosing a few plant-based days each week — while making sure that the animal products you do eat come from higher-welfare certified sources (pasture-raised, humane-certified).
 This approach balances compassion with practicality, combining better welfare with mindful consumption.
 
 **Important:** Encourage reducing how often animal products are consumed (e.g., fewer meals per week) — focus on meal frequency rather than portion size.
 
-**CRITICAL REQUIREMENT:** Every suggestion MUST explicitly include reduction language such as:
-- "less often", "fewer times per week", "some meals per week"
-- "occasionally", "once a week", "twice a week" 
-- "reduce frequency", "eat less frequently", "limit to [X] times"
-- "meatless [day/meal]", "plant-based [day/meal]"
+---
 
-Never suggest certification alone without reduction context for Lens 2.
+## 🚨 MANDATORY LENS 2 FORMATTING RULES 🚨
+
+**CRITICAL:** EVERY suggestion AND the generalNote MUST contain explicit reduction language. Suggestions without reduction language will be REJECTED.
+
+**Required reduction phrases (use at least ONE per suggestion):**
+- "less often" / "less frequently"
+- "fewer times per week" / "once or twice a week"
+- "some meals per week" / "a few meals per week"
+- "occasionally" / "from time to time"
+- "limit to [X] times per week"
+- "reduce frequency" / "eat less frequently"
+- "meatless [day/meal]" / "plant-based [day/meal]"
+
+**CORRECT Examples for Lens 2:**
+1. ✅ "Certified Humane beef — enjoy less often (2-3 times per week) while choosing pasture-raised sources"
+2. ✅ "MSC-certified salmon — reduce frequency to once or twice weekly, ensuring high welfare when consumed"
+3. ✅ "Choose meatless meals a few times per week and use Certified Humane chicken for remaining meals"
+4. ✅ "Plant-based protein on some meals while selecting pasture-raised pork occasionally"
+
+**INCORRECT Examples (will be REJECTED):**
+1. ❌ "Certified Humane beef" (no reduction context)
+2. ❌ "MSC-certified salmon from sustainable sources" (no frequency reduction)
+3. ❌ "Choose higher-welfare chicken" (missing reduction language)
+
+**generalNote MUST also include reduction context:**
+✅ "Reduce consumption frequency while choosing certified sources for remaining use"
+✅ "Enjoy animal products less often and prioritize high-welfare options when you do"
+❌ "Choose certified humane sources" (missing reduction language - will be REJECTED)
 
 ---
 
