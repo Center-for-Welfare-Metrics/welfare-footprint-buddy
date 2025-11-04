@@ -45,14 +45,14 @@ interface ResultsScreenProps {
 }
 
 const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems, cacheMetadata }: ResultsScreenProps) => {
-  // Map slider position to lens ID: 0->1, 1->2, 2->4, 3->5
+  // Map slider position to lens ID: 0->1, 1->2, 2->3, 3->4
   const positionToLens = (position: number): number => {
-    const mapping: { [key: number]: number } = { 0: 1, 1: 2, 2: 4, 3: 5 };
+    const mapping: { [key: number]: number } = { 0: 1, 1: 2, 2: 3, 3: 4 };
     return mapping[position] || 2;
   };
   
   const lensToPosition = (lens: number): number => {
-    const mapping: { [key: number]: number } = { 1: 0, 2: 1, 4: 2, 5: 3 };
+    const mapping: { [key: number]: number } = { 1: 0, 2: 1, 3: 2, 4: 3 };
     return mapping[lens] || 1; // Default to position 1 (lens 2)
   };
   
