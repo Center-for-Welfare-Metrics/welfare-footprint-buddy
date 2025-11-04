@@ -126,14 +126,26 @@ function validateLensBoundaries(response: any, ethicalLens: number): { violation
     ];
     const softAllow = [...plantBasedTerms, ...culturedTerms, ...certificationTerms];
     const hasReductionCue = (txt: string) => reductionTerms.some(r => r.test(txt));
+    
+    // Helper: Check if text implies reduction through combination or partial language
+    const impliesReduction = (txt: string) => {
+      const hasPlantBased = plantBasedTerms.some(p => p.test(txt));
+      const hasCertification = certificationTerms.some(c => c.test(txt));
+      const hasPartialLanguage = /\b(partial|some|mix|combine|both|and|while)\b/i.test(txt);
+      return (hasPlantBased && hasCertification) || hasPartialLanguage;
+    };
+    
     const check = (label: string, txt: string) => {
       const hardHits = scan(txt, hard);
       if (hardHits.length)
         violations.push(`${label} contains forbidden elimination/vegan language for Lens 2: ${hardHits.join(', ')}`);
-      if (!hasReductionCue(txt))
-        violations.push(`${label} lacks an explicit reduction cue (e.g., “less often,” “some meals per week”). Lens 2 requires reduction context.`);
+      
+      // Allow if has explicit reduction cue OR implies reduction through combination
+      if (!hasReductionCue(txt) && !impliesReduction(txt))
+        violations.push(`${label} lacks an explicit reduction cue (e.g., "less often," "some meals per week"). Lens 2 requires reduction context.`);
+      
       const softHits = scan(txt, softAllow);
-      if (softHits.length && !hasReductionCue(txt))
+      if (softHits.length && !hasReductionCue(txt) && !impliesReduction(txt))
         violations.push(`${label} mentions plant-based or certification terms without reduction context (Lens 2): ${softHits.join(', ')}`);
     };
     for (let i = 0; i < suggestions.length; i++) {
