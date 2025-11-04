@@ -299,8 +299,13 @@ serve(async (req) => {
       suggestionsCount: parsedResponse?.suggestions?.length ?? 0
     });
 
+    // Log actual suggestions for debugging
+    console.log('📝 Generated suggestions:', JSON.stringify(parsedResponse.suggestions, null, 2));
+    console.log('📝 General note:', parsedResponse.generalNote);
+
     const boundary = validateLensBoundaries(parsedResponse, ethicalLens);
     if (boundary.violations.length) {
+      console.error('❌ Lens boundary violations detected:', boundary.violations);
       return new Response(JSON.stringify({
         success: false,
         error: { message: 'Lens boundary violation', violations: boundary.violations }
