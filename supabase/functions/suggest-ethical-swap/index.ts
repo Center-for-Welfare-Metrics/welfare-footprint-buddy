@@ -63,7 +63,7 @@ function validateInput(body: any): { valid: boolean; data?: ValidatedInput; erro
 /**
  * Validates the AI output against hard “lens boundary” rules.
  * - Lens 1 ("Higher-Welfare Omnivore"): NO plant-based/cultured or reduction language.
- * - Lens 2 ("Lower Consumption"): ONLY reduction language; NO certifications / plant-based / substitutions.
+ * - Lens 2 ("Lower Consumption"): Reduction context REQUIRED; allows high-welfare sourcing and plant-based mentions ONLY when reduction is explicit.
  * - Lens 3 ("No Slaughter"): NO meat/fish/poultry/gelatin; vegetarian only. Vegan language allowed but not required.
  * - Lens 4 ("No Animal Use"): No hard restrictions here (prompt enforces plant-only).
  *
@@ -100,17 +100,17 @@ function validateLensBoundaries(
     /animal\s+welfare\s+approved/i, /\bMSC\b/i, /friend\s+of\s+the\s+sea/i, /\bRWS\b/i
   ];
   const reductionTerms = [
-    /\bportion\b/i, /\bsmaller\b/i, /\breeduce(d|r|)\b/i, /\bless\b/i, /\blower\b/i, /\bhalve\b/i,
-    /\bfrequency\b/i, /\bonce (a|per)\s+week\b/i, /\btwice (a|per)\s+week\b/i
+    /\bportion\b/i, /\bsmaller\b/i, /\breeduce(s|d|r|ing)?\b/i, /\bless\b/i, /\blower\b/i, /\bhalve\b/i,
+    /\bfrequency\b/i, /\bonce (a|per)\s+week\b/i, /\btwice (a|per)\s+week\b/i, /\bper\s+week\b/i,
+    /\bsome\s+meals\b/i, /\bmeatless\b/i, /\bfewer\b/i, /\boccasional(ly)?\b/i, /\beat\s+less\b/i
   ];
   const meatFishPoultryWords = [
     /\b(beef|pork|chicken|turkey|lamb|mutton|veal|duck|fish|tuna|salmon|anchov(y|ies)|shrimp|prawn|octopus|squid)\b/i,
     /\bgelatin\b/i, /\bbroth\b/i, /\bfish sauce\b/i, /\banchovy\b/i
   ];
 
-  // Build per-lens rule sets
+  // LENS 1: Higher-Welfare Omnivore — forbid plant-based/cultured/reduction language
   if (ethicalLens === 1) {
-    // LENS 1: forbid plant-based/cultured/reduction language
     const hard = [...plantBasedTerms, ...culturedTerms, ...reductionTerms];
     const checkText = (label: string, txt: string) => {
       const hits = scan(txt, hard);
@@ -127,38 +127,55 @@ function validateLensBoundaries(
     checkText('generalNote', generalNote);
   }
 
+  // LENS 2: Lower Consumption — require reduction; allow high-welfare and plant-based ONLY in reduction context
   if (ethicalLens === 2) {
-    // LENS 2: reduction ONLY. Forbid plant-based/cultured/certification/substitution language.
+    // Hard-block "eliminate all animal use" framing to avoid drifting into Lens 4.
     const hard = [
-      ...plantBasedTerms, ...culturedTerms, ...certificationTerms,
-      /\bsubstitute\b/i, /\bswap\b/i, /\breplace\b/i, /\balternative\b/i
+      /\b(fully|100%|completely)\s*(vegan|plant[-\s]?based)\b/i,
+      /\bno animal use\b/i,
+      /\beliminate\b/i,
+      /\bexclude all\b/i
     ];
-    const mustContain = reductionTerms; // at least some reduction language should appear
 
-    const requiresReductionPhrase = (txt: string) => scan(txt, mustContain).length > 0;
+    // These terms are allowed IF and ONLY IF reduction context is present in the same span.
+    const softAllow = [
+      ...plantBasedTerms,
+      ...culturedTerms,
+      ...certificationTerms
+    ];
+
+    const hasReductionCue = (txt: string) => reductionTerms.some(r => r.test(txt));
+
+    const check = (label: string, txt: string) => {
+      // Hard violations
+      const hardHits = scan(txt, hard);
+      if (hardHits.length) {
+        violations.push(`${label} contains forbidden elimination/vegan language for Lens 2: ${hardHits.join(', ')}`);
+      }
+
+      // Require at least one reduction cue overall
+      if (!hasReductionCue(txt)) {
+        violations.push(`${label} does not clearly describe reduced frequency (Lens 2 expects “some meals per week,” “less often,” etc.)`);
+      }
+
+      // Plant-based or certification language is fine only if reduction is mentioned in the same text
+      const softHits = scan(txt, softAllow);
+      if (softHits.length && !hasReductionCue(txt)) {
+        violations.push(`${label} mentions plant-based or certification terms without reduction context (Lens 2): ${softHits.join(', ')}`);
+      }
+    };
 
     for (let i = 0; i < suggestions.length; i++) {
       const s = suggestions[i];
       const txt = `${s?.name ?? ''} ${s?.description ?? ''} ${s?.reasoning ?? ''}`;
-
-      const hardHits = scan(txt, hard);
-      if (hardHits.length) {
-        violations.push(`Suggestion ${i + 1} ("${s?.name ?? 'unnamed'}") contains non-reduction language forbidden for Lens 2: ${hardHits.join(', ')}`);
-      }
-      if (!requiresReductionPhrase(txt)) {
-        violations.push(`Suggestion ${i + 1} ("${s?.name ?? 'unnamed'}") does not clearly state a portion/frequency reduction as required for Lens 2.`);
-      }
+      check(`Suggestion ${i + 1} ("${s?.name ?? 'unnamed'}")`, txt);
     }
 
-    // General note may talk about reduction; still forbid plant/certification talk
-    const gnHits = scan(generalNote, [...plantBasedTerms, ...culturedTerms, ...certificationTerms]);
-    if (gnHits.length) {
-      violations.push(`generalNote contains forbidden non-reduction language for Lens 2: ${gnHits.join(', ')}`);
-    }
+    check('generalNote', generalNote);
   }
 
+  // LENS 3: Vegetarian — forbid meat/fish/poultry/gelatin
   if (ethicalLens === 3) {
-    // LENS 3: vegetarian — forbid meat/fish/poultry/gelatin
     const hard = meatFishPoultryWords;
 
     for (let i = 0; i < suggestions.length; i++) {
