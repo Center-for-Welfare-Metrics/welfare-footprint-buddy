@@ -90,7 +90,7 @@ function validateLensBoundaries(response: any, ethicalLens: number): { violation
     /animal\s+welfare\s+approved/i, /\bMSC\b/i, /friend\s+of\s+the\s+sea/i, /\bRWS\b/i
   ];
   const reductionTerms = [
-    /\bportion\b/i, /\bsmaller\b/i, /\breeduce(s|d|r|ing)?\b/i, /\bless\b/i, /\blower\b/i, /\bhalve\b/i,
+    /\breeduce(s|d|r|ing)?\b/i, /\bless\b/i, /\blower\b/i, /\bhalve\b/i,
     /\bfrequency\b/i, /\bonce (a|per)\s+week\b/i, /\btwice (a|per)\s+week\b/i, /\bper\s+week\b/i,
     /\bsome\s+meals\b/i, /\bmeatless\b/i, /\bfewer\b/i, /\boccasional(ly)?\b/i, /\beat\s+less\b/i
   ];

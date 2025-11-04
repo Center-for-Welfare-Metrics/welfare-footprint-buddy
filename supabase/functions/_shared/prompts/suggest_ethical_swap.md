@@ -169,6 +169,8 @@ Example general note:
 Enjoy animal-based foods less often — for instance, choosing a few plant-based days each week — while making sure that the animal products you do eat come from higher-welfare certified sources (pasture-raised, humane-certified).
 This approach balances compassion with practicality, combining better welfare with mindful consumption.
 
+**Important:** Encourage reducing how often animal products are consumed (e.g., fewer meals per week) — focus on meal frequency rather than portion size.
+
 ---
 
 ### Lens 3 – No Slaughter (“Vegetarian”)
