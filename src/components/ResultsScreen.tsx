@@ -48,18 +48,21 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
   // Map slider position to lens ID: 0->1, 1->2, 2->3, 3->4
   const positionToLens = (position: number): number => {
     const mapping: { [key: number]: number } = { 0: 1, 1: 2, 2: 3, 3: 4 };
-    return mapping[position] || 2;
+    return mapping[position] || appConfig.ethicalLens.defaultValue;
   };
   
   const lensToPosition = (lens: number): number => {
     const mapping: { [key: number]: number } = { 1: 0, 2: 1, 3: 2, 4: 3 };
-    return mapping[lens] || 1; // Default to position 1 (lens 2)
+    return mapping[lens] ?? lensToPosition(appConfig.ethicalLens.defaultValue);
   };
+  
+  // Calculate default slider position from config
+  const defaultPosition = lensToPosition(appConfig.ethicalLens.defaultValue);
   
   const [ethicalSwaps, setEthicalSwaps] = useState<any[]>([]);
   const [isLoadingSwaps, setIsLoadingSwaps] = useState(false);
-  const [sliderValue, setSliderValue] = useState<number[]>([1]); // Default position 1 (lens 2 - Reducetarian)
-  const [initialSliderValue, setInitialSliderValue] = useState<number[]>([1]);
+  const [sliderValue, setSliderValue] = useState<number[]>([defaultPosition]);
+  const [initialSliderValue, setInitialSliderValue] = useState<number[]>([defaultPosition]);
   const [challengeOpen, setChallengeOpen] = useState(false);
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [isReanalyzing, setIsReanalyzing] = useState(false);
