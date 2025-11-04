@@ -106,7 +106,17 @@ function validateLensBoundaries(response: any, ethicalLens: number): { violation
 
   // Lens 1
   if (ethicalLens === 1) {
-    const hard = [...plantBasedTerms, ...culturedTerms, ...reductionTerms];
+    // For Lens 1, only forbid consumption-reduction language, not welfare-improvement language
+    const consumptionReductionTerms = [
+      /\b(reduce|reducing|reduced)\s+(consumption|intake|use|frequency)\b/i,
+      /\beat\s+less\b/i, /\bless\s+frequently\b/i, /\bless\s+often\b/i,
+      /\bfewer\s+(meals|times|products)\b/i,
+      /\bsmaller\s+(portions?|amounts?)\b/i,
+      /\bdecrease\s+(consumption|intake|use)\b/i,
+      /\b(once|twice|\d+\s*times?)\s+(a|per)\s+week\b/i,
+      /\bsome\s+meals\b/i, /\bmeatless\b/i, /\boccasional(ly)?\b/i
+    ];
+    const hard = [...plantBasedTerms, ...culturedTerms, ...consumptionReductionTerms];
     const checkText = (label: string, txt: string) => {
       const hits = scan(txt, hard);
       if (hits.length) violations.push(`${label} contains forbidden language for Lens 1: ${hits.join(', ')}`);
