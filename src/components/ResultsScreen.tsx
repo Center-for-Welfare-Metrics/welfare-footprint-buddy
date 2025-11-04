@@ -130,10 +130,10 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
         ethicalLens: currentLens,
         language: languageCode,
         sliderPosition: sliderValue[0],
-        displayedLens: currentLens === 1 ? 'Welfarist' :
-                       currentLens === 2 ? 'Reducetarian' :
-                       currentLens === 4 ? 'Vegetarian' :
-                       currentLens === 5 ? 'Vegan' : 'Unknown'
+        displayedLens: currentLens === 1 ? 'Higher-Welfare Omnivore' :
+                       currentLens === 2 ? 'Lower Consumption' :
+                       currentLens === 3 ? 'No Slaughter' :
+                       currentLens === 4 ? 'No Animal Use' : 'Unknown'
       });
       
       const { data: result, error } = await supabase.functions.invoke('suggest-ethical-swap', {
