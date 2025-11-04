@@ -107,8 +107,18 @@ Return ONLY the enriched description as plain text (not JSON).`;
 
   } catch (error) {
     console.error('Error in enrich-description function:', error);
+    
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    let safeMessage = 'Unable to enrich description. Please try again.';
+    
+    if (errorMessage.includes('AI') || errorMessage.includes('gateway')) {
+      safeMessage = 'Description service temporarily unavailable. Please try again later.';
+    } else if (errorMessage.includes('LOVABLE_API_KEY')) {
+      safeMessage = 'Service configuration error. Please contact support.';
+    }
+    
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
+      JSON.stringify({ error: safeMessage }),
       {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

@@ -85,8 +85,18 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in generate-text function:', error);
+    
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    let safeMessage = 'Text generation failed. Please try again.';
+    
+    if (errorMessage.includes('Gemini') || errorMessage.includes('API')) {
+      safeMessage = 'AI service temporarily unavailable. Please try again later.';
+    } else if (errorMessage.includes('GEMINI_API_KEY')) {
+      safeMessage = 'Service configuration error. Please contact support.';
+    }
+    
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
+      JSON.stringify({ error: safeMessage }),
       {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

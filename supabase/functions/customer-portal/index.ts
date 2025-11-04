@@ -61,7 +61,17 @@ serve(async (req) => {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR in customer-portal", { message: errorMessage });
-    return new Response(JSON.stringify({ error: errorMessage }), {
+    
+    // Return safe, user-friendly error message
+    let safeMessage = 'Unable to access billing portal. Please try again.';
+    
+    if (errorMessage.includes('Stripe') || errorMessage.includes('customer')) {
+      safeMessage = 'Billing service temporarily unavailable. Please try again later.';
+    } else if (errorMessage.includes('auth') || errorMessage.includes('User not authenticated')) {
+      safeMessage = 'Authentication required. Please sign in and try again.';
+    }
+    
+    return new Response(JSON.stringify({ error: safeMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
