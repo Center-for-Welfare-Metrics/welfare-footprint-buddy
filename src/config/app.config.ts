@@ -40,7 +40,7 @@ export const appConfig = {
    */
   ethicalLens: {
     /** Default slider position (1-5 scale) */
-    defaultValue: 3, // "Minimal Animal Suffering"
+    defaultValue: 1, // "Same Product, High Welfare"
     
     /** Slider range */
     min: 1,
