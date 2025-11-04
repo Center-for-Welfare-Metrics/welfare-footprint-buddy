@@ -72,7 +72,7 @@ const ETHICAL_LENS_GUIDANCE: Record<number, EthicalLensGuidance> = {
 
 /**
  * Gets the focus message for a specific ethical lens level
- * @param level - Ethical lens level (1-5)
+ * @param level - Ethical lens level (1-4)
  * @returns Focus message for the lens
  */
 export function getEthicalLensFocus(level: number): string {
@@ -82,7 +82,7 @@ export function getEthicalLensFocus(level: number): string {
 
 /**
  * Gets the examples for a specific ethical lens level
- * @param level - Ethical lens level (1-5)
+ * @param level - Ethical lens level (1-4)
  * @returns Array of example guidelines
  */
 export function getEthicalLensExamples(level: number): string[] {
@@ -92,7 +92,7 @@ export function getEthicalLensExamples(level: number): string[] {
 
 /**
  * Gets complete guidance for a specific ethical lens level
- * @param level - Ethical lens level (1-5)
+ * @param level - Ethical lens level (1-4)
  * @returns Complete guidance object
  */
 export function getEthicalLensGuidance(level: number): EthicalLensGuidance | null {
@@ -101,7 +101,7 @@ export function getEthicalLensGuidance(level: number): EthicalLensGuidance | nul
 
 /**
  * Returns a human-readable name for the ethical lens level
- * @param level - Ethical lens level (1-5)
+ * @param level - Ethical lens level (1-4)
  * @returns Descriptive name for the lens
  */
 export function getEthicalLensName(level: number): string {

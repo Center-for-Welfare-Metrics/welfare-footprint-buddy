@@ -153,6 +153,17 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
       // Check if result contains an error (from the function's error response)
       if (result?.error) {
         console.error('[handleEthicalSwap] Function returned error:', result.error);
+        
+        // Handle 422 validation errors differently (non-fatal warnings)
+        if (result.error.violations) {
+          toast({
+            title: "Validation Issue",
+            description: "The AI generated suggestions that don't align with this ethical lens. Please try again.",
+            variant: "default",
+          });
+          return;
+        }
+        
         throw new Error(result.error.message || result.error);
       }
 
