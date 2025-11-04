@@ -95,7 +95,9 @@ function validateLensBoundaries(response: any, ethicalLens: number): { violation
     /\bonce (a|per)\s+week\b/i, /\btwice (a|per)\s+week\b/i, /\bper\s+week\b/i,
     /\b\d+\s*times?\s*(a|per)\s+week\b/i, /\b\d+\s*days?\s*(a|per)\s+week\b/i,
     /\bsome\s+meals\b/i, /\bmeatless\b/i, /\bfewer\b/i, /\boccasional(ly)?\b/i, 
-    /\beat\s+less\b/i, /\bless\s+frequently\b/i
+    /\beat\s+less\b/i, /\bless\s+frequently\b/i,
+    /\bsmaller\s+amounts?\b/i, /\bdecrease\b/i, /\bdecreasing\b/i, /\blessen\b/i,
+    /\bconsumption\b/i  // Added to catch "reducing consumption"
   ];
   const meatFishPoultryWords = [
     /\b(beef|pork|chicken|turkey|lamb|mutton|veal|duck|fish|tuna|salmon|anchov(y|ies)|shrimp|prawn|octopus|squid)\b/i,
