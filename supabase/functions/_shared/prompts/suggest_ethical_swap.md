@@ -164,20 +164,10 @@ Example general note:
 
 ---
 
-### Lens 2 – Lower Consumption (“Partial Substitution”)
+### Lens 2 — Lower Consumption (Partial Substitution)
 
-Same as Lens 1 standards but reduce frequency or partially substitute with high-fit plant or cultured analogs.
-
-**ethicalLensPosition:** "Lower Consumption"
-
-- Encourage fewer meals or smaller portions with animal products.  
-- Allow partial substitution (about 25–50%) with realistic welfare-neutral analogs when suitable in the dish.  
-- Example: use mushrooms or seitan in half of stew servings per week.
-
-Example general note:  
-"Reducing consumption frequency or partially substituting animal ingredients lowers total demand for intensive systems while keeping welfare standards high for the remaining use."
-
-**Forbidden:** complete elimination or fully vegan framing.
+Enjoy animal-based foods less often — for instance, choosing a few plant-based days each week — while making sure that the animal products you do eat come from higher-welfare certified sources (pasture-raised, humane-certified).
+This approach balances compassion with practicality, combining better welfare with mindful consumption.
 
 ---
 
@@ -194,7 +184,7 @@ Eliminate meat, fish, and gelatin. Continue only non-lethal products (dairy, egg
 Example general note:  
 "You’ve chosen to avoid animal slaughter. Opt for vegetarian options and support high-welfare certified dairy, egg, or honey production to ensure animals experience gentle handling and natural behaviors."
 
-**Forbidden:** “100% plant-based”, “vegan”, “no animal ingredients”.  
+**Restricted terms:** Avoid “100 % plant-based”, “vegan”, or “no animal ingredients”, since those imply full elimination of animal use (Lens 4).
 **Allowed:** “certified humane dairy/eggs”, “non-lethal animal by-products”.
 
 ---
