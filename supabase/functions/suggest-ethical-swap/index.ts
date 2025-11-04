@@ -250,12 +250,45 @@ serve(async (req) => {
 
     const lovableData = await lovableResponse.json();
     const text = lovableData.choices?.[0]?.message?.content?.trim();
-    if (!text) throw new Error('No text response from AI');
+    if (!text) {
+      console.error('❌ AI returned empty response');
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: { message: 'AI returned empty response. Please try again.' } 
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
 
+    // Extract JSON from response
     const jsonMatch = text.match(/{[\s\S]*}/);
-    if (!jsonMatch) throw new Error('No valid JSON object found in AI response.');
+    if (!jsonMatch) {
+      console.error('❌ No JSON found in AI response:', text.slice(0, 200));
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: { message: 'AI returned invalid format. Please try again.' } 
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
     const cleanedText = jsonMatch[0];
-    const parsedResponse = JSON.parse(cleanedText);
+    let parsedResponse;
+    try {
+      parsedResponse = JSON.parse(cleanedText);
+    } catch (parseError) {
+      console.error('❌ JSON parse error:', parseError);
+      console.error('Attempted to parse:', cleanedText.slice(0, 200));
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: { message: 'AI returned malformed data. Please try again.' } 
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
 
     console.log('✅ AI response parsed', {
       ethicalLensPosition: parsedResponse.ethicalLensPosition,
