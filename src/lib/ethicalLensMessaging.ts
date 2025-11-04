@@ -29,7 +29,7 @@ const ETHICAL_LENS_GUIDANCE: Record<number, EthicalLensGuidance> = {
     uiHint: "Display welfare labels or trusted certification logos near this section."
   },
   2: { // Reducetarian (Lower Consumption)
-    focus: "Reduce frequency (e.g., halve intake, some meals per week) while choosing higher-welfare sources for remaining use. Partial plant-based substitution allowed when reduction context is explicit.",
+    focus: "Reduce frequency (e.g., fewer meals per week) while choosing higher-welfare sources for remaining use. Partial plant-based substitution allowed when reduction context is explicit.",
     examples: [
       "Focus on reducing high-suffering or high-volume products (e.g., industrial chicken, pork, farmed fish) first.",
       "Choose certified humane or pasture-raised sources for animal products you continue consuming.",
