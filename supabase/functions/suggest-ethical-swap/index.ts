@@ -90,9 +90,12 @@ function validateLensBoundaries(response: any, ethicalLens: number): { violation
     /animal\s+welfare\s+approved/i, /\bMSC\b/i, /friend\s+of\s+the\s+sea/i, /\bRWS\b/i
   ];
   const reductionTerms = [
-    /\breeduce(s|d|r|ing)?\b/i, /\bless\b/i, /\blower\b/i,
-    /\bfrequency\b/i, /\bonce (a|per)\s+week\b/i, /\btwice (a|per)\s+week\b/i, /\bper\s+week\b/i,
-    /\bsome\s+meals\b/i, /\bmeatless\b/i, /\bfewer\b/i, /\boccasional(ly)?\b/i, /\beat\s+less\b/i
+    /\breeduce(s|d|r|ing)?\b/i, /\bless\b/i, /\blower\b/i, /\blimit\b/i,
+    /\bfrequency\b/i, /\bfrequently\b/i, /\boften\b/i,
+    /\bonce (a|per)\s+week\b/i, /\btwice (a|per)\s+week\b/i, /\bper\s+week\b/i,
+    /\b\d+\s*times?\s*(a|per)\s+week\b/i, /\b\d+\s*days?\s*(a|per)\s+week\b/i,
+    /\bsome\s+meals\b/i, /\bmeatless\b/i, /\bfewer\b/i, /\boccasional(ly)?\b/i, 
+    /\beat\s+less\b/i, /\bless\s+frequently\b/i
   ];
   const meatFishPoultryWords = [
     /\b(beef|pork|chicken|turkey|lamb|mutton|veal|duck|fish|tuna|salmon|anchov(y|ies)|shrimp|prawn|octopus|squid)\b/i,

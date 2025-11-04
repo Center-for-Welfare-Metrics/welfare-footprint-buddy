@@ -171,6 +171,14 @@ This approach balances compassion with practicality, combining better welfare wi
 
 **Important:** Encourage reducing how often animal products are consumed (e.g., fewer meals per week) — focus on meal frequency rather than portion size.
 
+**CRITICAL REQUIREMENT:** Every suggestion MUST explicitly include reduction language such as:
+- "less often", "fewer times per week", "some meals per week"
+- "occasionally", "once a week", "twice a week" 
+- "reduce frequency", "eat less frequently", "limit to [X] times"
+- "meatless [day/meal]", "plant-based [day/meal]"
+
+Never suggest certification alone without reduction context for Lens 2.
+
 ---
 
 ### Lens 3 – No Slaughter (“Vegetarian”)
