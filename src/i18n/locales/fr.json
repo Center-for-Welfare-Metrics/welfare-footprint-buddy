@@ -169,12 +169,10 @@
     "level2": "Consommation Réduite",
     "level3": "Sans Abattage",
     "level4": "Sans Usage Animal",
-    "level5": "Végétalien",
     "desc1": "Omnivore à Meilleur Bien-être",
     "desc2": "Consommation Réduite",
-    "desc3": "Principalement Végétal",
-    "desc4": "Sans Abattage",
-    "desc5": "Sans Utilisation Animale",
+    "desc3": "Sans Abattage",
+    "desc4": "Sans Utilisation Animale",
     "rangeStart": "Même Produit, Haut Bien-être",
     "rangeEnd": "Végétal/Cultivé Uniquement"
   }

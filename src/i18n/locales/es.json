@@ -183,12 +183,10 @@
     "level2": "Menor Consumo",
     "level3": "Sin Sacrificio",
     "level4": "Sin Uso Animal",
-    "level5": "Vegano",
     "desc1": "Omnívoro de Mayor Bienestar",
     "desc2": "Menor Consumo",
-    "desc3": "Principalmente Vegetal",
-    "desc4": "Sin Sacrificio",
-    "desc5": "Sin Uso Animal",
+    "desc3": "Sin Sacrificio",
+    "desc4": "Sin Uso Animal",
     "rangeStart": "Mismo Producto, Alto Bienestar",
     "rangeEnd": "Solo Vegetal/Cultivado"
   }

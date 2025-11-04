@@ -182,12 +182,10 @@
     "level2": "Geringerer Konsum",
     "level3": "Kein Schlachten",
     "level4": "Keine Tiernutzung",
-    "level5": "Veganer",
     "desc1": "Allesser mit Höherem Tierwohl",
     "desc2": "Geringerer Verbrauch",
-    "desc3": "Überwiegend Pflanzlich",
-    "desc4": "Keine Schlachtung",
-    "desc5": "Keine Tiernutzung",
+    "desc3": "Kein Schlachten",
+    "desc4": "Keine Tiernutzung",
     "rangeStart": "Gleiches Produkt, Hohes Tierwohl",
     "rangeEnd": "Nur Pflanzlich/Kultiviert"
   }
