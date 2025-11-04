@@ -4,6 +4,7 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
 const MAX_PROMPT_LENGTH = 10000;
@@ -21,6 +22,11 @@ function validateInput(body: any): { valid: boolean; data?: { prompt: string }; 
 
   if (prompt.length > MAX_PROMPT_LENGTH) {
     return { valid: false, error: `Prompt exceeds maximum length of ${MAX_PROMPT_LENGTH} characters` };
+  }
+
+  // AI Function Safety Layer v1: Input sanitization
+  if (/[{}[\]]{2,}/.test(prompt)) {
+    return { valid: false, error: 'Suspicious input detected.' };
   }
 
   return {
@@ -61,14 +67,19 @@ serve(async (req) => {
       }
     };
 
+    // AI Function Safety Layer v1: 25s timeout
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 25000);
+
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
         body: JSON.stringify(requestBody)
       }
-    );
+    ).finally(() => clearTimeout(timeout));
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -77,7 +88,7 @@ serve(async (req) => {
     }
 
     const data = await response.json();
-    console.log('Text generation completed successfully');
+    console.log('✅ Text generation completed');
 
     return new Response(JSON.stringify(data), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

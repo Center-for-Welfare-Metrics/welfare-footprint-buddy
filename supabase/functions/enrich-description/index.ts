@@ -4,6 +4,7 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
 serve(async (req) => {
@@ -17,6 +18,14 @@ serve(async (req) => {
     if (!description || typeof description !== 'string') {
       return new Response(
         JSON.stringify({ error: 'Description is required and must be a string' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // AI Function Safety Layer v1: Input sanitization
+    if (/[{}[\]]{2,}/.test(description)) {
+      return new Response(
+        JSON.stringify({ error: 'Suspicious input detected.' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -60,12 +69,17 @@ Output: "Roast chicken from free-range producers, typically served with vegetabl
 
 Return ONLY the enriched description as plain text (not JSON).`;
 
+    // AI Function Safety Layer v1: 25s timeout
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 25000);
+
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${LOVABLE_API_KEY}`,
         'Content-Type': 'application/json',
       },
+      signal: controller.signal,
       body: JSON.stringify({
         model: 'google/gemini-2.5-flash',
         messages: [
@@ -75,7 +89,7 @@ Return ONLY the enriched description as plain text (not JSON).`;
         temperature: 0.7,
         max_tokens: 150
       }),
-    });
+    }).finally(() => clearTimeout(timeout));
 
     if (!response.ok) {
       if (response.status === 429) {
@@ -98,7 +112,7 @@ Return ONLY the enriched description as plain text (not JSON).`;
     const data = await response.json();
     const enrichedDescription = data.choices?.[0]?.message?.content?.trim() || description;
 
-    console.log('[enrich-description] Success:', { original: description, enriched: enrichedDescription });
+    console.log('[enrich-description] ✅ Success');
 
     return new Response(
       JSON.stringify({ enrichedDescription }),
