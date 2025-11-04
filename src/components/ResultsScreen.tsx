@@ -478,7 +478,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
                     The Ethical Lens lets you explore how your food choices align with different levels of concern for animal welfare.
                   </p>
                   <p className="leading-relaxed">
-                    You can select the approach that best reflects your values — from Welfarist (seeking higher-welfare animal products) to Vegan (avoiding all animal use).
+                    You can select the approach that best reflects your values — from Higher-Welfare Omnivore (seeking higher-welfare animal products) to No Animal Use (avoiding all animal products).
                   </p>
                   <p className="leading-relaxed">
                     The app then tailors its recommendations and messages to that perspective, helping you make informed and compassionate choices — without judgment.

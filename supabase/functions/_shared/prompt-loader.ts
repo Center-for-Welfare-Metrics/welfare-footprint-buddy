@@ -620,7 +620,7 @@ Reduce welfare impact while allowing non-lethal animal byproducts (milk, eggs, h
 This is NOT about nutrition, novelty, or species variation — it's about WELFARE IMPROVEMENTS FOR VEGETARIAN PRODUCTS.
 
 **🚨 CRITICAL: ALL SUGGESTIONS MUST BE VEGETARIAN (NOT VEGAN)**
-❌ NEVER suggest fully plant-based/vegan products (those are Lens 5 only)
+❌ NEVER suggest fully plant-based/vegan products (those are Lens 4 only)
 ❌ NEVER use language implying zero animal ingredients ("animal-free", "vegan", "100% plant-based")
 ✅ ALL suggestions must either:
    1. Contain high-welfare dairy, eggs, or honey (primary focus)
@@ -676,15 +676,15 @@ When the user scans meat, poultry, or fish, suggest vegetarian replacements that
 ❌ NO slaughtered animal products:
    - meat, fish, poultry, gelatin, broths
 ❌ NO fully vegan products:
-   - Reserve those for Lens 5
+   - Reserve those for Lens 4
 
 **✅ VALIDATION TEST FOR EVERY SUGGESTION:**
 Before including ANY suggestion, verify:
-1. Does it contain dairy, eggs, or honey? (If no → REJECT for Lens 4)
+1. Does it contain dairy, eggs, or honey? (If no → REJECT for Lens 3)
 2. Does it improve welfare compared to conventional? (If no → REJECT)
 3. Does the description avoid forbidden phrases? (Check list above)
 
-**✅ CORRECT Lens 4 Suggestions Examples:**
+**✅ CORRECT Lens 3 Suggestions Examples:**
 
 For dairy products:
 - "Certified Humane cow's milk from pasture-raised cows"
@@ -709,7 +709,7 @@ For meat/fish (suggest vegetarian with dairy/eggs):
 - "Lactose-free milk" → medical/nutritional framing
 - Any suggestion described as "100% plant-based" or "vegan"
 
-**🚨 ABSOLUTE FORBIDDEN PHRASES IN LENS 4 generalNote 🚨**
+**🚨 ABSOLUTE FORBIDDEN PHRASES IN LENS 3 generalNote 🚨**
 
 **IF YOU USE ANY OF THESE PHRASES IN generalNote, YOUR RESPONSE WILL BE REJECTED:**
 - ❌ "fully plant-based"
@@ -728,8 +728,8 @@ For meat/fish (suggest vegetarian with dairy/eggs):
 
 **Tone:** Welfare-focused, compassionate, evidence-based, vegetarian (not vegan).
 
-#### Lens 5 – Aim for Zero Animal Harm
-**ethicalLensPosition:** "Vegan Option Selected"
+#### Lens 4 – No Animal Use (Vegan)
+**ethicalLensPosition:** "No Animal Use"
 
 Recommend FULLY animal-free products ONLY:
 - Beyond Meat, Impossible Foods, plant-based dairy, tofu, tempeh

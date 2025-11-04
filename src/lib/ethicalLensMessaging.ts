@@ -106,11 +106,10 @@ export function getEthicalLensGuidance(level: number): EthicalLensGuidance | nul
  */
 export function getEthicalLensName(level: number): string {
   const names: Record<number, string> = {
-    1: "Welfarist",
-    2: "Reducetarian",
-    3: "Flexitarian",
-    4: "Vegetarian",
-    5: "Vegan"
+    1: "Higher-Welfare Omnivore",
+    2: "Lower Consumption",
+    3: "No Slaughter",
+    4: "No Animal Use"
   };
   return names[level] || "Unknown";
 }
