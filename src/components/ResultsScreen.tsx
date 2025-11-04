@@ -503,7 +503,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
               <p 
                 className="text-xs font-medium italic transition-colors duration-300"
                 style={{
-                  color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 4 | 5]
+                  color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]
                 }}
               >
                 "{positionToLens(sliderValue[0]) === 1 ? t('ethicalLens.persona1') :
@@ -515,21 +515,21 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
                 <p 
                   className="text-sm font-semibold transition-colors duration-300 flex-1"
                   style={{
-                    color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 4 | 5]
+                    color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]
                   }}
                 >
                   {positionToLens(sliderValue[0]) === 1 ? t('ethicalLens.desc1') :
                    positionToLens(sliderValue[0]) === 2 ? t('ethicalLens.desc2') :
-                   positionToLens(sliderValue[0]) === 4 ? t('ethicalLens.desc4') :
-                   t('ethicalLens.desc5')}
+                   positionToLens(sliderValue[0]) === 3 ? t('ethicalLens.desc3') :
+                   t('ethicalLens.desc4')}
                 </p>
                 <Popover>
                   <PopoverTrigger asChild>
                     <button
                       className="flex items-center justify-center w-5 h-5 rounded-full border transition-all hover:scale-110"
                       style={{
-                        borderColor: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 4 | 5],
-                        color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 4 | 5]
+                        borderColor: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4],
+                        color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]
                       }}
                       aria-label="Show detailed guidance"
                     >
@@ -545,13 +545,13 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
                       <h4 
                         className="font-semibold text-sm"
                         style={{
-                          color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 4 | 5]
+                          color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]
                         }}
                       >
-                        {positionToLens(sliderValue[0]) === 1 ? t('ethicalLens.persona1') :
-                         positionToLens(sliderValue[0]) === 2 ? t('ethicalLens.persona2') :
-                         positionToLens(sliderValue[0]) === 4 ? t('ethicalLens.persona4') :
-                         t('ethicalLens.persona5')}
+{positionToLens(sliderValue[0]) === 1 ? t('ethicalLens.persona1') :
+                  positionToLens(sliderValue[0]) === 2 ? t('ethicalLens.persona2') :
+                  positionToLens(sliderValue[0]) === 3 ? t('ethicalLens.persona3') :
+                  t('ethicalLens.persona4')}
                       </h4>
                       <div className="space-y-2">
                         {getEthicalLensExamples(positionToLens(sliderValue[0])).map((example, index) => (
