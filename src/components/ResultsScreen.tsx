@@ -658,13 +658,15 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
                       <div className="space-y-2">
                         <div className="flex justify-between items-start gap-2">
                           <h4 className="font-semibold text-sm text-white">{swap.name}</h4>
-                          <span className={`text-xs px-3 py-1.5 rounded-full font-semibold whitespace-nowrap border ${
-                            swap.confidence === 'High' ? 'bg-primary/20 text-primary border-primary/40' :
-                            swap.confidence === 'Medium' ? 'bg-secondary/20 text-secondary border-secondary/40' :
-                            'bg-muted/20 text-muted-foreground border-muted/40'
-                          }`}>
-                            {swap.confidence} {t('results.confidence')}
-                          </span>
+                          {swap.confidence && (
+                            <span className={`text-xs px-3 py-1.5 rounded-full font-semibold whitespace-nowrap border ${
+                              swap.confidence === 'High' ? 'bg-primary/20 text-primary border-primary/40' :
+                              swap.confidence === 'Medium' ? 'bg-secondary/20 text-secondary border-secondary/40' :
+                              'bg-muted/20 text-muted-foreground border-muted/40'
+                            }`}>
+                              {swap.confidence}
+                            </span>
+                          )}
                         </div>
                         <p className="text-sm text-gray-300">{swap.description}</p>
                         <div className="text-xs space-y-1">
