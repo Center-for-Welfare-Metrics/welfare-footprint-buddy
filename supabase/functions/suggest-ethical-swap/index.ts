@@ -248,25 +248,33 @@ serve(async (req) => {
     // Build lens-specific system message
     let systemMessage = 'You are an expert in animal welfare and food ethics. Follow ALL instructions exactly. Respect the 4-lens mapping.';
     
+    // Select model based on ethical lens - GPT-5 is more reliable for Lens 3 restrictions
+    const selectedModel = ethicalLens === 3 ? 'openai/gpt-5-mini' : 'google/gemini-2.5-flash';
+    
+    console.log(`🤖 Using model: ${selectedModel} for Lens ${ethicalLens}`);
+    
     // Add critical Lens 3 instructions to system message
     if (ethicalLens === 3) {
       systemMessage += `\n\n🚨 CRITICAL LENS 3 RULE - THIS IS VEGETARIAN MODE 🚨
       
 LENS 3 = NO SLAUGHTER = VEGETARIAN
 
-IF THE PRODUCT IS FISH/SEAFOOD (like ${productName}):
+THE PRODUCT IS: "${productName}"
+
+IF THIS IS FISH/SEAFOOD:
 ❌ NEVER suggest other fish or seafood - they ALL require slaughter
-❌ NEVER suggest "sustainable fish", "MSC-certified fish", or "wild-caught fish"
-✅ ONLY suggest VEGETARIAN alternatives: tofu, tempeh, mushrooms, seaweed, plant-based seafood
-✅ Focus on umami/ocean flavors using seaweed, nori, kelp
+❌ NEVER suggest "sustainable fish", "MSC-certified fish", "wild-caught fish", "responsibly sourced fish"
+❌ NO: salmon, tuna, cod, mullet, tilapia, shrimp, crab, anchovy, sardines, etc.
+✅ ONLY suggest VEGETARIAN alternatives: tofu, tempeh, mushrooms, seaweed, plant-based seafood, algae-based products
+✅ Focus on umami/ocean flavors using seaweed, nori, kelp, dulse
 
-BEFORE YOU RESPOND:
-1. Read your suggestions
-2. Check if ANY contain fish, seafood, meat, or poultry
-3. If YES → DELETE and replace with vegetarian option
-4. Double-check NO animal slaughter terms appear
+VALIDATION CHECKLIST (complete BEFORE responding):
+☐ Read ALL my suggestions
+☐ Verify ZERO fish/seafood/meat/poultry terms
+☐ Verify generalNote has ZERO slaughter terms
+☐ If ANY violations found → DELETE and replace
 
-Fish = Slaughter = FORBIDDEN for Lens 3`;
+Remember: Fish = Slaughter = FORBIDDEN for Lens 3`;
     }
 
     const lovableResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
@@ -277,7 +285,7 @@ Fish = Slaughter = FORBIDDEN for Lens 3`;
       },
       signal: controller.signal,
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
+        model: selectedModel,
         messages: [
           {
             role: 'system',
@@ -285,7 +293,7 @@ Fish = Slaughter = FORBIDDEN for Lens 3`;
           },
           { role: 'user', content: prompt },
         ],
-        temperature: 0.3, // Lower temperature for stricter instruction following
+        temperature: ethicalLens === 3 ? 0.2 : 0.3, // Even lower temperature for Lens 3
         max_tokens: 8192,
       }),
     }).finally(() => clearTimeout(timeout));
