@@ -184,11 +184,105 @@ function validateLensBoundaries(response: any, ethicalLens: number): { violation
   return { violations, warnings };
 }
 
+// -------- Intelligent Fallback ------------------------------------------------
+
+function intelligentFallback(ethicalLens: number, productName: string, language: string = 'en') {
+  console.log('[suggest-ethical-swap] Using intelligent fallback for lens', ethicalLens);
+  
+  const fallbackResponses: Record<number, any> = {
+    3: { // Lens 3: No Slaughter (Vegetarian)
+      ethicalLensPosition: 'no_slaughter',
+      suggestions: [
+        {
+          name: 'Marinated Tofu',
+          description: 'Firm or extra-firm tofu, pressed and marinated, provides a versatile protein base with excellent texture',
+          category: 'PLANT_PROTEIN',
+          confidence: 'high',
+          reasoning: 'Tofu is a complete protein source that can absorb flavors well and works in most cooking methods',
+          availability: 'widely_available'
+        },
+        {
+          name: 'Tempeh',
+          description: 'Fermented soybean cake with a nutty flavor and firm texture, rich in protein and nutrients',
+          category: 'PLANT_PROTEIN',
+          confidence: 'high',
+          reasoning: 'Tempeh offers superior nutritional profile and satisfying texture without animal slaughter',
+          availability: 'widely_available'
+        },
+        {
+          name: 'King Oyster Mushrooms',
+          description: 'Thick, meaty mushrooms that can be scored and cooked to create a satisfying texture',
+          category: 'FUNGI',
+          confidence: 'high',
+          reasoning: 'Provides umami depth and substantial texture that works well as a plant-based centerpiece',
+          availability: 'specialty_stores'
+        },
+        {
+          name: 'Seasoned Seaweed or Kelp',
+          description: 'Nutrient-rich sea vegetables that offer ocean-like flavors and important minerals',
+          category: 'SEA_VEGETABLE',
+          confidence: 'medium',
+          reasoning: 'Provides oceanic taste profile and beneficial nutrients without harming marine animals',
+          availability: 'widely_available'
+        }
+      ],
+      generalNote: 'These vegetarian alternatives avoid all animal slaughter while providing protein, umami flavors, and satisfying textures. Each option can be prepared in various ways to suit your culinary needs.'
+    },
+    4: { // Lens 4: No Animal Use (Vegan)
+      ethicalLensPosition: 'no_animal_use',
+      suggestions: [
+        {
+          name: 'Seasoned Tofu',
+          description: 'Plant-based protein that completely avoids all animal products',
+          category: 'PLANT_PROTEIN',
+          confidence: 'high',
+          reasoning: 'Provides complete protein without any animal exploitation',
+          availability: 'widely_available'
+        },
+        {
+          name: 'Jackfruit (prepared)',
+          description: 'Shredded young jackfruit provides a unique texture for plant-based dishes',
+          category: 'PLANT_PROTEIN',
+          confidence: 'medium',
+          reasoning: 'Offers interesting texture and versatility with zero animal products',
+          availability: 'widely_available'
+        },
+        {
+          name: 'Plant-Based Seafood Alternatives',
+          description: 'Made from konjac, algae, or legumes to mimic seafood texture and flavor',
+          category: 'OTHER_VEGETARIAN',
+          confidence: 'medium',
+          reasoning: 'Specialized products designed to replicate seafood experience without any animal ingredients',
+          availability: 'specialty_stores'
+        }
+      ],
+      generalNote: 'These vegan alternatives completely eliminate animal use while maintaining culinary satisfaction and nutritional value.'
+    }
+  };
+
+  const fallback = fallbackResponses[ethicalLens] || fallbackResponses[3];
+
+  return new Response(
+    JSON.stringify({
+      success: true,
+      data: fallback,
+      metadata: {
+        usedFallback: true,
+        reason: 'AI validation failed, safe alternatives provided'
+      }
+    }),
+    {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    }
+  );
+}
+
 // -------- Initialization ------------------------------------------------------
 
 const initAIHandler = () => {
   if (!(globalThis as any).__aiHandler) {
-    console.log('🔧 Initializing AI Handler with Lovable AI (GPT-5)');
+    console.log('🔧 Initializing AI Handler with Lovable AI (Gemini Pro for Lens 3)');
     (globalThis as any).__aiHandler = true;
   }
 };
@@ -242,134 +336,234 @@ serve(async (req) => {
       OUTPUT_LANGUAGE: outputLanguage,
     });
 
-    // CRITICAL: For Lens 3, prepend unmissable instructions if product is fish/seafood
-    if (ethicalLens === 3 && /fish|seafood|mullet|salmon|tuna|cod|tilapia|trout|bass|shrimp|crab|lobster|anchovy|sardine|mackerel|herring|prawn|squid|octopus/i.test(productName + ' ' + animalIngredients)) {
-      const criticalOverride = `
-🚨🚨🚨 CRITICAL OVERRIDE - READ THIS FIRST 🚨🚨🚨
+    // CRITICAL: Use Chain-of-Thought prompting for Lens 3
+    if (ethicalLens === 3) {
+      const isFishSeafood = /fish|seafood|mullet|salmon|tuna|cod|tilapia|trout|bass|shrimp|crab|lobster|anchovy|sardine|mackerel|herring|prawn|squid|octopus/i.test(productName + ' ' + animalIngredients);
+      
+      const cotPrompt = `
+🎯 CRITICAL INSTRUCTION - CHAIN-OF-THOUGHT PROCESS REQUIRED 🎯
 
-PRODUCT: "${productName}"
-ETHICAL LENS: 3 (VEGETARIAN - NO SLAUGHTER)
+You are a vegetarian chef assistant. A customer wants an alternative for "${productName}".
 
-THIS PRODUCT IS FISH/SEAFOOD.
+BEFORE you provide your final JSON response, you MUST complete this reasoning process:
 
-ABSOLUTE RULES YOU MUST FOLLOW:
-1. ❌ DO NOT suggest ANY fish or seafood alternatives (ALL fish/seafood require slaughter)
-2. ❌ DO NOT suggest "sustainable fish", "certified fish", "MSC fish", "wild-caught fish"
-3. ✅ ONLY suggest VEGETARIAN alternatives: tofu, tempeh, mushrooms, seaweed, plant-based seafood, algae products
-4. ✅ Focus on umami/ocean flavors using kelp, nori, dulse, wakame, spirulina
+STEP 1: Identify the food item
+- Product: "${productName}"
+- Animal ingredients: "${animalIngredients}"
+- Is this fish/seafood? ${isFishSeafood ? 'YES' : 'NO'}
 
-BEFORE YOU OUTPUT YOUR RESPONSE:
-☐ Check EVERY suggestion - does it contain fish/seafood? If YES → DELETE IT
-☐ Check generalNote - does it mention fish/seafood? If YES → REWRITE IT
-☐ Verify 100% VEGETARIAN alternatives only
+STEP 2: State the absolute constraint
+"I am helping with Lens 3 (VEGETARIAN - NO SLAUGHTER). I MUST suggest ONLY plant-based ingredients, fungi, sea vegetables, or dairy/egg alternatives. I MUST NOT suggest any fish, seafood, poultry, or mammal flesh."
 
-═══════════════════════════════════════════════════════════════
+STEP 3: Brainstorm 5-7 vegetarian alternatives
+Think of alternatives from these categories ONLY:
+- Plant proteins: tofu, tempeh, seitan, jackfruit, legumes
+- Fungi: mushrooms (king oyster, portobello, shiitake)
+- Sea vegetables: nori, kelp, dulse, wakame, spirulina
+- Dairy/eggs: if appropriate for the dish
 
+STEP 4: CRITICAL VALIDATION
+For EACH alternative you brainstormed:
+- Does it contain fish, seafood, meat, or poultry? If YES → DELETE IT
+- Is it purely vegetarian? If YES → Keep it
+
+STEP 5: Verify final list
+- Count: Do I have 3-5 alternatives?
+- Compliance: Are ALL alternatives vegetarian?
+- If any fail → Generate new vegetarian alternatives
+
+STEP 6: Format final response
+Now generate the JSON response with your verified vegetarian alternatives.
+
+${promptText}
 `;
-      promptText = criticalOverride + promptText;
+      promptText = cotPrompt;
     }
 
     const prompt = promptText;
 
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 25000);
+    // CRITICAL: Use more powerful model for Lens 3 due to compliance challenges
+    const model = ethicalLens === 3 ? 'google/gemini-2.5-pro' : 'google/gemini-2.5-flash';
 
-    const lovableResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      signal: controller.signal,
-      body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
+    // Define structured output schema for Lens 3 to enforce categorical constraints
+    const tools = ethicalLens === 3 ? [
+      {
+        type: 'function',
+        function: {
+          name: 'provide_vegetarian_alternative',
+          description: 'Provide vegetarian alternatives for a food item. ONLY vegetarian options allowed - NO fish, seafood, meat, or poultry.',
+          parameters: {
+            type: 'object',
+            properties: {
+              ethicalLensPosition: {
+                type: 'string',
+                enum: ['welfarist_reduce_harm', 'partial_substitution', 'no_slaughter', 'no_animal_use'],
+                description: 'The ethical lens position'
+              },
+              suggestions: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    name: { type: 'string', description: 'Name of the VEGETARIAN alternative (plant-based, fungi, sea vegetable, dairy, or egg)' },
+                    description: { type: 'string', description: 'How this vegetarian alternative compares' },
+                    category: {
+                      type: 'string',
+                      enum: ['PLANT_PROTEIN', 'FUNGI', 'SEA_VEGETABLE', 'LEGUME', 'DAIRY', 'EGG', 'CULTURED', 'OTHER_VEGETARIAN'],
+                      description: 'Category - must be vegetarian, NOT fish/meat/poultry'
+                    },
+                    confidence: { type: 'string', enum: ['low', 'medium', 'high'] },
+                    reasoning: { type: 'string', description: 'Welfare-focused reasoning for this vegetarian choice' },
+                    availability: { type: 'string', enum: ['widely_available', 'specialty_stores', 'emerging'] }
+                  },
+                  required: ['name', 'description', 'category', 'confidence', 'reasoning', 'availability']
+                },
+                minItems: 3,
+                maxItems: 5
+              },
+              generalNote: { type: 'string', description: 'General guidance about VEGETARIAN alternatives' }
+            },
+            required: ['ethicalLensPosition', 'suggestions', 'generalNote']
+          }
+        }
+      }
+    ] : undefined;
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 30000); // Longer timeout for Pro model
+
+    try {
+      const requestBody: any = {
+        model,
         messages: [
           {
             role: 'system',
-            content: 'You are an expert in animal welfare and food ethics. Follow ALL instructions exactly. Respect the 4-lens mapping.'
+            content: 'You are an expert in animal welfare and ethical food alternatives. You provide scientifically accurate, welfare-focused suggestions that strictly adhere to the specified ethical lens constraints. For Lens 3 (No Slaughter), you ONLY suggest vegetarian alternatives and NEVER suggest fish, seafood, meat, or poultry.',
           },
-          { role: 'user', content: prompt },
+          {
+            role: 'user',
+            content: prompt,
+          },
         ],
-        temperature: 0.4,
-        max_tokens: 8192,
-      }),
-    }).finally(() => clearTimeout(timeout));
+        temperature: 0.2, // Lower temperature for more deterministic output
+      };
 
-    if (!lovableResponse.ok) {
-      const errorText = await lovableResponse.text();
-      console.error('❌ Lovable AI error:', lovableResponse.status, errorText);
-      return new Response(
-        JSON.stringify({ success: false, error: { message: `Lovable AI error: ${lovableResponse.status}` } }),
-        { status: lovableResponse.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
+      // Add structured output for Lens 3
+      if (tools) {
+        requestBody.tools = tools;
+        requestBody.tool_choice = { type: 'function', function: { name: 'provide_vegetarian_alternative' } };
+      }
 
-    const lovableData = await lovableResponse.json();
-    const text = lovableData.choices?.[0]?.message?.content?.trim();
-    if (!text) {
-      console.error('❌ AI returned empty response');
-      return new Response(JSON.stringify({ 
-        success: false, 
-        error: { message: 'AI returned empty response. Please try again.' } 
-      }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      console.log(`🤖 Calling ${model} for Lens ${ethicalLens}${tools ? ' with structured output' : ''}`);
+
+      const lovableResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+        signal: controller.signal,
+      }).finally(() => clearTimeout(timeout));
+
+      if (!lovableResponse.ok) {
+        const errorText = await lovableResponse.text();
+        console.error('❌ Lovable AI error:', lovableResponse.status, errorText);
+        
+        // Fallback on AI error
+        if (ethicalLens === 3 || ethicalLens === 4) {
+          console.log('⚠️ AI error, using intelligent fallback');
+          return intelligentFallback(ethicalLens, productName, language);
+        }
+        
+        return new Response(
+          JSON.stringify({ success: false, error: { message: `Lovable AI error: ${lovableResponse.status}` } }),
+          { status: lovableResponse.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const lovableData = await lovableResponse.json();
+      console.log('[suggest-ethical-swap] Raw AI response:', JSON.stringify(lovableData));
+
+      let parsedResponse;
+
+      // Handle structured output (tool calling) for Lens 3
+      if (tools && lovableData.choices?.[0]?.message?.tool_calls) {
+        const toolCall = lovableData.choices[0].message.tool_calls[0];
+        console.log('[suggest-ethical-swap] Tool call response:', JSON.stringify(toolCall));
+        
+        try {
+          parsedResponse = JSON.parse(toolCall.function.arguments);
+          console.log('✅ Structured output parsed successfully');
+        } catch (parseError) {
+          console.error('[suggest-ethical-swap] Tool call parse error:', parseError);
+          return intelligentFallback(ethicalLens, productName, language);
+        }
+      } else {
+        // Handle regular text response
+        const text = lovableData.choices?.[0]?.message?.content?.trim();
+        if (!text) {
+          console.error('❌ AI returned empty response');
+          return intelligentFallback(ethicalLens, productName, language);
+        }
+
+        // Extract JSON from response
+        const jsonMatch = text.match(/{[\s\S]*}/);
+        if (!jsonMatch) {
+          console.error('❌ No JSON found in AI response:', text.slice(0, 200));
+          return intelligentFallback(ethicalLens, productName, language);
+        }
+
+        const cleanedText = jsonMatch[0];
+        try {
+          parsedResponse = JSON.parse(cleanedText);
+        } catch (parseError) {
+          console.error('❌ JSON parse error:', parseError);
+          return intelligentFallback(ethicalLens, productName, language);
+        }
+      }
+
+      console.log('✅ AI response parsed', {
+        ethicalLensPosition: parsedResponse.ethicalLensPosition,
+        requestedLens: ethicalLens,
+        suggestionsCount: parsedResponse?.suggestions?.length ?? 0
       });
-    }
 
-    // Extract JSON from response
-    const jsonMatch = text.match(/{[\s\S]*}/);
-    if (!jsonMatch) {
-      console.error('❌ No JSON found in AI response:', text.slice(0, 200));
-      return new Response(JSON.stringify({ 
-        success: false, 
-        error: { message: 'AI returned invalid format. Please try again.' } 
-      }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      // Log actual suggestions for debugging
+      console.log('📝 Generated suggestions:', JSON.stringify(parsedResponse.suggestions, null, 2));
+      console.log('📝 General note:', parsedResponse.generalNote);
+
+      // Validate the response against lens boundaries
+      const boundary = validateLensBoundaries(parsedResponse, ethicalLens);
+      
+      if (boundary.violations.length) {
+        console.error('❌ Lens boundary violations detected:', boundary.violations);
+        console.log('⚠️ Using intelligent fallback due to validation failure');
+        return intelligentFallback(ethicalLens, productName, language);
+      }
+
+      // Format response for compatibility with existing client code
+      const responseText = JSON.stringify(parsedResponse);
+      const data = {
+        candidates: [{ content: { parts: [{ text: responseText }] } }]
+      };
+      
+      console.log('🎉 Ethical swap suggestions generated successfully');
+      return new Response(JSON.stringify(data), { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       });
+
+    } catch (error) {
+      console.error('Error calling Lovable AI:', error);
+      
+      // Use intelligent fallback on error for Lens 3/4
+      if (ethicalLens === 3 || ethicalLens === 4) {
+        console.log('⚠️ Error occurred, using intelligent fallback');
+        return intelligentFallback(ethicalLens, productName, language);
+      }
+      
+      throw error;
     }
-
-    const cleanedText = jsonMatch[0];
-    let parsedResponse;
-    try {
-      parsedResponse = JSON.parse(cleanedText);
-    } catch (parseError) {
-      console.error('❌ JSON parse error:', parseError);
-      console.error('Attempted to parse:', cleanedText.slice(0, 200));
-      return new Response(JSON.stringify({ 
-        success: false, 
-        error: { message: 'AI returned malformed data. Please try again.' } 
-      }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
-
-    console.log('✅ AI response parsed', {
-      ethicalLensPosition: parsedResponse.ethicalLensPosition,
-      requestedLens: ethicalLens,
-      suggestionsCount: parsedResponse?.suggestions?.length ?? 0
-    });
-
-    // Log actual suggestions for debugging
-    console.log('📝 Generated suggestions:', JSON.stringify(parsedResponse.suggestions, null, 2));
-    console.log('📝 General note:', parsedResponse.generalNote);
-
-    const boundary = validateLensBoundaries(parsedResponse, ethicalLens);
-    if (boundary.violations.length) {
-      console.error('❌ Lens boundary violations detected:', boundary.violations);
-      return new Response(JSON.stringify({
-        success: false,
-        error: { message: 'Lens boundary violation', violations: boundary.violations }
-      }), { status: 422, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-    }
-
-    const data = {
-      candidates: [{ content: { parts: [{ text: cleanedText }] } }]
-    };
-    console.log('🎉 Ethical swap suggestions generated successfully');
-    return new Response(JSON.stringify(data), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
   } catch (error) {
     console.error('Error in suggest-ethical-swap function:', error);

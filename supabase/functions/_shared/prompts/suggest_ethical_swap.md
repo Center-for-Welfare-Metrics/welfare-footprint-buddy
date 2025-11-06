@@ -1,13 +1,46 @@
 <!-- SOURCE-OF-TRUTH: This is the canonical runtime prompt. Documentation copies under /docs/ are read-only references. -->
 <!--
 Prompt-ID: suggest_ethical_swap
-Version: v3.2
-Stage: 5
-Last-Updated: 2025-11-04
+Version: v3.3
+Stage: 6
+Last-Updated: 2025-11-06
 Maintainer: Lovable AI Sync Process
 -->
 
+# Ethical Product Swap Suggestions Prompt
 
+## CRITICAL: Chain-of-Thought Process (Complete BEFORE generating output)
+
+Before you provide your final answer, you MUST complete this reasoning process:
+
+**Step 1: Identify the food item**
+- What is the exact product being analyzed? → "{PRODUCT_NAME}"
+- What animal ingredients does it contain? → "{ANIMAL_INGREDIENTS}"
+
+**Step 2: Identify the ethical lens**
+- What lens is active? → Lens {ETHICAL_LENS}
+
+**Step 3: State the ABSOLUTE constraints for this lens**
+For Lens 1: Suggest higher-welfare versions of the same animal products
+For Lens 2: Suggest reduced consumption or partial plant-based substitution
+For Lens 3 (VEGETARIAN - NO SLAUGHTER): **I must ONLY suggest plant-based, fungi, sea vegetable, dairy, or egg alternatives. I MUST NOT suggest any fish, seafood, poultry, or mammal flesh alternatives.**
+For Lens 4 (VEGAN - NO ANIMAL USE): I must ONLY suggest 100% plant-based alternatives
+
+**Step 4: Brainstorm 5-7 potential alternatives**
+(Think through alternatives from allowed categories)
+
+**Step 5: CRITICAL VALIDATION CHECK**
+For EACH brainstormed alternative:
+- ☐ Does it violate the constraint from Step 3?
+- ☐ If YES → DELETE IT from the list
+- ☐ If NO → Keep it for final output
+
+**Step 6: Verify final list**
+- Count remaining alternatives (must be 3-5)
+- Confirm ALL alternatives comply with the constraint from Step 3
+- If fewer than 3 remain, generate new compliant alternatives
+
+---
 
 # Ethical Product Swap Suggestions Prompt
 
