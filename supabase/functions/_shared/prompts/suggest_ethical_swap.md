@@ -208,33 +208,44 @@ This approach balances compassion with practicality, combining better welfare wi
 
 ### Lens 3 – No Slaughter ("Vegetarian")
 
-Eliminate meat, fish, and gelatin. Continue only non-lethal products (dairy, eggs, honey).
+## 🚨🚨🚨 CRITICAL LENS 3 RESTRICTIONS - READ THIS FIRST 🚨🚨🚨
+
+**⚠️ LENS 3 MEANS VEGETARIAN - ABSOLUTELY NO SLAUGHTERED ANIMALS ⚠️**
 
 **ethicalLensPosition:** "No Slaughter"
 
-- Use Certified Humane dairy/eggs/honey where relevant.  
-- Focus on welfare improvements within those sectors.  
-- Do not suggest vegan or fully plant-based products unless they replace slaughtered items.
+## MANDATORY RULES FOR LENS 3:
 
-## 🚨 CRITICAL LENS 3 RESTRICTIONS 🚨
+**IF THE PRODUCT IS FISH OR SEAFOOD (mullet, salmon, tuna, shrimp, etc.):**
+- ❌ NEVER suggest other fish or seafood (they require slaughter)
+- ❌ NEVER suggest "sustainable fish" or "certified fish" (still involves slaughter)
+- ✅ ONLY suggest VEGETARIAN alternatives:
+  - Plant-based seafood alternatives (tofu, tempeh, mushrooms, jackfruit)
+  - Dairy-based alternatives if culturally appropriate
+  - Egg-based alternatives if appropriate
+- ✅ Focus on texture/flavor matching (umami, ocean flavors from seaweed/nori)
 
-**ABSOLUTELY FORBIDDEN - NEVER SUGGEST:**
-- Meat (beef, pork, lamb, veal, venison, etc.)
-- Poultry (chicken, turkey, duck, goose, quail, etc.)
-- Fish/Seafood (salmon, tuna, cod, shrimp, crab, lobster, anchovy, etc.)
+**IF THE PRODUCT IS MEAT OR POULTRY:**
+- ❌ NEVER suggest other meat or poultry
+- ✅ ONLY suggest plant-based or dairy/egg alternatives
+
+**IF THE PRODUCT IS DAIRY OR EGGS:**
+- ✅ Suggest higher-welfare dairy (Certified Humane, pasture-raised, organic)
+- ✅ Can suggest plant-based alternatives
+- ❌ NEVER suggest products with fish, meat, or poultry
+
+**ABSOLUTELY FORBIDDEN FOR LENS 3 - THESE REQUIRE SLAUGHTER:**
+- ALL Meat (beef, pork, lamb, veal, venison, game, etc.)
+- ALL Poultry (chicken, turkey, duck, goose, quail, etc.)
+- ALL Fish (salmon, tuna, cod, mullet, tilapia, sardines, etc.)
+- ALL Seafood (shrimp, crab, lobster, anchovy, squid, octopus, etc.)
 - Gelatin or any slaughter byproducts
 
-**FOR DAIRY PRODUCTS (butter, milk, cheese, yogurt):**
-- ✅ Suggest higher-welfare dairy (Certified Humane, pasture-raised, organic)
-- ✅ Can suggest plant-based alternatives if appropriate
-- ❌ NEVER suggest fish oil enriched or meat-based alternatives
-
-**FOR EGGS:**
-- ✅ Suggest higher-welfare eggs (Certified Humane, pasture-raised, cage-free)
-- ✅ Can suggest plant-based egg alternatives
-- ❌ NEVER suggest products with fish or meat
-
-**VALIDATION CHECK:** Before outputting, verify NO slaughtered-animal terms appear in ANY suggestion or generalNote.
+**🔒 FINAL VALIDATION - BEFORE SUBMITTING YOUR RESPONSE:**
+1. Re-read EVERY suggestion you created
+2. Check if ANY suggestion contains fish, seafood, meat, or poultry
+3. If YES → DELETE that suggestion and replace with vegetarian alternative
+4. Verify NO slaughtered-animal terms in generalNote
 
 Example general note:  
 "You've chosen to avoid animal slaughter. Opt for vegetarian options and support high-welfare certified dairy, egg, or honey production to ensure animals experience gentle handling and natural behaviors."
