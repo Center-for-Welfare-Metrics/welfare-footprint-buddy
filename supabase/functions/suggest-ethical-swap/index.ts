@@ -245,59 +245,6 @@ serve(async (req) => {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 25000);
 
-    // Build lens-specific system message
-    let systemMessage = 'You are an expert in animal welfare and food ethics. Follow ALL instructions exactly. Respect the 4-lens mapping.';
-    
-    // Select model based on ethical lens - GPT-5 is more reliable for Lens 3 restrictions
-    const selectedModel = ethicalLens === 3 ? 'openai/gpt-5-mini' : 'google/gemini-2.5-flash';
-    
-    console.log(`🤖 Using model: ${selectedModel} for Lens ${ethicalLens}`);
-    
-    // Add critical Lens 3 instructions to system message
-    if (ethicalLens === 3) {
-      systemMessage += `\n\n🚨 CRITICAL LENS 3 RULE - THIS IS VEGETARIAN MODE 🚨
-      
-LENS 3 = NO SLAUGHTER = VEGETARIAN
-
-THE PRODUCT IS: "${productName}"
-
-IF THIS IS FISH/SEAFOOD:
-❌ NEVER suggest other fish or seafood - they ALL require slaughter
-❌ NEVER suggest "sustainable fish", "MSC-certified fish", "wild-caught fish", "responsibly sourced fish"
-❌ NO: salmon, tuna, cod, mullet, tilapia, shrimp, crab, anchovy, sardines, etc.
-✅ ONLY suggest VEGETARIAN alternatives: tofu, tempeh, mushrooms, seaweed, plant-based seafood, algae-based products
-✅ Focus on umami/ocean flavors using seaweed, nori, kelp, dulse
-
-VALIDATION CHECKLIST (complete BEFORE responding):
-☐ Read ALL my suggestions
-☐ Verify ZERO fish/seafood/meat/poultry terms
-☐ Verify generalNote has ZERO slaughter terms
-☐ If ANY violations found → DELETE and replace
-
-Remember: Fish = Slaughter = FORBIDDEN for Lens 3`;
-    }
-
-    // Build request body with model-specific parameters
-    const requestBody: any = {
-      model: selectedModel,
-      messages: [
-        {
-          role: 'system',
-          content: systemMessage
-        },
-        { role: 'user', content: prompt },
-      ],
-    };
-
-    // GPT-5 models use different parameters than Gemini
-    if (selectedModel.startsWith('openai/')) {
-      requestBody.max_completion_tokens = 8192; // GPT-5 uses max_completion_tokens
-      // Note: GPT-5 doesn't support temperature parameter, defaults to 1.0
-    } else {
-      requestBody.max_tokens = 8192; // Gemini uses max_tokens
-      requestBody.temperature = 0.3;
-    }
-
     const lovableResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -305,7 +252,18 @@ Remember: Fish = Slaughter = FORBIDDEN for Lens 3`;
         'Content-Type': 'application/json',
       },
       signal: controller.signal,
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify({
+        model: 'google/gemini-2.5-flash',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are an expert in animal welfare and food ethics. Follow ALL instructions exactly. Respect the 4-lens mapping.'
+          },
+          { role: 'user', content: prompt },
+        ],
+        temperature: 0.4,
+        max_tokens: 8192,
+      }),
     }).finally(() => clearTimeout(timeout));
 
     if (!lovableResponse.ok) {
