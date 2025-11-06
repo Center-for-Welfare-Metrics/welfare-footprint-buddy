@@ -39,21 +39,20 @@ export const appConfig = {
    * Ethical Lens slider configuration
    */
   ethicalLens: {
-    /** Default slider position (1-5 scale) */
+    /** Default slider position (1-4 scale) */
     defaultValue: 1, // "Same Product, High Welfare"
     
     /** Slider range */
     min: 1,
-    max: 5,
+    max: 4,
     step: 1,
     
     /** Color mapping for each ethical lens level */
     colors: {
-      1: '#60A5FA', // Same Product, High Welfare (blue)
-      2: '#90B5FB',
-      3: '#C084FC', // Minimal Animal Suffering (default)
-      4: '#E677B8',
-      5: '#FF6B9D', // Plant-Based / Cultured Only (pink/red)
+      1: '#60A5FA', // Higher-Welfare Omnivore (blue)
+      2: '#90B5FB', // Lower Consumption (light blue)
+      3: '#C084FC', // No Slaughter (purple)
+      4: '#FF6B9D', // No Animal Use (pink)
     },
   },
 

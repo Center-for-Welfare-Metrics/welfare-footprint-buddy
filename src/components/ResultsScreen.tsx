@@ -511,8 +511,8 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
               >
                 "{positionToLens(sliderValue[0]) === 1 ? t('ethicalLens.persona1') :
                   positionToLens(sliderValue[0]) === 2 ? t('ethicalLens.persona2') :
-                  positionToLens(sliderValue[0]) === 4 ? t('ethicalLens.persona4') :
-                  t('ethicalLens.persona5')}"
+                  positionToLens(sliderValue[0]) === 3 ? t('ethicalLens.persona3') :
+                  t('ethicalLens.persona4')}"
               </p>
               <div className="flex items-center gap-2">
                 <p 
@@ -565,7 +565,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
                             <span 
                               className="text-base leading-none mt-0.5 flex-shrink-0"
                               style={{
-                                color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 4 | 5]
+                              color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]
                               }}
                             >
                               •
@@ -582,9 +582,9 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
             <div className="relative">
               <style>{`
                 .ethical-lens-slider [role="slider"] {
-                  background-color: ${appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 4 | 5]} !important;
-                  border-color: ${appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 4 | 5]} !important;
-                  box-shadow: 0 0 20px ${appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 4 | 5]}80 !important;
+                  background-color: ${appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]} !important;
+                  border-color: ${appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]} !important;
+                  box-shadow: 0 0 20px ${appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]}80 !important;
                   transition: all 0.3s ease;
                 }
               `}</style>
@@ -604,8 +604,8 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
                 <span style={{ color: appConfig.ethicalLens.colors[1] }}>{t('ethicalLens.rangeStart')}</span>
               </div>
               <div className="flex flex-col items-end">
-                <span className="text-lg mb-1" style={{ color: appConfig.ethicalLens.colors[5] }}>→</span>
-                <span className="text-right" style={{ color: appConfig.ethicalLens.colors[5] }}>{t('ethicalLens.rangeEnd')}</span>
+                <span className="text-lg mb-1" style={{ color: appConfig.ethicalLens.colors[4] }}>→</span>
+                <span className="text-right" style={{ color: appConfig.ethicalLens.colors[4] }}>{t('ethicalLens.rangeEnd')}</span>
               </div>
             </div>
             {/* Ethical Lens Guidance - Focus */}
@@ -613,7 +613,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
               <p 
                 className="text-sm font-semibold text-center transition-colors duration-300"
                 style={{
-                  color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 4 | 5]
+                  color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]
                 }}
               >
                 {getEthicalLensFocus(positionToLens(sliderValue[0]))}
@@ -630,7 +630,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
                 disabled={isLoadingSwaps}
                 className="w-full text-white font-bold transition-all duration-300"
                 style={{
-                  backgroundColor: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 4 | 5]
+                  backgroundColor: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]
                 }}
               >
                 {isLoadingSwaps ? (
