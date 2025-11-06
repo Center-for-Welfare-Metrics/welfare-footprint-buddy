@@ -277,6 +277,27 @@ VALIDATION CHECKLIST (complete BEFORE responding):
 Remember: Fish = Slaughter = FORBIDDEN for Lens 3`;
     }
 
+    // Build request body with model-specific parameters
+    const requestBody: any = {
+      model: selectedModel,
+      messages: [
+        {
+          role: 'system',
+          content: systemMessage
+        },
+        { role: 'user', content: prompt },
+      ],
+    };
+
+    // GPT-5 models use different parameters than Gemini
+    if (selectedModel.startsWith('openai/')) {
+      requestBody.max_completion_tokens = 8192; // GPT-5 uses max_completion_tokens
+      // Note: GPT-5 doesn't support temperature parameter, defaults to 1.0
+    } else {
+      requestBody.max_tokens = 8192; // Gemini uses max_tokens
+      requestBody.temperature = 0.3;
+    }
+
     const lovableResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -284,18 +305,7 @@ Remember: Fish = Slaughter = FORBIDDEN for Lens 3`;
         'Content-Type': 'application/json',
       },
       signal: controller.signal,
-      body: JSON.stringify({
-        model: selectedModel,
-        messages: [
-          {
-            role: 'system',
-            content: systemMessage
-          },
-          { role: 'user', content: prompt },
-        ],
-        temperature: ethicalLens === 3 ? 0.2 : 0.3, // Even lower temperature for Lens 3
-        max_tokens: 8192,
-      }),
+      body: JSON.stringify(requestBody),
     }).finally(() => clearTimeout(timeout));
 
     if (!lovableResponse.ok) {
