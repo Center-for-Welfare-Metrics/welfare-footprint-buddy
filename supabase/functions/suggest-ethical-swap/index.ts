@@ -186,7 +186,7 @@ function validateLensBoundaries(response: any, ethicalLens: number): { violation
 
 // -------- Intelligent Fallback ------------------------------------------------
 
-function intelligentFallback(ethicalLens: number, productName: string, language: string = 'en') {
+function intelligentFallback(ethicalLens: number, productName: string, language: string = 'en'): Response {
   console.log('[suggest-ethical-swap] Using intelligent fallback for lens', ethicalLens);
   
   const fallbackResponses: Record<number, any> = {
@@ -262,15 +262,14 @@ function intelligentFallback(ethicalLens: number, productName: string, language:
 
   const fallback = fallbackResponses[ethicalLens] || fallbackResponses[3];
 
+  // Format response to match the expected Gemini API structure
+  const responseText = JSON.stringify(fallback);
+  const data = {
+    candidates: [{ content: { parts: [{ text: responseText }] } }]
+  };
+
   return new Response(
-    JSON.stringify({
-      success: true,
-      data: fallback,
-      metadata: {
-        usedFallback: true,
-        reason: 'AI validation failed, safe alternatives provided'
-      }
-    }),
+    JSON.stringify(data),
     {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
