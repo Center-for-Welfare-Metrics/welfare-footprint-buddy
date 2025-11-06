@@ -245,6 +245,30 @@ serve(async (req) => {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 25000);
 
+    // Build lens-specific system message
+    let systemMessage = 'You are an expert in animal welfare and food ethics. Follow ALL instructions exactly. Respect the 4-lens mapping.';
+    
+    // Add critical Lens 3 instructions to system message
+    if (ethicalLens === 3) {
+      systemMessage += `\n\n🚨 CRITICAL LENS 3 RULE - THIS IS VEGETARIAN MODE 🚨
+      
+LENS 3 = NO SLAUGHTER = VEGETARIAN
+
+IF THE PRODUCT IS FISH/SEAFOOD (like ${productName}):
+❌ NEVER suggest other fish or seafood - they ALL require slaughter
+❌ NEVER suggest "sustainable fish", "MSC-certified fish", or "wild-caught fish"
+✅ ONLY suggest VEGETARIAN alternatives: tofu, tempeh, mushrooms, seaweed, plant-based seafood
+✅ Focus on umami/ocean flavors using seaweed, nori, kelp
+
+BEFORE YOU RESPOND:
+1. Read your suggestions
+2. Check if ANY contain fish, seafood, meat, or poultry
+3. If YES → DELETE and replace with vegetarian option
+4. Double-check NO animal slaughter terms appear
+
+Fish = Slaughter = FORBIDDEN for Lens 3`;
+    }
+
     const lovableResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -257,11 +281,11 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'You are an expert in animal welfare and food ethics. Follow ALL instructions exactly. Respect the 4-lens mapping.'
+            content: systemMessage
           },
           { role: 'user', content: prompt },
         ],
-        temperature: 0.4,
+        temperature: 0.3, // Lower temperature for stricter instruction following
         max_tokens: 8192,
       }),
     }).finally(() => clearTimeout(timeout));
