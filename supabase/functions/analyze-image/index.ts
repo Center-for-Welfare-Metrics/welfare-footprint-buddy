@@ -182,9 +182,34 @@ serve(async (req) => {
       console.log('Prompt template loaded: analyze_user_material');
       console.log('Output language:', outputLanguage);
       console.log('Additional info provided:', !!additionalInfo);
+      console.log('Image data provided:', !!imageData);
       console.log('Prompt length (chars):', prompt.length);
       console.log('Prompt preview (first 500 chars):', prompt.substring(0, 500));
       console.log('═══════════════════════════════════════════════════════════════════');
+      
+      // If no image data (text-only mode), instruct AI to avoid "visually" language
+      if (!imageData) {
+        const textOnlyContext = `
+═══════════════════════════════════════════════════════════════════
+⚠️ TEXT-ONLY MODE - NO IMAGE PROVIDED ⚠️
+═══════════════════════════════════════════════════════════════════
+
+CRITICAL INSTRUCTION: The user has provided a TEXT DESCRIPTION ONLY - there is NO IMAGE.
+
+You must:
+1. ❌ DO NOT use language like "visually identified", "visible in the image", "seen in the photo", etc.
+2. ✅ Instead use language like "identified from description", "mentioned in description", "based on description", etc.
+3. ✅ Base your analysis ENTIRELY on the user's text description and your knowledge of typical recipes/dishes
+4. ✅ Set source to "recipe_inference" for items derived from typical recipes
+5. ✅ Set source to "user_description" for items explicitly mentioned by the user
+
+═══════════════════════════════════════════════════════════════════
+
+`;
+        prompt = textOnlyContext + prompt;
+        isTextOnlyMode = true;
+        console.log('[analyze-image] TEXT-ONLY MODE: No image provided, analyzing from description only');
+      }
       
       // If user provided additional context (edited description), inject it
       if (additionalInfo && additionalInfo.trim()) {
@@ -193,20 +218,20 @@ serve(async (req) => {
 🚨 USER-PROVIDED DESCRIPTION (USE AS AUTHORITATIVE CONTEXT) 🚨
 ═══════════════════════════════════════════════════════════════════
 
-The user has provided this description of the image:
+The user has provided this description${imageData ? ' of the image' : ''}:
 
 "${additionalInfo}"
 
 ⚠️ CRITICAL INSTRUCTIONS:
 
-1. ✅ Use this description as GROUND TRUTH for what's in the image
+1. ✅ Use this description as GROUND TRUTH for what's in the ${imageData ? 'image' : 'food items'}
 2. ✅ If the user mentions specific dishes (e.g., "feijoada", "paella"), decompose those dishes according to their traditional recipes
 3. ✅ If the user mentions specific ingredients, ensure those are included in the items list
-4. ✅ Combine this description with your visual analysis for complete accuracy
+4. ✅ ${imageData ? 'Combine this description with your visual analysis for complete accuracy' : 'Use this description along with your knowledge of typical recipes to identify ingredients'}
 5. ❌ Do NOT contradict this user-provided information
 
 ═══════════════════════════════════════════════════════════════════
-NOW ANALYZE THE IMAGE USING THIS CONTEXT:
+NOW ANALYZE ${imageData ? 'THE IMAGE' : 'THE FOOD ITEMS'} USING THIS CONTEXT:
 ═══════════════════════════════════════════════════════════════════
 
 `;
