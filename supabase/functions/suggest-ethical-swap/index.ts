@@ -235,12 +235,41 @@ serve(async (req) => {
     };
     const outputLanguage = languageNames[language] ?? 'English';
 
-    const prompt = await loadAndProcessPrompt('suggest_ethical_swap', {
+    let promptText = await loadAndProcessPrompt('suggest_ethical_swap', {
       PRODUCT_NAME: productName,
       ANIMAL_INGREDIENTS: animalIngredients,
       ETHICAL_LENS: ethicalLens.toString(),
       OUTPUT_LANGUAGE: outputLanguage,
     });
+
+    // CRITICAL: For Lens 3, prepend unmissable instructions if product is fish/seafood
+    if (ethicalLens === 3 && /fish|seafood|mullet|salmon|tuna|cod|tilapia|trout|bass|shrimp|crab|lobster|anchovy|sardine|mackerel|herring|prawn|squid|octopus/i.test(productName + ' ' + animalIngredients)) {
+      const criticalOverride = `
+🚨🚨🚨 CRITICAL OVERRIDE - READ THIS FIRST 🚨🚨🚨
+
+PRODUCT: "${productName}"
+ETHICAL LENS: 3 (VEGETARIAN - NO SLAUGHTER)
+
+THIS PRODUCT IS FISH/SEAFOOD.
+
+ABSOLUTE RULES YOU MUST FOLLOW:
+1. ❌ DO NOT suggest ANY fish or seafood alternatives (ALL fish/seafood require slaughter)
+2. ❌ DO NOT suggest "sustainable fish", "certified fish", "MSC fish", "wild-caught fish"
+3. ✅ ONLY suggest VEGETARIAN alternatives: tofu, tempeh, mushrooms, seaweed, plant-based seafood, algae products
+4. ✅ Focus on umami/ocean flavors using kelp, nori, dulse, wakame, spirulina
+
+BEFORE YOU OUTPUT YOUR RESPONSE:
+☐ Check EVERY suggestion - does it contain fish/seafood? If YES → DELETE IT
+☐ Check generalNote - does it mention fish/seafood? If YES → REWRITE IT
+☐ Verify 100% VEGETARIAN alternatives only
+
+═══════════════════════════════════════════════════════════════
+
+`;
+      promptText = criticalOverride + promptText;
+    }
+
+    const prompt = promptText;
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 25000);
