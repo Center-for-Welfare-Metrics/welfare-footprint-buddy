@@ -2,12 +2,12 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
-import { loadAndProcessPrompt } from '../_shared/prompt-loader.ts';
+import { loadAndProcessPrompt } from "../_shared/prompt-loader.ts";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
 // -------- Input validation ----------------------------------------------------
@@ -18,37 +18,37 @@ const VALID_ETHICAL_LENS = [1, 2, 3, 4] as const;
 interface ValidatedInput {
   productName: string;
   animalIngredients: string;
-  ethicalLens: typeof VALID_ETHICAL_LENS[number];
+  ethicalLens: (typeof VALID_ETHICAL_LENS)[number];
   language: string;
 }
 
 function validateInput(body: any): { valid: boolean; data?: ValidatedInput; error?: string } {
-  if (!body || typeof body !== 'object') {
-    return { valid: false, error: 'Invalid request body' };
+  if (!body || typeof body !== "object") {
+    return { valid: false, error: "Invalid request body" };
   }
 
-  const { productName, animalIngredients, ethicalLens, language = 'en' } = body;
+  const { productName, animalIngredients, ethicalLens, language = "en" } = body;
 
-  if (!productName || typeof productName !== 'string' || productName.length > MAX_TEXT_LENGTH) {
+  if (!productName || typeof productName !== "string" || productName.length > MAX_TEXT_LENGTH) {
     return { valid: false, error: `productName is required and must be less than ${MAX_TEXT_LENGTH} characters` };
   }
 
-  if (!animalIngredients || typeof animalIngredients !== 'string' || animalIngredients.length > MAX_TEXT_LENGTH) {
+  if (!animalIngredients || typeof animalIngredients !== "string" || animalIngredients.length > MAX_TEXT_LENGTH) {
     return { valid: false, error: `animalIngredients is required and must be less than ${MAX_TEXT_LENGTH} characters` };
   }
 
   if (!VALID_ETHICAL_LENS.includes(ethicalLens)) {
-    return { valid: false, error: 'ethicalLens must be 1, 2, 3, or 4' };
+    return { valid: false, error: "ethicalLens must be 1, 2, 3, or 4" };
   }
 
-  const validLanguages = ['en', 'es', 'fr', 'de', 'pt', 'zh', 'hi', 'ar', 'ru'];
+  const validLanguages = ["en", "es", "fr", "de", "pt", "zh", "hi", "ar", "ru"];
   if (language && !validLanguages.includes(language)) {
-    return { valid: false, error: `Invalid language code. Must be one of: ${validLanguages.join(', ')}` };
+    return { valid: false, error: `Invalid language code. Must be one of: ${validLanguages.join(", ")}` };
   }
 
   // Basic injection guard
   if (/[{}[\]]{2,}/.test(productName) || /[{}[\]]{2,}/.test(animalIngredients)) {
-    return { valid: false, error: 'Suspicious input detected.' };
+    return { valid: false, error: "Suspicious input detected." };
   }
 
   return {
@@ -58,17 +58,17 @@ function validateInput(body: any): { valid: boolean; data?: ValidatedInput; erro
       animalIngredients: animalIngredients.trim(),
       ethicalLens,
       language,
-    }
+    },
   };
 }
 
 // -------- Lens boundary validator --------------------------------------------
 
-function validateLensBoundaries(response: any, ethicalLens: number): { violations: string[], warnings: string[] } {
+function validateLensBoundaries(response: any, ethicalLens: number): { violations: string[]; warnings: string[] } {
   const violations: string[] = [];
   const warnings: string[] = [];
   const suggestions = Array.isArray(response?.suggestions) ? response.suggestions : [];
-  const generalNote = String(response?.generalNote ?? '');
+  const generalNote = String(response?.generalNote ?? "");
 
   const scan = (txt: string, rules: RegExp[]): string[] => {
     const hits: string[] = [];
@@ -80,28 +80,65 @@ function validateLensBoundaries(response: any, ethicalLens: number): { violation
   };
 
   const plantBasedTerms = [
-    /plant[-\s]?based/i, /\bvegan\b/i, /\bvegetarian\b/i, /\btofu\b/i, /\btempeh\b/i, /\bseitan\b/i,
-    /\boat milk\b/i, /\bsoy milk\b/i, /\balmond milk\b/i, /\bcashew\b/i, /\bmycoprotein\b/i,
-    /\bimpossible\b/i, /\bbeyond meat\b/i, /\bjackfruit\b/i
+    /plant[-\s]?based/i,
+    /\bvegan\b/i,
+    /\bvegetarian\b/i,
+    /\btofu\b/i,
+    /\btempeh\b/i,
+    /\bseitan\b/i,
+    /\boat milk\b/i,
+    /\bsoy milk\b/i,
+    /\balmond milk\b/i,
+    /\bcashew\b/i,
+    /\bmycoprotein\b/i,
+    /\bimpossible\b/i,
+    /\bbeyond meat\b/i,
+    /\bjackfruit\b/i,
   ];
   const culturedTerms = [/lab[-\s]?grown/i, /cultured\s+(meat|dairy|protein)/i, /precision\s+fermentation/i];
   const certificationTerms = [
-    /certified/i, /humane/i, /pasture[-\s]?raised/i, /cage[-\s]?free/i, /organic/i, /GAP/i,
-    /animal\s+welfare\s+approved/i, /\bMSC\b/i, /friend\s+of\s+the\s+sea/i, /\bRWS\b/i
+    /certified/i,
+    /humane/i,
+    /pasture[-\s]?raised/i,
+    /cage[-\s]?free/i,
+    /organic/i,
+    /GAP/i,
+    /animal\s+welfare\s+approved/i,
+    /\bMSC\b/i,
+    /friend\s+of\s+the\s+sea/i,
+    /\bRWS\b/i,
   ];
   const reductionTerms = [
-    /\breeduce(s|d|r|ing)?\b/i, /\bless\b/i, /\blower\b/i, /\blimit\b/i,
-    /\bfrequency\b/i, /\bfrequently\b/i, /\boften\b/i,
-    /\bonce (a|per)\s+week\b/i, /\btwice (a|per)\s+week\b/i, /\bper\s+week\b/i,
-    /\b\d+\s*times?\s*(a|per)\s+week\b/i, /\b\d+\s*days?\s*(a|per)\s+week\b/i,
-    /\bsome\s+meals\b/i, /\bmeatless\b/i, /\bfewer\b/i, /\boccasional(ly)?\b/i, 
-    /\beat\s+less\b/i, /\bless\s+frequently\b/i,
-    /\bsmaller\s+amounts?\b/i, /\bdecrease(s|d|r|ing)?\b/i, /\blessen(s|ed|ing)?\b/i,
-    /\bconsumption\b/i, /\buse\b/i  // Comprehensive reduction language
+    /\breeduce(s|d|r|ing)?\b/i,
+    /\bless\b/i,
+    /\blower\b/i,
+    /\blimit\b/i,
+    /\bfrequency\b/i,
+    /\bfrequently\b/i,
+    /\boften\b/i,
+    /\bonce (a|per)\s+week\b/i,
+    /\btwice (a|per)\s+week\b/i,
+    /\bper\s+week\b/i,
+    /\b\d+\s*times?\s*(a|per)\s+week\b/i,
+    /\b\d+\s*days?\s*(a|per)\s+week\b/i,
+    /\bsome\s+meals\b/i,
+    /\bmeatless\b/i,
+    /\bfewer\b/i,
+    /\boccasional(ly)?\b/i,
+    /\beat\s+less\b/i,
+    /\bless\s+frequently\b/i,
+    /\bsmaller\s+amounts?\b/i,
+    /\bdecrease(s|d|r|ing)?\b/i,
+    /\blessen(s|ed|ing)?\b/i,
+    /\bconsumption\b/i,
+    /\buse\b/i, // Comprehensive reduction language
   ];
   const meatFishPoultryWords = [
     /\b(beef|pork|chicken|turkey|lamb|mutton|veal|duck|fish|tuna|salmon|anchov(y|ies)|shrimp|prawn|octopus|squid)\b/i,
-    /\bgelatin\b/i, /\bbroth\b/i, /\bfish sauce\b/i, /\banchovy\b/i
+    /\bgelatin\b/i,
+    /\bbroth\b/i,
+    /\bfish sauce\b/i,
+    /\banchovy\b/i,
   ];
 
   // Lens 1
@@ -109,31 +146,35 @@ function validateLensBoundaries(response: any, ethicalLens: number): { violation
     // For Lens 1, only forbid consumption-reduction language, not welfare-improvement language
     const consumptionReductionTerms = [
       /\b(reduce|reducing|reduced)\s+(consumption|intake|use|frequency)\b/i,
-      /\beat\s+less\b/i, /\bless\s+frequently\b/i, /\bless\s+often\b/i,
+      /\beat\s+less\b/i,
+      /\bless\s+frequently\b/i,
+      /\bless\s+often\b/i,
       /\bfewer\s+(meals|times|products)\b/i,
       /\bsmaller\s+(portions?|amounts?)\b/i,
       /\bdecrease\s+(consumption|intake|use)\b/i,
       /\b(once|twice|\d+\s*times?)\s+(a|per)\s+week\b/i,
-      /\bsome\s+meals\b/i, /\bmeatless\b/i, /\boccasional(ly)?\b/i
+      /\bsome\s+meals\b/i,
+      /\bmeatless\b/i,
+      /\boccasional(ly)?\b/i,
     ];
     const hard = [...plantBasedTerms, ...culturedTerms, ...consumptionReductionTerms];
     const checkText = (label: string, txt: string) => {
       const hits = scan(txt, hard);
-      if (hits.length) violations.push(`${label} contains forbidden language for Lens 1: ${hits.join(', ')}`);
+      if (hits.length) violations.push(`${label} contains forbidden language for Lens 1: ${hits.join(", ")}`);
     };
     for (let i = 0; i < suggestions.length; i++) {
       const s = suggestions[i];
-      checkText(`Suggestion ${i + 1}`, `${s?.name ?? ''} ${s?.description ?? ''} ${s?.reasoning ?? ''}`);
+      checkText(`Suggestion ${i + 1}`, `${s?.name ?? ""} ${s?.description ?? ""} ${s?.reasoning ?? ""}`);
     }
-    checkText('generalNote', generalNote);
+    checkText("generalNote", generalNote);
   }
-  
+
   const portionReductionTerms = [
     /\bsmaller\s+(portion|portions|serving|servings|amount|amounts|slice|slices|fillet|steak|cup|cups|spoon|spoons|container|carton|bottle)s?\b/i,
     /\b(use|consume|add|pour)\s+less\b/i,
     /\bhalf(\s+the)?\s+(amount|portion|serving)\b/i,
     /\breduce(d)?\s+(amount|portion|serving|size)\b/i,
-    /\b30g\b/i
+    /\b30g\b/i,
   ];
 
   const frequencyReductionTerms = [
@@ -145,9 +186,8 @@ function validateLensBoundaries(response: any, ethicalLens: number): { violation
     /\balternate\b/i,
     /\breplace\b/i,
     /\bswap\b/i,
-    /\bsubstitute\b/i
+    /\bsubstitute\b/i,
   ];
-
 
   // // Lens 2
   // if (ethicalLens === 2) {
@@ -157,125 +197,83 @@ function validateLensBoundaries(response: any, ethicalLens: number): { violation
   //     /\beliminate\b/i,
   //     /\bexclude all\b/i
   //   ];
-  //   const softAllow = [...plantBasedTerms, ...culturedTerms, ...certificationTerms];
-  //   const hasReductionCue = (txt: string) => reductionTerms.some(r => r.test(txt));
-    
-  //   // Helper: Check if text implies reduction through combination or partial language
-  //   const impliesReduction = (txt: string) => {
-  //     const hasPlantBased = plantBasedTerms.some(p => p.test(txt));
-  //     const hasCertification = certificationTerms.some(c => c.test(txt));
-  //     const hasPartialLanguage = /\b(partial|some|mix|combine|both|and|while)\b/i.test(txt);
-  //     return (hasPlantBased && hasCertification) || hasPartialLanguage;
-  //   };
-    
-  //   const check = (label: string, txt: string) => {
+
+  //   const softAllow = [
+  //     ...plantBasedTerms,
+  //     ...culturedTerms,
+  //     ...certificationTerms
+  //   ];
+
+  //   const hasFrequencyReduction = (txt: string): boolean =>
+  //     frequencyReductionTerms.some((r) => r.test(txt));
+
+  //   const hasEthicalSubstitution = (txt: string): boolean =>
+  //     plantBasedTerms.some((r) => r.test(txt)) ||
+  //     culturedTerms.some((r) => r.test(txt)) ||
+  //     certificationTerms.some((r) => r.test(txt));
+
+  //   const usesPortionReduction = (txt: string): boolean =>
+  //     portionReductionTerms.some((r) => r.test(txt));
+
+  //   const check = (label: string, raw: string): void => {
+  //     const txt = raw || '';
+
+  //     // 1) bloquear "virar Lens 4"
   //     const hardHits = scan(txt, hard);
-  //     if (hardHits.length)
-  //       violations.push(`${label} contains forbidden elimination/vegan language for Lens 2: ${hardHits.join(', ')}`);
-      
-  //     // Allow if has explicit reduction cue OR implies reduction through combination
-  //     if (!hasReductionCue(txt) && !impliesReduction(txt))
-  //       violations.push(`${label} lacks an explicit reduction cue (e.g., "less often," "some meals per week"). Lens 2 requires reduction context.`);
-      
+  //     if (hardHits.length) {
+  //       violations.push(
+  //         `${label} contains forbidden elimination/vegan language for Lens 2: ${hardHits.join(', ')}`
+  //       );
+  //     }
+
+  //     // 2) bloquear sugestões puramente de porção/volume
+  //     if (usesPortionReduction(txt) && !hasFrequencyReduction(txt) && !hasEthicalSubstitution(txt)) {
+  //       violations.push(
+  //         `${label} focuses on portion/volume reduction (e.g. "smaller portions", "less per serving", "smaller containers") without reduced frequency or ethical substitution, which is forbidden for Lens 2.`
+  //       );
+  //     }
+
+  //     // 3) exigir redução de frequência e/ou substituição ética
+  //     if (!hasFrequencyReduction(txt) && !hasEthicalSubstitution(txt)) {
+  //       violations.push(
+  //         `${label} lacks required Lens 2 behavior: reduce weekly frequency and/or alternate with high-welfare or plant-based options.`
+  //       );
+  //     }
+
+  //     // 4) se citar plant-based/certificação sem contexto de redução → warning
   //     const softHits = scan(txt, softAllow);
-  //     if (softHits.length && !hasReductionCue(txt) && !impliesReduction(txt))
-  //       violations.push(`${label} mentions plant-based or certification terms without reduction context (Lens 2): ${softHits.join(', ')}`);
+  //     if (softHits.length && !hasFrequencyReduction(txt) && !hasEthicalSubstitution(txt)) {
+  //       warnings.push(
+  //         `${label} mentions plant-based or certification terms without clear reduction/alternation context (Lens 2): ${softHits.join(', ')}`
+  //       );
+  //     }
   //   };
+
   //   for (let i = 0; i < suggestions.length; i++) {
   //     const s = suggestions[i];
-  //     check(`Suggestion ${i + 1}`, `${s?.name ?? ''} ${s?.description ?? ''} ${s?.reasoning ?? ''}`);
+  //     check(
+  //       `Suggestion ${i + 1}`,
+  //       `${s?.name ?? ''} ${s?.description ?? ''} ${s?.reasoning ?? ''}`
+  //     );
   //   }
+
   //   check('generalNote', generalNote);
   // }
- 
-
-  
-  // Lens 2
-  if (ethicalLens === 2) {
-    const hard = [
-      /\b(fully|100%|completely)\s*(vegan|plant[-\s]?based)\b/i,
-      /\bno animal use\b/i,
-      /\beliminate\b/i,
-      /\bexclude all\b/i
-    ];
-
-    const softAllow = [
-      ...plantBasedTerms,
-      ...culturedTerms,
-      ...certificationTerms
-    ];
-
-    const hasFrequencyReduction = (txt: string): boolean =>
-      frequencyReductionTerms.some((r) => r.test(txt));
-
-    const hasEthicalSubstitution = (txt: string): boolean =>
-      plantBasedTerms.some((r) => r.test(txt)) ||
-      culturedTerms.some((r) => r.test(txt)) ||
-      certificationTerms.some((r) => r.test(txt));
-
-    const usesPortionReduction = (txt: string): boolean =>
-      portionReductionTerms.some((r) => r.test(txt));
-
-    const check = (label: string, raw: string): void => {
-      const txt = raw || '';
-
-      // 1) bloquear "virar Lens 4"
-      const hardHits = scan(txt, hard);
-      if (hardHits.length) {
-        violations.push(
-          `${label} contains forbidden elimination/vegan language for Lens 2: ${hardHits.join(', ')}`
-        );
-      }
-
-      // 2) bloquear sugestões puramente de porção/volume
-      if (usesPortionReduction(txt) && !hasFrequencyReduction(txt) && !hasEthicalSubstitution(txt)) {
-        violations.push(
-          `${label} focuses on portion/volume reduction (e.g. "smaller portions", "less per serving", "smaller containers") without reduced frequency or ethical substitution, which is forbidden for Lens 2.`
-        );
-      }
-
-      // 3) exigir redução de frequência e/ou substituição ética
-      if (!hasFrequencyReduction(txt) && !hasEthicalSubstitution(txt)) {
-        violations.push(
-          `${label} lacks required Lens 2 behavior: reduce weekly frequency and/or alternate with high-welfare or plant-based options.`
-        );
-      }
-
-      // 4) se citar plant-based/certificação sem contexto de redução → warning
-      const softHits = scan(txt, softAllow);
-      if (softHits.length && !hasFrequencyReduction(txt) && !hasEthicalSubstitution(txt)) {
-        warnings.push(
-          `${label} mentions plant-based or certification terms without clear reduction/alternation context (Lens 2): ${softHits.join(', ')}`
-        );
-      }
-    };
-
-    for (let i = 0; i < suggestions.length; i++) {
-      const s = suggestions[i];
-      check(
-        `Suggestion ${i + 1}`,
-        `${s?.name ?? ''} ${s?.description ?? ''} ${s?.reasoning ?? ''}`
-      );
-    }
-
-    check('generalNote', generalNote);
-  }
-
-
-
 
   // Lens 3
   if (ethicalLens === 3) {
     const hard = meatFishPoultryWords;
     for (let i = 0; i < suggestions.length; i++) {
       const s = suggestions[i];
-      const hits = scan(`${s?.name ?? ''} ${s?.description ?? ''} ${s?.reasoning ?? ''}`, hard);
+      const hits = scan(`${s?.name ?? ""} ${s?.description ?? ""} ${s?.reasoning ?? ""}`, hard);
       if (hits.length)
-        violations.push(`Suggestion ${i + 1} includes slaughtered-animal terms forbidden for Lens 3: ${hits.join(', ')}`);
+        violations.push(
+          `Suggestion ${i + 1} includes slaughtered-animal terms forbidden for Lens 3: ${hits.join(", ")}`,
+        );
     }
     const gnHits = scan(generalNote, hard);
     if (gnHits.length)
-      violations.push(`generalNote includes slaughtered-animal terms forbidden for Lens 3: ${gnHits.join(', ')}`);
+      violations.push(`generalNote includes slaughtered-animal terms forbidden for Lens 3: ${gnHits.join(", ")}`);
   }
 
   return { violations, warnings };
@@ -283,78 +281,114 @@ function validateLensBoundaries(response: any, ethicalLens: number): { violation
 
 // -------- Intelligent Fallback ------------------------------------------------
 
-function intelligentFallback(ethicalLens: number, productName: string, language: string = 'en'): Response {
-  console.log('[suggest-ethical-swap] Using intelligent fallback for lens', ethicalLens);
-  
+function intelligentFallback(ethicalLens: number, productName: string, language: string = "en"): Response {
+  console.log("[suggest-ethical-swap] Using intelligent fallback for lens", ethicalLens);
+
   const fallbackResponses: Record<number, any> = {
-    3: { // Lens 3: No Slaughter (Vegetarian)
-      ethicalLensPosition: 'no_slaughter',
+    2: {
+      // Lens 2: Lower Consumption
+      ethicalLensPosition: "Lower Consumption",
       suggestions: [
         {
-          name: 'Marinated Tofu',
-          description: 'Firm or extra-firm tofu, pressed and marinated, provides a versatile protein base with excellent texture',
-          category: 'PLANT_PROTEIN',
-          confidence: 'high',
-          reasoning: 'Tofu is a complete protein source that can absorb flavors well and works in most cooking methods',
-          availability: 'widely_available'
+          name: "Alternate certified dairy milk and plant-based milk",
+          description: "Use certified higher-welfare dairy milk on some days and oat/soy milk on others.",
+          confidence: "high",
+          reasoning: "Alternating reduces total dairy demand while prioritizing better systems when dairy is used.",
+          availability: "widely_available",
         },
         {
-          name: 'Tempeh',
-          description: 'Fermented soybean cake with a nutty flavor and firm texture, rich in protein and nutrients',
-          category: 'PLANT_PROTEIN',
-          confidence: 'high',
-          reasoning: 'Tempeh offers superior nutritional profile and satisfying texture without animal slaughter',
-          availability: 'widely_available'
+          name: "Limit dairy milk to a few times per week",
+          description:
+            "Enjoy milk on fewer days and prioritize uses where it matters most (e.g., coffee) with certified sources.",
+          confidence: "high",
+          reasoning: "Fewer weekly uses directly reduce the number of animals kept in intensive conditions.",
+          availability: "widely_available",
         },
         {
-          name: 'King Oyster Mushrooms',
-          description: 'Thick, meaty mushrooms that can be scored and cooked to create a satisfying texture',
-          category: 'FUNGI',
-          confidence: 'high',
-          reasoning: 'Provides umami depth and substantial texture that works well as a plant-based centerpiece',
-          availability: 'specialty_stores'
+          name: "Plant-based versions for some recipes",
+          description: "Use plant-based milks in smoothies, cereals or baking for part of the week.",
+          confidence: "medium",
+          reasoning: "Partial substitution reduces demand while keeping familiar uses possible.",
+          availability: "widely_available",
         },
-        {
-          name: 'Seasoned Seaweed or Kelp',
-          description: 'Nutrient-rich sea vegetables that offer ocean-like flavors and important minerals',
-          category: 'SEA_VEGETABLE',
-          confidence: 'medium',
-          reasoning: 'Provides oceanic taste profile and beneficial nutrients without harming marine animals',
-          availability: 'widely_available'
-        }
       ],
-      generalNote: 'These vegetarian alternatives avoid all animal slaughter while providing protein, umami flavors, and satisfying textures. Each option can be prepared in various ways to suit your culinary needs.'
+      generalNote:
+        "Lower Consumption means enjoying animal products less often while prioritizing certified higher-welfare options and using plant-based alternatives in some meals to reduce overall demand.",
     },
-    4: { // Lens 4: No Animal Use (Vegan)
-      ethicalLensPosition: 'no_animal_use',
+
+    3: {
+      // Lens 3: No Slaughter (Vegetarian)
+      ethicalLensPosition: "no_slaughter",
       suggestions: [
         {
-          name: 'Seasoned Tofu',
-          description: 'Plant-based protein that completely avoids all animal products',
-          category: 'PLANT_PROTEIN',
-          confidence: 'high',
-          reasoning: 'Provides complete protein without any animal exploitation',
-          availability: 'widely_available'
+          name: "Marinated Tofu",
+          description:
+            "Firm or extra-firm tofu, pressed and marinated, provides a versatile protein base with excellent texture",
+          category: "PLANT_PROTEIN",
+          confidence: "high",
+          reasoning: "Tofu is a complete protein source that can absorb flavors well and works in most cooking methods",
+          availability: "widely_available",
         },
         {
-          name: 'Jackfruit (prepared)',
-          description: 'Shredded young jackfruit provides a unique texture for plant-based dishes',
-          category: 'PLANT_PROTEIN',
-          confidence: 'medium',
-          reasoning: 'Offers interesting texture and versatility with zero animal products',
-          availability: 'widely_available'
+          name: "Tempeh",
+          description: "Fermented soybean cake with a nutty flavor and firm texture, rich in protein and nutrients",
+          category: "PLANT_PROTEIN",
+          confidence: "high",
+          reasoning: "Tempeh offers superior nutritional profile and satisfying texture without animal slaughter",
+          availability: "widely_available",
         },
         {
-          name: 'Plant-Based Seafood Alternatives',
-          description: 'Made from konjac, algae, or legumes to mimic seafood texture and flavor',
-          category: 'OTHER_VEGETARIAN',
-          confidence: 'medium',
-          reasoning: 'Specialized products designed to replicate seafood experience without any animal ingredients',
-          availability: 'specialty_stores'
-        }
+          name: "King Oyster Mushrooms",
+          description: "Thick, meaty mushrooms that can be scored and cooked to create a satisfying texture",
+          category: "FUNGI",
+          confidence: "high",
+          reasoning: "Provides umami depth and substantial texture that works well as a plant-based centerpiece",
+          availability: "specialty_stores",
+        },
+        {
+          name: "Seasoned Seaweed or Kelp",
+          description: "Nutrient-rich sea vegetables that offer ocean-like flavors and important minerals",
+          category: "SEA_VEGETABLE",
+          confidence: "medium",
+          reasoning: "Provides oceanic taste profile and beneficial nutrients without harming marine animals",
+          availability: "widely_available",
+        },
       ],
-      generalNote: 'These vegan alternatives completely eliminate animal use while maintaining culinary satisfaction and nutritional value.'
-    }
+      generalNote:
+        "These vegetarian alternatives avoid all animal slaughter while providing protein, umami flavors, and satisfying textures. Each option can be prepared in various ways to suit your culinary needs.",
+    },
+    4: {
+      // Lens 4: No Animal Use (Vegan)
+      ethicalLensPosition: "no_animal_use",
+      suggestions: [
+        {
+          name: "Seasoned Tofu",
+          description: "Plant-based protein that completely avoids all animal products",
+          category: "PLANT_PROTEIN",
+          confidence: "high",
+          reasoning: "Provides complete protein without any animal exploitation",
+          availability: "widely_available",
+        },
+        {
+          name: "Jackfruit (prepared)",
+          description: "Shredded young jackfruit provides a unique texture for plant-based dishes",
+          category: "PLANT_PROTEIN",
+          confidence: "medium",
+          reasoning: "Offers interesting texture and versatility with zero animal products",
+          availability: "widely_available",
+        },
+        {
+          name: "Plant-Based Seafood Alternatives",
+          description: "Made from konjac, algae, or legumes to mimic seafood texture and flavor",
+          category: "OTHER_VEGETARIAN",
+          confidence: "medium",
+          reasoning: "Specialized products designed to replicate seafood experience without any animal ingredients",
+          availability: "specialty_stores",
+        },
+      ],
+      generalNote:
+        "These vegan alternatives completely eliminate animal use while maintaining culinary satisfaction and nutritional value.",
+    },
   };
 
   const fallback = fallbackResponses[ethicalLens] || fallbackResponses[3];
@@ -362,23 +396,20 @@ function intelligentFallback(ethicalLens: number, productName: string, language:
   // Format response to match the expected Gemini API structure
   const responseText = JSON.stringify(fallback);
   const data = {
-    candidates: [{ content: { parts: [{ text: responseText }] } }]
+    candidates: [{ content: { parts: [{ text: responseText }] } }],
   };
 
-  return new Response(
-    JSON.stringify(data),
-    {
-      status: 200,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    }
-  );
+  return new Response(JSON.stringify(data), {
+    status: 200,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
 }
 
 // -------- Initialization ------------------------------------------------------
 
 const initAIHandler = () => {
   if (!(globalThis as any).__aiHandler) {
-    console.log('🔧 Initializing AI Handler with Lovable AI (Gemini Pro for Lens 3)');
+    console.log("🔧 Initializing AI Handler with Lovable AI (Gemini Pro for Lens 3)");
     (globalThis as any).__aiHandler = true;
   }
 };
@@ -386,7 +417,7 @@ const initAIHandler = () => {
 // -------- HTTP handler --------------------------------------------------------
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
@@ -396,36 +427,43 @@ serve(async (req) => {
     if (!validation.valid) {
       return new Response(JSON.stringify({ success: false, error: { message: validation.error } }), {
         status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     const { productName, animalIngredients, ethicalLens, language } = validation.data!;
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY is not configured');
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
     initAIHandler();
 
     const ethicalLensNames = {
-      1: 'Higher-Welfare Omnivore',
-      2: 'Lower Consumption',
-      3: 'No Slaughter',
-      4: 'No Animal Use'
+      1: "Higher-Welfare Omnivore",
+      2: "Lower Consumption",
+      3: "No Slaughter",
+      4: "No Animal Use",
     } as const;
 
-    console.log('🎯 Ethical Swap Request', {
+    console.log("🎯 Ethical Swap Request", {
       productName,
       ethicalLens,
       ethicalLensName: ethicalLensNames[ethicalLens as 1 | 2 | 3 | 4],
-      animalIngredients_preview: animalIngredients.slice(0, 100)
+      animalIngredients_preview: animalIngredients.slice(0, 100),
     });
 
     const languageNames: Record<string, string> = {
-      en: 'English', es: 'Spanish', fr: 'French', de: 'German', pt: 'Portuguese',
-      zh: 'Chinese', hi: 'Hindi', ar: 'Arabic', ru: 'Russian'
+      en: "English",
+      es: "Spanish",
+      fr: "French",
+      de: "German",
+      pt: "Portuguese",
+      zh: "Chinese",
+      hi: "Hindi",
+      ar: "Arabic",
+      ru: "Russian",
     };
-    const outputLanguage = languageNames[language] ?? 'English';
+    const outputLanguage = languageNames[language] ?? "English";
 
-    let promptText = await loadAndProcessPrompt('suggest_ethical_swap', {
+    let promptText = await loadAndProcessPrompt("suggest_ethical_swap", {
       PRODUCT_NAME: productName,
       ANIMAL_INGREDIENTS: animalIngredients,
       ETHICAL_LENS: ethicalLens.toString(),
@@ -434,8 +472,11 @@ serve(async (req) => {
 
     // CRITICAL: Use Chain-of-Thought prompting for Lens 3
     if (ethicalLens === 3) {
-      const isFishSeafood = /fish|seafood|mullet|salmon|tuna|cod|tilapia|trout|bass|shrimp|crab|lobster|anchovy|sardine|mackerel|herring|prawn|squid|octopus/i.test(productName + ' ' + animalIngredients);
-      
+      const isFishSeafood =
+        /fish|seafood|mullet|salmon|tuna|cod|tilapia|trout|bass|shrimp|crab|lobster|anchovy|sardine|mackerel|herring|prawn|squid|octopus/i.test(
+          productName + " " + animalIngredients,
+        );
+
       const cotPrompt = `
 🎯 CRITICAL INSTRUCTION - CHAIN-OF-THOUGHT PROCESS REQUIRED 🎯
 
@@ -446,7 +487,7 @@ BEFORE you provide your final JSON response, you MUST complete this reasoning pr
 STEP 1: Identify the food item
 - Product: "${productName}"
 - Animal ingredients: "${animalIngredients}"
-- Is this fish/seafood? ${isFishSeafood ? 'YES' : 'NO'}
+- Is this fish/seafood? ${isFishSeafood ? "YES" : "NO"}
 
 STEP 2: State the absolute constraint
 "I am helping with Lens 3 (VEGETARIAN - NO SLAUGHTER). I MUST suggest ONLY plant-based ingredients, fungi, sea vegetables, or dairy/egg alternatives. I MUST NOT suggest any fish, seafood, poultry, or mammal flesh."
@@ -479,51 +520,71 @@ ${promptText}
     const prompt = promptText;
 
     // CRITICAL: Use more powerful model for Lens 3 due to compliance challenges
-    const model = ethicalLens === 3 ? 'google/gemini-2.5-pro' : 'google/gemini-2.5-flash';
+    const model = ethicalLens === 3 ? "google/gemini-2.5-pro" : "google/gemini-2.5-flash";
 
     // Define structured output schema for Lens 3 to enforce categorical constraints
-    const tools = ethicalLens === 3 ? [
-      {
-        type: 'function',
-        function: {
-          name: 'provide_vegetarian_alternative',
-          description: 'Provide vegetarian alternatives for a food item. ONLY vegetarian options allowed - NO fish, seafood, meat, or poultry.',
-          parameters: {
-            type: 'object',
-            properties: {
-              ethicalLensPosition: {
-                type: 'string',
-                enum: ['welfarist_reduce_harm', 'partial_substitution', 'no_slaughter', 'no_animal_use'],
-                description: 'The ethical lens position'
-              },
-              suggestions: {
-                type: 'array',
-                items: {
-                  type: 'object',
+    const tools =
+      ethicalLens === 3
+        ? [
+            {
+              type: "function",
+              function: {
+                name: "provide_vegetarian_alternative",
+                description:
+                  "Provide vegetarian alternatives for a food item. ONLY vegetarian options allowed - NO fish, seafood, meat, or poultry.",
+                parameters: {
+                  type: "object",
                   properties: {
-                    name: { type: 'string', description: 'Name of the VEGETARIAN alternative (plant-based, fungi, sea vegetable, dairy, or egg)' },
-                    description: { type: 'string', description: 'How this vegetarian alternative compares' },
-                    category: {
-                      type: 'string',
-                      enum: ['PLANT_PROTEIN', 'FUNGI', 'SEA_VEGETABLE', 'LEGUME', 'DAIRY', 'EGG', 'CULTURED', 'OTHER_VEGETARIAN'],
-                      description: 'Category - must be vegetarian, NOT fish/meat/poultry'
+                    ethicalLensPosition: {
+                      type: "string",
+                      enum: ["welfarist_reduce_harm", "partial_substitution", "no_slaughter", "no_animal_use"],
+                      description: "The ethical lens position",
                     },
-                    confidence: { type: 'string', enum: ['low', 'medium', 'high'] },
-                    reasoning: { type: 'string', description: 'Welfare-focused reasoning for this vegetarian choice' },
-                    availability: { type: 'string', enum: ['widely_available', 'specialty_stores', 'emerging'] }
+                    suggestions: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          name: {
+                            type: "string",
+                            description:
+                              "Name of the VEGETARIAN alternative (plant-based, fungi, sea vegetable, dairy, or egg)",
+                          },
+                          description: { type: "string", description: "How this vegetarian alternative compares" },
+                          category: {
+                            type: "string",
+                            enum: [
+                              "PLANT_PROTEIN",
+                              "FUNGI",
+                              "SEA_VEGETABLE",
+                              "LEGUME",
+                              "DAIRY",
+                              "EGG",
+                              "CULTURED",
+                              "OTHER_VEGETARIAN",
+                            ],
+                            description: "Category - must be vegetarian, NOT fish/meat/poultry",
+                          },
+                          confidence: { type: "string", enum: ["low", "medium", "high"] },
+                          reasoning: {
+                            type: "string",
+                            description: "Welfare-focused reasoning for this vegetarian choice",
+                          },
+                          availability: { type: "string", enum: ["widely_available", "specialty_stores", "emerging"] },
+                        },
+                        required: ["name", "description", "category", "confidence", "reasoning", "availability"],
+                      },
+                      minItems: 3,
+                      maxItems: 5,
+                    },
+                    generalNote: { type: "string", description: "General guidance about VEGETARIAN alternatives" },
                   },
-                  required: ['name', 'description', 'category', 'confidence', 'reasoning', 'availability']
+                  required: ["ethicalLensPosition", "suggestions", "generalNote"],
                 },
-                minItems: 3,
-                maxItems: 5
               },
-              generalNote: { type: 'string', description: 'General guidance about VEGETARIAN alternatives' }
             },
-            required: ['ethicalLensPosition', 'suggestions', 'generalNote']
-          }
-        }
-      }
-    ] : undefined;
+          ]
+        : undefined;
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 30000); // Longer timeout for Pro model
@@ -533,11 +594,12 @@ ${promptText}
         model,
         messages: [
           {
-            role: 'system',
-            content: 'You are an expert in animal welfare and ethical food alternatives. You provide scientifically accurate, welfare-focused suggestions that strictly adhere to the specified ethical lens constraints. For Lens 3 (No Slaughter), you ONLY suggest vegetarian alternatives and NEVER suggest fish, seafood, meat, or poultry.',
+            role: "system",
+            content:
+              "You are an expert in animal welfare and ethical food alternatives. You provide scientifically accurate, welfare-focused suggestions that strictly adhere to the specified ethical lens constraints. For Lens 3 (No Slaughter), you ONLY suggest vegetarian alternatives and NEVER suggest fish, seafood, meat, or poultry.",
           },
           {
-            role: 'user',
+            role: "user",
             content: prompt,
           },
         ],
@@ -547,16 +609,16 @@ ${promptText}
       // Add structured output for Lens 3
       if (tools) {
         requestBody.tools = tools;
-        requestBody.tool_choice = { type: 'function', function: { name: 'provide_vegetarian_alternative' } };
+        requestBody.tool_choice = { type: "function", function: { name: "provide_vegetarian_alternative" } };
       }
 
-      console.log(`🤖 Calling ${model} for Lens ${ethicalLens}${tools ? ' with structured output' : ''}`);
+      console.log(`🤖 Calling ${model} for Lens ${ethicalLens}${tools ? " with structured output" : ""}`);
 
-      const lovableResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-        method: 'POST',
+      const lovableResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(requestBody),
         signal: controller.signal,
@@ -564,49 +626,49 @@ ${promptText}
 
       if (!lovableResponse.ok) {
         const errorText = await lovableResponse.text();
-        console.error('❌ Lovable AI error:', lovableResponse.status, errorText);
-        
+        console.error("❌ Lovable AI error:", lovableResponse.status, errorText);
+
         // Fallback on AI error
         if (ethicalLens === 3 || ethicalLens === 4) {
-          console.log('⚠️ AI error, using intelligent fallback');
+          console.log("⚠️ AI error, using intelligent fallback");
           return intelligentFallback(ethicalLens, productName, language);
         }
-        
+
         return new Response(
           JSON.stringify({ success: false, error: { message: `Lovable AI error: ${lovableResponse.status}` } }),
-          { status: lovableResponse.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          { status: lovableResponse.status, headers: { ...corsHeaders, "Content-Type": "application/json" } },
         );
       }
 
       const lovableData = await lovableResponse.json();
-      console.log('[suggest-ethical-swap] Raw AI response:', JSON.stringify(lovableData));
+      console.log("[suggest-ethical-swap] Raw AI response:", JSON.stringify(lovableData));
 
       let parsedResponse;
 
       // Handle structured output (tool calling) for Lens 3
       if (tools && lovableData.choices?.[0]?.message?.tool_calls) {
         const toolCall = lovableData.choices[0].message.tool_calls[0];
-        console.log('[suggest-ethical-swap] Tool call response:', JSON.stringify(toolCall));
-        
+        console.log("[suggest-ethical-swap] Tool call response:", JSON.stringify(toolCall));
+
         try {
           parsedResponse = JSON.parse(toolCall.function.arguments);
-          console.log('✅ Structured output parsed successfully');
+          console.log("✅ Structured output parsed successfully");
         } catch (parseError) {
-          console.error('[suggest-ethical-swap] Tool call parse error:', parseError);
+          console.error("[suggest-ethical-swap] Tool call parse error:", parseError);
           return intelligentFallback(ethicalLens, productName, language);
         }
       } else {
         // Handle regular text response
         const text = lovableData.choices?.[0]?.message?.content?.trim();
         if (!text) {
-          console.error('❌ AI returned empty response');
+          console.error("❌ AI returned empty response");
           return intelligentFallback(ethicalLens, productName, language);
         }
 
         // Extract JSON from response
         const jsonMatch = text.match(/{[\s\S]*}/);
         if (!jsonMatch) {
-          console.error('❌ No JSON found in AI response:', text.slice(0, 200));
+          console.error("❌ No JSON found in AI response:", text.slice(0, 200));
           return intelligentFallback(ethicalLens, productName, language);
         }
 
@@ -614,60 +676,57 @@ ${promptText}
         try {
           parsedResponse = JSON.parse(cleanedText);
         } catch (parseError) {
-          console.error('❌ JSON parse error:', parseError);
+          console.error("❌ JSON parse error:", parseError);
           return intelligentFallback(ethicalLens, productName, language);
         }
       }
 
-      console.log('✅ AI response parsed', {
+      console.log("✅ AI response parsed", {
         ethicalLensPosition: parsedResponse.ethicalLensPosition,
         requestedLens: ethicalLens,
-        suggestionsCount: parsedResponse?.suggestions?.length ?? 0
+        suggestionsCount: parsedResponse?.suggestions?.length ?? 0,
       });
 
       // Log actual suggestions for debugging
-      console.log('📝 Generated suggestions:', JSON.stringify(parsedResponse.suggestions, null, 2));
-      console.log('📝 General note:', parsedResponse.generalNote);
+      console.log("📝 Generated suggestions:", JSON.stringify(parsedResponse.suggestions, null, 2));
+      console.log("📝 General note:", parsedResponse.generalNote);
 
       // Validate the response against lens boundaries
       const boundary = validateLensBoundaries(parsedResponse, ethicalLens);
-      
+
       if (boundary.violations.length) {
-        console.error('❌ Lens boundary violations detected:', boundary.violations);
-        console.log('⚠️ Using intelligent fallback due to validation failure');
+        console.error("❌ Lens boundary violations detected:", boundary.violations);
+        console.log("⚠️ Using intelligent fallback due to validation failure");
         return intelligentFallback(ethicalLens, productName, language);
       }
 
       // Format response for compatibility with existing client code
       const responseText = JSON.stringify(parsedResponse);
       const data = {
-        candidates: [{ content: { parts: [{ text: responseText }] } }]
+        candidates: [{ content: { parts: [{ text: responseText }] } }],
       };
-      
-      console.log('🎉 Ethical swap suggestions generated successfully');
-      return new Response(JSON.stringify(data), { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-      });
 
+      console.log("🎉 Ethical swap suggestions generated successfully");
+      return new Response(JSON.stringify(data), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     } catch (error) {
-      console.error('Error calling Lovable AI:', error);
-      
+      console.error("Error calling Lovable AI:", error);
+
       // Use intelligent fallback on error for Lens 3/4
       if (ethicalLens === 3 || ethicalLens === 4) {
-        console.log('⚠️ Error occurred, using intelligent fallback');
+        console.log("⚠️ Error occurred, using intelligent fallback");
         return intelligentFallback(ethicalLens, productName, language);
       }
-      
+
       throw error;
     }
-
   } catch (error) {
-    console.error('Error in suggest-ethical-swap function:', error);
+    console.error("Error in suggest-ethical-swap function:", error);
     const message = error instanceof Error ? error.message : String(error);
     return new Response(JSON.stringify({ success: false, error: { message } }), {
       status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 });
-
