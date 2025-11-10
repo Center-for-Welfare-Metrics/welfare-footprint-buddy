@@ -281,41 +281,10 @@ function validateLensBoundaries(response: any, ethicalLens: number): { violation
   return { violations, warnings };
 }
 
-// -------- Retry Logic with Exponential Backoff -------------------------------
-
-async function retryWithBackoff<T>(
-  fn: () => Promise<T>,
-  maxRetries: number = 3,
-  initialDelayMs: number = 1000
-): Promise<T> {
-  let lastError: Error | null = null;
-  
-  for (let attempt = 0; attempt < maxRetries; attempt++) {
-    try {
-      return await fn();
-    } catch (error) {
-      lastError = error instanceof Error ? error : new Error(String(error));
-      
-      // Don't retry on validation errors or client errors
-      if (lastError.message.includes('validation') || lastError.message.includes('400')) {
-        throw lastError;
-      }
-      
-      if (attempt < maxRetries - 1) {
-        const delayMs = initialDelayMs * Math.pow(2, attempt);
-        console.log(`⏳ Retry attempt ${attempt + 1}/${maxRetries} after ${delayMs}ms delay`);
-        await new Promise(resolve => setTimeout(resolve, delayMs));
-      }
-    }
-  }
-  
-  throw lastError || new Error('Max retries exceeded');
-}
-
 // -------- Intelligent Fallback ------------------------------------------------
 
 function intelligentFallback(ethicalLens: number, productName: string, language: string = 'en'): Response {
-  console.log('🔄 [FALLBACK] Using intelligent fallback for lens', ethicalLens);
+  console.log('[suggest-ethical-swap] Using intelligent fallback for lens', ethicalLens);
   
   const fallbackResponses: Record<number, any> = {
     3: { // Lens 3: No Slaughter (Vegetarian)
@@ -405,29 +374,6 @@ function intelligentFallback(ethicalLens: number, productName: string, language:
   );
 }
 
-// -------- Monitoring & Metrics ------------------------------------------------
-
-interface RequestMetrics {
-  lens: number;
-  model: string;
-  startTime: number;
-  usedFallback: boolean;
-  success: boolean;
-  errorType?: string;
-}
-
-function logMetrics(metrics: RequestMetrics) {
-  const duration = Date.now() - metrics.startTime;
-  console.log('📊 [METRICS]', {
-    lens: metrics.lens,
-    model: metrics.model,
-    duration_ms: duration,
-    fallback: metrics.usedFallback,
-    success: metrics.success,
-    error: metrics.errorType
-  });
-}
-
 // -------- Initialization ------------------------------------------------------
 
 const initAIHandler = () => {
@@ -459,15 +405,6 @@ serve(async (req) => {
     if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY is not configured');
     initAIHandler();
 
-    // Initialize metrics tracking
-    const metrics: RequestMetrics = {
-      lens: ethicalLens,
-      model: ethicalLens === 3 ? 'google/gemini-2.5-pro' : 'google/gemini-2.5-flash',
-      startTime: Date.now(),
-      usedFallback: false,
-      success: false
-    };
-
     const ethicalLensNames = {
       1: 'Higher-Welfare Omnivore',
       2: 'Lower Consumption',
@@ -475,7 +412,7 @@ serve(async (req) => {
       4: 'No Animal Use'
     } as const;
 
-    console.log('🎯 [REQUEST] Ethical Swap Request', {
+    console.log('🎯 Ethical Swap Request', {
       productName,
       ethicalLens,
       ethicalLensName: ethicalLensNames[ethicalLens as 1 | 2 | 3 | 4],
@@ -613,125 +550,92 @@ ${promptText}
         requestBody.tool_choice = { type: 'function', function: { name: 'provide_vegetarian_alternative' } };
       }
 
-      console.log(`🤖 [AI_CALL] Calling ${model} for Lens ${ethicalLens}${tools ? ' with structured output' : ''}`);
+      console.log(`🤖 Calling ${model} for Lens ${ethicalLens}${tools ? ' with structured output' : ''}`);
 
-      // Use retry logic with exponential backoff
-      const lovableResponse = await retryWithBackoff(async () => {
-        const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(requestBody),
-          signal: controller.signal,
-        });
+      const lovableResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+        signal: controller.signal,
+      }).finally(() => clearTimeout(timeout));
 
-        // Handle rate limiting and payment required errors
-        if (response.status === 429) {
-          metrics.errorType = 'rate_limit';
-          console.error('⚠️ [RATE_LIMIT] 429 - Too many requests, will retry');
-          throw new Error('Rate limit exceeded - retrying');
+      if (!lovableResponse.ok) {
+        const errorText = await lovableResponse.text();
+        console.error('❌ Lovable AI error:', lovableResponse.status, errorText);
+        
+        // Fallback on AI error
+        if (ethicalLens === 3 || ethicalLens === 4) {
+          console.log('⚠️ AI error, using intelligent fallback');
+          return intelligentFallback(ethicalLens, productName, language);
         }
-
-        if (response.status === 402) {
-          metrics.errorType = 'payment_required';
-          console.error('💳 [PAYMENT] 402 - Payment required');
-          // Don't retry on payment errors
-          if (ethicalLens === 3 || ethicalLens === 4) {
-            metrics.usedFallback = true;
-            throw new Error('payment_required_fallback');
-          }
-          throw new Error('Payment required - please add credits to your Lovable AI workspace');
-        }
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error(`❌ [AI_ERROR] ${response.status}:`, errorText);
-          throw new Error(`AI error: ${response.status}`);
-        }
-
-        return response;
-      }, 3, 2000).finally(() => clearTimeout(timeout));
-
-      // Handle special fallback case for payment required
-      if (lovableResponse instanceof Error && lovableResponse.message === 'payment_required_fallback') {
-        console.log('🔄 [FALLBACK] Payment required, using intelligent fallback');
-        return intelligentFallback(ethicalLens, productName, language);
+        
+        return new Response(
+          JSON.stringify({ success: false, error: { message: `Lovable AI error: ${lovableResponse.status}` } }),
+          { status: lovableResponse.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
 
       const lovableData = await lovableResponse.json();
-      console.log('🔍 [AI_RESPONSE] Raw response received:', {
-        hasChoices: !!lovableData.choices,
-        choicesLength: lovableData.choices?.length,
-        hasToolCalls: !!lovableData.choices?.[0]?.message?.tool_calls
-      });
+      console.log('[suggest-ethical-swap] Raw AI response:', JSON.stringify(lovableData));
 
       let parsedResponse;
 
       // Handle structured output (tool calling) for Lens 3
       if (tools && lovableData.choices?.[0]?.message?.tool_calls) {
         const toolCall = lovableData.choices[0].message.tool_calls[0];
-        console.log('🔧 [TOOL_CALL] Structured output received');
+        console.log('[suggest-ethical-swap] Tool call response:', JSON.stringify(toolCall));
         
         try {
           parsedResponse = JSON.parse(toolCall.function.arguments);
-          console.log('✅ [PARSE] Structured output parsed successfully');
+          console.log('✅ Structured output parsed successfully');
         } catch (parseError) {
-          console.error('❌ [PARSE_ERROR] Tool call parse failed:', parseError);
-          metrics.errorType = 'parse_error';
-          metrics.usedFallback = true;
+          console.error('[suggest-ethical-swap] Tool call parse error:', parseError);
           return intelligentFallback(ethicalLens, productName, language);
         }
       } else {
         // Handle regular text response
         const text = lovableData.choices?.[0]?.message?.content?.trim();
         if (!text) {
-          console.error('❌ [EMPTY] AI returned empty response');
-          metrics.errorType = 'empty_response';
-          metrics.usedFallback = true;
+          console.error('❌ AI returned empty response');
           return intelligentFallback(ethicalLens, productName, language);
         }
 
         // Extract JSON from response
         const jsonMatch = text.match(/{[\s\S]*}/);
         if (!jsonMatch) {
-          console.error('❌ [NO_JSON] No JSON found in AI response:', text.slice(0, 200));
-          metrics.errorType = 'no_json';
-          metrics.usedFallback = true;
+          console.error('❌ No JSON found in AI response:', text.slice(0, 200));
           return intelligentFallback(ethicalLens, productName, language);
         }
 
         const cleanedText = jsonMatch[0];
         try {
           parsedResponse = JSON.parse(cleanedText);
-          console.log('✅ [PARSE] Text response parsed successfully');
         } catch (parseError) {
-          console.error('❌ [PARSE_ERROR] JSON parse failed:', parseError);
-          metrics.errorType = 'parse_error';
-          metrics.usedFallback = true;
+          console.error('❌ JSON parse error:', parseError);
           return intelligentFallback(ethicalLens, productName, language);
         }
       }
 
-      console.log('✅ [PARSED] Response structure:', {
+      console.log('✅ AI response parsed', {
         ethicalLensPosition: parsedResponse.ethicalLensPosition,
         requestedLens: ethicalLens,
         suggestionsCount: parsedResponse?.suggestions?.length ?? 0
       });
 
+      // Log actual suggestions for debugging
+      console.log('📝 Generated suggestions:', JSON.stringify(parsedResponse.suggestions, null, 2));
+      console.log('📝 General note:', parsedResponse.generalNote);
+
       // Validate the response against lens boundaries
       const boundary = validateLensBoundaries(parsedResponse, ethicalLens);
       
       if (boundary.violations.length) {
-        console.error('🚫 [VALIDATION] Lens boundary violations:', boundary.violations);
-        metrics.errorType = 'boundary_violation';
-        metrics.usedFallback = true;
+        console.error('❌ Lens boundary violations detected:', boundary.violations);
+        console.log('⚠️ Using intelligent fallback due to validation failure');
         return intelligentFallback(ethicalLens, productName, language);
-      }
-
-      if (boundary.warnings.length) {
-        console.warn('⚠️ [VALIDATION] Warnings detected:', boundary.warnings);
       }
 
       // Format response for compatibility with existing client code
@@ -740,32 +644,25 @@ ${promptText}
         candidates: [{ content: { parts: [{ text: responseText }] } }]
       };
       
-      metrics.success = true;
-      logMetrics(metrics);
-      
-      console.log('🎉 [SUCCESS] Ethical swap suggestions generated successfully');
+      console.log('🎉 Ethical swap suggestions generated successfully');
       return new Response(JSON.stringify(data), { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       });
 
     } catch (error) {
-      console.error('❌ [ERROR] Lovable AI call failed:', error);
-      metrics.errorType = error instanceof Error ? error.message : 'unknown';
+      console.error('Error calling Lovable AI:', error);
       
       // Use intelligent fallback on error for Lens 3/4
       if (ethicalLens === 3 || ethicalLens === 4) {
-        console.log('🔄 [FALLBACK] Error occurred, using intelligent fallback');
-        metrics.usedFallback = true;
-        logMetrics(metrics);
+        console.log('⚠️ Error occurred, using intelligent fallback');
         return intelligentFallback(ethicalLens, productName, language);
       }
       
-      logMetrics(metrics);
       throw error;
     }
 
   } catch (error) {
-    console.error('❌ [FATAL] Error in suggest-ethical-swap function:', error);
+    console.error('Error in suggest-ethical-swap function:', error);
     const message = error instanceof Error ? error.message : String(error);
     return new Response(JSON.stringify({ success: false, error: { message } }), {
       status: 500,
