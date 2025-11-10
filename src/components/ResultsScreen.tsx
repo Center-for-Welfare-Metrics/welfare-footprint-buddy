@@ -45,6 +45,17 @@ interface ResultsScreenProps {
 }
 
 const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems, cacheMetadata }: ResultsScreenProps) => {
+  // Map technical ethical lens position to user-friendly translation key
+  const getEthicalLensLabel = (position: string): string => {
+    const mapping: Record<string, string> = {
+      'welfarist_reduce_harm': t('ethicalLens.level1'),
+      'partial_substitution': t('ethicalLens.level2'),
+      'no_slaughter': t('ethicalLens.level3'),
+      'no_animal_use': t('ethicalLens.level4'),
+    };
+    return mapping[position] || t('results.suggestedAlternatives');
+  };
+
   // Map slider position to lens ID: 0->1, 1->2, 2->3, 3->4
   const positionToLens = (position: number): number => {
     const mapping: { [key: number]: number } = { 0: 1, 1: 2, 2: 3, 3: 4 };
@@ -645,7 +656,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
             ) : (
               <div className="space-y-3">
                 <h3 className="font-semibold text-emerald-400">
-                  {ethicalSwaps[0]?.ethicalLensPosition || t('results.suggestedAlternatives')}
+                  {getEthicalLensLabel(ethicalSwaps[0]?.ethicalLensPosition)}
                 </h3>
                 {ethicalSwaps[0]?.generalNote && (
                   <p className="text-xs text-gray-400 italic border-l-2 border-emerald-500/50 pl-3 py-2">
