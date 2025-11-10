@@ -127,7 +127,69 @@ function validateLensBoundaries(response: any, ethicalLens: number): { violation
     }
     checkText('generalNote', generalNote);
   }
+  
+  const portionReductionTerms = [
+    /\bsmaller\s+(portion|portions|serving|servings|amount|amounts|slice|slices|fillet|steak|cup|cups|spoon|spoons|container|carton|bottle)s?\b/i,
+    /\b(use|consume|add|pour)\s+less\b/i,
+    /\bhalf(\s+the)?\s+(amount|portion|serving)\b/i,
+    /\breduce(d)?\s+(amount|portion|serving|size)\b/i,
+    /\b30g\b/i
+  ];
 
+  const frequencyReductionTerms = [
+    /\b(meatless|dairy-free)\s+day(s)?\b/i,
+    /\b(once|twice|\d+\s*(times|days))\s+(a|per)\s+week\b/i,
+    /\boccasional(ly)?\b/i,
+    /\bfewer\s+(meals|times|days)\b/i,
+    /\buse\b.*\bonly\b.*\b(sometimes|occasionally|rarely)\b/i,
+    /\balternate\b/i,
+    /\breplace\b/i,
+    /\bswap\b/i,
+    /\bsubstitute\b/i
+  ];
+
+
+  // // Lens 2
+  // if (ethicalLens === 2) {
+  //   const hard = [
+  //     /\b(fully|100%|completely)\s*(vegan|plant[-\s]?based)\b/i,
+  //     /\bno animal use\b/i,
+  //     /\beliminate\b/i,
+  //     /\bexclude all\b/i
+  //   ];
+  //   const softAllow = [...plantBasedTerms, ...culturedTerms, ...certificationTerms];
+  //   const hasReductionCue = (txt: string) => reductionTerms.some(r => r.test(txt));
+    
+  //   // Helper: Check if text implies reduction through combination or partial language
+  //   const impliesReduction = (txt: string) => {
+  //     const hasPlantBased = plantBasedTerms.some(p => p.test(txt));
+  //     const hasCertification = certificationTerms.some(c => c.test(txt));
+  //     const hasPartialLanguage = /\b(partial|some|mix|combine|both|and|while)\b/i.test(txt);
+  //     return (hasPlantBased && hasCertification) || hasPartialLanguage;
+  //   };
+    
+  //   const check = (label: string, txt: string) => {
+  //     const hardHits = scan(txt, hard);
+  //     if (hardHits.length)
+  //       violations.push(`${label} contains forbidden elimination/vegan language for Lens 2: ${hardHits.join(', ')}`);
+      
+  //     // Allow if has explicit reduction cue OR implies reduction through combination
+  //     if (!hasReductionCue(txt) && !impliesReduction(txt))
+  //       violations.push(`${label} lacks an explicit reduction cue (e.g., "less often," "some meals per week"). Lens 2 requires reduction context.`);
+      
+  //     const softHits = scan(txt, softAllow);
+  //     if (softHits.length && !hasReductionCue(txt) && !impliesReduction(txt))
+  //       violations.push(`${label} mentions plant-based or certification terms without reduction context (Lens 2): ${softHits.join(', ')}`);
+  //   };
+  //   for (let i = 0; i < suggestions.length; i++) {
+  //     const s = suggestions[i];
+  //     check(`Suggestion ${i + 1}`, `${s?.name ?? ''} ${s?.description ?? ''} ${s?.reasoning ?? ''}`);
+  //   }
+  //   check('generalNote', generalNote);
+  // }
+ 
+
+  
   // Lens 2
   if (ethicalLens === 2) {
     const hard = [
@@ -136,36 +198,71 @@ function validateLensBoundaries(response: any, ethicalLens: number): { violation
       /\beliminate\b/i,
       /\bexclude all\b/i
     ];
-    const softAllow = [...plantBasedTerms, ...culturedTerms, ...certificationTerms];
-    const hasReductionCue = (txt: string) => reductionTerms.some(r => r.test(txt));
-    
-    // Helper: Check if text implies reduction through combination or partial language
-    const impliesReduction = (txt: string) => {
-      const hasPlantBased = plantBasedTerms.some(p => p.test(txt));
-      const hasCertification = certificationTerms.some(c => c.test(txt));
-      const hasPartialLanguage = /\b(partial|some|mix|combine|both|and|while)\b/i.test(txt);
-      return (hasPlantBased && hasCertification) || hasPartialLanguage;
-    };
-    
-    const check = (label: string, txt: string) => {
+
+    const softAllow = [
+      ...plantBasedTerms,
+      ...culturedTerms,
+      ...certificationTerms
+    ];
+
+    const hasFrequencyReduction = (txt: string): boolean =>
+      frequencyReductionTerms.some((r) => r.test(txt));
+
+    const hasEthicalSubstitution = (txt: string): boolean =>
+      plantBasedTerms.some((r) => r.test(txt)) ||
+      culturedTerms.some((r) => r.test(txt)) ||
+      certificationTerms.some((r) => r.test(txt));
+
+    const usesPortionReduction = (txt: string): boolean =>
+      portionReductionTerms.some((r) => r.test(txt));
+
+    const check = (label: string, raw: string): void => {
+      const txt = raw || '';
+
+      // 1) bloquear "virar Lens 4"
       const hardHits = scan(txt, hard);
-      if (hardHits.length)
-        violations.push(`${label} contains forbidden elimination/vegan language for Lens 2: ${hardHits.join(', ')}`);
-      
-      // Allow if has explicit reduction cue OR implies reduction through combination
-      if (!hasReductionCue(txt) && !impliesReduction(txt))
-        violations.push(`${label} lacks an explicit reduction cue (e.g., "less often," "some meals per week"). Lens 2 requires reduction context.`);
-      
+      if (hardHits.length) {
+        violations.push(
+          `${label} contains forbidden elimination/vegan language for Lens 2: ${hardHits.join(', ')}`
+        );
+      }
+
+      // 2) bloquear sugestões puramente de porção/volume
+      if (usesPortionReduction(txt) && !hasFrequencyReduction(txt) && !hasEthicalSubstitution(txt)) {
+        violations.push(
+          `${label} focuses on portion/volume reduction (e.g. "smaller portions", "less per serving", "smaller containers") without reduced frequency or ethical substitution, which is forbidden for Lens 2.`
+        );
+      }
+
+      // 3) exigir redução de frequência e/ou substituição ética
+      if (!hasFrequencyReduction(txt) && !hasEthicalSubstitution(txt)) {
+        violations.push(
+          `${label} lacks required Lens 2 behavior: reduce weekly frequency and/or alternate with high-welfare or plant-based options.`
+        );
+      }
+
+      // 4) se citar plant-based/certificação sem contexto de redução → warning
       const softHits = scan(txt, softAllow);
-      if (softHits.length && !hasReductionCue(txt) && !impliesReduction(txt))
-        violations.push(`${label} mentions plant-based or certification terms without reduction context (Lens 2): ${softHits.join(', ')}`);
+      if (softHits.length && !hasFrequencyReduction(txt) && !hasEthicalSubstitution(txt)) {
+        warnings.push(
+          `${label} mentions plant-based or certification terms without clear reduction/alternation context (Lens 2): ${softHits.join(', ')}`
+        );
+      }
     };
+
     for (let i = 0; i < suggestions.length; i++) {
       const s = suggestions[i];
-      check(`Suggestion ${i + 1}`, `${s?.name ?? ''} ${s?.description ?? ''} ${s?.reasoning ?? ''}`);
+      check(
+        `Suggestion ${i + 1}`,
+        `${s?.name ?? ''} ${s?.description ?? ''} ${s?.reasoning ?? ''}`
+      );
     }
+
     check('generalNote', generalNote);
   }
+
+
+
 
   // Lens 3
   if (ethicalLens === 3) {
