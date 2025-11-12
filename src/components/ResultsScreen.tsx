@@ -619,17 +619,19 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
                 <span className="text-right" style={{ color: appConfig.ethicalLens.colors[4] }}>{t('ethicalLens.rangeEnd')}</span>
               </div>
             </div>
-            {/* Ethical Lens Guidance - Focus */}
-            <div className="space-y-3">
-              <p 
-                className="text-sm font-semibold text-center transition-colors duration-300"
-                style={{
-                  color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]
-                }}
-              >
-                {getEthicalLensFocus(positionToLens(sliderValue[0]))}
-              </p>
-            </div>
+            {/* Ethical Lens Guidance - Focus - Only show when no swaps are displayed */}
+            {ethicalSwaps.length === 0 && (
+              <div className="space-y-3">
+                <p 
+                  className="text-sm font-semibold text-center transition-colors duration-300"
+                  style={{
+                    color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]
+                  }}
+                >
+                  {getEthicalLensFocus(positionToLens(sliderValue[0]))}
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
