@@ -655,9 +655,6 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
               </Button>
             ) : (
               <div className="space-y-3">
-                <h3 className="font-semibold text-emerald-400">
-                  {getEthicalLensLabel(ethicalSwaps[0]?.ethicalLensPosition)}
-                </h3>
                 {ethicalSwaps[0]?.generalNote && (
                   <p className="text-xs text-gray-400 italic border-l-2 border-emerald-500/50 pl-3 py-2">
                     {ethicalSwaps[0].generalNote}
