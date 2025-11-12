@@ -525,18 +525,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
                   positionToLens(sliderValue[0]) === 3 ? t('ethicalLens.persona3') :
                   t('ethicalLens.persona4')}"
               </p>
-              <div className="flex items-center gap-2">
-                <p 
-                  className="text-sm font-semibold transition-colors duration-300 flex-1"
-                  style={{
-                    color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]
-                  }}
-                >
-                  {positionToLens(sliderValue[0]) === 1 ? t('ethicalLens.desc1') :
-                   positionToLens(sliderValue[0]) === 2 ? t('ethicalLens.desc2') :
-                   positionToLens(sliderValue[0]) === 3 ? t('ethicalLens.desc3') :
-                   t('ethicalLens.desc4')}
-                </p>
+                <div className="flex items-center gap-2 justify-center">
                 <Popover>
                   <PopoverTrigger asChild>
                     <button
