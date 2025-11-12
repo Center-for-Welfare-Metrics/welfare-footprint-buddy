@@ -630,19 +630,22 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
               <Button 
                 onClick={handleEthicalSwap}
                 disabled={isLoadingSwaps}
-                className="w-full text-white font-bold transition-all duration-300"
+                className="w-full text-white font-bold transition-all duration-300 relative overflow-hidden group"
                 style={{
                   backgroundColor: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]
                 }}
               >
-                {isLoadingSwaps ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t('results.findingSwaps')}
-                  </>
-                ) : (
-                  <>{t('results.suggestAlternatives')}</>
-                )}
+                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
+                <span className="relative z-10 flex items-center justify-center">
+                  {isLoadingSwaps ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      {t('results.findingSwaps')}
+                    </>
+                  ) : (
+                    <>{t('results.suggestAlternatives')}</>
+                  )}
+                </span>
               </Button>
             ) : (
               <div className="space-y-3">
