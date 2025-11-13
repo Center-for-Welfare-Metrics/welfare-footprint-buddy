@@ -29,24 +29,23 @@ const SharedResult = () => {
       }
 
       try {
-        const { data, error } = await supabase
-          .from('shared_results')
-          .select('*')
-          .eq('share_token', shareToken)
-          .maybeSingle();
+        // Use the public edge function to fetch shared results (no auth required)
+        const response = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/share-result?shareToken=${shareToken}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
 
-        if (error) throw error;
-
-        if (!data) {
-          setError("Shared result not found or expired");
-          return;
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || 'Failed to load shared result');
         }
 
-        // Increment view count
-        await supabase
-          .from('shared_results')
-          .update({ view_count: (data.view_count || 0) + 1 })
-          .eq('id', data.id);
+        const data = await response.json();
 
         setAnalysisData(data.analysis_data);
         setExpiresAt(data.expires_at);
