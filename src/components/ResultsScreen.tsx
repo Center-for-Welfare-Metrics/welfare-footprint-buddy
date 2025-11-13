@@ -512,8 +512,8 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
               </DialogContent>
             </Dialog>
           </div>
-          <p className="text-sm text-muted-foreground text-center mb-4">
-            Slide to explore alternatives matching different ethical priorities
+          <p className="text-sm text-muted-foreground text-center mb-4 max-w-2xl mx-auto">
+            Use the slider below to explore product alternatives based on different ethical approaches to animal welfare. Move the slider left or right to match your values, then click the button to see tailored suggestions for your chosen perspective.
           </p>
             <div className="space-y-4 bg-gray-800/50 p-4 rounded-lg">
             <div className="text-center space-y-1">
