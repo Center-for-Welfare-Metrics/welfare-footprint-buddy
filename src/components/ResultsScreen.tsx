@@ -485,7 +485,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
 
         <div className="border-b border-gray-700 pb-4">
           <div className="flex items-center justify-center gap-2 mb-2 mt-12">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-purple-400 to-primary bg-[length:200%_auto] animate-gradient-shift bg-clip-text text-transparent drop-shadow-[0_0_8px_rgba(16,185,129,0.3)]">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-400 via-cyan-300 to-emerald-400 bg-[length:200%_auto] animate-gradient-shift bg-clip-text text-transparent [text-shadow:_0_0_20px_rgba(16,185,129,0.5)]" style={{ filter: 'drop-shadow(0 0 12px rgba(16, 185, 129, 0.6))' }}>
               {t('ethicalLens.title')}
             </h1>
             <Dialog>
