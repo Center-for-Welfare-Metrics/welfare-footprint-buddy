@@ -167,7 +167,9 @@ const SharedResult = () => {
   }
 
   const hoursRemaining = getTimeRemaining();
-  const ethicalSwaps = analysisData?.ethicalSwaps || [];
+  const ethicalSwapsData = analysisData?.ethicalSwaps?.[0]; // Extract the first (and only) swap response
+  const suggestions = ethicalSwapsData?.suggestions || [];
+  const generalNote = ethicalSwapsData?.generalNote;
   const ethicalLensValue = analysisData?.ethicalLensValue || appConfig.ethicalLens.defaultValue;
 
   return (
@@ -227,7 +229,7 @@ const SharedResult = () => {
                 </div>
 
                 {/* Ethical Lens Suggestions */}
-                {ethicalSwaps.length > 0 && (
+                {analysisData?.ethicalSwaps && (
                   <div className="border-b border-gray-700 pb-3">
                     <div className="flex items-center gap-2 mb-3">
                       <h3 className="font-bold text-emerald-400">Ethical Lens ⚖️</h3>
@@ -236,37 +238,47 @@ const SharedResult = () => {
                       </span>
                     </div>
 
-                    <div className="space-y-3">
-                      {ethicalSwaps.map((swap: any, idx: number) => (
-                        <Card key={idx} className="p-4 bg-gray-800/50 border-gray-700">
-                          <div className="flex gap-3">
-                            <Lightbulb className="h-5 w-5 text-yellow-400 flex-shrink-0 mt-0.5" />
-                            <div className="flex-1">
-                              <h4 className="font-semibold text-white mb-1">{swap.name}</h4>
-                              <p className="text-sm text-gray-300 mb-2">{swap.description}</p>
-                              <div className="space-y-1">
-                                <p className="text-xs text-gray-400">
-                                  <span className="font-medium text-emerald-400">Reasoning:</span> {swap.reasoning}
-                                </p>
-                                <p className="text-xs text-gray-400">
-                                  <span className="font-medium text-emerald-400">Availability:</span> {swap.availability}
-                                </p>
-                                <p className="text-xs text-gray-400">
-                                  <span className="font-medium text-emerald-400">Confidence:</span> {swap.confidence}
-                                </p>
+                    {suggestions.length > 0 ? (
+                      <>
+                        <div className="space-y-3">
+                          {suggestions.map((swap: any, idx: number) => (
+                            <Card key={idx} className="p-4 bg-gray-800/50 border-gray-700">
+                              <div className="flex gap-3">
+                                <Lightbulb className="h-5 w-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+                                <div className="flex-1">
+                                  <h4 className="font-semibold text-white mb-1">{swap.name}</h4>
+                                  <p className="text-sm text-gray-300 mb-2">{swap.description}</p>
+                                  <div className="space-y-1">
+                                    <p className="text-xs text-gray-400">
+                                      <span className="font-medium text-emerald-400">Reasoning:</span> {swap.reasoning}
+                                    </p>
+                                    <p className="text-xs text-gray-400">
+                                      <span className="font-medium text-emerald-400">Availability:</span> {swap.availability}
+                                    </p>
+                                    <p className="text-xs text-gray-400">
+                                      <span className="font-medium text-emerald-400">Confidence:</span> {swap.confidence}
+                                    </p>
+                                  </div>
+                                </div>
                               </div>
-                            </div>
-                          </div>
-                        </Card>
-                      ))}
-                    </div>
+                            </Card>
+                          ))}
+                        </div>
 
-                    {ethicalSwaps[0]?.generalNote && (
-                      <Alert className="mt-3 border-blue-500/50 bg-blue-500/10">
-                        <AlertDescription className="text-blue-200 text-xs">
-                          <strong>Note:</strong> {ethicalSwaps[0].generalNote}
-                        </AlertDescription>
-                      </Alert>
+                        {generalNote && (
+                          <Alert className="mt-3 border-blue-500/50 bg-blue-500/10">
+                            <AlertDescription className="text-blue-200 text-xs">
+                              <strong>Note:</strong> {generalNote}
+                            </AlertDescription>
+                          </Alert>
+                        )}
+                      </>
+                    ) : (
+                      <div className="text-center p-4 bg-gray-800/30 rounded-lg border border-gray-700">
+                        <p className="text-gray-400 text-sm">
+                          No Ethical Lens suggestions were generated for this analysis. The person who shared this link did not request product alternatives.
+                        </p>
+                      </div>
                     )}
                   </div>
                 )}
