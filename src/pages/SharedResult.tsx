@@ -31,7 +31,7 @@ const SharedResult = () => {
       try {
         // Use the public edge function to fetch shared results (no auth required)
         const response = await fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/share-result?shareToken=${shareToken}`,
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/share-result/${shareToken}`,
           {
             method: 'GET',
             headers: {
