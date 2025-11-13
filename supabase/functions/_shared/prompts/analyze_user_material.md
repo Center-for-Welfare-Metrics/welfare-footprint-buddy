@@ -149,12 +149,22 @@ Use this **hierarchical reasoning** to decide how to handle detected food:
 - A processed single-source product (can of sardines, package of bacon)
 - An item where decomposition would not reveal additional distinct ingredients
 
+🚨 **CRITICAL: NEVER detect standalone raw ingredients** 🚨
+- **DO NOT** detect isolated raw ingredients like "flour", "breadcrumbs", "oil", or "dough fragments" UNLESS they are:
+  - Clearly packaged as a product for sale (e.g., a bag of flour, bottle of oil)
+  - Intentionally presented as a standalone dish component (e.g., a bowl of nuts as an appetizer)
+- If you see what appears to be flour, breadcrumbs, or dough, it's likely PART OF a larger dish
+- Focus on **whole recognizable foods**, not their raw ingredient components
+- **Example of incorrect detection**: "Flour" as a standalone item when it's part of fried dough
+- **Example of correct detection**: "Fried dough pastry" or "Breaded chicken" (the whole item, not the breading)
+
 **STEP 2: For composite dishes - what are the major components?**
 
 Focus on **primary ingredients** that contribute significantly to the dish:
 - Main animal proteins (meat, fish, eggs, dairy in substantial amounts)
 - Foundational plant components (grains, primary vegetables, legumes)
 - Significant sauces or cooking media (when they represent major ingredients)
+- **EXCLUDE** minor processing ingredients (flour coating, oil used for frying) unless they are a major component
 
 **STEP 3: Apply confidence levels based on evidence:**
 - **High confidence**: Ingredient is visually clear or explicitly mentioned in product name
@@ -169,6 +179,7 @@ Focus on **primary ingredients** that contribute significantly to the dish:
 4. **Use parenthetical notation** to indicate the source dish (e.g., "Dried Shrimp (from Acarajé)")
 5. **Include ALL significant ingredients** - both animal-derived AND plant-based for transparency
 6. **Only include items with reasonable certainty** about their presence in the dish
+7. **Avoid listing processing ingredients** (flour, oil, breadcrumbs) as standalone items
 
 ### CRITICAL RULE: Plant-Based Meat Substitutes
 
@@ -686,6 +697,25 @@ e.g., `"Additional vegetables (from Paella)"`, to keep the output concise and re
     - Label partially visible showing animal content keywords (e.g., "Contains: Milk" but can't see full list)
     - Recipe traditionally uses animal products (e.g., traditional Caesar dressing with anchovies)
   * **DEFAULT to `likelyHasAnimalIngredients: false` for items that are commonly plant-based** unless you have specific visual evidence or label text indicating animal content
+
+🚨 **CRITICAL: "Possibly Contains" Rule for Plant-Based Classification** 🚨
+
+**If an item's reasoning mentions it "possibly contains", "may contain", or "likely contains" ANY animal product (butter, milk, dairy, eggs, etc.), you MUST set `likelyHasAnimalIngredients: true`**
+
+Examples of INCORRECT classification:
+- ❌ Item: "Fried dough — likely contains wheat flour, possibly oil or butter"
+  - **WRONG**: `likelyHasAnimalIngredients: false` (butter is animal-derived!)
+  - **CORRECT**: `likelyHasAnimalIngredients: true`, `animalConfidence: "Medium"`
+
+- ❌ Item: "Bread — may contain milk or eggs"
+  - **WRONG**: `likelyHasAnimalIngredients: false`
+  - **CORRECT**: `likelyHasAnimalIngredients: true`, `animalConfidence: "Low"`
+
+**Classification Logic:**
+1. If the item **definitely contains** an animal product → `likelyHasAnimalIngredients: true`, `animalConfidence: "High"`
+2. If the item **possibly/likely contains** an animal product → `likelyHasAnimalIngredients: true`, `animalConfidence: "Medium"` or `"Low"`
+3. If the item is **confirmed plant-based** (no animal products) → `likelyHasAnimalIngredients: false`, `animalConfidence: "High"`
+4. **NEVER** use `likelyHasAnimalIngredients: false` if your reasoning mentions possible animal content
 - When decomposing, maintain high confidence for visible ingredients (e.g., a visible egg yolk should be "High" confidence)
 - **CONTEXTUAL REASONING**: Consider the product category and typical ingredients even when specific ingredients are not visible on the label
 
