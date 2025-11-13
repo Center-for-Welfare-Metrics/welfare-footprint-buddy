@@ -514,13 +514,54 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
               </DialogContent>
             </Dialog>
           </div>
-          <p className="text-sm text-muted-foreground text-center mb-4 max-w-2xl mx-auto">
-            Use the slider below to explore product alternatives based on different ethical approaches to animal welfare. Move the slider left or right to match your values, then click the button to see tailored suggestions for your chosen perspective.
+          <p className="text-sm text-muted-foreground text-center mb-6 max-w-2xl mx-auto">
+            Choose the ethical approach that aligns with your values. Each option tailors suggestions to your perspective on animal welfare.
           </p>
-            <div className="space-y-4 bg-gray-800/50 p-4 rounded-lg">
-            <div className="text-center space-y-1">
+            <div className="space-y-6 bg-gray-800/50 p-4 rounded-lg">
+            {/* Segmented Button Selector */}
+            <div className="relative p-1 rounded-xl bg-gradient-to-r from-[#60A5FA] via-[#C084FC] to-[#FF6B9D]">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-1 bg-gray-900/90 rounded-lg p-1">
+                {[
+                  { position: 0, lens: 1, label: t('ethicalLens.rangeStart'), shortLabel: 'Higher-Welfare' },
+                  { position: 1, lens: 2, label: 'Lower Consumption', shortLabel: 'Lower Consumption' },
+                  { position: 2, lens: 3, label: 'No Slaughter', shortLabel: 'No Slaughter' },
+                  { position: 3, lens: 4, label: t('ethicalLens.rangeEnd'), shortLabel: 'No Animal Use' }
+                ].map(({ position, lens, label, shortLabel }) => (
+                  <button
+                    key={position}
+                    onClick={() => {
+                      setSliderValue([position]);
+                      handleSliderCommit([position]);
+                    }}
+                    className={`
+                      relative px-3 py-3 rounded-lg font-semibold text-xs md:text-sm
+                      transition-all duration-300 ease-out
+                      ${sliderValue[0] === position 
+                        ? 'shadow-lg scale-105' 
+                        : 'hover:bg-gray-800/50 scale-100'
+                      }
+                    `}
+                    style={{
+                      backgroundColor: sliderValue[0] === position 
+                        ? appConfig.ethicalLens.colors[lens as 1 | 2 | 3 | 4]
+                        : 'transparent',
+                      color: sliderValue[0] === position ? '#ffffff' : appConfig.ethicalLens.colors[lens as 1 | 2 | 3 | 4],
+                      boxShadow: sliderValue[0] === position 
+                        ? `0 4px 20px ${appConfig.ethicalLens.colors[lens as 1 | 2 | 3 | 4]}60`
+                        : 'none'
+                    }}
+                  >
+                    <span className="hidden md:inline">{label}</span>
+                    <span className="md:hidden">{shortLabel}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Selected Lens Description */}
+            <div className="text-center space-y-3">
               <p 
-                className="text-xs font-medium italic transition-colors duration-300"
+                className="text-sm font-medium italic transition-colors duration-300"
                 style={{
                   color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]
                 }}
@@ -530,88 +571,58 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
                   positionToLens(sliderValue[0]) === 3 ? t('ethicalLens.persona3') :
                   t('ethicalLens.persona4')}"
               </p>
-                <div className="flex items-center gap-2 justify-center">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <button
-                      className="flex items-center justify-center w-5 h-5 rounded-full border transition-all hover:scale-110"
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button
+                    className="flex items-center justify-center gap-2 mx-auto px-3 py-1.5 rounded-full border transition-all hover:scale-105 text-xs"
+                    style={{
+                      borderColor: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4],
+                      color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]
+                    }}
+                    aria-label="Show detailed guidance"
+                  >
+                    <HelpCircle className="w-3 h-3" />
+                    <span>Learn more</span>
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent 
+                  className="w-80 bg-gray-900/95 border-gray-700 backdrop-blur-sm"
+                  side="bottom"
+                  align="center"
+                >
+                  <div className="space-y-3">
+                    <h4 
+                      className="font-semibold text-sm"
                       style={{
-                        borderColor: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4],
                         color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]
                       }}
-                      aria-label="Show detailed guidance"
                     >
-                      <HelpCircle className="w-3 h-3" />
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent 
-                    className="w-80 bg-gray-900/95 border-gray-700 backdrop-blur-sm"
-                    side="bottom"
-                    align="end"
-                  >
-                    <div className="space-y-3">
-                      <h4 
-                        className="font-semibold text-sm"
-                        style={{
-                          color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]
-                        }}
-                      >
-{positionToLens(sliderValue[0]) === 1 ? t('ethicalLens.persona1') :
-                  positionToLens(sliderValue[0]) === 2 ? t('ethicalLens.persona2') :
-                  positionToLens(sliderValue[0]) === 3 ? t('ethicalLens.persona3') :
-                  t('ethicalLens.persona4')}
-                      </h4>
-                      <div className="space-y-2">
-                        {getEthicalLensExamples(positionToLens(sliderValue[0])).map((example, index) => (
-                          <div 
-                            key={index}
-                            className="flex gap-2 items-start text-xs text-gray-300"
-                          >
-                            <span 
-                              className="text-base leading-none mt-0.5 flex-shrink-0"
-                              style={{
+                      {positionToLens(sliderValue[0]) === 1 ? t('ethicalLens.persona1') :
+                        positionToLens(sliderValue[0]) === 2 ? t('ethicalLens.persona2') :
+                        positionToLens(sliderValue[0]) === 3 ? t('ethicalLens.persona3') :
+                        t('ethicalLens.persona4')}
+                    </h4>
+                    <div className="space-y-2">
+                      {getEthicalLensExamples(positionToLens(sliderValue[0])).map((example, index) => (
+                        <div 
+                          key={index}
+                          className="flex gap-2 items-start text-xs text-gray-300"
+                        >
+                          <span 
+                            className="text-base leading-none mt-0.5 flex-shrink-0"
+                            style={{
                               color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]
-                              }}
-                            >
-                              •
-                            </span>
-                            <span className="leading-relaxed">{example}</span>
-                          </div>
-                        ))}
-                      </div>
+                            }}
+                          >
+                            •
+                          </span>
+                          <span className="leading-relaxed">{example}</span>
+                        </div>
+                      ))}
                     </div>
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </div>
-            <div className="relative">
-              <style>{`
-                .ethical-lens-slider [role="slider"] {
-                  background-color: ${appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]} !important;
-                  border-color: ${appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]} !important;
-                  box-shadow: 0 0 20px ${appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]}80 !important;
-                  transition: all 0.3s ease;
-                }
-              `}</style>
-              <Slider
-                value={sliderValue}
-                onValueChange={setSliderValue}
-                onValueCommit={handleSliderCommit}
-                max={3}
-                min={0}
-                step={1}
-                className="w-full ethical-lens-slider"
-              />
-            </div>
-            <div className="flex justify-between text-xs font-medium -mx-2">
-              <div className="flex flex-col items-start">
-                <span className="text-lg mb-1" style={{ color: appConfig.ethicalLens.colors[1] }}>←</span>
-                <span style={{ color: appConfig.ethicalLens.colors[1] }}>{t('ethicalLens.rangeStart')}</span>
-              </div>
-              <div className="flex flex-col items-end">
-                <span className="text-lg mb-1" style={{ color: appConfig.ethicalLens.colors[4] }}>→</span>
-                <span className="text-right" style={{ color: appConfig.ethicalLens.colors[4] }}>{t('ethicalLens.rangeEnd')}</span>
-              </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
             {/* Ethical Lens Guidance - Focus - Only show when no swaps are displayed */}
             {ethicalSwaps.length === 0 && (
