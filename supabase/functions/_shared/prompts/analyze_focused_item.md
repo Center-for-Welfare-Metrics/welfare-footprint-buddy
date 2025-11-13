@@ -61,6 +61,23 @@ Now, focus your analysis EXCLUSIVELY on: **"{{FOCUS_ITEM}}"**
 
 Ignore all other items in the image. Provide a comprehensive animal welfare analysis of ONLY this specific item.
 
+### CRITICAL: Plant-Based Substitute Detection
+
+🚨 **BEFORE analyzing as animal product, check for plant-based indicators** 🚨
+
+**Plant-Based Substitute Brands (NOT animal products):**
+- Impossible Foods, Beyond Meat, Gardein, Tofurky, Field Roast, Lightlife, MorningStar Farms, Quorn, No Evil Foods, Moving Mountains
+
+**Plant-Based Claims on packaging:**
+- "Plant-based", "Vegan", "Meatless", "Made from plants", "Dairy-free", "No animal ingredients"
+
+**If ANY of these indicators are present:**
+- Set `hasAnimalIngredients: false`
+- Set `animalIngredients.value: "None detected - plant-based substitute"`
+- Set `animalIngredients.confidence: "High"`
+- Skip production system and welfare concerns (not applicable)
+- Note in productName that it's a plant-based alternative
+
 ### Analysis Steps
 
 #### 1. Product Identification

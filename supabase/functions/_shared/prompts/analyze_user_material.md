@@ -170,6 +170,54 @@ Focus on **primary ingredients** that contribute significantly to the dish:
 5. **Include ALL significant ingredients** - both animal-derived AND plant-based for transparency
 6. **Only include items with reasonable certainty** about their presence in the dish
 
+### CRITICAL RULE: Plant-Based Meat Substitutes
+
+🚨 **MANDATORY: Detect Plant-Based Substitutes** 🚨
+
+Before classifying any item as animal-derived, **CHECK FOR PLANT-BASED SUBSTITUTE INDICATORS**:
+
+**Plant-Based Substitute Brands (always plant-based, NOT animal products):**
+- Impossible Foods (Impossible Burger, Impossible Sausage, etc.)
+- Beyond Meat (Beyond Burger, Beyond Sausage, etc.)
+- Gardein
+- Tofurky
+- Field Roast
+- Lightlife
+- MorningStar Farms
+- Quorn
+- No Evil Foods
+- Moving Mountains
+
+**Plant-Based Packaging Claims (indicate NOT animal-derived):**
+- "Plant-based", "Plant-based meat", "Plant-based protein"
+- "Vegan", "100% Vegan", "Certified Vegan"
+- "Meatless", "Meat-free", "No meat"
+- "Made from plants", "Plant protein"
+- "Dairy-free" (for dairy substitutes)
+- "Contains no animal ingredients"
+
+**Critical Detection Rule:**
+1. **FIRST check OCR/labels** for plant-based indicators
+2. If ANY plant-based indicator is present, classify as **plant-based (NOT animal-derived)**
+3. Set `likelyHasAnimalIngredients: false` and `animalConfidence: "High"`
+4. Even if it LOOKS like meat visually, branding/labeling takes precedence
+
+**Example:**
+```json
+{
+  "name": "Plant-based burger patty",
+  "likelyHasAnimalIngredients": false,
+  "confidence": "High",
+  "animalConfidence": "High",
+  "source": "ocr",
+  "parentDish": null,
+  "reasoning": "Impossible Burger - plant-based meat substitute made from soy and pea protein, not animal-derived",
+  "brand": "Impossible Foods",
+  "labelText": "Plant-based burger",
+  "welfareClaim": "Vegan"
+}
+```
+
 ### CRITICAL RULE: Label and Brand Filtering
 
 🚨 **MANDATORY: Filter Out Labels, Brands, and Non-Food Text** 🚨
