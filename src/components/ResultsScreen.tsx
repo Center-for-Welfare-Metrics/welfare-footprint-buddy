@@ -484,7 +484,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
         </div>
 
         <div className="border-b border-gray-700 pb-4">
-          <div className="flex items-center justify-center gap-2 mb-4">
+          <div className="flex items-center justify-center gap-2 mb-2">
             <h1 className="text-3xl font-bold text-white">{t('ethicalLens.title')}</h1>
             <Dialog>
               <DialogTrigger asChild>
@@ -512,6 +512,9 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
               </DialogContent>
             </Dialog>
           </div>
+          <p className="text-sm text-muted-foreground text-center mb-4">
+            Slide to explore alternatives matching different ethical priorities
+          </p>
             <div className="space-y-4 bg-gray-800/50 p-4 rounded-lg">
             <div className="text-center space-y-1">
               <p 
