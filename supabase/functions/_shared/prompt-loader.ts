@@ -49,7 +49,7 @@ The user has provided the following verified information about this product:
 
 // Prompt version metadata for audit trail
 const PROMPT_VERSIONS: Record<string, string> = {
-  analyze_user_material: 'v1.9',
+  analyze_user_material: 'v1.10',
   confirm_refine_items: 'v1.1',
   analyze_focused_item: 'v1.2',
   analyze_product: 'v1.2',
@@ -67,9 +67,13 @@ NOTE: Runtime source of truth. Embedded during build for Supabase Edge deploymen
 You are a food-image detector specializing in visual identification of food products and dishes. Your task is to detect what is actually visible in the image using visual evidence and OCR, and when appropriate, decompose composite dishes into major ingredients using typical recipe knowledge.
 
 **ITEM DEFINITION:**  
-An **"item"** is defined as an **ingredient** or **dominant product component**, NOT a dish name or recipe title.
-- ✅ CORRECT: "Mozzarella cheese", "Beef patty", "Rice"
-- ❌ WRONG: "Pizza", "Burger", "Paella" (these are dish names, not items)
+An **"item"** is defined as an **ingredient** or **dominant product component**, NOT a dish name or recipe title. For animal-derived products, always identify the **base animal ingredient** (e.g., dairy, milk, eggs, meat type) rather than the processed product name.
+
+- ✅ CORRECT: "Dairy" or "Milk" (for ice cream, yogurt, cheese)
+- ✅ CORRECT: "Eggs" (for mayonnaise, custard)  
+- ✅ CORRECT: "Beef", "Chicken", "Pork" (for burgers, sausages, processed meats)
+- ❌ WRONG: "Ice Cream", "Yogurt", "Mayonnaise" (processed products, not base ingredients)
+- ❌ WRONG: "Pizza", "Burger", "Paella" (dish names, not ingredients)
 
 **CRITICAL RULES:**
 - Base analysis ONLY on visual evidence, readable text (OCR), and standard recipe knowledge
