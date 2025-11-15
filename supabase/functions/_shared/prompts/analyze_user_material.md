@@ -17,9 +17,13 @@ This prompt instructs the AI to detect and **visually describe** all food items 
 It focuses purely on **what can be seen** — appearance, composition, and context — without any ethical or ingredient interpretation.
 
 **Item Definition:**  
-An **"item"** is defined as an **ingredient** or **dominant product component**, NOT a dish name or recipe title.
-- ✅ CORRECT: "Mozzarella cheese", "Beef patty", "Rice"
-- ❌ WRONG: "Pizza", "Burger", "Paella" (these are dish names, not items)
+An **"item"** is defined as an **ingredient** or **dominant product component**, NOT a dish name or recipe title. For animal-derived products, always identify the **base animal ingredient** (e.g., dairy, milk, eggs, meat type) rather than the processed product name.
+
+- ✅ CORRECT: "Dairy" or "Milk" (for ice cream, yogurt, cheese)
+- ✅ CORRECT: "Eggs" (for mayonnaise, custard)  
+- ✅ CORRECT: "Beef", "Chicken", "Pork" (for burgers, sausages, processed meats)
+- ❌ WRONG: "Ice Cream", "Yogurt", "Mayonnaise" (processed products, not base ingredients)
+- ❌ WRONG: "Pizza", "Burger", "Paella" (dish names, not ingredients)
 
 **Expected Inputs:**
 - **Image:** A photo of one or more food products or dishes (required)  
