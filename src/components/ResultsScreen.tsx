@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import { appConfig } from "@/config/app.config";
 import { ErrorHandler, withRetry } from "@/lib/errorHandler";
 import { getEthicalLensFocus, getEthicalLensExamples } from "@/lib/ethicalLensMessaging";
+import { scanInsertSchema } from "@/lib/validation";
 
 interface AnalysisData {
   productName?: { value: string; confidence: string };
@@ -90,11 +91,18 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
       if (!user || !data) return;
 
       try {
+        // Validate before inserting
+        const validated = scanInsertSchema.parse({
+          product_name: data.productName?.value || 'Unknown',
+          welfare_category: data.welfareConcerns?.value || '',
+          analysis_result: data
+        });
+
         await supabase.from('scans').insert([{
           user_id: user.id,
-          product_name: data.productName?.value || 'Unknown',
-          welfare_category: data.welfareConcerns?.value?.substring(0, 100) || '',
-          analysis_result: data as any,
+          product_name: validated.product_name,
+          welfare_category: validated.welfare_category,
+          analysis_result: JSON.parse(JSON.stringify(validated.analysis_result)),
           image_url: imageData,
         }]);
       } catch (error) {

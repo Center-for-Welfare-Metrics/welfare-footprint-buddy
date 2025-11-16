@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import { userPreferencesSchema } from '@/lib/validation';
 
 interface Preferences {
   ethical_lens: string;
@@ -55,9 +56,12 @@ const PreferencesSettings = ({ userId }: PreferencesSettingsProps) => {
   const handleSave = async () => {
     setLoading(true);
     try {
+      // Validate preferences before updating
+      const validated = userPreferencesSchema.parse(preferences);
+      
       const { error } = await supabase
         .from('user_preferences')
-        .update(preferences)
+        .update(validated)
         .eq('user_id', userId);
 
       if (error) throw error;

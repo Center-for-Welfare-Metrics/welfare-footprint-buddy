@@ -2,7 +2,9 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { loadAndProcessPrompt } from "../_shared/prompt-loader.ts";
+import { checkRateLimit } from '../_shared/rate-limiter.ts';
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -330,7 +332,48 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Create Supabase client for auth and rate limiting
+  const supabaseClient = createClient(
+    Deno.env.get("SUPABASE_URL") ?? "",
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+    { auth: { persistSession: false } }
+  );
+
   try {
+    // Authenticate user
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ success: false, error: { message: 'Authentication required' } }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
+    if (userError || !userData.user) {
+      return new Response(
+        JSON.stringify({ success: false, error: { message: 'Authentication failed. Please sign in again.' } }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Check rate limit
+    const rateLimitResult = await checkRateLimit(userData.user.id, supabaseClient);
+    if (!rateLimitResult.allowed) {
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: { 
+            message: 'Rate limit exceeded. Please try again later.',
+            remaining: 0,
+            limit: rateLimitResult.limit
+          } 
+        }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
     const body = await req.json();
     const validation = validateInput(body);
 
@@ -684,9 +727,20 @@ All suggestions MUST be 100% free from animal-derived products. Only plant-based
     }
   } catch (error) {
     console.error("Error in suggest-ethical-swap function:", error);
-    const message = error instanceof Error ? error.message : String(error);
+    
+    // Return safe, user-friendly error message
+    const errorStr = error instanceof Error ? error.message : String(error);
+    let safeMessage = 'Unable to generate ethical alternatives. Please try again.';
+    
+    if (errorStr.includes('auth') || errorStr.includes('JWT')) {
+      safeMessage = 'Authentication failed. Please sign in again.';
+    } else if (errorStr.includes('rate limit')) {
+      safeMessage = 'Too many requests. Please try again later.';
+    } else if (errorStr.includes('API') || errorStr.includes('AI')) {
+      safeMessage = 'AI service temporarily unavailable. Please try again later.';
+    }
 
-    return new Response(JSON.stringify({ success: false, error: { message } }), {
+    return new Response(JSON.stringify({ success: false, error: { message: safeMessage } }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

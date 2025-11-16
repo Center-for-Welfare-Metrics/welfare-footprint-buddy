@@ -117,7 +117,14 @@ serve(async (req) => {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR in check-scan-quota", { message: errorMessage });
-    return new Response(JSON.stringify({ error: errorMessage }), {
+    
+    // Return safe, user-friendly error message
+    let safeMessage = 'Unable to check scan quota. Please try again.';
+    if (errorMessage.includes('auth') || errorMessage.includes('JWT')) {
+      safeMessage = 'Authentication required. Please sign in and try again.';
+    }
+    
+    return new Response(JSON.stringify({ error: safeMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
