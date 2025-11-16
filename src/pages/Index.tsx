@@ -111,7 +111,11 @@ const Index = () => {
               language: i18n.language
             }
           });
-          if (res.error) throw res.error;
+          if (res.error) {
+            // Include the actual error details from the edge function
+            const errorDetail = res.error?.message || 'Description enrichment failed';
+            throw new Error(errorDetail);
+          }
           return res;
         }, 2, 1000),
         withRetry(async () => {
@@ -122,7 +126,11 @@ const Index = () => {
               language: i18n.language
             }
           });
-          if (res.error) throw res.error;
+          if (res.error) {
+            // Include the actual error details from the edge function
+            const errorDetail = res.error?.message || 'Item detection failed';
+            throw new Error(errorDetail);
+          }
           return res;
         }, 2, 1000)
       ]);
@@ -156,12 +164,26 @@ const Index = () => {
         }
       }
     } catch (error) {
-      const appError = ErrorHandler.parseSupabaseError(error, 'handleTextConfirmed');
+      console.error('[ERROR][handleTextConfirmed]', error);
+      
+      // Extract error message from edge function response
+      let errorMessage = 'We couldn\'t complete this analysis. Please try again later.';
+      if (error && typeof error === 'object' && 'message' in error) {
+        const errMsg = String(error.message);
+        // Check if this is a FunctionsHttpError with embedded error details
+        if (errMsg.includes('FunctionsHttpError') || errMsg.includes('non-2xx')) {
+          // Try to get the actual error from the response
+          errorMessage = 'Service temporarily unavailable. Please try again in a moment.';
+        } else {
+          errorMessage = errMsg;
+        }
+      }
+      
       toast({
         title: "Analysis Failed",
-        description: appError.userMessage,
+        description: errorMessage,
         variant: "destructive",
-        duration: 5000, // Auto-dismiss after 5 seconds
+        duration: 5000,
       });
     } finally {
       setIsAnalyzingItem(false);
