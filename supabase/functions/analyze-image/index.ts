@@ -139,26 +139,20 @@ serve(async (req) => {
   );
 
   try {
-    // Authenticate user
+    // Try to get authenticated user, but allow anonymous access
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
-      return new Response(
-        JSON.stringify({ success: false, error: { message: 'Authentication required' } }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    let userId = 'anonymous';
+    
+    if (authHeader) {
+      const token = authHeader.replace("Bearer ", "");
+      const { data: userData } = await supabaseClient.auth.getUser(token);
+      if (userData?.user) {
+        userId = userData.user.id;
+      }
     }
 
-    const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
-    if (userError || !userData.user) {
-      return new Response(
-        JSON.stringify({ success: false, error: { message: 'Authentication failed. Please sign in again.' } }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Check rate limit
-    const rateLimitResult = await checkRateLimit(userData.user.id, supabaseClient);
+    // Check rate limit (works for both authenticated and anonymous users)
+    const rateLimitResult = await checkRateLimit(userId, supabaseClient);
     if (!rateLimitResult.allowed) {
       return new Response(
         JSON.stringify({ 
