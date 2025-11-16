@@ -1,9 +1,9 @@
 <!-- SOURCE-OF-TRUTH: This is the canonical runtime prompt. Documentation copies under /docs/ are read-only references. -->
 <!--
 Prompt-ID: suggest_ethical_swap
-Version: v3.3
+Version: v3.4
 Stage: 6
-Last-Updated: 2025-11-06
+Last-Updated: 2025-11-16
 Maintainer: Lovable AI Sync Process
 -->
 
@@ -22,6 +22,21 @@ Before you provide your final answer, you MUST complete this reasoning process:
 
 - What lens is active? → Lens {ETHICAL_LENS}
 
+**Step 2.5: Infer culinary context from the product name**
+
+From PRODUCT_NAME and ANIMAL_INGREDIENTS, infer:
+- **Dish type** (if any): curry, stir-fry, stew, pasta sauce, ceviche, BBQ/grilled, soup, salad, sandwich, roasted dish, etc.
+- **Cooking method**: slow-cooked, grilled, fried, marinated, baked, raw/fresh, etc.
+- **Texture profile**: tender/slow-cooked, firm/grilled, minced/ground, cubed/chunked, flaky, etc.
+
+If context is clear (e.g., "chicken curry", "beef Bolognese", "salmon ceviche"):
+- Note the specific dish type and cooking method
+- Remember: alternatives must fit this culinary context
+
+If context is weak (e.g., "chicken" alone):
+- Acknowledge limited context
+- Provide general alternatives without forcing a specific dish
+
 **Step 3: State the ABSOLUTE constraints for this lens**
 For Lens 1: Suggest higher-welfare versions of the same animal products
 For Lens 2: Suggest reduced consumption or partial plant-based substitution
@@ -29,7 +44,18 @@ For Lens 3 (VEGETARIAN - NO SLAUGHTER): **I must ONLY suggest plant-based, fungi
 For Lens 4 (VEGAN - NO ANIMAL USE): I must ONLY suggest 100% plant-based alternatives
 
 **Step 4: Brainstorm 5-7 potential alternatives**
-(Think through alternatives from allowed categories)
+
+For each potential alternative:
+- Check: Does it comply with the ethical lens constraint?
+- Check: Does it fit the culinary context from Step 2.5?
+  - For curry/stew: Does it absorb spices and slow-cook well?
+  - For Bolognese/ragù: Does it work in tomato-based sauces with similar texture?
+  - For ceviche: Does it hold up in acidic marinades?
+  - For BBQ/grilled: Can it be grilled or achieve charred texture?
+  - For stir-fry: Does it cook quickly at high heat?
+  - For sandwich/burger: Does it provide structure and satisfying texture?
+
+(Think through alternatives from allowed categories that match both ethical lens AND culinary context)
 
 **Step 5: CRITICAL VALIDATION CHECK**
 For EACH brainstormed alternative:
@@ -85,10 +111,31 @@ Generate ethical product swap suggestions based on the user's welfare priorities
 
 **Versioning:**
 
-- **Version:** 3.2
-- **Last Updated:** 2025-11-04
+- **Version:** 3.4
+- **Last Updated:** 2025-11-16
 - **Maintainer:** Lovable AI Sync Process
-- **Change Log:** Enhanced Lens 3 restrictions to prevent slaughtered-animal suggestions for dairy products.
+- **Change Log:** Added culinary-context awareness to ensure alternatives match dish type and cooking method inferred from product name.
+
+---
+
+## Culinary Context Guide
+
+When PRODUCT_NAME contains contextual information (e.g., "chicken curry", "beef Bolognese"), use this guide to select culinarily appropriate alternatives:
+
+| Dish Context | Cooking Method | Texture/Role | Best Plant/Fungi Alternatives | Best High-Welfare Options |
+|--------------|----------------|--------------|-------------------------------|---------------------------|
+| **Curry/Stew** | Slow-cooked, spice-absorbing | Tender, chunked | Chickpeas, firm tofu, jackfruit, mushrooms, paneer (vegetarian) | Certified Humane chicken/lamb, slow-growing breeds |
+| **Bolognese/Ragù** | Tomato-based sauce | Minced/crumbled | Lentils, TVP, finely diced mushrooms | Certified Humane ground beef, pasture-raised |
+| **Ceviche** | Citrus-marinated, raw/fresh | Firm, flaky chunks | Hearts of palm, king oyster mushrooms, melon cubes | MSC-certified white fish, sustainably caught |
+| **BBQ/Grilled** | High heat, charred | Firm, holds shape | Portobello caps, tempeh, seitan, eggplant | Pasture-raised beef/chicken, humane slaughter |
+| **Stir-Fry** | Quick high heat | Firm, bite-sized | Firm tofu, tempeh, snap peas, broccoli | Certified Humane chicken, free-range |
+| **Sandwich/Burger** | Layered, structural | Substantial, textured | Portobello, seitan patty, bean burger with cheese (vegetarian) | Pasture-raised beef/turkey, certified humane |
+| **Soup** | Simmered liquid | Tender or hearty | White beans, lentils, mushrooms, egg noodles (vegetarian) | Certified Humane chicken, bone broth from high-welfare |
+
+**Usage:**
+- If dish context is clear, explicitly reference it in suggestion descriptions
+- If context is ambiguous, provide general alternatives without forcing specificity
+- Always prioritize ethical lens constraints over culinary matching
 
 ---
 
@@ -136,16 +183,19 @@ Example:
 
 ### Ingredient within a Dish Context
 
-If the ingredient is part of a dish (e.g., fish in ceviche, chicken in curry):
+If the ingredient is part of a dish (e.g., "fish ceviche", "chicken curry", "beef Bolognese"):
 
-- Do not ignore the dish context.  
-  Suggestions must be **culinarily compatible** and still prioritize welfare improvement.
-- Examples:
-  - Fish in ceviche → "MSC-certified white fish", "King oyster mushrooms – acid-marinated texture similar to fish."
-  - Chicken in curry → "Certified Humane chicken – gentle handling systems", "Paneer – vegetarian lens", "Firm tofu – vegan lens."
-  - Pork in dumplings → "Certified Humane pork mince", "Mushroom-cabbage filling – vegetarian lens."
+- **CRITICAL:** Suggestions must be **culinarily compatible** with the dish type while prioritizing welfare improvement.
+- Use the Culinary Context Guide to identify appropriate alternatives for the cooking method and texture.
+- **Explicitly reference the dish context** in descriptions when it is clearly inferable.
 
-Each suggestion: one ingredient or preparation with a brief note on texture or fit.
+**Examples with dish-context awareness:**
+  - Fish in ceviche → "MSC-certified white fish – sustainably caught with lower bycatch", "King oyster mushrooms marinated in citrus – ceviche-like texture and ocean flavor from nori"
+  - Chicken in curry → "Certified Humane chicken – slow-cooked to absorb spices", "Chickpeas cooked in the same curry sauce – similar texture and spice profile", "Firm tofu cubes – absorb curry flavors well"
+  - Beef in Bolognese → "Pasture-raised ground beef – humane systems", "Lentils in tomato sauce – mimic minced texture and absorb flavors", "Finely diced mushrooms – umami-rich Bolognese base"
+  - Grilled steak → "Pasture-raised grass-fed beef – outdoor grazing", "Portobello mushroom caps – grillable with char texture", "Seitan steaks – firm texture suitable for BBQ"
+
+Each suggestion: one ingredient or preparation with **explicit culinary-context fit** and welfare reasoning.
 
 ---
 
