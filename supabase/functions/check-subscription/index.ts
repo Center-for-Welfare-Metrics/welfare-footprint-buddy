@@ -142,7 +142,16 @@ serve(async (req) => {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR in check-subscription", { message: errorMessage });
-    return new Response(JSON.stringify({ error: errorMessage }), {
+    
+    // Return safe, user-friendly error message
+    let safeMessage = 'Unable to check subscription status. Please try again.';
+    if (errorMessage.includes('auth') || errorMessage.includes('JWT')) {
+      safeMessage = 'Authentication required. Please sign in and try again.';
+    } else if (errorMessage.includes('Stripe') || errorMessage.includes('subscription')) {
+      safeMessage = 'Subscription service temporarily unavailable. Please try again later.';
+    }
+    
+    return new Response(JSON.stringify({ error: safeMessage }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
