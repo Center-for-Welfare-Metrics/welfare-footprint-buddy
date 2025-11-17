@@ -61,7 +61,7 @@ const HomeScreen = ({ onStartScan, onDescribeFood }: HomeScreenProps) => {
       {/* Main Content Area */}
       <div className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 pb-8 relative z-10 max-w-4xl mx-auto w-full">
         <header className="mb-10 sm:mb-12 md:mb-14 animate-fade-in space-y-4 sm:space-y-5">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white drop-shadow-lg leading-tight text-center">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-accent drop-shadow-lg leading-tight text-center">
             Food Welfare Explorer
           </h1>
           <p className="text-base sm:text-lg md:text-xl font-normal text-foreground/90 drop-shadow-sm px-2 max-w-[340px] mx-auto leading-relaxed text-center">
