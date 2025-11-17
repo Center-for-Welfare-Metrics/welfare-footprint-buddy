@@ -59,19 +59,16 @@ const HomeScreen = ({ onStartScan, onDescribeFood }: HomeScreenProps) => {
       </div>
       
       {/* Main Content Area */}
-      <div className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-8 relative z-10 max-w-4xl mx-auto w-full">
-        <header className="mb-8 sm:mb-10 md:mb-12 animate-fade-in space-y-3 sm:space-y-4">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white drop-shadow-lg leading-tight">
-            {t('home.title')}
+      <div className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 pb-8 relative z-10 max-w-4xl mx-auto w-full">
+        <header className="mb-10 sm:mb-12 md:mb-14 animate-fade-in space-y-4 sm:space-y-5">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white drop-shadow-lg leading-tight text-center">
+            Food Welfare Explorer
           </h1>
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-medium text-accent drop-shadow-md px-2">
-            {t('home.subtitle')}
-          </h2>
-          <p className="text-base sm:text-lg md:text-xl font-normal text-foreground/85 drop-shadow-sm px-2 max-w-2xl mx-auto leading-relaxed">
-            {t('home.description')}
+          <p className="text-base sm:text-lg md:text-xl font-normal text-foreground/90 drop-shadow-sm px-2 max-w-[340px] mx-auto leading-relaxed text-center">
+            Instant AI-powered insights into choices to improve the welfare impact behind everyday foods.
           </p>
-          <p className="text-xs sm:text-sm whitespace-pre-line max-w-3xl mx-auto leading-relaxed opacity-70 mt-10 sm:mt-12" style={{ color: '#B0B8B6' }}>
-            Choose how you'd like to start — upload a photo or describe your meal.
+          <p className="text-sm sm:text-base font-normal text-foreground/75 drop-shadow-sm px-2 max-w-[340px] mx-auto leading-relaxed text-center">
+            Upload a photo or describe your meal to begin exploring.
           </p>
         </header>
         
@@ -84,12 +81,13 @@ const HomeScreen = ({ onStartScan, onDescribeFood }: HomeScreenProps) => {
               className="btn-primary-cta w-full py-6 px-8 text-lg sm:text-xl flex items-center justify-center gap-3 group"
             >
               <Camera className="h-6 w-6 sm:h-7 sm:w-7 group-hover:scale-110 transition-transform" />
-              {t('home.startScan')}
+              Upload or Take a Photo
             </Button>
             
             <Button 
               onClick={onDescribeFood}
-              className="btn-primary-cta w-full py-6 px-8 text-lg sm:text-xl flex items-center justify-center gap-3 group"
+              variant="secondary"
+              className="w-full py-6 px-8 text-lg sm:text-xl flex items-center justify-center gap-3 group bg-background/10 hover:bg-background/20 border border-border/30 text-foreground"
             >
               <PenLine className="h-6 w-6 sm:h-7 sm:w-7 group-hover:scale-110 transition-transform" />
               Describe the Food
@@ -99,8 +97,8 @@ const HomeScreen = ({ onStartScan, onDescribeFood }: HomeScreenProps) => {
       </div>
       {/* Footer */}
       <footer className="w-full py-8 sm:py-10 px-4 sm:px-6 pb-36 sm:pb-44 space-y-5 sm:space-y-6 relative z-10">
-        <p className="text-xs sm:text-sm whitespace-pre-line max-w-3xl mx-auto leading-relaxed opacity-70" style={{ color: '#B0B8B6' }}>
-          {t('home.footer')}
+        <p className="text-xs sm:text-sm text-center max-w-3xl mx-auto leading-relaxed opacity-60" style={{ color: '#B0B8B6' }}>
+          Prototype — Thanks for helping us test
         </p>
         <Button
           variant="ghost"
