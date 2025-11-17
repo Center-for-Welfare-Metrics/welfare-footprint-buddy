@@ -16,14 +16,14 @@
     "close": "Fermer"
   },
   "home": {
-    "title": "Scanner de Bien-être Alimentaire",
+    "title": "Explorateur de Bien-être Alimentaire",
     "subtitle": "Des Choix Éclairés pour un Monde plus Bienveillant",
     "description": "Scannez ou décrivez des produits alimentaires et des repas pour comprendre leur impact sur le bien-être animal.",
     "uploadPhoto": "Télécharger ou Prendre une Photo",
     "textInput": "Ou saisissez le nom ou la description d'un produit",
     "startScan": "Démarrer le Scan",
     "continueAsGuest": "Continuer en Invité",
-    "footer": "Prototype – Usage Interne Uniquement\nMerci de nous aider à tester le Scanner de Bien-être Alimentaire.\n\nLes versions futures utiliseront le Cadre d'Empreinte de Bien-être™;\ncelle-ci utilise des connaissances générales sur le bien-être animal pour tester la technologie."
+    "footer": "Prototype – Usage Interne Uniquement\nMerci de nous aider à tester l'Explorateur de Bien-être Alimentaire.\n\nLes versions futures utiliseront le Cadre d'Empreinte de Bien-être™;\ncelle-ci utilise des connaissances générales sur le bien-être animal pour tester la technologie."
   },
   "auth": {
     "welcomeBack": "Bon Retour",
