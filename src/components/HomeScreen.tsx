@@ -73,7 +73,7 @@ const HomeScreen = ({ onStartScan, onDescribeFood }: HomeScreenProps) => {
             <img 
               src={foodWelfareLogo} 
               alt="Food Welfare Explorer Logo" 
-              className="w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 object-contain drop-shadow-2xl"
+              className="w-96 h-96 sm:w-[512px] sm:h-[512px] md:w-[640px] md:h-[640px] lg:w-[768px] lg:h-[768px] object-contain drop-shadow-2xl"
             />
           </div>
           
