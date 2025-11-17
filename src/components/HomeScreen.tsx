@@ -69,18 +69,13 @@ const HomeScreen = ({ onStartScan, onDescribeFood }: HomeScreenProps) => {
       <div className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 pb-8 relative z-10 max-w-4xl mx-auto w-full">
         <header className="mb-12 sm:mb-14 md:mb-16 animate-fade-in space-y-5 sm:space-y-6">
           {/* Logo */}
-          <div className="flex justify-center mb-6 sm:mb-8 animate-scale-in">
+          <div className="flex justify-center mb-8 sm:mb-10 animate-scale-in">
             <img 
               src={foodWelfareLogo} 
               alt="Food Welfare Explorer Logo" 
-              className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 object-contain drop-shadow-2xl"
+              className="w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 object-contain drop-shadow-2xl"
             />
           </div>
-          
-          {/* Title with enhanced styling */}
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-accent drop-shadow-2xl leading-tight text-center animate-scale-in tracking-tight">
-            Food Welfare Explorer
-          </h1>
           
           {/* Subtitle with fade-in animation */}
           <p className="text-lg sm:text-xl md:text-2xl font-normal text-foreground/95 drop-shadow-md px-2 max-w-[380px] mx-auto leading-relaxed text-center animate-fade-in" style={{ animationDelay: '0.1s' }}>
