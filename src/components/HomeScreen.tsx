@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import LanguageSelector from "@/components/LanguageSelector";
 import diversePeopleDining from "@/assets/diverse-people-dining-small.png";
 import foodPattern from "@/assets/food-pattern.png";
+import foodWelfareLogo from "@/assets/food-welfare-logo.png";
 
 interface HomeScreenProps {
   onStartScan: () => void;
@@ -67,6 +68,15 @@ const HomeScreen = ({ onStartScan, onDescribeFood }: HomeScreenProps) => {
       {/* Main Content Area */}
       <div className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 pb-8 relative z-10 max-w-4xl mx-auto w-full">
         <header className="mb-12 sm:mb-14 md:mb-16 animate-fade-in space-y-5 sm:space-y-6">
+          {/* Logo */}
+          <div className="flex justify-center mb-6 sm:mb-8 animate-scale-in">
+            <img 
+              src={foodWelfareLogo} 
+              alt="Food Welfare Explorer Logo" 
+              className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 object-contain drop-shadow-2xl"
+            />
+          </div>
+          
           {/* Title with enhanced styling */}
           <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-accent drop-shadow-2xl leading-tight text-center animate-scale-in tracking-tight">
             Food Welfare Explorer
