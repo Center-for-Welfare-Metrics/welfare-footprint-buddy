@@ -846,6 +846,13 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* CHANGE START – quota system upgrade: Daily limit dialog */}
+      <DailyLimitDialog 
+        open={showDailyLimitDialog} 
+        onOpenChange={setShowDailyLimitDialog}
+      />
+      {/* CHANGE END */}
     </div>
   );
 };
