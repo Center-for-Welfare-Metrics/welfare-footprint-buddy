@@ -26,6 +26,12 @@ const HomeScreen = ({ onStartScan, onDescribeFood }: HomeScreenProps) => {
 
   return (
     <div className="flex flex-col min-h-screen text-center bg-gradient-radial-forest relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
+      </div>
+
       {/* Header with Language Selector and Sign In */}
       <div className="absolute top-3 sm:top-4 right-3 sm:right-4 left-3 sm:left-4 flex items-center justify-between gap-2 sm:gap-4 z-10">
         <div className="flex-1" />
@@ -36,7 +42,7 @@ const HomeScreen = ({ onStartScan, onDescribeFood }: HomeScreenProps) => {
             variant="ghost"
             size="sm"
             onClick={() => navigate('/profile')}
-            className="flex items-center gap-1 sm:gap-2 px-1.5 sm:px-2 h-9"
+            className="flex items-center gap-1 sm:gap-2 px-1.5 sm:px-2 h-9 hover:bg-background/20 transition-all"
           >
             <Avatar className="h-7 w-7 sm:h-8 sm:w-8">
               <AvatarFallback className="bg-emerald-500 text-gray-900 text-xs font-semibold">
@@ -49,7 +55,7 @@ const HomeScreen = ({ onStartScan, onDescribeFood }: HomeScreenProps) => {
             variant="ghost"
             size="sm"
             onClick={() => navigate('/auth')}
-            className="h-9"
+            className="h-9 hover:bg-background/20 transition-all"
           >
             <User className="mr-1.5 h-4 w-4" />
             {t('common.signIn')}
@@ -59,52 +65,58 @@ const HomeScreen = ({ onStartScan, onDescribeFood }: HomeScreenProps) => {
       </div>
       
       {/* Main Content Area */}
-      <div className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 pb-8 relative z-10 max-w-4xl mx-auto w-full">
-        <header className="mb-10 sm:mb-12 md:mb-14 animate-fade-in space-y-4 sm:space-y-5">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-accent drop-shadow-lg leading-tight text-center">
+      <div className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 pb-8 relative z-10 max-w-4xl mx-auto w-full">
+        <header className="mb-12 sm:mb-14 md:mb-16 animate-fade-in space-y-5 sm:space-y-6">
+          {/* Title with enhanced styling */}
+          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-accent drop-shadow-2xl leading-tight text-center animate-scale-in tracking-tight">
             Food Welfare Explorer
           </h1>
-          <p className="text-base sm:text-lg md:text-xl font-normal text-foreground/90 drop-shadow-sm px-2 max-w-[340px] mx-auto leading-relaxed text-center">
+          
+          {/* Subtitle with fade-in animation */}
+          <p className="text-lg sm:text-xl md:text-2xl font-normal text-foreground/95 drop-shadow-md px-2 max-w-[380px] mx-auto leading-relaxed text-center animate-fade-in" style={{ animationDelay: '0.1s' }}>
             Instant AI-powered insights into choices to improve the welfare impact behind everyday foods.
           </p>
-          <p className="text-sm sm:text-base font-normal text-foreground/75 drop-shadow-sm px-2 max-w-[340px] mx-auto leading-relaxed text-center">
+          
+          {/* Secondary text with delayed fade-in */}
+          <p className="text-base sm:text-lg font-normal text-foreground/80 drop-shadow-sm px-2 max-w-[360px] mx-auto leading-relaxed text-center animate-fade-in" style={{ animationDelay: '0.2s' }}>
             Upload a photo or describe your meal to begin exploring.
           </p>
         </header>
         
-        <main className="w-full space-y-5 sm:space-y-6">
+        <main className="w-full space-y-5 sm:space-y-6 animate-fade-in" style={{ animationDelay: '0.3s' }}>
           
           {/* Primary Action Buttons */}
           <div className="w-full space-y-4 sm:space-y-5 max-w-md mx-auto px-2">
             <Button 
               onClick={onStartScan}
-              className="btn-primary-cta w-full py-6 px-8 text-lg sm:text-xl flex items-center justify-center gap-3 group"
+              className="btn-primary-cta w-full py-7 px-8 text-lg sm:text-xl flex items-center justify-center gap-3 group shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105"
             >
-              <Camera className="h-6 w-6 sm:h-7 sm:w-7 group-hover:scale-110 transition-transform" />
+              <Camera className="h-6 w-6 sm:h-7 sm:w-7 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300" />
               Upload or Take a Photo
             </Button>
             
             <Button 
               onClick={onDescribeFood}
               variant="secondary"
-              className="w-full py-6 px-8 text-lg sm:text-xl flex items-center justify-center gap-3 group bg-background/10 hover:bg-background/20 border border-border/30 text-foreground"
+              className="w-full py-7 px-8 text-lg sm:text-xl flex items-center justify-center gap-3 group bg-background/15 hover:bg-background/25 border-2 border-border/40 hover:border-border/60 text-foreground shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
             >
-              <PenLine className="h-6 w-6 sm:h-7 sm:w-7 group-hover:scale-110 transition-transform" />
+              <PenLine className="h-6 w-6 sm:h-7 sm:w-7 group-hover:scale-110 group-hover:-rotate-12 transition-transform duration-300" />
               Describe the Food
             </Button>
           </div>
         </main>
       </div>
+      
       {/* Footer */}
-      <footer className="w-full py-8 sm:py-10 px-4 sm:px-6 pb-36 sm:pb-44 space-y-5 sm:space-y-6 relative z-10">
-        <p className="text-xs sm:text-sm text-center max-w-3xl mx-auto leading-relaxed opacity-60" style={{ color: '#B0B8B6' }}>
+      <footer className="w-full py-8 sm:py-10 px-4 sm:px-6 pb-36 sm:pb-44 space-y-5 sm:space-y-6 relative z-10 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+        <p className="text-xs sm:text-sm text-center max-w-3xl mx-auto leading-relaxed opacity-60 hover:opacity-80 transition-opacity" style={{ color: '#B0B8B6' }}>
           Prototype — Thanks for helping us test
         </p>
         <Button
           variant="ghost"
           size="sm"
           onClick={() => navigate('/about')}
-          className="text-accent/60 hover:text-accent/90 mx-auto transition-colors"
+          className="text-accent/60 hover:text-accent/90 mx-auto transition-all hover:scale-105"
         >
           <Info className="mr-2 h-4 w-4" />
           About this App
