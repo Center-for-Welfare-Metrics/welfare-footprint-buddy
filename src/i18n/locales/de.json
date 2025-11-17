@@ -16,14 +16,14 @@
     "close": "Schließen"
   },
   "home": {
-    "title": "Lebensmittel-Tierwohl-Scanner",
+    "title": "Lebensmittel-Tierwohl-Explorer",
     "subtitle": "Informierte Entscheidungen für eine freundlichere Welt",
     "description": "Scannen oder beschreiben Sie Lebensmittel und Mahlzeiten, um deren Tierwohl-Auswirkungen zu verstehen.",
     "uploadPhoto": "Foto Hochladen oder Aufnehmen",
     "textInput": "Oder geben Sie einen Produktnamen oder eine Beschreibung ein",
     "startScan": "Scan Starten",
     "continueAsGuest": "Als Gast Fortfahren",
-    "footer": "Prototyp – Nur für internen Gebrauch\nDanke, dass Sie uns beim Testen des Lebensmittel-Tierwohl-Scanners helfen.\n\nZukünftige Versionen werden das Tierwohl-Fußabdruck-Framework™ verwenden;\ndiese nutzt allgemeines Tierwohl-Wissen, um die Technologie zu testen."
+    "footer": "Prototyp – Nur für internen Gebrauch\nDanke, dass Sie uns beim Testen des Lebensmittel-Tierwohl-Explorers helfen.\n\nZukünftige Versionen werden das Tierwohl-Fußabdruck-Framework™ verwenden;\ndiese nutzt allgemeines Tierwohl-Wissen, um die Technologie zu testen."
   },
   "auth": {
     "welcomeBack": "Willkommen Zurück",

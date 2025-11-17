@@ -16,15 +16,15 @@
     "close": "Close"
   },
   "home": {
-    "title": "Welfare",
-    "subtitle": "Footprint",
+    "title": "Food Welfare",
+    "subtitle": "Explorer",
     "description": "Instant AI-powered welfare analysis of food products.",
     "startScan": "Upload or Take a Photo",
     "orWriteHere": "...or describe what you're eating",
     "manualInputPlaceholder": "e.g., Valencian paella, grilled salmon, cheese pizza...",
     "analyzeText": "Analyze",
     "continueAsGuest": "Continue as Guest",
-    "footer": "Prototype – For Internal Use Only\nThanks for helping us test the Welfare Footprint App.\n\nFuture versions will use the Welfare Footprint Framework™;\nthis one uses general animal welfare knowledge to trial the technology."
+    "footer": "Prototype – For Internal Use Only\nThanks for helping us test the Food Welfare Explorer.\n\nFuture versions will use the Welfare Footprint Framework™;\nthis one uses general animal welfare knowledge to trial the technology."
   },
   "auth": {
     "welcomeBack": "Welcome Back",

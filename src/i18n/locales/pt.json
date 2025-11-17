@@ -16,14 +16,14 @@
     "close": "Fechar"
   },
   "home": {
-    "title": "Scanner de Bem-Estar Alimentar",
+    "title": "Explorador de Bem-Estar Alimentar",
     "subtitle": "Escolhas Informadas para um Mundo mais Gentil",
     "description": "Escaneie ou descreva produtos alimentares e refeições para entender seu impacto no bem-estar animal.",
     "uploadPhoto": "Enviar ou Tirar uma Foto",
     "textInput": "Ou digite o nome ou descrição de um produto",
     "startScan": "Iniciar Escaneamento",
     "continueAsGuest": "Continuar como Visitante",
-    "footer": "Protótipo – Apenas para Uso Interno\nObrigado por nos ajudar a testar o Scanner de Bem-Estar Alimentar.\n\nVersões futuras usarão o Framework de Pegada de Bem-Estar™;\nesta usa conhecimento geral de bem-estar animal para testar a tecnologia."
+    "footer": "Protótipo – Apenas para Uso Interno\nObrigado por nos ajudar a testar o Explorador de Bem-Estar Alimentar.\n\nVersões futuras usarão o Framework de Pegada de Bem-Estar™;\nesta usa conhecimento geral de bem-estar animal para testar a tecnologia."
   },
   "auth": {
     "welcomeBack": "Bem-vindo de Volta",
