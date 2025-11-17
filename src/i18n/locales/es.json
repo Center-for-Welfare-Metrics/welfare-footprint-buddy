@@ -16,12 +16,14 @@
     "close": "Cerrar"
   },
   "home": {
-    "title": "Huella de",
-    "subtitle": "Bienestar",
-    "description": "Análisis de bienestar instantáneo de productos alimenticios con IA.",
+    "title": "Escáner de Bienestar Alimentario",
+    "subtitle": "Decisiones Informadas para un Mundo más Amable",
+    "description": "Escanea o describe productos alimenticios y comidas para entender su impacto en el bienestar animal.",
+    "uploadPhoto": "Subir o Tomar una Foto",
+    "textInput": "O ingresa el nombre o descripción del producto",
     "startScan": "Iniciar Escaneo",
     "continueAsGuest": "Continuar como Invitado",
-    "footer": "Prototipo – Solo para Uso Interno\nGracias por ayudarnos a probar la App de Huella de Bienestar.\n\nLas versiones futuras usarán el Marco de Huella de Bienestar™;\nesta utiliza conocimiento general de bienestar animal para probar la tecnología."
+    "footer": "Prototipo – Solo para Uso Interno\nGracias por ayudarnos a probar el Escáner de Bienestar Alimentario.\n\nLas versiones futuras usarán el Marco de Huella de Bienestar™;\nesta utiliza conocimiento general de bienestar animal para probar la tecnología."
   },
   "auth": {
     "welcomeBack": "Bienvenido de Nuevo",
