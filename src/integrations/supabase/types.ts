@@ -188,6 +188,27 @@ export type Database = {
         }
         Relationships: []
       }
+      anonymous_daily_usage: {
+        Row: {
+          date: string
+          ip_address: string
+          last_updated: string | null
+          scans_used: number
+        }
+        Insert: {
+          date: string
+          ip_address: string
+          last_updated?: string | null
+          scans_used?: number
+        }
+        Update: {
+          date?: string
+          ip_address?: string
+          last_updated?: string | null
+          scans_used?: number
+        }
+        Relationships: []
+      }
       api_rate_limits: {
         Row: {
           created_at: string

@@ -15,6 +15,9 @@ import { appConfig } from "@/config/app.config";
 import { ErrorHandler, withRetry } from "@/lib/errorHandler";
 import { getEthicalLensFocus, getEthicalLensExamples } from "@/lib/ethicalLensMessaging";
 import { scanInsertSchema } from "@/lib/validation";
+// CHANGE START – quota system upgrade
+import { DailyLimitDialog } from "./DailyLimitDialog";
+// CHANGE END
 
 interface AnalysisData {
   productName?: { value: string; confidence: string };
@@ -81,6 +84,9 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
   const [isSharing, setIsSharing] = useState(false);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  // CHANGE START – quota system upgrade
+  const [showDailyLimitDialog, setShowDailyLimitDialog] = useState(false);
+  // CHANGE END
   const { toast } = useToast();
   const { user } = useAuth();
   const { i18n, t } = useTranslation();
@@ -192,6 +198,15 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
       const parsedResult = JSON.parse(result.candidates[0].content.parts[0].text);
       setEthicalSwaps([parsedResult]);
     } catch (error: any) {
+      // CHANGE START – quota system upgrade: Check for daily limit error
+      if (error?.error?.code === 'DAILY_LIMIT_REACHED' || error?.message?.includes('DAILY_LIMIT_REACHED')) {
+        console.log('[ResultsScreen] Daily limit reached, showing login dialog');
+        setShowDailyLimitDialog(true);
+        setIsLoadingSwaps(false);
+        return;
+      }
+      // CHANGE END
+      
       console.error('[handleEthicalSwap] Full error:', error);
       const errorMessage = error?.message || error?.error?.message || "An error occurred";
       toast({

@@ -646,11 +646,11 @@ verify_jwt = true   # ✅ Authentication required
 ### What Is Missing
 
 ❌ **Critical Gaps**:
-- Backend enforcement of monthly quotas
-- IP-based tracking for anonymous users
-- Authentication requirement for AI endpoints
-- Individual rate limiting for anonymous users
-- Daily quota system
+- ~~Backend enforcement of monthly quotas~~ **FIXED: Added anonymous daily quotas**
+- ~~IP-based tracking for anonymous users~~ **FIXED: Added IP-based daily tracking**
+- Authentication requirement for AI endpoints (still public but now enforced via quota)
+- Individual rate limiting for anonymous users (still shared hourly pool)
+- Daily quota system **✅ IMPLEMENTED for anonymous users**
 - CAPTCHA or anti-bot protection
 
 ### Current Protection Level
@@ -660,12 +660,163 @@ verify_jwt = true   # ✅ Authentication required
 - ⚠️ Monthly quotas (frontend only, easily bypassed)
 
 **For Anonymous Users**:
-- ⚠️ Shared hourly rate limit (ineffective)
+- ✅ **NEW: Daily quota (10 scans/day per IP, backend enforced)**
+- ✅ **NEW: Must log in after exceeding daily limit**
+- ⚠️ Shared hourly rate limit (ineffective for individual tracking)
 - ❌ No monthly quotas
-- ❌ No authentication required
-- ❌ No IP-based tracking
 
-**Overall Assessment**: 🔴 **HIGH RISK** - Current protections are insufficient for public deployment. The app is vulnerable to abuse and has significant cost exposure.
+**Overall Assessment**: 🟡 **MEDIUM RISK** - Anonymous daily quotas now provide backend protection. Logged-in users still have bypass-able monthly quotas, but the anonymous attack vector is significantly reduced.
+
+---
+
+## Anonymous Daily Quota Enforcement (NEW)
+
+### Overview
+
+As of this implementation, **anonymous users are limited to 10 free scans per day** (UTC timezone). After reaching this limit, they must create an account or log in to continue using the scanner.
+
+This system provides:
+- ✅ Backend enforcement (no frontend bypass possible)
+- ✅ IP-based tracking (each IP gets independent quota)
+- ✅ Automatic daily reset at midnight UTC
+- ✅ Clear error messaging requiring login
+- ✅ No impact on logged-in users
+
+### Database Schema
+
+**Table**: `anonymous_daily_usage`
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `ip_address` | TEXT | User's IP address (primary key part) |
+| `date` | TEXT | UTC date in YYYY-MM-DD format (primary key part) |
+| `scans_used` | INTEGER | Number of scans consumed today |
+| `last_updated` | TIMESTAMPTZ | Last usage timestamp |
+
+**Primary Key**: `(ip_address, date)`
+
+**Index**: `idx_anonymous_daily_usage_date` on `date` column for cleanup operations
+
+**RLS Policy**: Only `service_role` can read/write (managed entirely by backend)
+
+### IP Address Extraction
+
+Anonymous users are identified by their IP address, extracted in this priority order:
+
+1. `x-real-ip` header (preferred, set by reverse proxies)
+2. `x-forwarded-for` header (first IP in comma-separated list)
+3. `"unknown"` (fallback, treated as single anonymous user)
+
+```typescript
+const ipAddress = req.headers.get("x-real-ip") ??
+                  req.headers.get("x-forwarded-for")?.split(',')[0]?.trim() ??
+                  "unknown";
+```
+
+### How It Works
+
+**Backend Enforcement Flow** (in `analyze-image`, `enrich-description`, `suggest-ethical-swap`):
+
+1. Extract IP address from request headers
+2. Determine if user is authenticated (`userId !== 'anonymous'`)
+3. If anonymous:
+   - Query `anonymous_daily_usage` for today's usage
+   - If `scans_used >= 10`: Return 429 error with `DAILY_LIMIT_REACHED` code
+   - If under limit: Increment counter and proceed with AI call
+4. If authenticated: Skip anonymous quota check, use normal monthly quotas
+
+**Daily Reset**:
+- Each date gets a new row in the database
+- When the UTC date changes, old records are automatically ignored
+- No manual cleanup required for normal operation
+
+**Example Database State**:
+
+```
+ip_address        | date       | scans_used | last_updated
+------------------|------------|------------|------------------------
+192.168.1.100     | 2025-01-17 | 7          | 2025-01-17 14:30:22
+203.0.113.42      | 2025-01-17 | 10         | 2025-01-17 15:45:10  ← At limit
+198.51.100.200    | 2025-01-17 | 3          | 2025-01-17 09:12:05
+```
+
+### Error Response
+
+When an anonymous user exceeds the daily limit, the backend returns:
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "DAILY_LIMIT_REACHED",
+    "message": "You've reached the free daily limit. Please log in to continue using the scanner.",
+    "requiresAuth": true
+  }
+}
+```
+
+**Status Code**: `429 Too Many Requests`
+
+### Frontend Handling
+
+The frontend should:
+1. Detect `error.code === "DAILY_LIMIT_REACHED"`
+2. Display a dialog prompting the user to log in or create an account
+3. Redirect to `/auth` page when user confirms
+
+### Interaction with Other Systems
+
+**Anonymous Users**:
+- ✅ Daily quota: 10 scans/day/IP (backend enforced) - **NEW**
+- ✅ Hourly rate limit: 10 requests/hour (shared global pool, backend enforced)
+- ❌ Monthly quota: None
+
+**Logged-In Free Users**:
+- ✅ Monthly quota: 10 scans/month (frontend only, bypass-able)
+- ✅ Hourly rate limit: 10 requests/hour (backend enforced)
+- ❌ Daily quota: None (exempt from anonymous daily limits)
+
+**Paid Users (Basic/Pro)**:
+- ✅ Monthly quota: 200/1000 scans (frontend only)
+- ✅ Hourly rate limit: 50/200 requests/hour (backend enforced)
+- ❌ Daily quota: None (exempt from anonymous daily limits)
+
+### Configuration
+
+**Anonymous Daily Limit**: Configurable in `supabase/functions/_shared/anonymous-quota.ts`
+
+```typescript
+const ANONYMOUS_DAILY_LIMIT = 10; // Change this value to adjust the limit
+```
+
+### Security Considerations
+
+**✅ Backend Enforcement**:
+- All quota checks happen inside edge functions
+- No way to bypass via direct API calls
+- IP-based tracking prevents simple cookie/session bypass
+
+**⚠️ Known Limitations**:
+- Users behind shared IPs (corporate networks, VPNs) share the same quota
+- Sophisticated users can bypass via VPN/proxy rotation
+- "unknown" IP fallback creates shared pool for misconfigured proxies
+
+**Recommended Additional Protections** (not implemented):
+- Device fingerprinting
+- CAPTCHA after repeated limit hits
+- Progressive rate limiting (stricter after violations)
+
+### Maintenance
+
+**Cleanup Old Records** (recommended cron job):
+
+```sql
+-- Delete records older than 7 days
+DELETE FROM public.anonymous_daily_usage
+WHERE date < (CURRENT_DATE - INTERVAL '7 days');
+```
+
+This can be run weekly to prevent table bloat.
 
 ---
 

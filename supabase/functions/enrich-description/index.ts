@@ -3,6 +3,9 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { loadAndProcessPrompt } from "../_shared/prompt-loader.ts";
 import { checkRateLimit } from '../_shared/rate-limiter.ts';
+// CHANGE START – quota system upgrade
+import { isAnonymousOverLimit, incrementAnonymousUsage } from '../_shared/anonymous-quota.ts';
+// CHANGE END
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -23,6 +26,12 @@ serve(async (req) => {
   );
 
   try {
+    // CHANGE START – quota system upgrade: Extract IP address for anonymous quota tracking
+    const ipAddress = req.headers.get("x-real-ip") ??
+                      req.headers.get("x-forwarded-for")?.split(',')[0]?.trim() ??
+                      "unknown";
+    // CHANGE END
+    
     // Try to get authenticated user, but allow anonymous access
     const authHeader = req.headers.get("Authorization");
     let userId = 'anonymous';
@@ -43,6 +52,27 @@ serve(async (req) => {
         { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+    
+    // CHANGE START – quota system upgrade: Enforce anonymous daily quota (10 scans/day/IP)
+    if (userId === 'anonymous') {
+      const overLimit = await isAnonymousOverLimit(ipAddress, supabaseClient);
+      if (overLimit) {
+        console.log(`[enrich-description] Anonymous IP ${ipAddress} exceeded daily limit`);
+        return new Response(
+          JSON.stringify({
+            error: 'DAILY_LIMIT_REACHED',
+            message: "You've reached the free daily limit. Please log in to continue using the scanner.",
+            requiresAuth: true
+          }),
+          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      // Increment anonymous usage immediately (before AI call)
+      await incrementAnonymousUsage(ipAddress, supabaseClient);
+      console.log(`[enrich-description] Anonymous IP ${ipAddress} scan counted`);
+    }
+    // CHANGE END
     
     const { description, language = 'en' } = await req.json();
 
