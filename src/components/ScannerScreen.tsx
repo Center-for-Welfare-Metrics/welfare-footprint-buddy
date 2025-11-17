@@ -6,6 +6,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useTranslation } from "react-i18next";
 import { appConfig } from "@/config/app.config";
 import { ErrorHandler, withRetry } from "@/lib/errorHandler";
+// CHANGE START – quota system upgrade
+import { DailyLimitDialog } from "./DailyLimitDialog";
+// CHANGE END
 
 interface ScannerScreenProps {
   onBack: () => void;
@@ -17,6 +20,9 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
   const [imagePreview, setImagePreview] = useState<string>("");
   const [imageData, setImageData] = useState<{ base64: string; mimeType: string } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  // CHANGE START – quota system upgrade
+  const [showDailyLimitDialog, setShowDailyLimitDialog] = useState(false);
+  // CHANGE END
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const { i18n, t } = useTranslation();
@@ -102,6 +108,16 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
         throw new Error('Unexpected response format from AI.');
       }
     } catch (error) {
+      // CHANGE START – quota system upgrade: Check for daily limit error
+      const errorData = error as any;
+      if (errorData?.error?.code === 'DAILY_LIMIT_REACHED' || errorData?.message?.includes('DAILY_LIMIT_REACHED')) {
+        console.log('[ScannerScreen] Daily limit reached, showing login dialog');
+        setShowDailyLimitDialog(true);
+        setIsLoading(false);
+        return;
+      }
+      // CHANGE END
+      
       const appError = ErrorHandler.parseSupabaseError(error, 'handleAnalyze');
       toast({
         title: appError.retryable ? "Analysis Failed" : "Error",
@@ -156,6 +172,13 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
 
   return (
     <div className="flex flex-col items-center pb-40">
+      {/* CHANGE START – quota system upgrade: Daily limit dialog */}
+      <DailyLimitDialog 
+        open={showDailyLimitDialog} 
+        onOpenChange={setShowDailyLimitDialog}
+      />
+      {/* CHANGE END */}
+      
       <h2 className="text-3xl font-bold mb-6 text-white">{t('scanner.uploadImage')}</h2>
       <div className="w-full max-w-2xl glass-card rounded-2xl p-6">
         <div 
