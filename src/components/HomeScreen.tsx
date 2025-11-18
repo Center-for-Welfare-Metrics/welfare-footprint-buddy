@@ -50,7 +50,7 @@ const HomeScreen = ({ onStartScan, onDescribeFood }: HomeScreenProps) => {
       </div>
 
       {/* Header with Language Selector and Sign In */}
-      <div className="absolute top-3 sm:top-4 right-3 sm:right-4 left-3 sm:left-4 flex items-center justify-between gap-2 sm:gap-4 z-10">
+      <div className="absolute top-3 sm:top-4 right-3 sm:right-4 left-3 sm:left-4 flex items-center justify-between gap-2 sm:gap-4 z-50">
         <div className="flex-1" />
         <div className="flex items-center gap-1.5 sm:gap-2">
           <LanguageSelector />
