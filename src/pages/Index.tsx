@@ -79,9 +79,20 @@ const Index = () => {
     setEnrichedDescription("");
   };
 
-  const handleStartScan = () => navigateToScreen('scanner');
+  const handleStartScan = () => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    navigateToScreen('scanner');
+  };
   
   const handleDescribeFood = () => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    
     console.log('[Describe Food] Navigating to text input screen');
     
     // Navigate to text confirmation screen (Step 1 for text mode)
