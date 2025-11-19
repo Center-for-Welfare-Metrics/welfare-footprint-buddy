@@ -208,9 +208,22 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
       // CHANGE END
       
       console.error('[handleEthicalSwap] Full error:', error);
-      const errorMessage = error?.message || error?.error?.message || "An error occurred";
+      // Improved error messaging for authentication and API issues
+      let errorMessage = "An error occurred";
+      let errorTitle = "Failed to load suggestions";
+      
+      if (error?.message?.includes("401") || error?.message?.includes("Unauthorized")) {
+        errorTitle = "Authentication Error";
+        errorMessage = "There's an issue with your authentication. Please try signing out and signing back in.";
+      } else if (error?.message?.includes("missing sub claim") || error?.message?.includes("bad_jwt")) {
+        errorTitle = "Session Error";
+        errorMessage = "Your session is invalid. Please refresh the page and sign in again.";
+      } else {
+        errorMessage = error?.message || error?.error?.message || "An error occurred";
+      }
+      
       toast({
-        title: "Failed to load suggestions",
+        title: errorTitle,
         description: errorMessage,
         variant: "destructive",
       });
