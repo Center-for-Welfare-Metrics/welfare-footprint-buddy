@@ -119,9 +119,22 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
       // CHANGE END
       
       const appError = ErrorHandler.parseSupabaseError(error, 'handleAnalyze');
+      
+      // Improved error messaging for authentication and API issues
+      let errorTitle = appError.retryable ? "Analysis Failed" : "Error";
+      let errorMessage = appError.userMessage;
+      
+      if (errorMessage?.includes("401") || errorMessage?.includes("Unauthorized")) {
+        errorTitle = "Authentication Error";
+        errorMessage = "There's an issue with your authentication. Please try signing out and signing back in.";
+      } else if (errorMessage?.includes("missing sub claim") || errorMessage?.includes("bad_jwt")) {
+        errorTitle = "Session Error";
+        errorMessage = "Your session is invalid. Please refresh the page and sign in again.";
+      }
+      
       toast({
-        title: appError.retryable ? "Analysis Failed" : "Error",
-        description: appError.userMessage,
+        title: errorTitle,
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
