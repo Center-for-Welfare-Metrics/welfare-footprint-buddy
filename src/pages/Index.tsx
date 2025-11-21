@@ -112,11 +112,11 @@ const Index = () => {
             }
           });
           if (res.error) {
-            // Extract error details from edge function response
-            const errorData = (res as any).error?.context?.body;
-            const errorDetail = errorData?.error || res.error?.message || 'Description enrichment failed';
+            // When edge function returns non-2xx, error details are in res.data
+            const errorData = res.data as any;
+            const errorDetail = errorData?.message || errorData?.error || res.error?.message || 'Description enrichment failed';
             const error = new Error(errorDetail) as any;
-            error.context = { body: errorData };
+            error.errorData = errorData;
             throw error;
           }
           return res;
@@ -130,11 +130,11 @@ const Index = () => {
             }
           });
           if (res.error) {
-            // Extract error details from edge function response
-            const errorData = (res as any).error?.context?.body;
-            const errorDetail = errorData?.error || res.error?.message || 'Item detection failed';
+            // When edge function returns non-2xx, error details are in res.data
+            const errorData = res.data as any;
+            const errorDetail = errorData?.message || errorData?.error || res.error?.message || 'Item detection failed';
             const error = new Error(errorDetail) as any;
-            error.context = { body: errorData };
+            error.errorData = errorData;
             throw error;
           }
           return res;
@@ -178,22 +178,21 @@ const Index = () => {
       
       // Try to extract error details from Supabase function response
       if (error && typeof error === 'object') {
-        // Check if the error response contains error details
         const errorObj = error as any;
         
-        // Look for error message in various possible locations
-        if (errorObj.context?.body?.error) {
-          errorMessage = errorObj.context.body.error;
+        // Check for error data from edge function
+        if (errorObj.errorData) {
+          errorMessage = errorObj.errorData.message || errorObj.errorData.error || errorObj.message;
+          
+          // Check for specific error types
+          if (errorObj.errorData.error === 'DAILY_LIMIT_REACHED' || 
+              errorMessage.toLowerCase().includes('daily limit')) {
+            errorTitle = 'Daily Limit Reached';
+          } else if (errorMessage.toLowerCase().includes('rate limit')) {
+            errorTitle = 'Rate Limit Exceeded';
+          }
         } else if (errorObj.message) {
           errorMessage = errorObj.message;
-        }
-        
-        // Check for quota/rate limit errors
-        if (errorMessage.toLowerCase().includes('daily') && 
-            errorMessage.toLowerCase().includes('limit')) {
-          errorTitle = 'Daily Limit Reached';
-        } else if (errorMessage.toLowerCase().includes('rate limit')) {
-          errorTitle = 'Rate Limit Exceeded';
         }
       }
       
