@@ -112,9 +112,12 @@ const Index = () => {
             }
           });
           if (res.error) {
-            // Include the actual error details from the edge function
-            const errorDetail = res.error?.message || 'Description enrichment failed';
-            throw new Error(errorDetail);
+            // Extract error details from edge function response
+            const errorData = (res as any).error?.context?.body;
+            const errorDetail = errorData?.error || res.error?.message || 'Description enrichment failed';
+            const error = new Error(errorDetail) as any;
+            error.context = { body: errorData };
+            throw error;
           }
           return res;
         }, 2, 1000),
@@ -127,9 +130,12 @@ const Index = () => {
             }
           });
           if (res.error) {
-            // Include the actual error details from the edge function
-            const errorDetail = res.error?.message || 'Item detection failed';
-            throw new Error(errorDetail);
+            // Extract error details from edge function response
+            const errorData = (res as any).error?.context?.body;
+            const errorDetail = errorData?.error || res.error?.message || 'Item detection failed';
+            const error = new Error(errorDetail) as any;
+            error.context = { body: errorData };
+            throw error;
           }
           return res;
         }, 2, 1000)
@@ -168,19 +174,31 @@ const Index = () => {
       
       // Extract error message from edge function response
       let errorMessage = 'We couldn\'t complete this analysis. Please try again later.';
-      if (error && typeof error === 'object' && 'message' in error) {
-        const errMsg = String(error.message);
-        // Check if this is a FunctionsHttpError with embedded error details
-        if (errMsg.includes('FunctionsHttpError') || errMsg.includes('non-2xx')) {
-          // Try to get the actual error from the response
-          errorMessage = 'Service temporarily unavailable. Please try again in a moment.';
-        } else {
-          errorMessage = errMsg;
+      let errorTitle = 'Analysis Failed';
+      
+      // Try to extract error details from Supabase function response
+      if (error && typeof error === 'object') {
+        // Check if the error response contains error details
+        const errorObj = error as any;
+        
+        // Look for error message in various possible locations
+        if (errorObj.context?.body?.error) {
+          errorMessage = errorObj.context.body.error;
+        } else if (errorObj.message) {
+          errorMessage = errorObj.message;
+        }
+        
+        // Check for quota/rate limit errors
+        if (errorMessage.toLowerCase().includes('daily') && 
+            errorMessage.toLowerCase().includes('limit')) {
+          errorTitle = 'Daily Limit Reached';
+        } else if (errorMessage.toLowerCase().includes('rate limit')) {
+          errorTitle = 'Rate Limit Exceeded';
         }
       }
       
       toast({
-        title: "Analysis Failed",
+        title: errorTitle,
         description: errorMessage,
         variant: "destructive",
         duration: 5000,
