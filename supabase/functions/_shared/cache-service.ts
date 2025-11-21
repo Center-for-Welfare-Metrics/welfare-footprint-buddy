@@ -8,6 +8,9 @@
 import { createClient, SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { generateImageHash, normalizeText, getLanguageFamily } from './image-hash.ts';
 import type { AIRequest, AIResponse } from './ai-handler.ts';
+import { createLogger, Logger } from './logger.ts';
+
+const logger = createLogger({ functionName: 'cache-service' });
 
 // Cost estimation (per 1M tokens, USD)
 const COST_PER_1M_TOKENS: Record<string, { input: number; output: number }> = {
@@ -90,7 +93,7 @@ export class CacheService {
         .maybeSingle();
 
       if (error) {
-        console.error('Cache check error:', error);
+        logger.error('Cache check failed', { errorCode: error.code, errorMessage: error.message });
         return { hit: false };
       }
 
@@ -119,9 +122,10 @@ export class CacheService {
         },
       };
 
+      logger.info('Cache hit', { cacheKeyPreview: cacheKey.substring(0, 16), hitCount: data.hit_count + 1 });
       return { hit: true, response, entry: data };
     } catch (error) {
-      console.error('Cache check exception:', error);
+      logger.error('Cache check exception', { error: error instanceof Error ? error.message : String(error) });
       return { hit: false };
     }
   }
@@ -150,12 +154,12 @@ export class CacheService {
         });
 
       if (error) {
-        console.error('Cache save error:', error);
+        logger.error('Cache save failed', { errorCode: error.code, cacheKeyPreview: cacheKey.substring(0, 16) });
       } else {
-        console.log('Saved to cache:', cacheKey.substring(0, 16) + '...');
+        logger.info('Saved to cache', { cacheKeyPreview: cacheKey.substring(0, 16) });
       }
     } catch (error) {
-      console.error('Cache save exception:', error);
+      logger.error('Cache save exception', { error: error instanceof Error ? error.message : String(error) });
     }
   }
 
@@ -196,10 +200,10 @@ export class CacheService {
         });
 
       if (error) {
-        console.error('Metrics recording error:', error);
+        logger.error('Metrics recording failed', { errorCode: error.code });
       }
     } catch (error) {
-      console.error('Metrics recording exception:', error);
+      logger.error('Metrics recording exception', { error: error instanceof Error ? error.message : String(error) });
     }
   }
 }

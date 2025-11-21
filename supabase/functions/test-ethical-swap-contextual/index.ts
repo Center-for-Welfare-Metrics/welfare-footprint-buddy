@@ -1,9 +1,13 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
+import { createLogger, getRequestId, getClientIp, jsonSuccessResponse, jsonErrorResponse } from "../_shared/logger.ts";
+
+const logger = createLogger({ functionName: 'test-ethical-swap-contextual' });
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
 interface TestCase {
@@ -27,24 +31,27 @@ interface TestResult {
 }
 
 serve(async (req) => {
+  const requestId = getRequestId(req);
+  const ip = getClientIp(req);
+  const reqLogger = logger.withRequest({ requestId, ip });
+
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    console.log('[Test Runner] Starting contextual focus test suite');
+    reqLogger.info('Starting contextual focus test suite');
 
-// Load test cases (with fail-safe for missing file)
-let testCases: TestCase[] = [];
-try {
-  const testCasesPath = new URL('../_shared/prompts/tests/suggest_ethical_swap_contextual_focus.test.json', import.meta.url);
-  const testCasesText = await Deno.readTextFile(testCasesPath);
-  testCases = JSON.parse(testCasesText);
-  console.log(`[Test Runner] Loaded ${testCases.length} test cases`);
-} catch (err) {
-  console.warn('[Test Runner] No test file found — skipping file-based tests');
-}
-
+    // Load test cases (with fail-safe for missing file)
+    let testCases: TestCase[] = [];
+    try {
+      const testCasesPath = new URL('../_shared/prompts/tests/suggest_ethical_swap_contextual_focus.test.json', import.meta.url);
+      const testCasesText = await Deno.readTextFile(testCasesPath);
+      testCases = JSON.parse(testCasesText);
+      reqLogger.info('Test cases loaded', { count: testCases.length });
+    } catch (err) {
+      reqLogger.warn('No test file found, skipping file-based tests');
+    }
 
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -55,7 +62,7 @@ try {
 
     // Run each test case
     for (const testCase of testCases) {
-      console.log(`[Test Runner] Running: ${testCase.name}`);
+      reqLogger.info('Running test case', { name: testCase.name });
       
       const result: TestResult = {
         name: testCase.name,
@@ -98,7 +105,6 @@ try {
 
         // Validate based on expected behavior
         const concern = testCase.input.PRIMARY_WELFARE_CONCERN.toLowerCase();
-        const expectedBehavior = testCase.expected_behavior.toLowerCase();
 
         // Check for primary concern mention
         if (!reasoning.toLowerCase().includes(concern.split(' ')[0]) && 
@@ -196,7 +202,7 @@ try {
       }
 
       results.push(result);
-      console.log(`[Test Runner] ${testCase.name}: ${result.passed ? 'PASS' : 'FAIL'}`);
+      reqLogger.info('Test case completed', { name: testCase.name, passed: result.passed });
     }
 
     // Generate summary
@@ -209,33 +215,22 @@ try {
       passRate: `${((passedCount / testCases.length) * 100).toFixed(1)}%`,
     };
 
-    console.log(`[Test Runner] Summary: ${passedCount}/${testCases.length} tests passed (${summary.passRate})`);
+    reqLogger.info('Test suite completed', summary);
 
-    return new Response(
-      JSON.stringify({
-        summary,
-        results: results.map(r => ({
-          name: r.name,
-          passed: r.passed,
-          issues: r.issues,
-          reasoning: r.reasoning,
-        })),
-        timestamp: new Date().toISOString(),
-      }, null, 2),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
+    return jsonSuccessResponse({
+      summary,
+      results: results.map(r => ({
+        name: r.name,
+        passed: r.passed,
+        issues: r.issues,
+        reasoning: r.reasoning,
+      })),
+      timestamp: new Date().toISOString(),
+    });
 
   } catch (error) {
-    console.error('[Test Runner] Fatal error:', error);
     const errorMessage = error instanceof Error ? error.message : String(error);
-    return new Response(
-      JSON.stringify({ error: errorMessage }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
+    reqLogger.error('Fatal error in test runner', { error: errorMessage });
+    return jsonErrorResponse(500, 'Test runner encountered an error. Please try again.');
   }
 });

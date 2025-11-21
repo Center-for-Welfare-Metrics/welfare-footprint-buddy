@@ -12,10 +12,14 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { createLogger, getRequestId, getClientIp, jsonErrorResponse, jsonSuccessResponse } from "../_shared/logger.ts";
+
+const logger = createLogger({ functionName: 'admin-cache-control' });
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
 // Input validation schemas
@@ -71,25 +75,30 @@ function validateInput(body: any): { valid: boolean; data?: ValidatedInput; erro
 }
 
 serve(async (req) => {
+  const requestId = getRequestId(req);
+  const ip = getClientIp(req);
+  const reqLogger = logger.withRequest({ requestId, ip });
+
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    reqLogger.info('Request started');
+
     // Verify authentication
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      return new Response(
-        JSON.stringify({ success: false, error: 'Unauthorized - No authorization header' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      reqLogger.warn('No authorization header');
+      return jsonErrorResponse(401, 'Unauthorized - No authorization header');
     }
 
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
     const SUPABASE_SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
     if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
-      throw new Error('Missing Supabase configuration');
+      reqLogger.error('Configuration error: Missing Supabase configuration');
+      return jsonErrorResponse(500, 'Service configuration error. Please contact support.');
     }
 
     // Create Supabase client with service role key for admin operations
@@ -101,31 +110,24 @@ serve(async (req) => {
     // Verify JWT and get user
     const { data: userData, error: userError } = await supabase.auth.getUser(token);
     if (userError || !userData.user) {
-      console.error('User verification failed:', userError);
-      return new Response(
-        JSON.stringify({ success: false, error: 'Unauthorized - Invalid token' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      reqLogger.warn('User verification failed', { error: userError?.message });
+      return jsonErrorResponse(401, 'Unauthorized - Invalid token');
     }
+
+    reqLogger.info('User authenticated', { userId: userData.user.id });
 
     // Check if user has admin role using security definer function
     const { data: isAdmin, error: roleError } = await supabase
       .rpc('has_role', { _user_id: userData.user.id, _role: 'admin' });
 
     if (roleError) {
-      console.error('Role check failed:', roleError);
-      return new Response(
-        JSON.stringify({ success: false, error: 'Authorization check failed' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      reqLogger.error('Role check failed', { error: roleError.message });
+      return jsonErrorResponse(500, 'Authorization check failed');
     }
 
     if (!isAdmin) {
-      console.warn('Non-admin user attempted cache control:', userData.user.id);
-      return new Response(
-        JSON.stringify({ success: false, error: 'Forbidden - Admin access required' }),
-        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      reqLogger.warn('Non-admin user attempted cache control', { userId: userData.user.id });
+      return jsonErrorResponse(403, 'Forbidden - Admin access required');
     }
 
     // Parse and validate request body
@@ -133,16 +135,13 @@ serve(async (req) => {
     const validation = validateInput(body);
     
     if (!validation.valid) {
-      return new Response(
-        JSON.stringify({ success: false, error: validation.error }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      reqLogger.warn('Invalid request body', { error: validation.error });
+      return jsonErrorResponse(400, validation.error!);
     }
 
     const { action, promptTemplateId, promptVersion, model, cacheKey } = validation.data!;
+    reqLogger.info('Cache control action requested', { action, promptTemplateId, promptVersion, model });
 
-    // Get IP address and user agent for audit logging
-    const ipAddress = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
     const userAgent = req.headers.get('user-agent') || 'unknown';
 
     let result;
@@ -155,7 +154,6 @@ serve(async (req) => {
         if (flushError) throw flushError;
         
         result = {
-          success: true,
           message: `Flushed all cache (${flushData} entries)`,
           deletedCount: flushData,
         };
@@ -163,10 +161,7 @@ serve(async (req) => {
 
       case 'invalidate_by_prompt':
         if (!promptTemplateId) {
-          return new Response(
-            JSON.stringify({ success: false, error: 'promptTemplateId is required for invalidate_by_prompt' }),
-            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
+          return jsonErrorResponse(400, 'promptTemplateId is required for invalidate_by_prompt');
         }
 
         const { data: promptData, error: promptError } = await supabase
@@ -178,7 +173,6 @@ serve(async (req) => {
         if (promptError) throw promptError;
 
         result = {
-          success: true,
           message: `Invalidated ${promptData} cache entries for prompt ${promptTemplateId}${promptVersion ? ` (v${promptVersion})` : ''}`,
           deletedCount: promptData,
         };
@@ -186,10 +180,7 @@ serve(async (req) => {
 
       case 'invalidate_by_model':
         if (!model) {
-          return new Response(
-            JSON.stringify({ success: false, error: 'model is required for invalidate_by_model' }),
-            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
+          return jsonErrorResponse(400, 'model is required for invalidate_by_model');
         }
 
         const { data: modelData, error: modelError } = await supabase
@@ -198,7 +189,6 @@ serve(async (req) => {
         if (modelError) throw modelError;
 
         result = {
-          success: true,
           message: `Invalidated ${modelData} cache entries for model ${model}`,
           deletedCount: modelData,
         };
@@ -206,10 +196,7 @@ serve(async (req) => {
 
       case 'invalidate_by_key':
         if (!cacheKey) {
-          return new Response(
-            JSON.stringify({ success: false, error: 'cacheKey is required for invalidate_by_key' }),
-            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
+          return jsonErrorResponse(400, 'cacheKey is required for invalidate_by_key');
         }
 
         const { data: keyData, error: keyError } = await supabase
@@ -218,14 +205,13 @@ serve(async (req) => {
         if (keyError) throw keyError;
 
         result = {
-          success: true,
           message: keyData ? 'Cache entry invalidated' : 'Cache key not found',
           deleted: keyData,
         };
         break;
     }
 
-    console.log('Cache control action completed:', action, result);
+    reqLogger.info('Cache control action completed successfully', { action, result });
 
     // Log admin action to audit log
     try {
@@ -233,41 +219,28 @@ serve(async (req) => {
         user_id: userData.user.id,
         action: action,
         details: { promptTemplateId, promptVersion, model, cacheKey, result },
-        ip_address: ipAddress,
+        ip_address: ip || 'unknown',
         user_agent: userAgent,
       });
     } catch (auditError) {
       // Don't fail the request if audit logging fails, but log the error
-      console.error('Failed to log admin action:', auditError);
+      reqLogger.warn('Failed to log admin action', { error: auditError instanceof Error ? auditError.message : String(auditError) });
     }
 
-    return new Response(JSON.stringify(result), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return jsonSuccessResponse(result);
 
   } catch (error) {
-    // Log full error server-side for debugging
-    console.error('Admin cache control error:', error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    reqLogger.error('Request failed', { error: errorMessage });
     
-    // Return safe, user-friendly error message
-    const errorStr = error instanceof Error ? error.message : String(error);
     let safeMessage = 'Cache operation failed. Please try again.';
     
-    if (errorStr.includes('database') || errorStr.includes('connection')) {
+    if (errorMessage.includes('database') || errorMessage.includes('connection')) {
       safeMessage = 'Database connection error. Please try again later.';
-    } else if (errorStr.includes('Supabase')) {
+    } else if (errorMessage.includes('Supabase')) {
       safeMessage = 'Backend service error. Please contact support.';
     }
     
-    return new Response(
-      JSON.stringify({ 
-        success: false,
-        error: safeMessage
-      }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
+    return jsonErrorResponse(500, safeMessage);
   }
 });

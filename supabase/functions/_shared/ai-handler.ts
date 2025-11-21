@@ -6,6 +6,9 @@
  */
 
 import { CacheService, CacheOptions, CacheStrategy } from './cache-service.ts';
+import { createLogger } from './logger.ts';
+
+const logger = createLogger({ functionName: 'ai-handler' });
 
 // ============= Type Definitions =============
 
@@ -164,7 +167,7 @@ export class AIHandler {
         const cacheResult = await this.cacheService.checkCache(cacheKey);
         
         if (cacheResult.hit && cacheResult.response) {
-          console.log('Cache HIT:', cacheKey.substring(0, 16) + '...');
+          logger.info('Cache HIT', { cacheKeyPreview: cacheKey.substring(0, 16) });
           cacheHit = true;
           
           // Record cache hit metrics
@@ -202,9 +205,9 @@ export class AIHandler {
           };
         }
         
-        console.log('Cache MISS:', cacheKey.substring(0, 16) + '...');
+        logger.info('Cache MISS', { cacheKeyPreview: cacheKey.substring(0, 16) });
       } catch (error) {
-        console.error('Cache lookup error (continuing without cache):', error);
+        logger.warn('Cache lookup error, continuing without cache', { error: error instanceof Error ? error.message : String(error) });
       }
     }
 
@@ -249,7 +252,7 @@ export class AIHandler {
       // Save to cache (background, non-blocking)
       if (this.cacheService && cacheOptions && cacheKey && response.success) {
         this.cacheService.saveToCache(cacheKey, finalResponse, cacheOptions)
-          .catch(err => console.error('Background cache save error:', err));
+          .catch(err => logger.error('Background cache save error', { error: err instanceof Error ? err.message : String(err) }));
       }
 
       // Record metrics (background, non-blocking)
@@ -259,7 +262,7 @@ export class AIHandler {
           cacheOptions.mode,
           false,
           cacheKey
-        ).catch(err => console.error('Background metrics error:', err));
+        ).catch(err => logger.error('Background metrics error', { error: err instanceof Error ? err.message : String(err) }));
       }
 
       return finalResponse;
