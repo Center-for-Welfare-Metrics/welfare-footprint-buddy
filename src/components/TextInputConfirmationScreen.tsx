@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Edit3, ArrowRight } from "lucide-react";
@@ -33,6 +33,11 @@ const TextInputConfirmationScreen = ({
   const { t } = useTranslation();
   const [text, setText] = useState(initialText);
   
+  // Reset text when initialText changes (e.g., when starting a new scan)
+  useEffect(() => {
+    setText(initialText);
+  }, [initialText]);
+  
   const randomExample = useMemo(() => {
     const randomIndex = Math.floor(Math.random() * EXAMPLE_DESCRIPTIONS.length);
     return `Example: ${EXAMPLE_DESCRIPTIONS[randomIndex]}`;
@@ -66,6 +71,8 @@ const TextInputConfirmationScreen = ({
               placeholder={randomExample}
               className="min-h-[120px] bg-white/10 text-white border-gray-600 mb-4"
               disabled={isProcessing}
+              autoComplete="off"
+              data-form-type="other"
             />
             
             <Button
