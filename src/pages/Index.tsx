@@ -112,11 +112,25 @@ const Index = () => {
             }
           });
           if (res.error) {
-            // When edge function returns non-2xx, error details are in res.data
-            const errorData = res.data as any;
-            const errorDetail = errorData?.message || errorData?.error || res.error?.message || 'Description enrichment failed';
+            // Parse error response - edge function JSON is in res.data for 429 errors
+            let errorData = res.data as any;
+            
+            // If data is not an object, try parsing the error message as JSON
+            if (!errorData || typeof errorData !== 'object') {
+              try {
+                const errorMsg = res.error.message || '';
+                const jsonMatch = errorMsg.match(/\{.*\}/s);
+                if (jsonMatch) {
+                  errorData = JSON.parse(jsonMatch[0]);
+                }
+              } catch (e) {
+                // Not JSON, use as-is
+              }
+            }
+            
+            const errorDetail = errorData?.error?.message || errorData?.message || errorData?.error || res.error?.message || 'Description enrichment failed';
             const error = new Error(errorDetail) as any;
-            error.errorData = errorData;
+            error.errorData = errorData?.error || errorData;
             throw error;
           }
           return res;
@@ -130,11 +144,25 @@ const Index = () => {
             }
           });
           if (res.error) {
-            // When edge function returns non-2xx, error details are in res.data
-            const errorData = res.data as any;
-            const errorDetail = errorData?.message || errorData?.error || res.error?.message || 'Item detection failed';
+            // Parse error response - edge function JSON is in res.data for 429 errors
+            let errorData = res.data as any;
+            
+            // If data is not an object, try parsing the error message as JSON
+            if (!errorData || typeof errorData !== 'object') {
+              try {
+                const errorMsg = res.error.message || '';
+                const jsonMatch = errorMsg.match(/\{.*\}/s);
+                if (jsonMatch) {
+                  errorData = JSON.parse(jsonMatch[0]);
+                }
+              } catch (e) {
+                // Not JSON, use as-is
+              }
+            }
+            
+            const errorDetail = errorData?.error?.message || errorData?.message || errorData?.error || res.error?.message || 'Item detection failed';
             const error = new Error(errorDetail) as any;
-            error.errorData = errorData;
+            error.errorData = errorData?.error || errorData;
             throw error;
           }
           return res;
@@ -183,10 +211,10 @@ const Index = () => {
         // Check for error data from edge function
         if (errorObj.errorData) {
           errorMessage = errorObj.errorData.message || errorObj.errorData.error || errorObj.message;
+          const errorCode = errorObj.errorData.code;
           
           // Check for specific error types
-          if (errorObj.errorData.error === 'DAILY_LIMIT_REACHED' || 
-              errorMessage.toLowerCase().includes('daily limit')) {
+          if (errorCode === 'DAILY_LIMIT_REACHED' || errorMessage.toLowerCase().includes('daily limit')) {
             errorTitle = 'Daily Limit Reached';
           } else if (errorMessage.toLowerCase().includes('rate limit')) {
             errorTitle = 'Rate Limit Exceeded';
