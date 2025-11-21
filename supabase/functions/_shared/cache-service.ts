@@ -27,6 +27,7 @@ export interface CacheOptions {
   promptVersion: string;
   mode: string;
   focusItem?: string;
+  additionalContext?: string; // User-provided description/context
 }
 
 export class CacheService {
@@ -66,6 +67,18 @@ export class CacheService {
     if (options.focusItem) {
       const normalized = normalizeText(options.focusItem);
       components.push(`focus:${normalized}`);
+    }
+    
+    // Additional context (hashed for privacy and brevity)
+    if (options.additionalContext && options.additionalContext.trim()) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(normalizeText(options.additionalContext));
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const contextHash = hashArray.slice(0, 8)
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('');
+      components.push(`ctx:${contextHash}`);
     }
     
     // Join and hash
