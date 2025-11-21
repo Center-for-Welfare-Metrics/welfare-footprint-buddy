@@ -60,9 +60,12 @@ serve(async (req) => {
         console.log(`[enrich-description] Anonymous IP ${ipAddress} exceeded daily limit`);
         return new Response(
           JSON.stringify({
-            error: 'DAILY_LIMIT_REACHED',
-            message: "You've reached the free daily limit. Please log in to continue using the scanner.",
-            requiresAuth: true
+            success: false,
+            error: {
+              code: 'DAILY_LIMIT_REACHED',
+              message: "You've reached the free daily limit. Please log in to continue using the scanner.",
+              requiresAuth: true
+            }
           }),
           { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );

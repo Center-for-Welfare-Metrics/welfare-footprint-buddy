@@ -128,9 +128,11 @@ const Index = () => {
               }
             }
             
-            const errorDetail = errorData?.error?.message || errorData?.message || errorData?.error || res.error?.message || 'Description enrichment failed';
+            // Both edge functions now return { success: false, error: { code, message, requiresAuth } }
+            const errorObj = errorData?.error || errorData;
+            const errorDetail = errorObj?.message || errorObj?.error || res.error?.message || 'Description enrichment failed';
             const error = new Error(errorDetail) as any;
-            error.errorData = errorData?.error || errorData;
+            error.errorData = errorObj;
             throw error;
           }
           return res;
@@ -160,9 +162,11 @@ const Index = () => {
               }
             }
             
-            const errorDetail = errorData?.error?.message || errorData?.message || errorData?.error || res.error?.message || 'Item detection failed';
+            // Both edge functions now return { success: false, error: { code, message, requiresAuth } }
+            const errorObj = errorData?.error || errorData;
+            const errorDetail = errorObj?.message || errorObj?.error || res.error?.message || 'Item detection failed';
             const error = new Error(errorDetail) as any;
-            error.errorData = errorData?.error || errorData;
+            error.errorData = errorObj;
             throw error;
           }
           return res;
