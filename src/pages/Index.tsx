@@ -312,6 +312,7 @@ const Index = () => {
               const detectionJson = JSON.parse(sanitizedText);
               setDetectedItems(detectionJson.items || []);
               setItemsSummary(confirmedDescription);
+              setEnrichedDescription(confirmedDescription); // Update enriched description with edited text
               setHasNoFoodItems((detectionJson.items || []).length === 0);
               
               console.log('[Step 1→2] Text-only re-detection complete');
@@ -323,6 +324,7 @@ const Index = () => {
         } else {
           // Description not changed, use existing items from handleTextConfirmed
           setItemsSummary(confirmedDescription);
+          setEnrichedDescription(confirmedDescription); // Ensure enriched description is in sync
         }
       } else if (confirmedDescription !== itemsSummary) {
         // Image mode: user edited description, re-detect with new context
@@ -353,6 +355,7 @@ const Index = () => {
             const detectionJson = JSON.parse(sanitizedText);
             setDetectedItems(detectionJson.items || []);
             setItemsSummary(confirmedDescription);
+            setEnrichedDescription(confirmedDescription); // Update enriched description with edited text
             
             console.log('[Step 1→2] Re-analysis complete with edited description');
           } catch (parseError) {
@@ -363,6 +366,7 @@ const Index = () => {
       } else {
         // Image mode: description not changed, use existing items
         setItemsSummary(confirmedDescription);
+        setEnrichedDescription(confirmedDescription); // Ensure enriched description is in sync
       }
       
       navigateToScreen('itemSelection');
