@@ -1,14 +1,13 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { createLogger, getRequestId, getClientIp, jsonErrorResponse, jsonSuccessResponse } from "../_shared/logger.ts";
+
+const logger = createLogger({ functionName: 'check-scan-quota' });
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
-
-const logStep = (step: string, details?: any) => {
-  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
-  console.log(`[CHECK-SCAN-QUOTA] ${step}${detailsStr}`);
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
 // Tier limits
@@ -19,6 +18,10 @@ const TIER_LIMITS = {
 };
 
 serve(async (req) => {
+  const requestId = getRequestId(req);
+  const ip = getClientIp(req);
+  const reqLogger = logger.withRequest({ requestId, ip });
+
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -30,17 +33,26 @@ serve(async (req) => {
   );
 
   try {
-    logStep("Function started");
+    reqLogger.info('Request started');
 
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) throw new Error("No authorization header provided");
+    if (!authHeader) {
+      reqLogger.warn('No authorization header');
+      return jsonErrorResponse(401, 'Authentication required. Please sign in and try again.');
+    }
 
     const token = authHeader.replace("Bearer ", "");
     const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
-    if (userError) throw new Error(`Authentication error: ${userError.message}`);
+    if (userError) {
+      reqLogger.warn('Authentication failed', { error: userError.message });
+      return jsonErrorResponse(401, 'Authentication required. Please sign in and try again.');
+    }
     const user = userData.user;
-    if (!user) throw new Error("User not authenticated");
-    logStep("User authenticated", { userId: user.id });
+    if (!user) {
+      reqLogger.warn('User not found');
+      return jsonErrorResponse(401, 'Authentication required. Please sign in and try again.');
+    }
+    reqLogger.info('User authenticated', { userId: user.id });
 
     // Get current month-year
     const now = new Date();
@@ -54,7 +66,8 @@ serve(async (req) => {
       .single();
 
     if (subError && subError.code !== 'PGRST116') {
-      throw new Error(`Subscription lookup error: ${subError.message}`);
+      reqLogger.error('Subscription lookup failed', { errorCode: subError.code });
+      return jsonErrorResponse(500, 'Unable to check scan quota. Please try again.');
     }
 
     const tier = subscription?.status === 'active' 
@@ -63,7 +76,7 @@ serve(async (req) => {
       : 'free';
     
     const scansLimit = TIER_LIMITS[tier as keyof typeof TIER_LIMITS];
-    logStep("User tier determined", { tier, scansLimit });
+    reqLogger.info('User tier determined', { tier, scansLimit });
 
     // Get or create usage record for current month
     const { data: usage, error: usageError } = await supabaseClient
@@ -77,7 +90,8 @@ serve(async (req) => {
     let additionalScans = 0;
 
     if (usageError && usageError.code !== 'PGRST116') {
-      throw new Error(`Usage lookup error: ${usageError.message}`);
+      reqLogger.error('Usage lookup failed', { errorCode: usageError.code });
+      return jsonErrorResponse(500, 'Unable to check scan quota. Please try again.');
     }
 
     if (usage) {
@@ -91,16 +105,15 @@ serve(async (req) => {
     const usagePercent = totalLimit > 0 ? (scansUsed / totalLimit) * 100 : 0;
     const warningThreshold = usagePercent >= 80;
 
-    logStep("Quota check complete", {
+    reqLogger.info('Quota check complete', {
       scansUsed,
       totalLimit,
       remaining,
       canScan,
-      usagePercent,
-      warningThreshold
+      usagePercent: Math.round(usagePercent)
     });
 
-    return new Response(JSON.stringify({
+    return jsonSuccessResponse({
       can_scan: canScan,
       scans_used: scansUsed,
       scans_limit: scansLimit,
@@ -110,23 +123,16 @@ serve(async (req) => {
       usage_percent: Math.round(usagePercent),
       warning: warningThreshold,
       tier
-    }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 200,
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    logStep("ERROR in check-scan-quota", { message: errorMessage });
+    reqLogger.error('Request failed', { error: errorMessage });
     
-    // Return safe, user-friendly error message
     let safeMessage = 'Unable to check scan quota. Please try again.';
     if (errorMessage.includes('auth') || errorMessage.includes('JWT')) {
       safeMessage = 'Authentication required. Please sign in and try again.';
     }
     
-    return new Response(JSON.stringify({ error: safeMessage }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
-    });
+    return jsonErrorResponse(500, safeMessage);
   }
 });

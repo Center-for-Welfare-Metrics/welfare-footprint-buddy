@@ -1,17 +1,20 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { createLogger, getRequestId, getClientIp, jsonErrorResponse, jsonSuccessResponse } from "../_shared/logger.ts";
+
+const logger = createLogger({ functionName: 'increment-scan-usage' });
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
-
-const logStep = (step: string, details?: any) => {
-  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
-  console.log(`[INCREMENT-SCAN-USAGE] ${step}${detailsStr}`);
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
 serve(async (req) => {
+  const requestId = getRequestId(req);
+  const ip = getClientIp(req);
+  const reqLogger = logger.withRequest({ requestId, ip });
+
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -23,17 +26,26 @@ serve(async (req) => {
   );
 
   try {
-    logStep("Function started");
+    reqLogger.info('Request started');
 
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) throw new Error("No authorization header provided");
+    if (!authHeader) {
+      reqLogger.warn('No authorization header');
+      return jsonErrorResponse(401, 'Authentication required. Please sign in and try again.');
+    }
 
     const token = authHeader.replace("Bearer ", "");
     const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
-    if (userError) throw new Error(`Authentication error: ${userError.message}`);
+    if (userError) {
+      reqLogger.warn('Authentication failed', { error: userError.message });
+      return jsonErrorResponse(401, 'Authentication required. Please sign in and try again.');
+    }
     const user = userData.user;
-    if (!user) throw new Error("User not authenticated");
-    logStep("User authenticated", { userId: user.id });
+    if (!user) {
+      reqLogger.warn('User not found');
+      return jsonErrorResponse(401, 'Authentication required. Please sign in and try again.');
+    }
+    reqLogger.info('User authenticated', { userId: user.id });
 
     // Get current month-year
     const now = new Date();
@@ -54,8 +66,11 @@ serve(async (req) => {
         .update({ scans_used: existing.scans_used + 1 })
         .eq('id', existing.id);
 
-      if (updateError) throw updateError;
-      logStep("Usage incremented", { newCount: existing.scans_used + 1 });
+      if (updateError) {
+        reqLogger.error('Usage update failed', { errorCode: updateError.code });
+        return jsonErrorResponse(500, 'Unable to update scan usage. Please try again.');
+      }
+      reqLogger.info('Usage incremented', { newCount: existing.scans_used + 1 });
     } else {
       // Create new record
       const { error: insertError } = await supabaseClient
@@ -67,27 +82,23 @@ serve(async (req) => {
           additional_scans_purchased: 0
         });
 
-      if (insertError) throw insertError;
-      logStep("Usage record created", { scansUsed: 1 });
+      if (insertError) {
+        reqLogger.error('Usage insert failed', { errorCode: insertError.code });
+        return jsonErrorResponse(500, 'Unable to update scan usage. Please try again.');
+      }
+      reqLogger.info('Usage record created', { scansUsed: 1 });
     }
 
-    return new Response(JSON.stringify({ success: true }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 200,
-    });
+    return jsonSuccessResponse({ success: true });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    logStep("ERROR in increment-scan-usage", { message: errorMessage });
+    reqLogger.error('Request failed', { error: errorMessage });
     
-    // Return safe, user-friendly error message
     let safeMessage = 'Unable to update scan usage. Please try again.';
     if (errorMessage.includes('auth') || errorMessage.includes('JWT')) {
       safeMessage = 'Authentication required. Please sign in and try again.';
     }
     
-    return new Response(JSON.stringify({ error: safeMessage }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
-    });
+    return jsonErrorResponse(500, safeMessage);
   }
 });

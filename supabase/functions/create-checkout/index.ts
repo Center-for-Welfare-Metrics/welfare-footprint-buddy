@@ -1,18 +1,21 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { createLogger, getRequestId, getClientIp, jsonErrorResponse, jsonSuccessResponse } from "../_shared/logger.ts";
+
+const logger = createLogger({ functionName: 'create-checkout' });
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
-
-const logStep = (step: string, details?: any) => {
-  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
-  console.log(`[CREATE-CHECKOUT] ${step}${detailsStr}`);
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
 serve(async (req) => {
+  const requestId = getRequestId(req);
+  const ip = getClientIp(req);
+  const reqLogger = logger.withRequest({ requestId, ip });
+
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -23,18 +26,29 @@ serve(async (req) => {
   );
 
   try {
-    logStep("Function started");
+    reqLogger.info('Request started');
 
-    const authHeader = req.headers.get("Authorization")!;
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      reqLogger.warn('No authorization header');
+      return jsonErrorResponse(401, 'Authentication required. Please sign in and try again.');
+    }
+
     const token = authHeader.replace("Bearer ", "");
     const { data } = await supabaseClient.auth.getUser(token);
     const user = data.user;
-    if (!user?.email) throw new Error("User not authenticated or email not available");
-    logStep("User authenticated", { userId: user.id, email: user.email });
+    if (!user?.email) {
+      reqLogger.warn('User not authenticated');
+      return jsonErrorResponse(401, 'Authentication required. Please sign in and try again.');
+    }
+    reqLogger.info('User authenticated', { userId: user.id });
 
     const { priceId } = await req.json();
-    if (!priceId) throw new Error("Price ID is required");
-    logStep("Price ID received", { priceId });
+    if (!priceId) {
+      reqLogger.warn('Missing priceId in request');
+      return jsonErrorResponse(400, 'Invalid subscription plan. Please select a valid plan.');
+    }
+    reqLogger.info('Creating checkout session', { priceId });
 
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", { 
       apiVersion: "2025-08-27.basil" 
@@ -44,9 +58,9 @@ serve(async (req) => {
     let customerId;
     if (customers.data.length > 0) {
       customerId = customers.data[0].id;
-      logStep("Found existing customer", { customerId });
+      reqLogger.info('Found existing Stripe customer');
     } else {
-      logStep("No existing customer found");
+      reqLogger.info('Creating new Stripe customer');
     }
 
     const session = await stripe.checkout.sessions.create({
@@ -63,18 +77,13 @@ serve(async (req) => {
       cancel_url: `${req.headers.get("origin")}/profile?tab=subscription&canceled=true`,
     });
 
-    logStep("Checkout session created", { sessionId: session.id });
+    reqLogger.info('Checkout session created successfully');
 
-    return new Response(JSON.stringify({ url: session.url }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 200,
-    });
+    return jsonSuccessResponse({ url: session.url });
   } catch (error) {
-    // Log full error server-side for debugging
     const errorMessage = error instanceof Error ? error.message : String(error);
-    logStep("ERROR in create-checkout", { message: errorMessage });
+    reqLogger.error('Request failed', { error: errorMessage });
     
-    // Return safe, user-friendly error message
     let safeMessage = 'Failed to create checkout session. Please try again.';
     
     if (errorMessage.includes('STRIPE') || errorMessage.includes('stripe')) {
@@ -85,9 +94,6 @@ serve(async (req) => {
       safeMessage = 'Invalid subscription plan. Please select a valid plan.';
     }
     
-    return new Response(JSON.stringify({ error: safeMessage }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
-    });
+    return jsonErrorResponse(500, safeMessage);
   }
 });

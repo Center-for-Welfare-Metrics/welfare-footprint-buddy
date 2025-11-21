@@ -1,7 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { loadAndProcessPrompt } from "../_shared/prompt-loader.ts";
+import { createLogger, getRequestId, getClientIp, jsonErrorResponse, jsonSuccessResponse } from "../_shared/logger.ts";
+
+const logger = createLogger({ functionName: 'enrich-description' });
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -10,35 +12,44 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  const requestId = getRequestId(req);
+  const ip = getClientIp(req);
+  const reqLogger = logger.withRequest({ requestId, ip });
+
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    reqLogger.info('Request started', { method: req.method });
+
     const { description, language = 'en' } = await req.json();
 
     if (!description || typeof description !== 'string') {
-      return new Response(
-        JSON.stringify({ error: 'Description is required and must be a string' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      reqLogger.warn('Invalid request: missing or invalid description');
+      return jsonErrorResponse(400, 'Description is required and must be a string');
     }
 
     // AI Function Safety Layer v1: Input sanitization
     if (/[{}[\]]{2,}/.test(description)) {
-      return new Response(
-        JSON.stringify({ error: 'Suspicious input detected.' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      reqLogger.warn('Suspicious input detected', { descriptionPreview: description.slice(0, 50) });
+      return jsonErrorResponse(400, 'Suspicious input detected.');
     }
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY is not configured');
+      reqLogger.error('Configuration error: LOVABLE_API_KEY not set');
+      return jsonErrorResponse(500, 'Service configuration error. Please contact support.');
     }
 
     // Load the enrichment prompt from the shared prompt loader
     const systemPrompt = await loadAndProcessPrompt('enrich_description', {});
+
+    reqLogger.info('Calling AI service', { 
+      language, 
+      descriptionLength: description.length,
+      descriptionPreview: description.slice(0, 50)
+    });
 
     // AI Function Safety Layer v1: 25s timeout
     const controller = new AbortController();
@@ -64,36 +75,32 @@ serve(async (req) => {
 
     if (!response.ok) {
       if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: 'Rate limits exceeded, please try again later.' }),
-          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
+        reqLogger.warn('Rate limit exceeded');
+        return jsonErrorResponse(429, 'Rate limits exceeded, please try again later.');
       }
       if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ error: 'Payment required, please add funds to your Lovable AI workspace.' }),
-          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
+        reqLogger.error('Payment required for AI service');
+        return jsonErrorResponse(402, 'Payment required, please add funds to your Lovable AI workspace.');
       }
       const errorText = await response.text();
-      console.error('AI gateway error:', response.status, errorText);
-      throw new Error(`AI gateway error: ${response.status}`);
+      reqLogger.error('AI gateway error', { status: response.status, errorPreview: errorText.slice(0, 200) });
+      return jsonErrorResponse(500, 'Description service temporarily unavailable. Please try again later.');
     }
 
     const data = await response.json();
     const enrichedDescription = data.choices?.[0]?.message?.content?.trim() || description;
 
-    console.log('[enrich-description] ✅ Success');
+    reqLogger.info('Request completed successfully', { 
+      originalLength: description.length,
+      enrichedLength: enrichedDescription.length
+    });
 
-    return new Response(
-      JSON.stringify({ enrichedDescription }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    return jsonSuccessResponse({ enrichedDescription });
 
   } catch (error) {
-    console.error('Error in enrich-description function:', error);
-    
     const errorMessage = error instanceof Error ? error.message : String(error);
+    reqLogger.error('Request failed', { error: errorMessage });
+    
     let safeMessage = 'Unable to enrich description. Please try again.';
     
     if (errorMessage.includes('AI') || errorMessage.includes('gateway')) {
@@ -102,12 +109,6 @@ serve(async (req) => {
       safeMessage = 'Service configuration error. Please contact support.';
     }
     
-    return new Response(
-      JSON.stringify({ error: safeMessage }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
+    return jsonErrorResponse(500, safeMessage);
   }
 });

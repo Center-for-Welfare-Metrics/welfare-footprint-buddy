@@ -1,18 +1,21 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { createLogger, getRequestId, getClientIp, jsonErrorResponse, jsonSuccessResponse } from "../_shared/logger.ts";
+
+const logger = createLogger({ functionName: 'check-subscription' });
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
-
-const logStep = (step: string, details?: any) => {
-  const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
-  console.log(`[CHECK-SUBSCRIPTION] ${step}${detailsStr}`);
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
 serve(async (req) => {
+  const requestId = getRequestId(req);
+  const ip = getClientIp(req);
+  const reqLogger = logger.withRequest({ requestId, ip });
+
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -24,26 +27,38 @@ serve(async (req) => {
   );
 
   try {
-    logStep("Function started");
+    reqLogger.info('Request started');
 
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-    if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
+    if (!stripeKey) {
+      reqLogger.error('Configuration error: STRIPE_SECRET_KEY not set');
+      return jsonErrorResponse(500, 'Service configuration error. Please contact support.');
+    }
 
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) throw new Error("No authorization header provided");
+    if (!authHeader) {
+      reqLogger.warn('No authorization header');
+      return jsonErrorResponse(401, 'Authentication required. Please sign in and try again.');
+    }
 
     const token = authHeader.replace("Bearer ", "");
     const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
-    if (userError) throw new Error(`Authentication error: ${userError.message}`);
+    if (userError) {
+      reqLogger.warn('Authentication failed', { error: userError.message });
+      return jsonErrorResponse(401, 'Authentication required. Please sign in and try again.');
+    }
     const user = userData.user;
-    if (!user?.email) throw new Error("User not authenticated or email not available");
-    logStep("User authenticated", { userId: user.id, email: user.email });
+    if (!user?.email) {
+      reqLogger.warn('User not found or email missing');
+      return jsonErrorResponse(401, 'Authentication required. Please sign in and try again.');
+    }
+    reqLogger.info('User authenticated', { userId: user.id });
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
     
     if (customers.data.length === 0) {
-      logStep("No customer found, setting free tier");
+      reqLogger.info('No Stripe customer found, setting free tier');
       
       // Upsert subscription record for free tier
       await supabaseClient
@@ -54,19 +69,16 @@ serve(async (req) => {
           status: 'free',
         }, { onConflict: 'user_id' });
       
-      return new Response(JSON.stringify({ 
+      return jsonSuccessResponse({ 
         subscribed: false,
         product_id: 'free',
         tier: 'free',
         scans_limit: 10
-      }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
       });
     }
 
     const customerId = customers.data[0].id;
-    logStep("Found Stripe customer", { customerId });
+    reqLogger.info('Stripe customer found', { hasCustomer: true });
 
     const subscriptions = await stripe.subscriptions.list({
       customer: customerId,
@@ -96,12 +108,7 @@ serve(async (req) => {
         scansLimit = 1000;
       }
       
-      logStep("Active subscription found", { 
-        subscriptionId: subscription.id, 
-        endDate: subscriptionEnd,
-        tier,
-        productId
-      });
+      reqLogger.info('Active subscription found', { tier, productId });
 
       // Update subscription record in database
       await supabaseClient
@@ -116,7 +123,7 @@ serve(async (req) => {
           current_period_end: subscriptionEnd,
         }, { onConflict: 'user_id' });
     } else {
-      logStep("No active subscription found, setting free tier");
+      reqLogger.info('No active subscription, setting free tier');
       
       // Update to free tier
       await supabaseClient
@@ -129,21 +136,17 @@ serve(async (req) => {
         }, { onConflict: 'user_id' });
     }
 
-    return new Response(JSON.stringify({
+    return jsonSuccessResponse({
       subscribed: hasActiveSub,
       product_id: productId,
       tier,
       scans_limit: scansLimit,
       subscription_end: subscriptionEnd
-    }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 200,
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    logStep("ERROR in check-subscription", { message: errorMessage });
+    reqLogger.error('Request failed', { error: errorMessage });
     
-    // Return safe, user-friendly error message
     let safeMessage = 'Unable to check subscription status. Please try again.';
     if (errorMessage.includes('auth') || errorMessage.includes('JWT')) {
       safeMessage = 'Authentication required. Please sign in and try again.';
@@ -151,9 +154,6 @@ serve(async (req) => {
       safeMessage = 'Subscription service temporarily unavailable. Please try again later.';
     }
     
-    return new Response(JSON.stringify({ error: safeMessage }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
-    });
+    return jsonErrorResponse(500, safeMessage);
   }
 });
