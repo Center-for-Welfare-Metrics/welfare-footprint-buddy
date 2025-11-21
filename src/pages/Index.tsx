@@ -61,6 +61,19 @@ const Index = () => {
       const previousScreen = newHistory[newHistory.length - 1];
       setNavigationHistory(newHistory);
       setCurrentScreen(previousScreen);
+      
+      // Reset state when navigating back to entry point screens
+      if (previousScreen === 'home' || previousScreen === 'scanner') {
+        console.log('[Navigation] Back to entry point - resetting analysis state');
+        setDetectedItems([]);
+        setItemsSummary("");
+        setCurrentImagePreview("");
+        setAnalysisData(null);
+        setScannedImageData("");
+        setHasNoFoodItems(false);
+        setCacheMetadata(null);
+        setEnrichedDescription("");
+      }
     }
   };
 
@@ -79,7 +92,19 @@ const Index = () => {
     setEnrichedDescription("");
   };
 
-  const handleStartScan = () => navigateToScreen('scanner');
+  const handleStartScan = () => {
+    console.log('[Start Scan] Navigating to scanner - resetting state');
+    // Reset all analysis state when starting a new scan
+    setItemsSummary("");
+    setDetectedItems([]);
+    setScannedImageData("");
+    setCurrentImagePreview("");
+    setHasNoFoodItems(false);
+    setEnrichedDescription("");
+    setCacheMetadata(null);
+    setAnalysisData(null);
+    navigateToScreen('scanner');
+  };
   
   const handleDescribeFood = () => {
     console.log('[Describe Food] Navigating to text input screen');
