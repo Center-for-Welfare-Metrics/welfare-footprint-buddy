@@ -5,10 +5,6 @@ import { loadAndProcessPrompt } from "../_shared/prompt-loader.ts";
 import { AIHandler, callAI } from '../_shared/ai-handler.ts';
 import { GeminiProvider } from '../_shared/providers/gemini.ts';
 import type { CacheOptions } from '../_shared/cache-service.ts';
-import { checkRateLimit } from '../_shared/rate-limiter.ts';
-// CHANGE START – quota system upgrade
-import { isAnonymousOverLimit, incrementAnonymousUsage } from '../_shared/anonymous-quota.ts';
-// CHANGE END
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -134,72 +130,7 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // Create Supabase client for auth and rate limiting
-  const supabaseClient = createClient(
-    Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-    { auth: { persistSession: false } }
-  );
-
   try {
-    // CHANGE START – quota system upgrade: Extract IP address for anonymous quota tracking
-    const ipAddress = req.headers.get("x-real-ip") ??
-                      req.headers.get("x-forwarded-for")?.split(',')[0]?.trim() ??
-                      "unknown";
-    // CHANGE END
-    
-    // Try to get authenticated user, but allow anonymous access
-    const authHeader = req.headers.get("Authorization");
-    let userId = 'anonymous';
-    
-    if (authHeader) {
-      const token = authHeader.replace("Bearer ", "");
-      const { data: userData } = await supabaseClient.auth.getUser(token);
-      if (userData?.user) {
-        userId = userData.user.id;
-      }
-    }
-
-    // Check rate limit (works for both authenticated and anonymous users)
-    const rateLimitResult = await checkRateLimit(userId, supabaseClient);
-    if (!rateLimitResult.allowed) {
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          error: { 
-            message: 'Rate limit exceeded. Please try again later.',
-            remaining: 0,
-            limit: rateLimitResult.limit
-          } 
-        }),
-        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-    
-    // CHANGE START – quota system upgrade: Enforce anonymous daily quota (10 scans/day/IP)
-    if (userId === 'anonymous') {
-      const overLimit = await isAnonymousOverLimit(ipAddress, supabaseClient);
-      if (overLimit) {
-        console.log(`[analyze-image] Anonymous IP ${ipAddress} exceeded daily limit`);
-        return new Response(
-          JSON.stringify({
-            success: false,
-            error: {
-              code: 'DAILY_LIMIT_REACHED',
-              message: "You've reached the free daily limit. Please log in to continue using the scanner.",
-              requiresAuth: true
-            }
-          }),
-          { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-      
-      // Increment anonymous usage immediately (before AI call)
-      await incrementAnonymousUsage(ipAddress, supabaseClient);
-      console.log(`[analyze-image] Anonymous IP ${ipAddress} scan counted`);
-    }
-    // CHANGE END
-    
     // Parse and validate input
     const body = await req.json();
     console.log('[analyze-image] Received language:', body.language);
