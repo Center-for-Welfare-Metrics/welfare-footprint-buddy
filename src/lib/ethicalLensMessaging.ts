@@ -49,15 +49,15 @@ const ETHICAL_LENS_GUIDANCE: Record<number, EthicalLensGuidance> = {
     tone: "Encouraging and progress-oriented — emphasizes balanced steps rather than elimination.",
     uiHint: "Include sliders or visual indicators showing reduced animal content."
   },
-  4: { // Vegetarian (No Slaughter)
-    focus: "Eliminate all meat, fish, and slaughter byproducts while continuing non-lethal animal products.",
+  4: { // No Animal Use (Vegan)
+    focus: "This option is for people who want to avoid using animals altogether in their food choices. It focuses on meals and products that do not contain meat, fish, eggs, dairy, honey, gelatin, or any other animal-derived ingredients.",
     examples: [
-      "Continue consuming dairy and eggs — ideally from higher-welfare farms.",
-      "Remove the most direct source of suffering (killing) while supporting gentler systems.",
-      "Explore vegetarian versions of common meals (e.g., veggie burgers, lentil stews, vegetable lasagna)."
+      "Replace all animal-derived ingredients with plant- or fungi-based options (and, where available, cultivated products).",
+      "Prioritize foods with no animal ingredients, including hidden ones such as gelatin, whey, casein, fish sauce, or animal-based stocks.",
+      "Use this lens to explore recipes and products that are fully compatible with a vegan pattern of consumption, while still aiming for practicality, taste, and good nutrition."
     ],
-    tone: "Empathetic and educational — recognizes continuity while promoting reduced harm.",
-    uiHint: "Suggest vegetarian alternatives of the detected product."
+    tone: "Inspiring and future-focused — celebrates innovation and compassion.",
+    uiHint: "Show plant-based brands or product swaps directly beneath the explanation."
   },
   5: { // Vegan (No Animal Use)
     focus: "Avoid all animal-derived products in food, clothing, and daily life.",
