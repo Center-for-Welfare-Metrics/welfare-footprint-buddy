@@ -70,11 +70,13 @@ const HomeScreen = ({ onStartScan, onDescribeFood }: HomeScreenProps) => {
         <header className="mb-12 sm:mb-14 md:mb-16 animate-fade-in space-y-5 sm:space-y-6">
           {/* Logo */}
           <div className="flex justify-center mb-6 sm:mb-8 animate-scale-in">
-            <img 
-              src={foodWelfareLogo} 
-              alt="Food Welfare Explorer Logo" 
-              className="w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72 object-contain drop-shadow-2xl"
-            />
+            <div className="rounded-3xl overflow-hidden" style={{ background: 'linear-gradient(135deg, hsl(195 45% 25%) 0%, hsl(190 50% 30%) 100%)' }}>
+              <img 
+                src={foodWelfareLogo} 
+                alt="Food Welfare Explorer Logo" 
+                className="w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72 object-contain drop-shadow-2xl mix-blend-multiply"
+              />
+            </div>
           </div>
           
           {/* Subtitle with fade-in animation */}
