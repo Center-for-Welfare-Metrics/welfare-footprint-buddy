@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import LanguageSelector from "@/components/LanguageSelector";
 import diversePeopleDining from "@/assets/diverse-people-dining-small.png";
 import foodPattern from "@/assets/food-pattern.png";
-import foodWelfareLogo from "@/assets/food-welfare-logo.png";
+import foodWelfareLogo from "@/assets/food-welfare-explorer-logo.png";
 
 interface HomeScreenProps {
   onStartScan: () => void;
