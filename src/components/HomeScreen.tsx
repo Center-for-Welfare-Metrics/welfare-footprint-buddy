@@ -69,11 +69,11 @@ const HomeScreen = ({ onStartScan, onDescribeFood }: HomeScreenProps) => {
       <div className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 pb-8 relative z-10 max-w-4xl mx-auto w-full">
         <header className="mb-12 sm:mb-14 md:mb-16 animate-fade-in space-y-5 sm:space-y-6">
           {/* Logo */}
-          <div className="flex justify-center mb-8 sm:mb-10 animate-scale-in">
+          <div className="flex justify-center mb-6 sm:mb-8 animate-scale-in">
             <img 
               src={foodWelfareLogo} 
               alt="Food Welfare Explorer Logo" 
-              className="w-96 h-96 sm:w-[512px] sm:h-[512px] md:w-[640px] md:h-[640px] lg:w-[768px] lg:h-[768px] object-contain drop-shadow-2xl"
+              className="w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 lg:w-72 lg:h-72 object-contain drop-shadow-2xl"
             />
           </div>
           
