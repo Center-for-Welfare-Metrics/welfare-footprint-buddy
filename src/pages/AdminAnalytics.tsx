@@ -178,10 +178,10 @@ export default function AdminAnalytics() {
   }
 
   const lensLabels: Record<number, string> = {
-    1: 'Balanced',
-    2: 'Welfarist',
-    3: 'Liberationist',
-    4: 'Vegan'
+    1: 'Higher-Welfare Omnivore',
+    2: 'Lower Consumption',
+    3: 'No Slaughter',
+    4: 'No Animal Use'
   };
 
   const lensDataWithLabels = analytics.lens_usage.map(item => ({
