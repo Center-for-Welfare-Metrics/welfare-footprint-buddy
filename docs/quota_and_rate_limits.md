@@ -1,5 +1,18 @@
 # Quota and Rate Limits System
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Monthly Scan Quotas](#monthly-scan-quotas)
+- [Hourly Rate Limits](#hourly-rate-limits)
+- [Anonymous User Behavior](#anonymous-user-behavior)
+- [Authenticated User Flow](#authenticated-user-flow)
+- [Current Vulnerabilities](#current-vulnerabilities)
+- [Developer Guidelines](#developer-guidelines)
+- [Related Documentation](#related-documentation)
+
+---
+
 ## Overview
 
 The Welfare Footprint App implements a **two-layer protection system** to control usage and prevent abuse:
@@ -820,6 +833,38 @@ This can be run weekly to prevent table bloat.
 
 ---
 
+## Developer Guidelines
+
+### Before Introducing New Quotas
+
+If you plan to add new quota types (e.g., daily quotas, feature-specific limits), consider:
+
+1. **Both frontend AND backend enforcement** – Frontend-only checks can be bypassed
+2. **Database schema changes** – May need new tables or columns
+3. **Edge function updates** – All AI functions must check the new limits
+4. **User messaging** – Clear error messages and UI feedback
+5. **Analytics tracking** – The admin dashboard already logs `daily_limit_block` events for monitoring
+
+### Key Files to Update
+
+| Change Type | Files to Modify |
+|-------------|-----------------|
+| Quota limits | `src/config/subscription.config.ts` |
+| Rate limits | `supabase/functions/_shared/rate-limiter.ts` |
+| Anonymous limits | `supabase/functions/_shared/anonymous-quota.ts` |
+| Frontend checks | Components that call AI functions |
+| Backend checks | `analyze-image`, `suggest-ethical-swap`, `enrich-description` |
+
+### Testing Quota Changes
+
+1. Test with free, basic, and pro tier accounts
+2. Test anonymous user flow
+3. Verify edge function enforcement (use curl/Postman)
+4. Check that `daily_limit_block` events are logged
+5. Verify admin dashboard reflects new limits
+
+---
+
 ## Next Steps (If Protection Improvements Are Desired)
 
 This section is for reference only and describes potential improvements that are **not currently implemented**:
@@ -839,3 +884,10 @@ This section is for reference only and describes potential improvements that are
 8. Add browser fingerprinting for better anonymous tracking
 9. Implement progressive rate limiting (stricter after repeated violations)
 10. Add admin dashboard for monitoring usage and abuse patterns
+
+---
+
+## Related Documentation
+
+- [Analytics Overview](./analytics_overview.md) – Event tracking and the `user_events` table
+- [Admin Dashboard](./admin_dashboard.md) – How to access and use the analytics panel

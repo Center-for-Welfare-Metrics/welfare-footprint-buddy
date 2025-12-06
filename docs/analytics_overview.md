@@ -8,6 +8,7 @@ This document describes the lightweight, privacy-respecting analytics system in 
 - [Database Schema](#database-schema)
 - [Event Types](#event-types)
 - [Architecture](#architecture)
+- [How to Add New Event Types](#how-to-add-new-event-types)
 - [Admin Analytics Dashboard](#admin-analytics-dashboard)
 
 ---
@@ -18,7 +19,7 @@ The analytics system tracks app usage without collecting PII (Personally Identif
 
 - **No cookies** or fingerprinting
 - **No raw IP addresses** – only SHA-256 hashed IPs
-- **No external services** – all data stays in Supabase
+- **No external services** – all data stays in the backend database
 - Events are fire-and-forget (never block UI)
 
 ---
@@ -27,21 +28,43 @@ The analytics system tracks app usage without collecting PII (Personally Identif
 
 ### Table: `user_events`
 
-| Column            | Type        | Nullable | Default            |
-|-------------------|-------------|----------|--------------------|
-| `id`              | uuid        | No       | `gen_random_uuid()`|
-| `timestamp`       | timestamptz | No       | `now()`            |
-| `user_id`         | uuid        | Yes      | —                  |
-| `ip_hash`         | text        | Yes      | —                  |
-| `event_type`      | text        | No       | —                  |
-| `event_properties`| jsonb       | Yes      | —                  |
-| `user_agent`      | text        | Yes      | —                  |
+| Column            | Type        | Nullable | Default            | Description |
+|-------------------|-------------|----------|--------------------|-------------|
+| `id`              | uuid        | No       | `gen_random_uuid()`| Unique event identifier |
+| `timestamp`       | timestamptz | No       | `now()`            | When the event occurred |
+| `user_id`         | uuid        | Yes      | —                  | Authenticated user's ID (null for anonymous) |
+| `ip_hash`         | text        | Yes      | —                  | SHA-256 hash of client IP (never raw IP) |
+| `event_type`      | text        | No       | —                  | Type of event (see Event Types below) |
+| `event_properties`| jsonb       | Yes      | —                  | Additional event metadata |
+| `user_agent`      | text        | Yes      | —                  | Browser user agent string |
 
 ### RLS Policies
 
-- `Allow insert for authenticated users` – any authenticated user can insert
-- `Allow insert for anon` – anonymous users can also insert
+- `Allow insert for authenticated users` – any authenticated user can insert events
+- `Allow insert for anon` – anonymous users can also insert events
 - **No SELECT policies** – data is read only via service role (admin functions)
+
+### Data Flow
+
+```
+User Action → Frontend trackEvent() → Edge Function (log-event) → user_events table
+```
+
+### IP Hashing
+
+For privacy, raw IP addresses are **never stored**. The `log-event` edge function hashes IPs using SHA-256:
+
+```typescript
+async function hashIp(ip: string | null): Promise<string | null> {
+  if (!ip) return null;
+  const data = new TextEncoder().encode(ip);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+}
+```
+
+This one-way hash allows tracking unique anonymous visitors without storing identifiable data.
 
 ---
 
@@ -64,6 +87,19 @@ Currently tracked events:
 | `signup_succeeded`         | Signup successful                        | —                             |
 | `error_ai_failure`         | AI call failed                           | `{ mode, error }`             |
 | `error_rate_limited`       | User was rate-limited                    | `{ mode? }`                   |
+
+### Property Details
+
+- **`mode`**: Either `"image"` or `"text"` depending on input method
+- **`language`**: ISO language code (e.g., `"en"`, `"es"`)
+- **`lens`**: Ethical lens value (1-4)
+  - 1 = Higher-Welfare Omnivore
+  - 2 = Lower Consumption
+  - 3 = No Slaughter
+  - 4 = No Animal Use
+- **`detectedItems`**: Number of food items detected in the scan
+- **`alternativesCount`**: Number of ethical alternatives returned
+- **`error`**: Error message when AI call fails
 
 ---
 
@@ -93,6 +129,7 @@ trackEvent('scan_started', { mode: 'image', language: 'en' });
 - Hashes IP using SHA-256
 - Inserts into `user_events` table
 - Always returns `{ success: true/false }`
+- Config: `verify_jwt = false` (allows anonymous event logging)
 
 ### Server-Side Logging
 
@@ -102,6 +139,59 @@ AI edge functions also emit `[EVENT]` logs for debugging:
 console.log('[EVENT] scan_completed', { userId, mode, itemCount });
 console.error('[EVENT] error_ai_failure', { userId, error });
 ```
+
+These appear in edge function logs and help with operational debugging.
+
+---
+
+## How to Add New Event Types
+
+### Step 1: Define the Event Type
+
+Add the new event type to `src/integrations/analytics.ts`:
+
+```typescript
+type AnalyticsEventType =
+  | "app_opened"
+  | "scan_started"
+  // ... existing types
+  | "your_new_event";  // Add here
+```
+
+### Step 2: Define Properties (if any)
+
+Document what properties your event will include:
+
+```typescript
+// Example properties
+trackEvent('your_new_event', {
+  someValue: 123,
+  category: 'example'
+});
+```
+
+### Step 3: Add the Tracking Call
+
+In the appropriate component or function:
+
+```typescript
+import { trackEvent } from '@/integrations/analytics';
+
+// Call when the event occurs
+trackEvent('your_new_event', { someValue: 123 });
+```
+
+### Step 4: Update Documentation
+
+Add your new event to the Event Types table in this document.
+
+### Best Practices
+
+- **Never log PII**: No emails, names, or identifiable data in properties
+- **Keep properties minimal**: Only include what's needed for analysis
+- **Use consistent naming**: Follow the existing `snake_case` convention
+- **Fail silently**: Analytics should never break user experience
+- **Document thoroughly**: Future developers need to understand each event
 
 ---
 
@@ -117,7 +207,7 @@ console.error('[EVENT] error_ai_failure', { userId, error });
 
 ### How Admin is Determined
 
-The system uses the existing `has_role` database function:
+The system uses the `has_role` database function:
 
 ```sql
 SELECT has_role(user_id, 'admin');
@@ -186,7 +276,7 @@ Features:
 - Bar chart: lens usage breakdown
 - Table: event type counts (7 days)
 
-Uses `recharts` for visualization (already in project dependencies).
+Uses `recharts` for visualization.
 
 ### How Collaborators Access the Dashboard
 
