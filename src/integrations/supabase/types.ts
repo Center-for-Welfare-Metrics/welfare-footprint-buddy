@@ -393,6 +393,36 @@ export type Database = {
         }
         Relationships: []
       }
+      user_events: {
+        Row: {
+          event_properties: Json | null
+          event_type: string
+          id: string
+          ip_hash: string | null
+          timestamp: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          event_properties?: Json | null
+          event_type: string
+          id?: string
+          ip_hash?: string | null
+          timestamp?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          event_properties?: Json | null
+          event_type?: string
+          id?: string
+          ip_hash?: string | null
+          timestamp?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_preferences: {
         Row: {
           anonymous_usage: boolean | null
