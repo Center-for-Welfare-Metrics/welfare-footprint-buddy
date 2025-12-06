@@ -106,7 +106,7 @@ const EthicalLens = () => {
   
   return (
     <NavigationWrapper onBack={handleBack}>
-      <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-gray-950 p-4 pb-48">
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-gray-950 p-4 pb-40">
         <div className="max-w-2xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8 animate-fade-in">
@@ -245,7 +245,7 @@ const EthicalLens = () => {
           </div>
           
           {/* Disclaimer */}
-          <div className="p-3 bg-gray-800/50 border border-gray-700 text-gray-300 rounded-lg text-center">
+          <div className="p-3 bg-gray-800/50 border border-gray-700 text-gray-300 rounded-lg text-center mb-24">
             <h3 className="font-bold text-sm">{t('results.disclaimer')}</h3>
             <p className="text-xs">
               {t('results.defaultDisclaimer').split('Welfare Footprint Institute').map((part, index, arr) => (
@@ -266,11 +266,8 @@ const EthicalLens = () => {
             </p>
           </div>
           
-          {/* Spacer to allow scrolling past fixed button */}
-          <div className="h-28" aria-hidden="true"></div>
-          
           {/* Continue Button */}
-          <div className="fixed bottom-24 left-0 right-0 p-4 bg-gradient-to-t from-gray-900 via-gray-900 to-transparent">
+          <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-gray-900 via-gray-900 to-transparent">
             <div className="max-w-2xl mx-auto">
               <Button
                 onClick={handleContinue}
