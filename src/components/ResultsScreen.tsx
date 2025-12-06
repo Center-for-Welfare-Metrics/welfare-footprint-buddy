@@ -1,22 +1,24 @@
 import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, HelpCircle, AlertCircle, Share2, Check, Copy } from "lucide-react";
+import { Loader2, HelpCircle, AlertCircle, Share2, Check, Copy, Sparkles } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
 import { Card } from "@/components/ui/card";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "react-i18next";
 import { appConfig } from "@/config/app.config";
 import { ErrorHandler, withRetry } from "@/lib/errorHandler";
-import { getEthicalLensFocus, getEthicalLensExamples } from "@/lib/ethicalLensMessaging";
+import { getEthicalLensFocus } from "@/lib/ethicalLensMessaging";
 import { scanInsertSchema } from "@/lib/validation";
 import { DailyLimitDialog } from "./DailyLimitDialog";
 import { trackEvent } from "@/integrations/analytics";
+
+// Session storage key for ethical lens
+const ETHICAL_LENS_SESSION_KEY = 'ethical_lens_selection';
 
 interface AnalysisData {
   productName?: { value: string; confidence: string };
@@ -48,6 +50,25 @@ interface ResultsScreenProps {
 }
 
 const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems, cacheMetadata }: ResultsScreenProps) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Get selected lens from navigation state or session storage
+  const getInitialLens = (): number => {
+    // Check if navigated back from ethical lens page
+    const navState = location.state as { selectedLens?: number; fromEthicalLensPage?: boolean } | null;
+    if (navState?.selectedLens) {
+      return navState.selectedLens;
+    }
+    // Check session storage
+    const stored = sessionStorage.getItem(ETHICAL_LENS_SESSION_KEY);
+    if (stored) {
+      const parsed = parseInt(stored, 10);
+      if (parsed >= 1 && parsed <= 4) return parsed;
+    }
+    return appConfig.ethicalLens.defaultValue;
+  };
+  
   // Map technical ethical lens position to user-friendly translation key
   const getEthicalLensLabel = (position: string): string => {
     const mapping: Record<string, string> = {
@@ -70,8 +91,11 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
     return mapping[lens] ?? lensToPosition(appConfig.ethicalLens.defaultValue);
   };
   
-  // Calculate default slider position from config
-  const defaultPosition = lensToPosition(appConfig.ethicalLens.defaultValue);
+  // Current ethical lens value (1-4)
+  const [currentLens, setCurrentLens] = useState<number>(getInitialLens);
+  
+  // Calculate default slider position from config (for backward compatibility)
+  const defaultPosition = lensToPosition(currentLens);
   
   const [ethicalSwaps, setEthicalSwaps] = useState<any[]>([]);
   const [isLoadingSwaps, setIsLoadingSwaps] = useState(false);
@@ -89,6 +113,29 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
   const { toast } = useToast();
   const { user } = useAuth();
   const { i18n, t } = useTranslation();
+  
+  // Update lens when navigating back from ethical lens page
+  useEffect(() => {
+    const navState = location.state as { selectedLens?: number; fromEthicalLensPage?: boolean } | null;
+    if (navState?.fromEthicalLensPage && navState.selectedLens) {
+      setCurrentLens(navState.selectedLens);
+      setSliderValue([lensToPosition(navState.selectedLens)]);
+      setInitialSliderValue([lensToPosition(navState.selectedLens)]);
+      // Clear previous swaps when lens changes
+      setEthicalSwaps([]);
+    }
+  }, [location.state]);
+  
+  // Navigate to ethical lens page
+  const handleNavigateToEthicalLens = () => {
+    navigate('/ethical-lens', {
+      state: {
+        analysisData: data,
+        imageData,
+        currentLens
+      }
+    });
+  };
 
   // Save scan to history if user is logged in
   useEffect(() => {
@@ -147,8 +194,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
 
     setIsLoadingSwaps(true);
     
-    // Track swap suggestion requested
-    const currentLens = positionToLens(sliderValue[0]);
+    // Track swap suggestion requested (use state currentLens)
     trackEvent("swap_suggestion_requested", { 
       lens: currentLens, 
       productCategory: productName 
@@ -163,7 +209,6 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
         animalIngredients,
         ethicalLens: currentLens,
         language: languageCode,
-        sliderPosition: sliderValue[0],
         displayedLens: currentLens === 1 ? 'Higher-Welfare Omnivore' :
                        currentLens === 2 ? 'Lower Consumption' :
                        currentLens === 3 ? 'No Slaughter' :
@@ -212,7 +257,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
       // Check for daily limit error
       if (error?.error?.code === 'DAILY_LIMIT_REACHED' || error?.message?.includes('DAILY_LIMIT_REACHED')) {
         console.log('[ResultsScreen] Daily limit reached, showing login dialog');
-        trackEvent("daily_limit_block", { lens: positionToLens(sliderValue[0]) });
+        trackEvent("daily_limit_block", { lens: currentLens });
         setShowDailyLimitDialog(true);
         setIsLoadingSwaps(false);
         return;
@@ -534,159 +579,35 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
           <p className="text-gray-300 whitespace-pre-wrap">{data.welfareConcerns?.value || 'N/A'}</p>
         </div>
 
-        <div className="border-b border-gray-700 pb-4">
-          <div className="flex items-center justify-center gap-2 mb-2 mt-12">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-400 via-cyan-300 to-emerald-400 bg-[length:200%_auto] animate-gradient-shift bg-clip-text text-transparent [text-shadow:_0_0_20px_rgba(16,185,129,0.5)]" style={{ filter: 'drop-shadow(0 0 12px rgba(16, 185, 129, 0.6))' }}>
-              {t('ethicalLens.title')}
-            </h1>
-            <Dialog>
-              <DialogTrigger asChild>
-                <button className="text-emerald-400/70 hover:text-emerald-400 transition-colors">
-                  <HelpCircle className="h-4 w-4" />
-                </button>
-              </DialogTrigger>
-              <DialogContent className="glass-card max-w-md bg-background/95 border border-emerald-500/30">
-                <DialogHeader>
-                  <DialogTitle className="text-xl font-bold text-emerald-400">
-                    {t('ethicalLens.title')}
-                  </DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4 text-gray-200">
-                  <p className="leading-relaxed">
-                    The Ethical Lens lets you explore how your food choices align with different levels of concern for animal welfare.
-                  </p>
-                  <p className="leading-relaxed">
-                    You can select the approach that best reflects your values — from Higher-Welfare Omnivore (seeking higher-welfare animal products) to No Animal Use (avoiding all animal products).
-                  </p>
-                  <p className="leading-relaxed">
-                    The app then tailors its recommendations and messages to that perspective, helping you make informed and compassionate choices — without judgment.
-                  </p>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
-          <p className="text-sm text-muted-foreground text-center mb-6 max-w-2xl mx-auto">
-            Choose the ethical approach that aligns with your values. Each option tailors suggestions to your perspective on animal welfare.
-          </p>
-            <div className="space-y-6 bg-gray-800/50 p-4 rounded-lg">
-            {/* Segmented Button Selector */}
-            <div className="relative p-1 rounded-xl bg-gradient-to-r from-[#60A5FA] via-[#C084FC] to-[#FF6B9D]">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-1 bg-gray-900/90 rounded-lg p-1">
-                {[
-                  { position: 0, lens: 1, label: t('ethicalLens.rangeStart'), shortLabel: 'Higher-Welfare' },
-                  { position: 1, lens: 2, label: 'Lower Consumption', shortLabel: 'Lower Consumption' },
-                  { position: 2, lens: 3, label: 'No Slaughter', shortLabel: 'No Slaughter' },
-                  { position: 3, lens: 4, label: t('ethicalLens.rangeEnd'), shortLabel: 'No Animal Use' }
-                ].map(({ position, lens, label, shortLabel }) => (
-                  <button
-                    key={position}
-                    onClick={() => {
-                      setSliderValue([position]);
-                      handleSliderCommit([position]);
-                    }}
-                    className={`
-                      relative px-3 py-3 rounded-lg font-semibold text-xs md:text-sm
-                      transition-all duration-300 ease-out
-                      ${sliderValue[0] === position 
-                        ? 'shadow-lg scale-105' 
-                        : 'hover:bg-gray-800/50 scale-100'
-                      }
-                    `}
-                    style={{
-                      backgroundColor: sliderValue[0] === position 
-                        ? appConfig.ethicalLens.colors[lens as 1 | 2 | 3 | 4]
-                        : 'transparent',
-                      color: sliderValue[0] === position ? '#ffffff' : appConfig.ethicalLens.colors[lens as 1 | 2 | 3 | 4],
-                      boxShadow: sliderValue[0] === position 
-                        ? `0 4px 20px ${appConfig.ethicalLens.colors[lens as 1 | 2 | 3 | 4]}60`
-                        : 'none'
-                    }}
-                  >
-                    <span className="hidden md:inline">{label}</span>
-                    <span className="md:hidden">{shortLabel}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Selected Lens Description */}
-            <div className="text-center space-y-3">
-              <p 
-                className="text-sm font-medium italic transition-colors duration-300"
-                style={{
-                  color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]
-                }}
-              >
-                "{positionToLens(sliderValue[0]) === 1 ? t('ethicalLens.persona1') :
-                  positionToLens(sliderValue[0]) === 2 ? t('ethicalLens.persona2') :
-                  positionToLens(sliderValue[0]) === 3 ? t('ethicalLens.persona3') :
-                  t('ethicalLens.persona4')}"
+        {/* Navigate to Ethical Lens Section */}
+        <div className="border-b border-gray-700 pb-4 mt-4">
+          <div className="bg-gradient-to-r from-emerald-900/30 via-cyan-900/30 to-emerald-900/30 border border-emerald-500/30 rounded-lg p-4">
+            <p className="text-center text-gray-300 mb-3 text-sm">
+              Want suggestions tailored to your values?
+            </p>
+            <Button
+              onClick={handleNavigateToEthicalLens}
+              className="w-full py-5 font-bold text-white relative overflow-hidden group"
+              style={{
+                background: `linear-gradient(135deg, ${appConfig.ethicalLens.colors[currentLens as 1|2|3|4]}, ${appConfig.ethicalLens.colors[currentLens as 1|2|3|4]}dd)`,
+                boxShadow: `0 4px 20px ${appConfig.ethicalLens.colors[currentLens as 1|2|3|4]}30`
+              }}
+            >
+              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                <Sparkles className="w-4 h-4" />
+                {t('ethicalLens.title')}
+              </span>
+            </Button>
+            {currentLens !== appConfig.ethicalLens.defaultValue && (
+              <p className="text-center text-xs text-gray-400 mt-2">
+                Currently: <span style={{ color: appConfig.ethicalLens.colors[currentLens as 1|2|3|4] }}>
+                  {currentLens === 1 ? t('ethicalLens.persona1') :
+                   currentLens === 2 ? t('ethicalLens.persona2') :
+                   currentLens === 3 ? t('ethicalLens.persona3') :
+                   t('ethicalLens.persona4')}
+                </span>
               </p>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <button
-                    className="flex items-center justify-center gap-2 mx-auto px-3 py-1.5 rounded-full border transition-all hover:scale-105 text-xs"
-                    style={{
-                      borderColor: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4],
-                      color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]
-                    }}
-                    aria-label="Show detailed guidance"
-                  >
-                    <HelpCircle className="w-3 h-3" />
-                    <span>Learn more</span>
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent 
-                  className="w-80 bg-gray-900/95 border-gray-700 backdrop-blur-sm"
-                  side="bottom"
-                  align="center"
-                >
-                  <div className="space-y-3">
-                    <h4 
-                      className="font-semibold text-sm"
-                      style={{
-                        color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]
-                      }}
-                    >
-                      {positionToLens(sliderValue[0]) === 1 ? t('ethicalLens.persona1') :
-                        positionToLens(sliderValue[0]) === 2 ? t('ethicalLens.persona2') :
-                        positionToLens(sliderValue[0]) === 3 ? t('ethicalLens.persona3') :
-                        t('ethicalLens.persona4')}
-                    </h4>
-                    <div className="space-y-2">
-                      {getEthicalLensExamples(positionToLens(sliderValue[0])).map((example, index) => (
-                        <div 
-                          key={index}
-                          className="flex gap-2 items-start text-xs text-gray-300"
-                        >
-                          <span 
-                            className="text-base leading-none mt-0.5 flex-shrink-0"
-                            style={{
-                              color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]
-                            }}
-                          >
-                            •
-                          </span>
-                          <span className="leading-relaxed">{example}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </PopoverContent>
-              </Popover>
-            </div>
-            {/* Ethical Lens Guidance - Focus - Only show when no swaps are displayed */}
-            {ethicalSwaps.length === 0 && (
-              <div className="space-y-3">
-                <p 
-                  className="text-sm font-semibold text-center transition-colors duration-300"
-                  style={{
-                    color: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]
-                  }}
-                >
-                  {getEthicalLensFocus(positionToLens(sliderValue[0]))}
-                </p>
-              </div>
             )}
           </div>
         </div>
