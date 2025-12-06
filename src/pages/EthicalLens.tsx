@@ -270,7 +270,7 @@ const EthicalLens = () => {
           <div className="h-28" aria-hidden="true"></div>
           
           {/* Continue Button */}
-          <div className="fixed bottom-8 left-0 right-0 p-4 bg-gradient-to-t from-gray-900 via-gray-900 to-transparent">
+          <div className="fixed bottom-24 left-0 right-0 p-4 bg-gradient-to-t from-gray-900 via-gray-900 to-transparent">
             <div className="max-w-2xl mx-auto">
               <Button
                 onClick={handleContinue}
