@@ -106,7 +106,7 @@ const EthicalLens = () => {
   
   return (
     <NavigationWrapper onBack={handleBack}>
-      <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-gray-950 p-4 pb-32">
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-gray-950 p-4 pb-48">
         <div className="max-w-2xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8 animate-fade-in">
