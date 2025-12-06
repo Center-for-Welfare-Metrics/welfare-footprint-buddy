@@ -434,10 +434,41 @@ NOW PROCEED WITH YOUR ANALYSIS USING THE ABOVE USER CONTEXT:
 
     let cleanedText = text;
     try {
+      // Remove markdown code blocks
       cleanedText = text.replace(/```(json)?/gi, '').trim();
+      
+      // Try to find valid JSON object boundaries
+      const jsonStart = cleanedText.indexOf('{');
+      const jsonEnd = cleanedText.lastIndexOf('}');
+      
+      if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
+        cleanedText = cleanedText.substring(jsonStart, jsonEnd + 1);
+      }
+      
+      // Attempt to fix common truncation issues - unclosed strings/objects
+      let fixAttempts = 0;
+      while (fixAttempts < 3) {
+        try {
+          JSON.parse(cleanedText);
+          break; // Success
+        } catch (e) {
+          fixAttempts++;
+          // Try adding closing braces/brackets if truncated
+          if (cleanedText.split('{').length > cleanedText.split('}').length) {
+            cleanedText += '}';
+          } else if (cleanedText.split('[').length > cleanedText.split(']').length) {
+            cleanedText += ']';
+          } else {
+            throw e; // Can't auto-fix
+          }
+        }
+      }
+      
       JSON.parse(cleanedText);
     } catch (parseError) {
       console.error('JSON parse error:', parseError);
+      console.error('Raw AI response (first 1000 chars):', text.substring(0, 1000));
+      console.error('Raw AI response (last 500 chars):', text.substring(text.length - 500));
       return new Response(
         JSON.stringify({ 
           success: false, 
