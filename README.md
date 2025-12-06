@@ -71,3 +71,24 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+
+---
+
+## 📘 Documentation Index
+
+For detailed technical documentation, see the `/docs` folder:
+
+| Document | Description |
+|----------|-------------|
+| [Analytics Overview](docs/analytics_overview.md) | Event tracking system – what's tracked, how it works, and how to add new events |
+| [Admin Dashboard](docs/admin_dashboard.md) | How to access and use the analytics panel, including admin role setup |
+| [Quota and Rate Limits](docs/quota_and_rate_limits.md) | Monthly quotas, hourly rate limits, and enforcement logic |
+| [Architecture Overview](docs/architecture_overview.md) | High-level system architecture and component relationships |
+| [Privacy & Data Flow](docs/privacy_data_flow.md) | Data handling, privacy protections, and user data management |
+| [Testing Guide](docs/testing_guide.md) | How to test the application and its components |
+
+### Quick Links for Developers
+
+- **Add a new analytics event:** See [How to Add New Event Types](docs/analytics_overview.md#how-to-add-new-event-types)
+- **Grant admin access:** See [How to Promote a User to Admin](docs/admin_dashboard.md#how-to-promote-a-user-to-admin)
+- **Modify quotas:** See [Developer Guidelines](docs/quota_and_rate_limits.md#developer-guidelines)
