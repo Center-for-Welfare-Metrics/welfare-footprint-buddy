@@ -10,6 +10,7 @@ import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
 import About from "./pages/About";
 import SharedResult from "./pages/SharedResult";
+import AdminAnalytics from "./pages/AdminAnalytics";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
               <Route path="/profile" element={<Profile />} />
               <Route path="/about" element={<About />} />
               <Route path="/share/:shareToken" element={<SharedResult />} />
+              <Route path="/admin/analytics" element={<AdminAnalytics />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
