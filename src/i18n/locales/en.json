@@ -188,7 +188,10 @@
     "shareLinkTemporary": "⏱ Temporary link (expires in 48 hours)",
     "shareError": "Failed to Create Share Link",
     "linkCopied": "Link Copied!",
-    "copyFailed": "Failed to Copy"
+    "copyFailed": "Failed to Copy",
+    "alternatives": "Ethical Alternatives",
+    "generatingAlternatives": "Finding ethical alternatives...",
+    "noAlternativesGenerated": "No alternatives were generated. Please try again."
   },
   "confirmation": {
     "title": "Challenge Results",

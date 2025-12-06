@@ -156,7 +156,10 @@
     "reanalysisComplete": "Neuanalyse Abgeschlossen",
     "reanalysisCompleteDesc": "Das Produkt wurde mit Ihren zusätzlichen Informationen neu analysiert.",
     "reanalysisFailed": "Neuanalyse Fehlgeschlagen",
-    "failedToLoad": "Fehler beim Laden von Vorschlägen"
+    "failedToLoad": "Fehler beim Laden von Vorschlägen",
+    "alternatives": "Ethische Alternativen",
+    "generatingAlternatives": "Suche nach ethischen Alternativen...",
+    "noAlternativesGenerated": "Es wurden keine Alternativen generiert. Bitte versuchen Sie es erneut."
   },
   "confirmation": {
     "title": "Herausforderungsergebnisse",

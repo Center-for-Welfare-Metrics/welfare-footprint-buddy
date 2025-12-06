@@ -143,7 +143,10 @@
     "reanalysisComplete": "पुनः विश्लेषण पूर्ण",
     "reanalysisCompleteDesc": "आपकी अतिरिक्त जानकारी के साथ उत्पाद का पुनः विश्लेषण किया गया है।",
     "reanalysisFailed": "पुनः विश्लेषण विफल",
-    "failedToLoad": "सुझाव लोड करने में विफल"
+    "failedToLoad": "सुझाव लोड करने में विफल",
+    "alternatives": "नैतिक विकल्प",
+    "generatingAlternatives": "नैतिक विकल्प खोज रहे हैं...",
+    "noAlternativesGenerated": "कोई विकल्प उत्पन्न नहीं हुआ। कृपया पुनः प्रयास करें।"
   },
   "confirmation": {
     "title": "चुनौती परिणाम",

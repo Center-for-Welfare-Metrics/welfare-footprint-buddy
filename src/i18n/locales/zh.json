@@ -143,7 +143,10 @@
     "reanalysisComplete": "重新分析完成",
     "reanalysisCompleteDesc": "产品已根据您的附加信息重新分析。",
     "reanalysisFailed": "重新分析失败",
-    "failedToLoad": "加载建议失败"
+    "failedToLoad": "加载建议失败",
+    "alternatives": "道德替代品",
+    "generatingAlternatives": "正在寻找道德替代品...",
+    "noAlternativesGenerated": "未生成替代品。请重试。"
   },
   "confirmation": {
     "title": "挑战结果",
