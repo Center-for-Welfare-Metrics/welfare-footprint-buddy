@@ -143,7 +143,10 @@
     "reanalysisComplete": "اكتملت إعادة التحليل",
     "reanalysisCompleteDesc": "تمت إعادة تحليل المنتج بمعلوماتك الإضافية.",
     "reanalysisFailed": "فشلت إعادة التحليل",
-    "failedToLoad": "فشل تحميل الاقتراحات"
+    "failedToLoad": "فشل تحميل الاقتراحات",
+    "alternatives": "بدائل أخلاقية",
+    "generatingAlternatives": "جارٍ البحث عن بدائل أخلاقية...",
+    "noAlternativesGenerated": "لم يتم إنشاء بدائل. يرجى المحاولة مرة أخرى."
   },
   "confirmation": {
     "title": "نتائج التحدي",

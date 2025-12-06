@@ -86,6 +86,9 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
   const { user } = useAuth();
   const { i18n, t } = useTranslation();
   
+  // Track if we should auto-generate swaps after lens update
+  const [shouldAutoGenerateSwaps, setShouldAutoGenerateSwaps] = useState(false);
+  
   // Update lens when navigating back from ethical lens page
   useEffect(() => {
     const navState = location.state as { selectedLens?: number; fromEthicalLensPage?: boolean } | null;
@@ -93,8 +96,11 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
       setCurrentLens(navState.selectedLens);
       // Clear previous swaps when lens changes
       setEthicalSwaps([]);
+      // Mark that we should auto-generate swaps
+      setShouldAutoGenerateSwaps(true);
     }
   }, [location.state]);
+
   
   // Navigate to ethical lens page
   const handleNavigateToEthicalLens = () => {
@@ -258,6 +264,15 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
       setIsLoadingSwaps(false);
     }
   };
+
+  // Auto-trigger alternatives generation when returning from Ethical Lens page
+  // This runs after currentLens state has been updated
+  useEffect(() => {
+    if (shouldAutoGenerateSwaps && data.hasAnimalIngredients) {
+      setShouldAutoGenerateSwaps(false);
+      handleEthicalSwap();
+    }
+  }, [shouldAutoGenerateSwaps, currentLens]);
 
 
   const handleChallengeAnalysis = async () => {
@@ -568,6 +583,72 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
             )}
           </div>
         </div>
+
+        {/* Ethical Alternatives Section - Shows when swaps are loaded or loading */}
+        {(isLoadingSwaps || ethicalSwaps.length > 0) && (
+          <div className="mt-6 border-t border-gray-700 pt-4">
+            <div className="flex items-center gap-2 mb-3">
+              <h3 className="font-bold text-emerald-400">{t('results.alternatives')}</h3>
+              <span 
+                className="text-sm font-medium"
+                style={{ color: appConfig.ethicalLens.colors[currentLens as 1|2|3|4] }}
+              >
+                {currentLens === 1 ? t('ethicalLens.persona1') :
+                 currentLens === 2 ? t('ethicalLens.persona2') :
+                 currentLens === 3 ? t('ethicalLens.persona3') :
+                 t('ethicalLens.persona4')}
+              </span>
+            </div>
+
+            {isLoadingSwaps ? (
+              <div className="flex items-center justify-center p-8 bg-gray-800/30 rounded-lg border border-gray-700">
+                <Loader2 className="h-6 w-6 animate-spin text-emerald-400 mr-3" />
+                <span className="text-gray-300">{t('results.generatingAlternatives')}</span>
+              </div>
+            ) : ethicalSwaps[0]?.suggestions?.length > 0 ? (
+              <>
+                <div className="space-y-3">
+                  {ethicalSwaps[0].suggestions.map((swap: any, idx: number) => (
+                    <Card key={idx} className="p-4 bg-gray-800/50 border-gray-700">
+                      <div className="flex gap-3">
+                        <Sparkles className="h-5 w-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-white mb-1">{swap.name}</h4>
+                          <p className="text-sm text-gray-300 mb-2">{swap.description}</p>
+                          <div className="space-y-1">
+                            <p className="text-xs text-gray-400">
+                              <span className="font-medium text-emerald-400">{t('results.reasoning')}:</span> {swap.reasoning}
+                            </p>
+                            <p className="text-xs text-gray-400">
+                              <span className="font-medium text-emerald-400">{t('results.availability')}:</span> {swap.availability}
+                            </p>
+                            <p className="text-xs text-gray-400">
+                              <span className="font-medium text-emerald-400">{t('results.confidence')}:</span> {swap.confidence}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+
+                {ethicalSwaps[0].generalNote && (
+                  <div className="mt-3 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                    <p className="text-blue-200 text-xs">
+                      <strong>Note:</strong> {ethicalSwaps[0].generalNote}
+                    </p>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="text-center p-4 bg-gray-800/30 rounded-lg border border-gray-700">
+                <p className="text-gray-400 text-sm">
+                  {t('results.noAlternativesGenerated')}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
         {/* Action Buttons - 2x2 Grid on desktop, stacked on mobile */}

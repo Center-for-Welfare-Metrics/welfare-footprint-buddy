@@ -157,7 +157,10 @@
     "reanalysisComplete": "Reanálise Completa",
     "reanalysisCompleteDesc": "O produto foi reanalisado com suas informações adicionais.",
     "reanalysisFailed": "Reanálise Falhou",
-    "failedToLoad": "Falha ao carregar sugestões"
+    "failedToLoad": "Falha ao carregar sugestões",
+    "alternatives": "Alternativas Éticas",
+    "generatingAlternatives": "Procurando alternativas éticas...",
+    "noAlternativesGenerated": "Nenhuma alternativa foi gerada. Por favor, tente novamente."
   },
   "confirmation": {
     "title": "Resultados do Desafio",
