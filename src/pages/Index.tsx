@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import HomeScreen from "@/components/HomeScreen";
 import ScannerScreen from "@/components/ScannerScreen";
@@ -43,6 +43,7 @@ const Index = () => {
   const { toast } = useToast();
   const { i18n, t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, loading } = useAuth();
 
   // Debug log - no auth redirects should happen on Index page
@@ -52,6 +53,31 @@ const Index = () => {
   useEffect(() => {
     trackEvent("app_opened", { source: "web" });
   }, []);
+
+  // Restore results screen when returning from ethical lens page
+  useEffect(() => {
+    const navState = location.state as { 
+      fromEthicalLensPage?: boolean; 
+      analysisData?: any; 
+      imageData?: string;
+      selectedLens?: number;
+    } | null;
+    
+    if (navState?.fromEthicalLensPage && navState.analysisData) {
+      setAnalysisData(navState.analysisData);
+      if (navState.imageData) {
+        setScannedImageData(navState.imageData);
+      }
+      setCurrentScreen('results');
+      setNavigationHistory(prev => {
+        // Ensure results is in history
+        if (!prev.includes('results')) {
+          return [...prev, 'results'];
+        }
+        return prev;
+      });
+    }
+  }, [location.state]);
 
   // Navigate to a new screen and add to history
   const navigateToScreen = (screen: Screen) => {
