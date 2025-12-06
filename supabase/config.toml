@@ -15,6 +15,9 @@ verify_jwt = false
 [functions.admin-cache-control]
 verify_jwt = true
 
+[functions.admin-analytics]
+verify_jwt = true
+
 [functions.share-result]
 verify_jwt = false
 
