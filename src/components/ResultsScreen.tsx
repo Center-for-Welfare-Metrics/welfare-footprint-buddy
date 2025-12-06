@@ -12,7 +12,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "react-i18next";
 import { appConfig } from "@/config/app.config";
 import { ErrorHandler, withRetry } from "@/lib/errorHandler";
-import { getEthicalLensFocus } from "@/lib/ethicalLensMessaging";
 import { scanInsertSchema } from "@/lib/validation";
 import { DailyLimitDialog } from "./DailyLimitDialog";
 import { trackEvent } from "@/integrations/analytics";
@@ -69,38 +68,11 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
     return appConfig.ethicalLens.defaultValue;
   };
   
-  // Map technical ethical lens position to user-friendly translation key
-  const getEthicalLensLabel = (position: string): string => {
-    const mapping: Record<string, string> = {
-      'welfarist_reduce_harm': t('ethicalLens.level1'),
-      'partial_substitution': t('ethicalLens.level2'),
-      'no_slaughter': t('ethicalLens.level3'),
-      'no_animal_use': t('ethicalLens.level4'),
-    };
-    return mapping[position] || t('results.suggestedAlternatives');
-  };
-
-  // Map slider position to lens ID: 0->1, 1->2, 2->3, 3->4
-  const positionToLens = (position: number): number => {
-    const mapping: { [key: number]: number } = { 0: 1, 1: 2, 2: 3, 3: 4 };
-    return mapping[position] || appConfig.ethicalLens.defaultValue;
-  };
-  
-  const lensToPosition = (lens: number): number => {
-    const mapping: { [key: number]: number } = { 1: 0, 2: 1, 3: 2, 4: 3 };
-    return mapping[lens] ?? lensToPosition(appConfig.ethicalLens.defaultValue);
-  };
-  
   // Current ethical lens value (1-4)
   const [currentLens, setCurrentLens] = useState<number>(getInitialLens);
   
-  // Calculate default slider position from config (for backward compatibility)
-  const defaultPosition = lensToPosition(currentLens);
-  
   const [ethicalSwaps, setEthicalSwaps] = useState<any[]>([]);
   const [isLoadingSwaps, setIsLoadingSwaps] = useState(false);
-  const [sliderValue, setSliderValue] = useState<number[]>([defaultPosition]);
-  const [initialSliderValue, setInitialSliderValue] = useState<number[]>([defaultPosition]);
   const [challengeOpen, setChallengeOpen] = useState(false);
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [isReanalyzing, setIsReanalyzing] = useState(false);
@@ -119,8 +91,6 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
     const navState = location.state as { selectedLens?: number; fromEthicalLensPage?: boolean } | null;
     if (navState?.fromEthicalLensPage && navState.selectedLens) {
       setCurrentLens(navState.selectedLens);
-      setSliderValue([lensToPosition(navState.selectedLens)]);
-      setInitialSliderValue([lensToPosition(navState.selectedLens)]);
       // Clear previous swaps when lens changes
       setEthicalSwaps([]);
     }
@@ -289,19 +259,6 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
     }
   };
 
-  const handleSliderCommit = (value: number[]) => {
-    const position = value[0];
-    
-    // Only trigger action if value changed from initial
-    if (position !== initialSliderValue[0]) {
-      // Track ethical lens change
-      trackEvent("ethical_lens_changed", { lens: positionToLens(position) });
-      
-      // Clear ethical swaps and reset to show button again
-      setEthicalSwaps([]);
-      setInitialSliderValue([position]);
-    }
-  };
 
   const handleChallengeAnalysis = async () => {
     if (!imageData || !onReanalyze) return;
@@ -358,7 +315,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
         const completeAnalysis = {
           ...data,
           ethicalSwaps: ethicalSwaps.length > 0 ? ethicalSwaps : null,
-          ethicalLensValue: positionToLens(sliderValue[0]),
+          ethicalLensValue: currentLens,
           cacheMetadata,
         };
 
@@ -620,7 +577,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
                 disabled={isLoadingSwaps}
                 className="w-full text-white font-bold transition-all duration-300 relative overflow-hidden group"
                 style={{
-                  backgroundColor: appConfig.ethicalLens.colors[positionToLens(sliderValue[0]) as 1 | 2 | 3 | 4]
+                  backgroundColor: appConfig.ethicalLens.colors[currentLens as 1 | 2 | 3 | 4]
                 }}
               >
                 <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
