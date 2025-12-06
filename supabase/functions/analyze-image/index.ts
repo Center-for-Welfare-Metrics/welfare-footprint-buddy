@@ -467,6 +467,14 @@ NOW PROCEED WITH YOUR ANALYSIS USING THE ABOVE USER CONTEXT:
     };
 
     const cacheHeader = aiResponse.metadata.cacheHit ? 'HIT' : 'MISS';
+    
+    // [EVENT] Log successful scan completion
+    console.log('[EVENT] scan_completed', {
+      mode,
+      language,
+      latencyMs: aiResponse.metadata.latencyMs,
+      cacheHit: aiResponse.metadata.cacheHit,
+    });
 
     return new Response(JSON.stringify(data), {
       headers: { 
@@ -480,8 +488,14 @@ NOW PROCEED WITH YOUR ANALYSIS USING THE ABOVE USER CONTEXT:
     // Log full error server-side for debugging
     console.error('Error in analyze-image function:', error);
     
-    // Return safe, user-friendly error message
+    // [EVENT] Log AI failure
     const errorStr = error instanceof Error ? error.message : String(error);
+    console.error('[EVENT] error_ai_failure', {
+      mode: 'analyze-image',
+      error: errorStr.slice(0, 200),
+    });
+    
+    // Return safe, user-friendly error message
     let safeMessage = 'Failed to analyze image. Please try again.';
     
     // Map known error types to safe messages

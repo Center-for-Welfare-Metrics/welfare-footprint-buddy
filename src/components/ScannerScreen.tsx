@@ -6,9 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useTranslation } from "react-i18next";
 import { appConfig } from "@/config/app.config";
 import { ErrorHandler, withRetry } from "@/lib/errorHandler";
-// CHANGE START – quota system upgrade
 import { DailyLimitDialog } from "./DailyLimitDialog";
-// CHANGE END
+import { trackEvent } from "@/integrations/analytics";
 
 interface ScannerScreenProps {
   onBack: () => void;
@@ -63,6 +62,10 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
     }
 
     setIsLoading(true);
+    
+    // Track scan started
+    trackEvent("scan_started", { mode: "image", language: i18n.language });
+    
     try {
       // First, detect all items in the image with retry logic
       const { data, error } = await withRetry(async () => {
@@ -90,6 +93,12 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
           // Check if there are any food items detected
           const hasFoodItems = detectionJson.items && detectionJson.items.length > 0;
           
+          // Track scan completed
+          trackEvent("scan_completed", { 
+            mode: "image", 
+            detectedItems: (detectionJson.items || []).length 
+          });
+          
           // Pass to confirmation screen with flag indicating if no food items found
           onConfirmationNeeded(
             detectionJson.items || [], 
@@ -108,15 +117,18 @@ const ScannerScreen = ({ onBack, onAnalysisComplete, onConfirmationNeeded }: Sca
         throw new Error('Unexpected response format from AI.');
       }
     } catch (error) {
-      // CHANGE START – quota system upgrade: Check for daily limit error
+      // Check for daily limit error
       const errorData = error as any;
       if (errorData?.error?.code === 'DAILY_LIMIT_REACHED' || errorData?.message?.includes('DAILY_LIMIT_REACHED')) {
         console.log('[ScannerScreen] Daily limit reached, showing login dialog');
+        trackEvent("daily_limit_block", { mode: "image" });
         setShowDailyLimitDialog(true);
         setIsLoading(false);
         return;
       }
-      // CHANGE END
+      
+      // Track AI failure
+      trackEvent("error_ai_failure", { mode: "image", error: errorData?.message || 'unknown' });
       
       const appError = ErrorHandler.parseSupabaseError(error, 'handleAnalyze');
       

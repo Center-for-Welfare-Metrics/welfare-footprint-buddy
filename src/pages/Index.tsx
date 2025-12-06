@@ -13,6 +13,7 @@ import DescriptionConfirmationScreen from "@/components/DescriptionConfirmationS
 import TextInputConfirmationScreen from "@/components/TextInputConfirmationScreen";
 import NavigationWrapper from "@/components/NavigationWrapper";
 import { ErrorHandler, withRetry } from "@/lib/errorHandler";
+import { trackEvent } from "@/integrations/analytics";
 
 type Screen = 'home' | 'scanner' | 'confirmation' | 'textConfirmation' | 'descriptionConfirmation' | 'itemSelection' | 'results';
 
@@ -46,6 +47,11 @@ const Index = () => {
 
   // Debug log - no auth redirects should happen on Index page
   console.log('Index page loaded - user:', user?.email || 'not logged in', 'loading:', loading);
+
+  // Track app opened on first render
+  useEffect(() => {
+    trackEvent("app_opened", { source: "web" });
+  }, []);
 
   // Navigate to a new screen and add to history
   const navigateToScreen = (screen: Screen) => {

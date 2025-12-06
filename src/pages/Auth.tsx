@@ -10,6 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
+import { trackEvent } from '@/integrations/analytics';
 
 // Validation schema for authentication
 const authSchema = z.object({
@@ -77,18 +78,22 @@ const Auth = () => {
       const validatedFullName = result.data.fullName || '';
 
       if (isLogin) {
+        trackEvent("login_started");
         const { error } = await signIn(validatedEmail, validatedPassword);
         if (error) {
           toast.error(error.message);
         } else {
+          trackEvent("login_succeeded");
           toast.success('Welcome back!');
           navigate('/');
         }
       } else {
+        trackEvent("signup_started");
         const { error } = await signUp(validatedEmail, validatedPassword, validatedFullName);
         if (error) {
           toast.error(error.message);
         } else {
+          trackEvent("signup_succeeded");
           toast.success('Account created successfully!');
           navigate('/');
         }

@@ -20,3 +20,6 @@ verify_jwt = false
 
 [functions.test-ethical-swap-contextual]
 verify_jwt = false
+
+[functions.log-event]
+verify_jwt = false

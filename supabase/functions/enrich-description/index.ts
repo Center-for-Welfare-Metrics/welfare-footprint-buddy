@@ -90,6 +90,12 @@ serve(async (req) => {
     const data = await response.json();
     const enrichedDescription = data.choices?.[0]?.message?.content?.trim() || description;
 
+    // [EVENT] Log successful enrichment
+    console.log('[EVENT] enrich_completed', { 
+      originalLength: description.length,
+      enrichedLength: enrichedDescription.length
+    });
+
     reqLogger.info('Request completed successfully', { 
       originalLength: description.length,
       enrichedLength: enrichedDescription.length
@@ -100,6 +106,12 @@ serve(async (req) => {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     reqLogger.error('Request failed', { error: errorMessage });
+    
+    // [EVENT] Log AI failure
+    console.error('[EVENT] error_ai_failure', {
+      mode: 'enrich-description',
+      error: errorMessage.slice(0, 200),
+    });
     
     let safeMessage = 'Unable to enrich description. Please try again.';
     

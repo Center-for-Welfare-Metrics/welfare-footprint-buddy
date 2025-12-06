@@ -669,6 +669,13 @@ All suggestions MUST be 100% free from animal-derived products. Only plant-based
         candidates: [{ content: { parts: [{ text: responseText }] } }],
       };
 
+      // [EVENT] Log successful swap suggestion
+      console.log('[EVENT] swap_suggestion_completed', {
+        ethicalLens,
+        suggestionsCount: parsedResponse?.suggestions?.length ?? 0,
+        productName: productName.slice(0, 50),
+      });
+
       console.log("🎉 Ethical swap suggestions generated successfully");
       return new Response(JSON.stringify(data), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -686,8 +693,14 @@ All suggestions MUST be 100% free from animal-derived products. Only plant-based
   } catch (error) {
     console.error("Error in suggest-ethical-swap function:", error);
     
-    // Return safe, user-friendly error message
+    // [EVENT] Log AI failure
     const errorStr = error instanceof Error ? error.message : String(error);
+    console.error('[EVENT] error_ai_failure', {
+      mode: 'suggest-ethical-swap',
+      error: errorStr.slice(0, 200),
+    });
+    
+    // Return safe, user-friendly error message
     let safeMessage = 'Unable to generate ethical alternatives. Please try again.';
     
     if (errorStr.includes('auth') || errorStr.includes('JWT')) {
