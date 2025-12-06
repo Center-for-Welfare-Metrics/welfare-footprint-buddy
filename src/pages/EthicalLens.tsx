@@ -245,7 +245,7 @@ const EthicalLens = () => {
           </div>
           
           {/* Continue Button */}
-          <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-gray-900 via-gray-900 to-transparent">
+          <div className="p-4">
             <div className="max-w-2xl mx-auto">
               <Button
                 onClick={handleContinue}
@@ -270,7 +270,7 @@ const EthicalLens = () => {
           </div>
           
           {/* Disclaimer */}
-          <div className="p-3 bg-gray-800/50 border border-gray-700 text-gray-300 rounded-lg text-center mb-24">
+          <div className="p-3 bg-gray-800/50 border border-gray-700 text-gray-300 rounded-lg text-center">
             <h3 className="font-bold text-sm">{t('results.disclaimer')}</h3>
             <p className="text-xs">
               {t('results.defaultDisclaimer').split('Welfare Footprint Institute').map((part, index, arr) => (
