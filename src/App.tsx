@@ -12,6 +12,7 @@ import About from "./pages/About";
 import SharedResult from "./pages/SharedResult";
 import AdminAnalytics from "./pages/AdminAnalytics";
 import EthicalLens from "./pages/EthicalLens";
+import EthicalAlternatives from "./pages/EthicalAlternatives";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
               <Route path="/share/:shareToken" element={<SharedResult />} />
               <Route path="/admin/analytics" element={<AdminAnalytics />} />
               <Route path="/ethical-lens" element={<EthicalLens />} />
+              <Route path="/ethical-alternatives" element={<EthicalAlternatives />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { HelpCircle, Sparkles, Check, Loader2 } from "lucide-react";
+import { HelpCircle, Sparkles, Check } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { appConfig } from "@/config/app.config";
@@ -10,9 +10,6 @@ import { getEthicalLensFocus, getEthicalLensExamples } from "@/lib/ethicalLensMe
 import { useTranslation } from "react-i18next";
 import { trackEvent } from "@/integrations/analytics";
 import NavigationWrapper from "@/components/NavigationWrapper";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { DailyLimitDialog } from "@/components/DailyLimitDialog";
 
 // Session storage key for ethical lens
 const ETHICAL_LENS_SESSION_KEY = 'ethical_lens_selection';
@@ -27,8 +24,7 @@ interface LensOption {
 const EthicalLens = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { i18n, t } = useTranslation();
-  const { toast } = useToast();
+  const { t } = useTranslation();
   
   // Get passed state from navigation
   const passedState = location.state as { 
@@ -54,10 +50,6 @@ const EthicalLens = () => {
   };
   
   const [selectedLens, setSelectedLens] = useState<number>(getInitialLens);
-  const [ethicalSwaps, setEthicalSwaps] = useState<any[]>([]);
-  const [isLoadingSwaps, setIsLoadingSwaps] = useState(false);
-  const [showAlternatives, setShowAlternatives] = useState(false);
-  const [showDailyLimitDialog, setShowDailyLimitDialog] = useState(false);
   
   // Persist selection to session storage
   useEffect(() => {
@@ -94,116 +86,17 @@ const EthicalLens = () => {
   const handleLensSelect = (lensId: number) => {
     setSelectedLens(lensId);
     trackEvent("ethical_lens_changed", { lens: lensId, source: "dedicated_page" });
-    // Clear alternatives when lens changes
-    setEthicalSwaps([]);
-    setShowAlternatives(false);
-  };
-
-  const handleEthicalSwap = async () => {
-    const productName = passedState?.analysisData?.productName?.value;
-    const animalIngredients = passedState?.analysisData?.animalIngredients?.value;
-    if (!productName || !animalIngredients) return;
-
-    setIsLoadingSwaps(true);
-    setShowAlternatives(true);
-    
-    // Track swap suggestion requested
-    trackEvent("swap_suggestion_requested", { 
-      lens: selectedLens, 
-      productCategory: productName 
-    });
-    
-    try {
-      // Normalize language code (e.g., "en-GB" -> "en")
-      const languageCode = i18n.language.split('-')[0];
-      
-      console.log('🎯 [handleEthicalSwap] Sending request with:', {
-        productName,
-        animalIngredients,
-        ethicalLens: selectedLens,
-        language: languageCode,
-        displayedLens: selectedLens === 1 ? 'Higher-Welfare Omnivore' :
-                       selectedLens === 2 ? 'Lower Consumption' :
-                       selectedLens === 3 ? 'No Slaughter' :
-                       selectedLens === 4 ? 'No Animal Use' : 'Unknown'
-      });
-      
-      const { data: result, error } = await supabase.functions.invoke('suggest-ethical-swap', {
-        body: { 
-          productName,
-          animalIngredients,
-          ethicalLens: selectedLens,
-          language: languageCode
-        }
-      });
-
-      if (error) {
-        console.error('[handleEthicalSwap] Edge function error:', error);
-        throw error;
-      }
-
-      // Check if result contains an error (from the function's error response)
-      if (result?.error) {
-        console.error('[handleEthicalSwap] Function returned error:', result.error);
-        
-        // Handle 422 validation errors differently (non-fatal warnings)
-        if (result.error.violations) {
-          toast({
-            title: "Validation Issue",
-            description: "The AI generated suggestions that don't align with this ethical lens. Please try again.",
-            variant: "default",
-          });
-          return;
-        }
-        
-        throw new Error(result.error.message || result.error);
-      }
-
-      const parsedResult = JSON.parse(result.candidates[0].content.parts[0].text);
-      setEthicalSwaps([parsedResult]);
-      
-      // Track swap suggestion completed
-      trackEvent("swap_suggestion_completed", { 
-        alternativesCount: parsedResult?.suggestions?.length ?? 0 
-      });
-    } catch (error: any) {
-      // Check for daily limit error
-      if (error?.error?.code === 'DAILY_LIMIT_REACHED' || error?.message?.includes('DAILY_LIMIT_REACHED')) {
-        console.log('[EthicalLens] Daily limit reached, showing login dialog');
-        trackEvent("daily_limit_block", { lens: selectedLens });
-        setShowDailyLimitDialog(true);
-        setIsLoadingSwaps(false);
-        return;
-      }
-      
-      console.error('[handleEthicalSwap] Full error:', error);
-      // Improved error messaging for authentication and API issues
-      let errorMessage = "An error occurred";
-      let errorTitle = "Failed to load suggestions";
-      
-      if (error?.message?.includes("401") || error?.message?.includes("Unauthorized")) {
-        errorTitle = "Authentication Error";
-        errorMessage = "There's an issue with your authentication. Please try signing out and signing back in.";
-      } else if (error?.message?.includes("missing sub claim") || error?.message?.includes("bad_jwt")) {
-        errorTitle = "Session Error";
-        errorMessage = "Your session is invalid. Please refresh the page and sign in again.";
-      } else {
-        errorMessage = error?.message || error?.error?.message || "An error occurred";
-      }
-      
-      toast({
-        title: errorTitle,
-        description: errorMessage,
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoadingSwaps(false);
-    }
   };
   
   const handleContinue = () => {
-    // Generate alternatives when button is clicked
-    handleEthicalSwap();
+    // Navigate to alternatives page with all necessary data
+    navigate('/ethical-alternatives', {
+      state: {
+        analysisData: passedState?.analysisData,
+        imageData: passedState?.imageData,
+        selectedLens: selectedLens
+      }
+    });
   };
   
   const handleBack = () => {
@@ -355,7 +248,6 @@ const EthicalLens = () => {
             <div className="max-w-2xl mx-auto">
               <Button
                 onClick={handleContinue}
-                disabled={isLoadingSwaps}
                 className="w-full py-6 text-lg font-bold text-white relative overflow-hidden group"
                 style={{
                   background: `linear-gradient(135deg, ${appConfig.ethicalLens.colors[selectedLens as 1|2|3|4]}, ${appConfig.ethicalLens.colors[selectedLens as 1|2|3|4]}dd)`,
@@ -363,17 +255,8 @@ const EthicalLens = () => {
                 }}
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">
-                  {isLoadingSwaps ? (
-                    <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      {t('results.generatingAlternatives')}
-                    </>
-                  ) : (
-                    <>
-                      Continue to Alternatives
-                      <Sparkles className="w-5 h-5" />
-                    </>
-                  )}
+                  Continue to Alternatives
+                  <Sparkles className="w-5 h-5" />
                 </span>
                 <div 
                   className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -384,102 +267,8 @@ const EthicalLens = () => {
               </Button>
             </div>
           </div>
-          
-          {/* Disclaimer */}
-          <div className="p-3 bg-gray-800/50 border border-gray-700 text-gray-300 rounded-lg text-center mb-8">
-            <h3 className="font-bold text-sm">{t('results.disclaimer')}</h3>
-            <p className="text-xs">
-              {t('results.defaultDisclaimer').split('Welfare Footprint Institute').map((part, index, arr) => (
-                index < arr.length - 1 ? (
-                  <span key={index}>
-                    {part}
-                    <a 
-                      href="https://welfarefootprint.org" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-emerald-400 hover:text-emerald-300 underline"
-                    >
-                      Welfare Footprint Institute
-                    </a>
-                  </span>
-                ) : part
-              ))}
-            </p>
-          </div>
-
-          {/* Ethical Alternatives Section - Shows when swaps are loaded or loading */}
-          {showAlternatives && (
-            <div className="mt-6 border-t border-gray-700 pt-4">
-              <div className="flex items-center gap-2 mb-3">
-                <h3 className="font-bold text-emerald-400">{t('results.alternatives')}</h3>
-                <span 
-                  className="text-sm font-medium"
-                  style={{ color: appConfig.ethicalLens.colors[selectedLens as 1|2|3|4] }}
-                >
-                  {selectedLens === 1 ? t('ethicalLens.persona1') :
-                   selectedLens === 2 ? t('ethicalLens.persona2') :
-                   selectedLens === 3 ? t('ethicalLens.persona3') :
-                   t('ethicalLens.persona4')}
-                </span>
-              </div>
-
-              {isLoadingSwaps ? (
-                <div className="flex items-center justify-center p-8 bg-gray-800/30 rounded-lg border border-gray-700">
-                  <Loader2 className="h-6 w-6 animate-spin text-emerald-400 mr-3" />
-                  <span className="text-gray-300">{t('results.generatingAlternatives')}</span>
-                </div>
-              ) : ethicalSwaps[0]?.suggestions?.length > 0 ? (
-                <>
-                  <div className="space-y-3">
-                    {ethicalSwaps[0].suggestions.map((swap: any, idx: number) => (
-                      <Card key={idx} className="p-4 bg-gray-800/50 border-gray-700">
-                        <div className="flex gap-3">
-                          <Sparkles className="h-5 w-5 text-yellow-400 flex-shrink-0 mt-0.5" />
-                          <div className="flex-1">
-                            <h4 className="font-semibold text-white mb-1">{swap.name}</h4>
-                            <p className="text-sm text-gray-300 mb-2">{swap.description}</p>
-                            <div className="space-y-1">
-                              <p className="text-xs text-gray-400">
-                                <span className="font-medium text-emerald-400">{t('results.reasoning')}:</span> {swap.reasoning}
-                              </p>
-                              <p className="text-xs text-gray-400">
-                                <span className="font-medium text-emerald-400">{t('results.availability')}:</span> {swap.availability}
-                              </p>
-                              <p className="text-xs text-gray-400">
-                                <span className="font-medium text-emerald-400">{t('results.confidence')}:</span> {swap.confidence}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-
-                  {ethicalSwaps[0].generalNote && (
-                    <div className="mt-3 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-                      <p className="text-blue-200 text-xs">
-                        <strong>Note:</strong> {ethicalSwaps[0].generalNote}
-                      </p>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <div className="text-center p-4 bg-gray-800/30 rounded-lg border border-gray-700">
-                  <p className="text-gray-400 text-sm">
-                    {t('results.noAlternativesGenerated')}
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
         </div>
       </div>
-
-      {/* Daily limit dialog */}
-      <DailyLimitDialog 
-        open={showDailyLimitDialog} 
-        onOpenChange={setShowDailyLimitDialog}
-      />
     </NavigationWrapper>
   );
 };
