@@ -183,7 +183,10 @@ const EthicalAlternatives = () => {
                 {ethicalSwaps[0].suggestions.map((swap: any, idx: number) => (
                   <Card key={idx} className="p-4 bg-gray-800/50 border-gray-700">
                     <div className="flex gap-3">
-                      <Sparkles className="h-5 w-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+                      <Sparkles 
+                        className="h-5 w-5 flex-shrink-0 mt-0.5" 
+                        style={{ color: appConfig.ethicalLens.colors[selectedLens as 1|2|3|4] }}
+                      />
                       <div className="flex-1">
                         <h4 className="font-semibold text-white mb-1">{swap.name}</h4>
                         <p className="text-sm text-gray-300 mb-2">{swap.description}</p>
