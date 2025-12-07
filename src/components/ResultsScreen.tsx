@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, HelpCircle, AlertCircle, Share2, Check, Copy, Sparkles } from "lucide-react";
+import { Loader2, HelpCircle, AlertCircle, Share2, Check, Copy, Sparkles, Compass } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -444,46 +444,10 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
               }}
             >
               <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
-              <span className="relative z-10 flex flex-col items-center justify-center gap-3">
-                {/* Custom Stylized Compass Icon */}
-                <svg 
-                  width="48" 
-                  height="48" 
-                  viewBox="0 0 48 48" 
-                  fill="none" 
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="drop-shadow-[0_0_12px_rgba(255,255,255,0.5)] group-hover:drop-shadow-[0_0_18px_rgba(255,255,255,0.7)] transition-all duration-300"
-                >
-                  {/* Outer ring with glow */}
-                  <circle cx="24" cy="24" r="21" stroke="currentColor" strokeWidth="2.5" opacity="0.9" />
-                  <circle cx="24" cy="24" r="18" stroke="currentColor" strokeWidth="1" opacity="0.4" />
-                  
-                  {/* Cardinal direction markers */}
-                  <line x1="24" y1="5" x2="24" y2="10" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
-                  <line x1="24" y1="38" x2="24" y2="43" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
-                  <line x1="5" y1="24" x2="10" y2="24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
-                  <line x1="38" y1="24" x2="43" y2="24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" opacity="0.7" />
-                  
-                  {/* Compass needle - North (bright) */}
-                  <polygon 
-                    points="24,8 28,24 24,20 20,24" 
-                    fill="currentColor" 
-                    opacity="1"
-                  />
-                  {/* Compass needle - South (dimmer) */}
-                  <polygon 
-                    points="24,40 28,24 24,28 20,24" 
-                    fill="currentColor" 
-                    opacity="0.4"
-                  />
-                  
-                  {/* Center dot with glow effect */}
-                  <circle cx="24" cy="24" r="3" fill="currentColor" opacity="0.9" />
-                  <circle cx="24" cy="24" r="1.5" fill="white" opacity="0.8" />
-                </svg>
-                
-                <span className="flex items-center gap-1.5 text-base">
-                  <Sparkles className="w-4 h-4" />
+              <span className="relative z-10 flex flex-col items-center justify-center gap-1.5">
+                <Compass className="w-6 h-6 drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]" />
+                <span className="flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5" />
                   {t('ethicalLens.title')}
                 </span>
               </span>
