@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Card } from "@/components/ui/card";
-import { Sparkles, Loader2 } from "lucide-react";
+import { Sparkles, Loader2, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { appConfig } from "@/config/app.config";
 import { useTranslation } from "react-i18next";
 import { trackEvent } from "@/integrations/analytics";
@@ -220,7 +221,7 @@ const EthicalAlternatives = () => {
           )}
 
           {/* Disclaimer - Only shown on this page */}
-          <div className="p-3 bg-gray-800/50 border border-gray-700 text-gray-300 rounded-lg text-center">
+          <div className="p-3 bg-gray-800/50 border border-gray-700 text-gray-300 rounded-lg text-center mb-6">
             <h3 className="font-bold text-sm">{t('results.disclaimer')}</h3>
             <p className="text-xs">
               {t('results.defaultDisclaimer').split('Welfare Footprint Institute').map((part, index, arr) => (
@@ -240,6 +241,16 @@ const EthicalAlternatives = () => {
               ))}
             </p>
           </div>
+
+          {/* Check Other Lens Button */}
+          <Button
+            variant="outline"
+            onClick={handleBack}
+            className="w-full border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            {t('ethicalLens.checkOtherLens', 'Check Other Ethical Lens Alternatives')}
+          </Button>
         </div>
       </div>
 
