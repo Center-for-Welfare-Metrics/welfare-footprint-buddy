@@ -3,8 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, HelpCircle, AlertCircle, Share2, Check, Copy, Sparkles } from "lucide-react";
-import CompassIcon from "@/components/icons/CompassIcon";
+import { Loader2, HelpCircle, AlertCircle, Share2, Check, Copy, Sparkles, Compass } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -446,7 +445,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
             >
               <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
               <span className="relative z-10 flex flex-col items-center justify-center gap-1.5">
-                <CompassIcon size={28} className="drop-shadow-[0_0_8px_rgba(94,234,212,0.6)]" />
+                <Compass className="w-6 h-6 drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]" />
                 <span className="flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5" />
                   {t('ethicalLens.title')}
