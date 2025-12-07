@@ -446,7 +446,7 @@ const ResultsScreen = ({ data, onNewScan, imageData, onReanalyze, onBackToItems,
             >
               <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
               <span className="relative z-10 flex flex-col items-center justify-center gap-2">
-                <StylizedCompass className="w-12 h-12 text-white" glowColor="rgba(255,255,255,0.5)" />
+                <StylizedCompass className="w-24 h-24 text-white" glowColor="rgba(255,255,255,0.7)" />
                 <span className="flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5" />
                   {t('ethicalLens.title')}
