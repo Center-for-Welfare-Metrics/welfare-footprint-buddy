@@ -25,16 +25,26 @@ export type AnalyticsEventType =
 
 export type AnalyticsProperties = Record<string, unknown>;
 
+// Study event fields for enrolled participants
+export interface StudyEventFields {
+  participant_id?: string;
+  participant_code?: string;
+  treatment_group?: string;
+  study_version?: string;
+}
+
 /**
  * Track an analytics event. This function is fire-and-forget -
  * it will never block UI or throw errors.
  * 
  * @param eventType - The type of event to track
  * @param properties - Optional properties to attach to the event
+ * @param studyFields - Optional study participant fields for enrolled users
  */
 export async function trackEvent(
   eventType: AnalyticsEventType,
-  properties: AnalyticsProperties = {}
+  properties: AnalyticsProperties = {},
+  studyFields: StudyEventFields = {}
 ): Promise<void> {
   try {
     // Use supabase.functions.invoke for proper auth header forwarding
@@ -42,6 +52,7 @@ export async function trackEvent(
       body: {
         eventType,
         properties,
+        ...studyFields,
       },
     });
   } catch (_err) {

@@ -26,3 +26,18 @@ verify_jwt = false
 
 [functions.log-event]
 verify_jwt = false
+
+[functions.study-enroll]
+verify_jwt = true
+
+[functions.study-withdraw]
+verify_jwt = true
+
+[functions.study-complete]
+verify_jwt = true
+
+[functions.study-anonymize]
+verify_jwt = true
+
+[functions.study-export]
+verify_jwt = true
