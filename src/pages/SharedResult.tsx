@@ -8,6 +8,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { appConfig } from "@/config/app.config";
+import NavigationWrapper from "@/components/NavigationWrapper";
 
 const SharedResult = () => {
   const { shareToken } = useParams<{ shareToken: string }>();
@@ -138,32 +139,40 @@ const SharedResult = () => {
     }
   };
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-emerald-900 to-gray-900 flex items-center justify-center p-4">
-        <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-emerald-400 mx-auto mb-4" />
-          <p className="text-white">Loading shared result...</p>
+      <NavigationWrapper onBack={handleBack}>
+        <div className="bg-gradient-to-br from-gray-900 via-emerald-900 to-gray-900 flex items-center justify-center p-4 min-h-[calc(100vh-80px)]">
+          <div className="text-center">
+            <Loader2 className="h-12 w-12 animate-spin text-emerald-400 mx-auto mb-4" />
+            <p className="text-white">Loading shared result...</p>
+          </div>
         </div>
-      </div>
+      </NavigationWrapper>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-emerald-900 to-gray-900 flex items-center justify-center p-4">
-        <div className="max-w-md w-full glass-card rounded-2xl p-8 text-center">
-          <AlertCircle className="h-16 w-16 text-red-400 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-white mb-2">Unable to Load Result</h1>
-          <p className="text-gray-300 mb-6">{error}</p>
-          <Button
-            onClick={() => navigate('/')}
-            className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
-          >
-            Go to Home
-          </Button>
+      <NavigationWrapper onBack={handleBack}>
+        <div className="bg-gradient-to-br from-gray-900 via-emerald-900 to-gray-900 flex items-center justify-center p-4 min-h-[calc(100vh-80px)]">
+          <div className="max-w-md w-full glass-card rounded-2xl p-8 text-center">
+            <AlertCircle className="h-16 w-16 text-red-400 mx-auto mb-4" />
+            <h1 className="text-2xl font-bold text-white mb-2">Unable to Load Result</h1>
+            <p className="text-gray-300 mb-6">{error}</p>
+            <Button
+              onClick={() => navigate('/')}
+              className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold"
+            >
+              Go to Home
+            </Button>
+          </div>
         </div>
-      </div>
+      </NavigationWrapper>
     );
   }
 
@@ -174,8 +183,9 @@ const SharedResult = () => {
   const ethicalLensValue = analysisData?.ethicalLensValue || appConfig.ethicalLens.defaultValue;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-emerald-900 to-gray-900 p-4">
-      <div className="container mx-auto max-w-lg">
+    <NavigationWrapper onBack={handleBack}>
+      <div className="bg-gradient-to-br from-gray-900 via-emerald-900 to-gray-900 p-4">
+        <div className="container mx-auto max-w-lg">
         {isTemporary && hoursRemaining !== null && (
           <Alert className="mb-4 border-amber-500/50 bg-amber-500/10">
             <Clock className="h-4 w-4 text-amber-400" />
@@ -370,14 +380,15 @@ const SharedResult = () => {
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="mt-6 text-center">
-          <p className="text-xs text-gray-500">
-            Powered by Welfare Footprint Institute
-          </p>
+          {/* Footer */}
+          <div className="mt-6 text-center">
+            <p className="text-xs text-gray-500">
+              Powered by Welfare Footprint Institute
+            </p>
+          </div>
         </div>
       </div>
-    </div>
+    </NavigationWrapper>
   );
 };
 

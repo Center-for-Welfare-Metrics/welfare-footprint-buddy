@@ -572,9 +572,6 @@ const Index = () => {
     handleBack();
   };
 
-  // Determine if Home icon should be shown
-  const showHomeIcon = currentScreen !== 'home' && currentScreen !== 'scanner';
-
   return (
     <div className="container mx-auto max-w-4xl px-4">
       {currentScreen === 'home' && (
@@ -586,8 +583,6 @@ const Index = () => {
       {currentScreen === 'scanner' && (
         <NavigationWrapper 
           onBack={handleBack}
-          onHome={handleGoHome}
-          showHome={showHomeIcon}
           isProcessing={isAnalyzingItem}
         >
           <div className="p-4">
@@ -603,8 +598,6 @@ const Index = () => {
       {currentScreen === 'textConfirmation' && (
         <NavigationWrapper 
           onBack={handleBack}
-          onHome={handleGoHome}
-          showHome={showHomeIcon}
           isProcessing={isAnalyzingItem}
         >
           <div className="p-4">
@@ -620,8 +613,6 @@ const Index = () => {
       {currentScreen === 'descriptionConfirmation' && (
         <NavigationWrapper 
           onBack={handleBack}
-          onHome={handleGoHome}
-          showHome={showHomeIcon}
           isProcessing={isAnalyzingItem}
         >
           <div className="p-4">
@@ -639,8 +630,6 @@ const Index = () => {
       {currentScreen === 'itemSelection' && (
         <NavigationWrapper 
           onBack={handleBack}
-          onHome={handleGoHome}
-          showHome={showHomeIcon}
           isProcessing={isAnalyzingItem}
         >
           <div className="p-4">
@@ -660,8 +649,6 @@ const Index = () => {
       {currentScreen === 'results' && analysisData && (
         <NavigationWrapper 
           onBack={handleBack}
-          onHome={handleGoHome}
-          showHome={showHomeIcon}
           isProcessing={isAnalyzingItem}
         >
           <div className="p-4">

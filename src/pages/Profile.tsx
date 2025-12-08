@@ -6,12 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { ArrowLeft, Download, Trash2, LogOut } from 'lucide-react';
+import { Download, LogOut } from 'lucide-react';
 import ScanHistory from '@/components/profile/ScanHistory';
 import PreferencesSettings from '@/components/profile/PreferencesSettings';
 import PrivacyControls from '@/components/profile/PrivacyControls';
 import ProgressInsights from '@/components/profile/ProgressInsights';
 import { SubscriptionManagement } from '@/components/profile/SubscriptionManagement';
+import NavigationWrapper from '@/components/NavigationWrapper';
 
 const Profile = () => {
   const { user, signOut } = useAuth();
@@ -74,22 +75,23 @@ const Profile = () => {
     navigate('/');
   };
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   if (!user) return null;
 
   return (
-    <div className="container mx-auto p-4 max-w-4xl min-h-screen">
-      <div className="mb-6 flex items-center justify-between">
-        <Button variant="ghost" onClick={() => navigate('/')} className="text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Home
-        </Button>
-        <Button variant="ghost" onClick={handleSignOut} className="text-muted-foreground hover:text-foreground">
-          <LogOut className="mr-2 h-4 w-4" />
-          Sign Out
-        </Button>
-      </div>
+    <NavigationWrapper onBack={handleBack}>
+      <div className="container mx-auto p-4 max-w-4xl">
+        <div className="mb-6 flex justify-end">
+          <Button variant="ghost" onClick={handleSignOut} className="text-muted-foreground hover:text-foreground">
+            <LogOut className="mr-2 h-4 w-4" />
+            Sign Out
+          </Button>
+        </div>
 
-      <Card className="mb-6 bg-card border-border">
+        <Card className="mb-6 bg-card border-border">
         <CardHeader>
           <CardTitle className="text-foreground">Your Profile</CardTitle>
           <CardDescription className="text-muted-foreground">{user.email}</CardDescription>
@@ -129,9 +131,10 @@ const Profile = () => {
 
         <TabsContent value="privacy">
           <PrivacyControls userId={user.id} />
-        </TabsContent>
-      </Tabs>
-    </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </NavigationWrapper>
   );
 };
 

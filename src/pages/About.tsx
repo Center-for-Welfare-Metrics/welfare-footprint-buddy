@@ -1,10 +1,13 @@
-import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
+import NavigationWrapper from "@/components/NavigationWrapper";
 
 const About = () => {
   const navigate = useNavigate();
+  
+  const handleBack = () => {
+    navigate(-1);
+  };
   
   const content = `## About the Welfare Footprint App
 
@@ -33,18 +36,10 @@ This app is part of a broader mission to make animal suffering — often invisib
 We welcome feedback from users, researchers, and developers to continue improving its accuracy, clarity, and usability.`;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-background/80 p-4">
-      <div className="container mx-auto max-w-3xl">
-        <Button
-          variant="ghost"
-          onClick={() => navigate("/")}
-          className="mb-6 text-white/70 hover:text-white"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Home
-        </Button>
-
-        <div className="glass-card rounded-2xl p-8 space-y-8">
+    <NavigationWrapper onBack={handleBack}>
+      <div className="bg-gradient-to-b from-background to-background/80 p-4">
+        <div className="container mx-auto max-w-3xl">
+          <div className="glass-card rounded-2xl p-8 space-y-8">
           <div className="prose prose-invert max-w-none">
             <ReactMarkdown
               components={{
@@ -82,11 +77,12 @@ We welcome feedback from users, researchers, and developers to continue improvin
               }}
             >
               {content}
-            </ReactMarkdown>
+              </ReactMarkdown>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </NavigationWrapper>
   );
 };
 
