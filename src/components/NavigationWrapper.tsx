@@ -1,28 +1,30 @@
 import { Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 interface NavigationWrapperProps {
   children: React.ReactNode;
   onBack?: () => void;
-  onHome?: () => void;
-  showHome?: boolean;
   isProcessing?: boolean;
 }
 
 const NavigationWrapper = ({ 
   children, 
   onBack, 
-  onHome, 
-  showHome = false,
   isProcessing = false 
 }: NavigationWrapperProps) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  const handleGoHome = () => {
+    navigate('/');
+  };
 
   return (
     <div className="min-h-screen flex flex-col animate-fade-in">
       {/* Top Navigation Bar */}
-      <nav className="flex items-center justify-between p-4 max-w-6xl mx-auto w-full">
+      <nav className="sticky top-0 z-50 flex items-center justify-between p-4 max-w-6xl mx-auto w-full bg-background/80 backdrop-blur-sm">
         {/* Back Button */}
         <div className="flex-1">
           {onBack && (
@@ -36,20 +38,18 @@ const NavigationWrapper = ({
           )}
         </div>
 
-        {/* Home Icon - Right aligned */}
+        {/* Home Icon - Always visible, right aligned */}
         <div className="flex-shrink-0">
-          {showHome && onHome && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onHome}
-              disabled={isProcessing}
-              className="text-emerald-400 hover:bg-emerald-400/10 transition-all duration-200"
-              aria-label={t('common.home', 'Return to Home')}
-            >
-              <Home className="h-5 w-5" />
-            </Button>
-          )}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleGoHome}
+            disabled={isProcessing}
+            className="text-emerald-400 hover:bg-emerald-400/10 transition-all duration-200"
+            aria-label={t('common.home', 'Return to Home')}
+          >
+            <Home className="h-5 w-5" />
+          </Button>
         </div>
       </nav>
 

@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
 import { trackEvent } from '@/integrations/analytics';
+import NavigationWrapper from '@/components/NavigationWrapper';
 
 // Validation schema for authentication
 const authSchema = z.object({
@@ -176,9 +177,14 @@ const Auth = () => {
     }
   };
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <Card className="w-full max-w-md bg-card border-border">
+    <NavigationWrapper onBack={handleBack}>
+      <div className="flex items-center justify-center p-4 min-h-[calc(100vh-80px)]">
+        <Card className="w-full max-w-md bg-card border-border">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center text-foreground">
             {isRecoveryMode 
@@ -337,8 +343,9 @@ const Auth = () => {
             </div>
           )}
         </CardContent>
-      </Card>
-    </div>
+        </Card>
+      </div>
+    </NavigationWrapper>
   );
 };
 
