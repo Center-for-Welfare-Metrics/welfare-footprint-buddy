@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { HelpCircle, Sparkles, Check } from "lucide-react";
+import { HelpCircle, Sparkles, Check, Info, Lightbulb } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { appConfig } from "@/config/app.config";
-import { getEthicalLensFocus, getEthicalLensExamples } from "@/lib/ethicalLensMessaging";
+import { getEthicalLensFocus, getEthicalLensExamples, getEthicalLensPermits, getEthicalLensFurtherGuidance } from "@/lib/ethicalLensMessaging";
 import { useTranslation } from "react-i18next";
 import { trackEvent } from "@/integrations/analytics";
 import NavigationWrapper from "@/components/NavigationWrapper";
@@ -241,6 +241,51 @@ const EthicalLens = () => {
                 </div>
               </Card>
             ))}
+          </div>
+
+          {/* Selected Lens Information Panel */}
+          <div 
+            className="mb-8 p-4 rounded-lg border animate-fade-in"
+            style={{
+              backgroundColor: `${appConfig.ethicalLens.colors[selectedLens as 1|2|3|4]}10`,
+              borderColor: `${appConfig.ethicalLens.colors[selectedLens as 1|2|3|4]}40`
+            }}
+          >
+            {/* What this lens permits */}
+            <div className="flex items-start gap-3 mb-4">
+              <Info 
+                className="w-5 h-5 flex-shrink-0 mt-0.5" 
+                style={{ color: appConfig.ethicalLens.colors[selectedLens as 1|2|3|4] }}
+              />
+              <div>
+                <h4 
+                  className="font-semibold text-sm mb-1"
+                  style={{ color: appConfig.ethicalLens.colors[selectedLens as 1|2|3|4] }}
+                >
+                  What this lens allows
+                </h4>
+                <p className="text-sm text-gray-300 leading-relaxed">
+                  {getEthicalLensPermits(selectedLens)}
+                </p>
+              </div>
+            </div>
+
+            {/* Optional further guidance */}
+            {getEthicalLensFurtherGuidance(selectedLens) && (
+              <div className="flex items-start gap-3 pt-3 border-t border-gray-700/50">
+                <Lightbulb 
+                  className="w-5 h-5 flex-shrink-0 mt-0.5 text-amber-400/80" 
+                />
+                <div>
+                  <h4 className="font-semibold text-sm mb-1 text-amber-400/90">
+                    Want to go further? (Optional)
+                  </h4>
+                  <p className="text-sm text-gray-400 leading-relaxed">
+                    {getEthicalLensFurtherGuidance(selectedLens)}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
           
           {/* Continue Button */}

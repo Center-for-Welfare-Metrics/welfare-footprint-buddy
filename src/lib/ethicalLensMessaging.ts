@@ -15,6 +15,10 @@ interface EthicalLensGuidance {
   examples: string[];
   tone: string;
   uiHint: string;
+  /** What this lens explicitly permits */
+  permits: string;
+  /** Optional guidance for users who want stricter standards */
+  furtherGuidance?: string;
 }
 
 const ETHICAL_LENS_GUIDANCE: Record<number, EthicalLensGuidance> = {
@@ -26,7 +30,9 @@ const ETHICAL_LENS_GUIDANCE: Record<number, EthicalLensGuidance> = {
       "For meat or eggs, prioritize smaller-scale or transparent farms with clear welfare documentation."
     ],
     tone: "Practical and compassionate — encourages improvement without moral judgment.",
-    uiHint: "Display welfare labels or trusted certification logos near this section."
+    uiHint: "Display welfare labels or trusted certification logos near this section.",
+    permits: "This lens allows all animal products (meat, fish, dairy, eggs, honey) as long as they come from higher-welfare, certified sources.",
+    furtherGuidance: "For even greater welfare improvements, consider reducing consumption frequency or choosing pasture-raised and slow-growing breeds."
   },
   2: { // Reducetarian (Lower Consumption)
     focus: "Reduce frequency (e.g., fewer meals per week) while choosing higher-welfare sources for remaining use. Partial plant-based substitution allowed when reduction context is explicit.",
@@ -37,17 +43,21 @@ const ETHICAL_LENS_GUIDANCE: Record<number, EthicalLensGuidance> = {
       "Lowering frequency means fewer animals bred into intensive systems."
     ],
     tone: "Practical and progress-oriented — emphasizes both reduction and welfare improvement.",
-    uiHint: "Highlight reduction strategies, welfare certifications, and partial substitution options."
+    uiHint: "Highlight reduction strategies, welfare certifications, and partial substitution options.",
+    permits: "This lens allows all animal products, but prioritizes eating them less often while choosing higher-welfare sources when you do.",
+    furtherGuidance: "To further reduce animal suffering, aim for meatless days several times per week, or explore fully plant-based meals for greater impact."
   },
-  3: { // Flexitarian (Mostly Plant-Based)
-    focus: "Adopt a primarily plant-based diet while allowing occasional humane-source animal products.",
+  3: { // No Slaughter (Vegetarian)
+    focus: "Avoid products that require animal slaughter. Dairy, eggs, and honey are acceptable.",
     examples: [
-      "Make plant foods the default; include limited dairy, eggs, or fish from certified sources.",
-      "Recognize that even 'humane' systems involve harm (e.g., calf separation, slaughter).",
-      "Emphasize practicality and continuous harm reduction rather than strict elimination."
+      "Choose plant-based proteins like tofu, tempeh, seitan, legumes, or mushrooms as primary protein sources.",
+      "Dairy, eggs, and honey are acceptable — preferably from humane-certified or pasture-raised sources.",
+      "Avoid all meat, poultry, fish, and seafood, as these require slaughter."
     ],
-    tone: "Encouraging and progress-oriented — emphasizes balanced steps rather than elimination.",
-    uiHint: "Include sliders or visual indicators showing reduced animal content."
+    tone: "Encouraging and inclusive — celebrates the choice to avoid slaughter while remaining practical.",
+    uiHint: "Highlight vegetarian alternatives and certified humane dairy/egg options.",
+    permits: "This lens allows dairy, eggs, and honey, as long as no slaughter is involved. Meat, fish, and seafood are excluded.",
+    furtherGuidance: "For even greater welfare improvements, choose humane-certified, organic, or pasture-raised dairy and eggs — or explore fully plant-based alternatives when convenient."
   },
   4: { // No Animal Use (Vegan)
     focus: "This option is for people who want to avoid using animals altogether in their food choices. It focuses on meals and products that do not contain meat, fish, eggs, dairy, honey, gelatin, or any other animal-derived ingredients.",
@@ -57,9 +67,11 @@ const ETHICAL_LENS_GUIDANCE: Record<number, EthicalLensGuidance> = {
       "Use this lens to explore recipes and products that are fully compatible with a vegan pattern of consumption, while still aiming for practicality, taste, and good nutrition."
     ],
     tone: "Inspiring and future-focused — celebrates innovation and compassion.",
-    uiHint: "Show plant-based brands or product swaps directly beneath the explanation."
+    uiHint: "Show plant-based brands or product swaps directly beneath the explanation.",
+    permits: "This lens excludes all animal-derived products: no meat, fish, dairy, eggs, honey, gelatin, or any animal by-products.",
+    furtherGuidance: "You're already at the highest level of animal-product avoidance. To go further, consider supporting animal sanctuaries or advocating for plant-based options in your community."
   },
-  5: { // Vegan (No Animal Use)
+  5: { // Legacy - Vegan (No Animal Use)
     focus: "Avoid all animal-derived products in food, clothing, and daily life.",
     examples: [
       "No funding of breeding, confinement, or animal use — the most consistent stance.",
@@ -67,7 +79,9 @@ const ETHICAL_LENS_GUIDANCE: Record<number, EthicalLensGuidance> = {
       "Verify vegan certifications (e.g., Vegan Society, Certified Plant-Based) to ensure no hidden animal derivatives."
     ],
     tone: "Inspiring and future-focused — celebrates innovation and compassion.",
-    uiHint: "Show plant-based brands or product swaps directly beneath the explanation."
+    uiHint: "Show plant-based brands or product swaps directly beneath the explanation.",
+    permits: "This lens excludes all animal-derived products.",
+    furtherGuidance: "Consider extending your ethical choices to non-food products like clothing and cosmetics."
   }
 };
 
@@ -89,6 +103,26 @@ export function getEthicalLensFocus(level: number): string {
 export function getEthicalLensExamples(level: number): string[] {
   const guidance = ETHICAL_LENS_GUIDANCE[level];
   return guidance?.examples || [];
+}
+
+/**
+ * Gets what a specific ethical lens permits
+ * @param level - Ethical lens level (1-4)
+ * @returns Description of what the lens permits
+ */
+export function getEthicalLensPermits(level: number): string {
+  const guidance = ETHICAL_LENS_GUIDANCE[level];
+  return guidance?.permits || "";
+}
+
+/**
+ * Gets optional further guidance for users who want stricter standards
+ * @param level - Ethical lens level (1-4)
+ * @returns Optional further guidance string
+ */
+export function getEthicalLensFurtherGuidance(level: number): string | undefined {
+  const guidance = ETHICAL_LENS_GUIDANCE[level];
+  return guidance?.furtherGuidance;
 }
 
 /**
