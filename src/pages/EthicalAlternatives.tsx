@@ -173,7 +173,7 @@ const EthicalAlternatives = () => {
 
           {/* Alternatives Content */}
           {isLoadingSwaps ? (
-            <div className="flex items-center justify-center p-8 bg-gray-800/30 rounded-lg border border-gray-700">
+            <div className="flex items-center justify-center p-8 bg-gray-800/30 rounded-lg border border-gray-700 mb-6">
               <Loader2 className="h-6 w-6 animate-spin text-emerald-400 mr-3" />
               <span className="text-gray-300">{t('results.generatingAlternatives')}</span>
             </div>
