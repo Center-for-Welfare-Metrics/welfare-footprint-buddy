@@ -393,13 +393,65 @@ export type Database = {
         }
         Relationships: []
       }
+      study_participants: {
+        Row: {
+          anonymized_at: string | null
+          completed_at: string | null
+          consent_given_at: string
+          contact_opt_in: boolean
+          created_at: string | null
+          enrolled_at: string
+          id: string
+          participant_code: string
+          study_status: string
+          study_version: string
+          treatment_group: string
+          user_id: string | null
+          withdrawn_at: string | null
+        }
+        Insert: {
+          anonymized_at?: string | null
+          completed_at?: string | null
+          consent_given_at?: string
+          contact_opt_in?: boolean
+          created_at?: string | null
+          enrolled_at?: string
+          id?: string
+          participant_code: string
+          study_status?: string
+          study_version?: string
+          treatment_group: string
+          user_id?: string | null
+          withdrawn_at?: string | null
+        }
+        Update: {
+          anonymized_at?: string | null
+          completed_at?: string | null
+          consent_given_at?: string
+          contact_opt_in?: boolean
+          created_at?: string | null
+          enrolled_at?: string
+          id?: string
+          participant_code?: string
+          study_status?: string
+          study_version?: string
+          treatment_group?: string
+          user_id?: string | null
+          withdrawn_at?: string | null
+        }
+        Relationships: []
+      }
       user_events: {
         Row: {
           event_properties: Json | null
           event_type: string
           id: string
           ip_hash: string | null
+          participant_code: string | null
+          participant_id: string | null
+          study_version: string | null
           timestamp: string
+          treatment_group: string | null
           user_agent: string | null
           user_id: string | null
         }
@@ -408,7 +460,11 @@ export type Database = {
           event_type: string
           id?: string
           ip_hash?: string | null
+          participant_code?: string | null
+          participant_id?: string | null
+          study_version?: string | null
           timestamp?: string
+          treatment_group?: string | null
           user_agent?: string | null
           user_id?: string | null
         }
@@ -417,11 +473,23 @@ export type Database = {
           event_type?: string
           id?: string
           ip_hash?: string | null
+          participant_code?: string | null
+          participant_id?: string | null
+          study_version?: string | null
           timestamp?: string
+          treatment_group?: string | null
           user_agent?: string | null
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "user_events_participant_id_fkey"
+            columns: ["participant_id"]
+            isOneToOne: false
+            referencedRelation: "study_participants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_preferences: {
         Row: {

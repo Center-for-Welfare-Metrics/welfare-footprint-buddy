@@ -48,7 +48,15 @@ serve(async (req) => {
 
   try {
     const body = await req.json();
-    const { eventType, properties } = body;
+    const { 
+      eventType, 
+      properties,
+      // Study fields (only for enrolled participants)
+      participant_id,
+      participant_code,
+      treatment_group,
+      study_version,
+    } = body;
 
     // Validate eventType
     if (!eventType || typeof eventType !== 'string') {
@@ -79,16 +87,27 @@ serve(async (req) => {
 
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+    // Build event record
+    const eventRecord: Record<string, unknown> = {
+      user_id: userId,
+      ip_hash: ipHash,
+      event_type: eventType,
+      event_properties: properties ?? null,
+      user_agent: userAgent,
+    };
+
+    // Add study fields only if participant_id is provided (enrolled active participant)
+    if (participant_id) {
+      eventRecord.participant_id = participant_id;
+      eventRecord.participant_code = participant_code;
+      eventRecord.treatment_group = treatment_group;
+      eventRecord.study_version = study_version;
+    }
+
     // Insert event into user_events table
     const { error } = await supabase
       .from('user_events')
-      .insert({
-        user_id: userId,
-        ip_hash: ipHash,
-        event_type: eventType,
-        event_properties: properties ?? null,
-        user_agent: userAgent,
-      });
+      .insert(eventRecord);
 
     if (error) {
       console.error('[log-event] Database insert error:', error.message);

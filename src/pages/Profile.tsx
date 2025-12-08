@@ -12,6 +12,7 @@ import PreferencesSettings from '@/components/profile/PreferencesSettings';
 import PrivacyControls from '@/components/profile/PrivacyControls';
 import ProgressInsights from '@/components/profile/ProgressInsights';
 import { SubscriptionManagement } from '@/components/profile/SubscriptionManagement';
+import StudyParticipation from '@/components/profile/StudyParticipation';
 import NavigationWrapper from '@/components/NavigationWrapper';
 
 const Profile = () => {
@@ -105,11 +106,12 @@ const Profile = () => {
       </Card>
 
       <Tabs defaultValue="scans" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-5 bg-muted">
-          <TabsTrigger value="scans" className="text-muted-foreground data-[state=active]:text-foreground">Scan History</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-6 bg-muted">
+          <TabsTrigger value="scans" className="text-muted-foreground data-[state=active]:text-foreground">History</TabsTrigger>
           <TabsTrigger value="insights" className="text-muted-foreground data-[state=active]:text-foreground">Insights</TabsTrigger>
-          <TabsTrigger value="subscription" className="text-muted-foreground data-[state=active]:text-foreground">Subscription</TabsTrigger>
-          <TabsTrigger value="preferences" className="text-muted-foreground data-[state=active]:text-foreground">Preferences</TabsTrigger>
+          <TabsTrigger value="subscription" className="text-muted-foreground data-[state=active]:text-foreground">Plan</TabsTrigger>
+          <TabsTrigger value="preferences" className="text-muted-foreground data-[state=active]:text-foreground">Prefs</TabsTrigger>
+          <TabsTrigger value="research" className="text-muted-foreground data-[state=active]:text-foreground">Research</TabsTrigger>
           <TabsTrigger value="privacy" className="text-muted-foreground data-[state=active]:text-foreground">Privacy</TabsTrigger>
         </TabsList>
 
@@ -127,6 +129,10 @@ const Profile = () => {
 
         <TabsContent value="preferences">
           <PreferencesSettings userId={user.id} />
+        </TabsContent>
+
+        <TabsContent value="research">
+          <StudyParticipation userId={user.id} />
         </TabsContent>
 
         <TabsContent value="privacy">
