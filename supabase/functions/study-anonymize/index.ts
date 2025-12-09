@@ -1,3 +1,44 @@
+/**
+ * Study Anonymization Edge Function
+ * 
+ * PURPOSE:
+ * Anonymizes participant and event data for completed studies.
+ * Only processes data where completed_at is more than 90 days ago.
+ * Safe to run multiple times (idempotent via anonymized_at IS NULL check).
+ * 
+ * CALLED BY:
+ * - Admin UI or scheduled job
+ * 
+ * AUTHENTICATION:
+ * - Requires valid admin JWT (user must have 'admin' role in user_roles)
+ * 
+ * REQUEST BODY:
+ * {
+ *   "study_version": "1.0"  // Required
+ * }
+ * 
+ * RESPONSE:
+ * - 200: { success, participants_anonymized, events_anonymized, study_version }
+ * - 400: Missing study_version
+ * - 401: Invalid authentication
+ * - 403: Not an admin
+ * - 500: Internal error
+ * 
+ * ANONYMIZATION LOGIC:
+ * 1. Find participants where:
+ *    - study_version matches
+ *    - study_status = 'completed'
+ *    - completed_at + 90 days < NOW()
+ *    - anonymized_at IS NULL
+ * 2. Set user_id = NULL, anonymized_at = NOW() for those participants
+ * 3. Set user_id = NULL for all user_events linked to those participants
+ * 
+ * SIDE EFFECTS:
+ * - Nullifies user_id in study_participants (irreversible)
+ * - Nullifies user_id in user_events for affected participants
+ * - Logs 'study_anonymized' to admin_audit_log
+ */
+
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {

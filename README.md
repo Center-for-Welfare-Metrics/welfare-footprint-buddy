@@ -86,9 +86,50 @@ For detailed technical documentation, see the `/docs` folder:
 | [Architecture Overview](docs/architecture_overview.md) | High-level system architecture and component relationships |
 | [Privacy & Data Flow](docs/privacy_data_flow.md) | Data handling, privacy protections, and user data management |
 | [Testing Guide](docs/testing_guide.md) | How to test the application and its components |
+| [Study Analytics (Dev)](docs/study-analytics-dev.md) | Study participant tracking, enrollment, exports, and anonymization |
 
 ### Quick Links for Developers
 
 - **Add a new analytics event:** See [How to Add New Event Types](docs/analytics_overview.md#how-to-add-new-event-types)
 - **Grant admin access:** See [How to Promote a User to Admin](docs/admin_dashboard.md#how-to-promote-a-user-to-admin)
 - **Modify quotas:** See [Developer Guidelines](docs/quota_and_rate_limits.md#developer-guidelines)
+
+---
+
+## Study Participant Tracking & Research Analytics
+
+This app includes an IRB-compliant research study tracking system for behavioral analysis.
+
+### Database Tables
+
+- **`study_participants`**: Stores enrollment records with treatment group assignment, consent, and study status
+  - Key columns: `study_status`, `treatment_group`, `participant_code`, `contact_opt_in`, `completed_at`, `anonymized_at`
+  - Constraint: `UNIQUE (user_id, study_version)` — one enrollment per user per study version
+
+- **`user_events`** (extended): Includes optional study fields for enrolled participants
+  - Added columns: `participant_id`, `participant_code`, `treatment_group`, `study_version`
+
+### Edge Functions
+
+| Function | Path | Description |
+|----------|------|-------------|
+| `study-enroll` | `/functions/v1/study-enroll` | Enrolls user with randomized treatment assignment |
+| `study-withdraw` | `/functions/v1/study-withdraw` | Withdraws user from active study |
+| `study-complete` | `/functions/v1/study-complete` | Admin: marks study version as completed |
+| `study-anonymize` | `/functions/v1/study-anonymize` | Admin: anonymizes data 90+ days post-completion |
+| `study-export` | `/functions/v1/study-export` | Admin: exports de-identified study data (JSON/CSV) |
+| `log-event` | `/functions/v1/log-event` | Logs analytics events (with optional study fields) |
+
+### UI Components
+
+- **`src/components/profile/StudyParticipation.tsx`**: Consent form, enrollment, and withdrawal UI
+- **`src/hooks/useStudyParticipant.ts`**: Hook to fetch current user's study enrollment
+
+### Detailed Documentation
+
+See [Study Analytics Developer Guide](docs/study-analytics-dev.md) for:
+- Complete schema reference
+- RLS policies and security model
+- Edge function request/response formats
+- Event logging integration
+- Admin operations (export, completion, anonymization)

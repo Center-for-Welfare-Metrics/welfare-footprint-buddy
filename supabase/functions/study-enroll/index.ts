@@ -1,3 +1,38 @@
+/**
+ * Study Enrollment Edge Function
+ * 
+ * PURPOSE:
+ * Enrolls an authenticated user in a research study with randomized treatment
+ * group assignment. Generates a unique, export-safe participant code.
+ * 
+ * CALLED BY:
+ * - Frontend: StudyParticipation component when user consents to join study
+ * 
+ * AUTHENTICATION:
+ * - Requires valid user JWT (Bearer token in Authorization header)
+ * - Uses service_role client for database operations
+ * 
+ * REQUEST BODY:
+ * {
+ *   "study_version": "1.0",     // Optional, defaults to "1.0"
+ *   "contact_opt_in": false     // Optional, defaults to false
+ * }
+ * 
+ * RESPONSE:
+ * - 200: { success, participant_id, participant_code, treatment_group, study_version }
+ * - 400: Already enrolled or previously withdrawn from this study version
+ * - 401: Missing or invalid authentication
+ * - 500: Failed to generate unique participant code
+ * 
+ * SIDE EFFECTS:
+ * - Creates record in study_participants table
+ * - Logs 'participant_enrolled' to admin_audit_log
+ * 
+ * ASSUMPTIONS:
+ * - User has not previously enrolled/withdrawn from this study_version
+ * - Treatment groups are: 'control', 'treatment_a', 'treatment_b'
+ */
+
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {

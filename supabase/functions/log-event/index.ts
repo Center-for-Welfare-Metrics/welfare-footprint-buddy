@@ -1,3 +1,42 @@
+/**
+ * Event Logging Edge Function
+ * 
+ * PURPOSE:
+ * Logs analytics events from the frontend to the user_events table.
+ * Supports optional study tracking fields for enrolled participants.
+ * 
+ * CALLED BY:
+ * - Frontend: trackEvent() in src/integrations/analytics.ts
+ * 
+ * AUTHENTICATION:
+ * - Public endpoint (no auth required)
+ * - If user JWT is present, user_id is extracted and stored
+ * 
+ * REQUEST BODY:
+ * {
+ *   "eventType": "scan_completed",      // Required
+ *   "properties": { ... },               // Optional event properties
+ *   // Optional study fields (only for enrolled active participants):
+ *   "participant_id": "uuid",
+ *   "participant_code": "AB12-CD34",
+ *   "treatment_group": "treatment_a",
+ *   "study_version": "1.0"
+ * }
+ * 
+ * RESPONSE:
+ * - 200: { success: true }
+ * - 400: Invalid eventType
+ * - 500: Database or configuration error
+ * 
+ * PRIVACY:
+ * - IP addresses are hashed (SHA-256) before storage
+ * - No cookies or fingerprinting
+ * - Study fields only stored when participant_id is provided
+ * 
+ * SIDE EFFECTS:
+ * - Inserts record into user_events table
+ */
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 

@@ -1,3 +1,48 @@
+/**
+ * Study Data Export Edge Function
+ * 
+ * PURPOSE:
+ * Exports de-identified study data for research analysis.
+ * Supports JSON and CSV output formats with filtering options.
+ * 
+ * CALLED BY:
+ * - Admin UI or direct API call
+ * 
+ * AUTHENTICATION:
+ * - Requires valid admin JWT (user must have 'admin' role in user_roles)
+ * 
+ * REQUEST BODY:
+ * {
+ *   "study_version": "1.0",           // Required
+ *   "format": "csv",                   // Optional: "json" (default) or "csv"
+ *   "date_from": "2025-01-01",        // Optional: filter events from date
+ *   "date_to": "2025-06-30",          // Optional: filter events to date
+ *   "treatment_group": "treatment_a"   // Optional: filter by treatment group
+ * }
+ * 
+ * RESPONSE:
+ * - JSON format: { success, study_version, events_count, participants_count, data }
+ * - CSV format: Downloadable CSV file
+ * 
+ * EXPORTED FIELDS:
+ * - participant_code (de-identified ID)
+ * - treatment_group
+ * - study_version
+ * - event_type
+ * - event_timestamp
+ * - contact_opt_in
+ * - Whitelisted event_properties only (see ALLOWED_EVENT_PROPERTIES)
+ * 
+ * NOT EXPORTED:
+ * - user_id
+ * - email, name, or any PII
+ * - IP addresses
+ * - Non-whitelisted event properties
+ * 
+ * SIDE EFFECTS:
+ * - Logs 'study_export' to admin_audit_log
+ */
+
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
