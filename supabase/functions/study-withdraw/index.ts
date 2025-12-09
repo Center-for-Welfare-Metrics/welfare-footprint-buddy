@@ -1,3 +1,42 @@
+/**
+ * Study Withdrawal Edge Function
+ * 
+ * PURPOSE:
+ * Withdraws an authenticated user from their active study enrollment.
+ * Pre-withdrawal event data is preserved for anonymized analysis.
+ * 
+ * CALLED BY:
+ * - Frontend: StudyParticipation component when user clicks "Leave Study"
+ * 
+ * AUTHENTICATION:
+ * - Requires valid user JWT (Bearer token in Authorization header)
+ * - Uses service_role client for database operations
+ * 
+ * REQUEST BODY:
+ * {
+ *   "study_version": "1.0"  // Optional, defaults to "1.0"
+ * }
+ * 
+ * RESPONSE:
+ * - 200: { success, message }
+ * - 400: Cannot withdraw (not active)
+ * - 401: Missing or invalid authentication
+ * - 404: Not enrolled in this study version
+ * - 500: Internal error
+ * 
+ * SIDE EFFECTS:
+ * - Updates study_status to 'withdrawn' and sets withdrawn_at
+ * - Logs 'participant_withdrawn' to admin_audit_log
+ * - Does NOT modify treatment_group, participant_code, or other fields
+ * 
+ * SECURITY NOTES:
+ * - User UPDATE RLS policy is intentionally absent for study_participants
+ * - All withdrawals must go through this function to ensure:
+ *   1. Only status fields are modified
+ *   2. Audit logging is always performed
+ *   3. Validation of active status is enforced
+ */
+
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {

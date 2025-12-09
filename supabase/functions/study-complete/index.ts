@@ -1,3 +1,38 @@
+/**
+ * Study Completion Edge Function
+ * 
+ * PURPOSE:
+ * Marks all active participants in a study version as completed.
+ * This is a manual admin-triggered action (not date-based).
+ * 
+ * CALLED BY:
+ * - Admin UI or direct API call
+ * 
+ * AUTHENTICATION:
+ * - Requires valid admin JWT (user must have 'admin' role in user_roles)
+ * 
+ * REQUEST BODY:
+ * {
+ *   "study_version": "1.0"  // Required
+ * }
+ * 
+ * RESPONSE:
+ * - 200: { success, study_version, participants_completed, completed_at, message }
+ * - 400: Missing study_version
+ * - 401: Invalid authentication
+ * - 403: Not an admin
+ * - 500: Internal error
+ * 
+ * SIDE EFFECTS:
+ * - Updates all 'active' participants to study_status='completed'
+ * - Sets completed_at timestamp
+ * - Logs 'study_completed' to admin_audit_log
+ * 
+ * POST-COMPLETION:
+ * - Anonymization becomes available 90 days after completed_at
+ * - No new events will be logged with study fields for completed participants
+ */
+
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
