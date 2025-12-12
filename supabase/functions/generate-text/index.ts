@@ -1,6 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { getClientIp, checkIpRateLimit, rateLimitResponse } from "../_shared/ip-rate-limiter.ts";
+import { AIHandler, callAI } from '../_shared/ai-handler.ts';
+import { GeminiProvider } from '../_shared/providers/gemini.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -36,6 +38,22 @@ function validateInput(body: any): { valid: boolean; data?: { prompt: string }; 
   };
 }
 
+// Initialize AI Handler once (consistent with other AI edge functions)
+const initAIHandler = (apiKey: string) => {
+  if (!(globalThis as any).__aiHandler) {
+    const handler = new AIHandler();
+    
+    // Note: Cache not initialized for generate-text as it's a general-purpose endpoint
+    // and caching arbitrary prompts may not be appropriate
+    
+    const geminiProvider = new GeminiProvider(apiKey, 'gemini-2.0-flash-exp');
+    handler.registerProvider(geminiProvider);
+    handler.setDefaultProvider('gemini');
+    (globalThis as any).__aiHandler = handler;
+    console.log('[generate-text] AI Handler initialized with Gemini provider');
+  }
+};
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -67,37 +85,44 @@ serve(async (req) => {
       throw new Error('GEMINI_API_KEY is not configured');
     }
 
-    const requestBody = {
-      contents: [{
-        parts: [{ text: prompt }]
+    // Initialize the shared AI Handler
+    initAIHandler(GEMINI_API_KEY);
+
+    // Call AI using the shared handler (consistent with analyze-image, suggest-ethical-swap, etc.)
+    const aiResponse = await callAI({
+      prompt,
+      timeout: 25000, // 25s timeout (slightly less than edge function timeout)
+      cache: 'bypass', // Don't cache general-purpose text generation
+    });
+
+    if (!aiResponse.success) {
+      console.error('[generate-text] AI Handler error:', aiResponse.error);
+      throw new Error(aiResponse.error?.message || 'AI request failed');
+    }
+
+    const text = aiResponse.data?.text;
+    if (!text) {
+      throw new Error('No text response from AI');
+    }
+
+    // Return response in the same format as the original Gemini API response
+    // to maintain backward compatibility with existing clients
+    const data = {
+      candidates: [{
+        content: {
+          parts: [{ text }]
+        }
       }],
-      generationConfig: {
-        response_mime_type: "application/json"
+      // Include original raw response if available
+      ...(aiResponse.data?.raw || {}),
+      _metadata: {
+        provider: aiResponse.metadata.provider,
+        model: aiResponse.metadata.model,
+        latencyMs: aiResponse.metadata.latencyMs,
       }
     };
 
-    // AI Function Safety Layer v1: 25s timeout
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 25000);
-
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        signal: controller.signal,
-        body: JSON.stringify(requestBody)
-      }
-    ).finally(() => clearTimeout(timeout));
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Gemini API error:', response.status, errorText);
-      throw new Error(`Gemini API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log('✅ Text generation completed');
+    console.log('✅ Text generation completed via AI Handler');
 
     return new Response(JSON.stringify(data), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -109,10 +134,12 @@ serve(async (req) => {
     const errorMessage = error instanceof Error ? error.message : String(error);
     let safeMessage = 'Text generation failed. Please try again.';
     
-    if (errorMessage.includes('Gemini') || errorMessage.includes('API')) {
-      safeMessage = 'AI service temporarily unavailable. Please try again later.';
-    } else if (errorMessage.includes('GEMINI_API_KEY')) {
+    if (errorMessage.includes('GEMINI_API_KEY')) {
       safeMessage = 'Service configuration error. Please contact support.';
+    } else if (errorMessage.includes('timeout') || errorMessage.includes('TIMEOUT')) {
+      safeMessage = 'Request timed out. Please try again.';
+    } else if (errorMessage.includes('rate limit') || errorMessage.includes('RATE_LIMIT')) {
+      safeMessage = 'AI service busy. Please try again later.';
     }
     
     return new Response(
