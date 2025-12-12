@@ -534,17 +534,17 @@ When rate limit is exceeded:
 
 #### shared_results Table
 
-Hardened RLS policies to prevent data enumeration:
+Strict RLS policies to prevent unauthorized data access:
 
 | Policy | Command | Condition |
 |--------|---------|-----------|
-| `View shared results by token only` | SELECT | `expires_at IS NULL OR expires_at > now()` |
+| `Service role can select shared results` | SELECT | `auth.role() = 'service_role'` |
 | `Users can create their own shares` | INSERT | `auth.uid() = user_id` |
 | `Anonymous users can create temporary shares` | INSERT | `user_id IS NULL AND expires_at IS NOT NULL AND expires_at <= now() + '48 hours'` |
 | `Allow public to update view count only` | UPDATE | Expiration check only |
 | `Users can delete their own shares` | DELETE | `auth.uid() = user_id` |
 
-**Note:** The `share-result` edge function uses `service_role` which bypasses RLS, ensuring proper validation at the application layer.
+**Note:** Shared results can ONLY be read by the `share-result` edge function (which uses `service_role`). There is no public/anonymous SELECT access—all reads go through the controlled edge function that validates the share token at the application layer.
 
 #### study_participants Table
 
