@@ -12,9 +12,19 @@ import { createLogger, Logger } from './logger.ts';
 
 const logger = createLogger({ functionName: 'cache-service' });
 
-// Cost estimation (per 1M tokens, USD)
+/**
+ * Cost estimation (per 1M tokens, USD)
+ * 
+ * NOTE: These are best-effort estimates based on published pricing.
+ * Update when models change or pricing updates occur.
+ * Pricing source: https://ai.google.dev/pricing (as of 2024)
+ */
 const COST_PER_1M_TOKENS: Record<string, { input: number; output: number }> = {
+  // Current models in use
   'gemini-2.0-flash-exp': { input: 0.075, output: 0.30 },
+  'gemini-2.5-flash': { input: 0.075, output: 0.30 },
+  'gemini-2.5-pro': { input: 1.25, output: 5.00 },
+  // Legacy models (kept for historical metrics)
   'gemini-1.5-pro': { input: 1.25, output: 5.00 },
   'gemini-1.5-flash': { input: 0.075, output: 0.30 },
 };

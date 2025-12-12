@@ -2,16 +2,31 @@
 
 This directory contains the authoring copies of AI prompts used throughout the Welfare Footprint application.
 
-## ⚠️ Important: Source of Truth
+## ⚠️ Critical: Dual-Location Architecture
 
-**The embedded strings in `prompt-loader.ts` are the RUNTIME SOURCE OF TRUTH for all prompts.**
+Due to Supabase Edge Functions' inability to read files at runtime, prompts exist in **TWO locations**:
 
-The `.md` files in this directory serve as:
-- **Human-readable documentation** of prompt content
-- **Authoring copies** for easier editing and review
+| Location | Purpose | Used At |
+|----------|---------|---------|
+| `.md` files in this directory | Authoring, documentation, review | Development time |
+| `PROMPTS` object in `prompt-loader.ts` | **Runtime execution** | Production |
+
+### 🔴 RUNTIME SOURCE OF TRUTH
+
+**The `PROMPTS` object in `supabase/functions/_shared/prompt-loader.ts` is the ONLY source used at runtime.**
+
+The `.md` files are:
+- **Authoring copies** for easier editing (proper syntax highlighting, markdown preview)
+- **Human-readable documentation** for code reviews
 - **Reference material** for understanding prompt logic
 
-However, **Supabase Edge Functions cannot read files at runtime**. Therefore, all prompts must be embedded as strings in `prompt-loader.ts` to be used by the application.
+### ⚠️ Both Locations Must Stay in Sync
+
+Any prompt change **MUST** be applied to:
+1. The `.md` file in this directory
+2. The corresponding entry in `prompt-loader.ts`
+
+**If you only update the `.md` file, your changes will NOT take effect!**
 
 ## Safe Prompt Update Workflow
 
@@ -53,6 +68,18 @@ To update a prompt safely without breaking the application:
 | `analyze_focused_item` | `analyze_focused_item.md` | `analyze-image` | Deep analysis of a single selected item |
 | `suggest_ethical_swap` | `suggest_ethical_swap.md` | `suggest-ethical-swap` | Generate ethical alternative suggestions |
 | `enrich_description` | `enrich_description.md` | `enrich-description` | Transform brief descriptions into informative summaries |
+
+## Dynamic Prompt Wrappers
+
+Some edge functions add **dynamic wrappers** around the base prompts at runtime. These are intentional and include runtime-specific values that cannot be static:
+
+| Function | Dynamic Logic | Purpose |
+|----------|---------------|---------|
+| `suggest-ethical-swap` | CoT wrapper for Lens 3 | Adds chain-of-thought reasoning with product-specific context |
+| `suggest-ethical-swap` | System message per lens | Lens-specific rules (2=no portion-only, 3=vegetarian, 4=vegan) |
+| `analyze-image` | User context prefixes | Injects user-provided descriptions with priority markers |
+
+These dynamic wrappers are **not** candidates for centralization because they require runtime variable interpolation.
 
 ## Variable Substitution
 
