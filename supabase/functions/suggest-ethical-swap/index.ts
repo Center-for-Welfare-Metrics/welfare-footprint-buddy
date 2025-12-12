@@ -4,6 +4,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 import { loadAndProcessPrompt } from "../_shared/prompt-loader.ts";
+import { getClientIp, checkIpRateLimit, rateLimitResponse } from "../_shared/ip-rate-limiter.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -329,6 +330,14 @@ const initAIHandler = () => {
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
+  }
+
+  // IP-based rate limiting: 20 requests per minute
+  const clientIp = getClientIp(req);
+  const rateLimit = checkIpRateLimit(clientIp, 20, 60000);
+  if (!rateLimit.allowed) {
+    console.warn(`[suggest-ethical-swap] Rate limit exceeded for IP: ${clientIp.substring(0, 8)}...`);
+    return rateLimitResponse(rateLimit.retryAfter);
   }
 
   try {
