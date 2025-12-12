@@ -508,6 +508,68 @@ All study operations are logged to `admin_audit_log` with the following actions:
 
 ---
 
+## Security Controls
+
+This section documents the security measures implemented to protect the research system and user data.
+
+### IP-Based Rate Limiting
+
+All public edge functions are protected by in-memory IP-based rate limiting to prevent abuse:
+
+| Function | Limit | Window | Purpose |
+|----------|-------|--------|---------|
+| `analyze-image` | 20 req | 60 sec | Prevent AI API cost abuse |
+| `generate-text` | 20 req | 60 sec | Prevent AI API cost abuse |
+| `suggest-ethical-swap` | 20 req | 60 sec | Prevent AI API cost abuse |
+| `enrich-description` | 20 req | 60 sec | Prevent AI API cost abuse |
+| `log-event` | 120 req | 60 sec | Prevent analytics pollution |
+
+**Implementation:** `supabase/functions/_shared/ip-rate-limiter.ts`
+
+When rate limit is exceeded:
+- HTTP 429 response with `Retry-After` header
+- Server-side warning log with truncated IP
+
+### Row-Level Security (RLS)
+
+#### shared_results Table
+
+Hardened RLS policies to prevent data enumeration:
+
+| Policy | Command | Condition |
+|--------|---------|-----------|
+| `View shared results by token only` | SELECT | `expires_at IS NULL OR expires_at > now()` |
+| `Users can create their own shares` | INSERT | `auth.uid() = user_id` |
+| `Anonymous users can create temporary shares` | INSERT | `user_id IS NULL AND expires_at IS NOT NULL AND expires_at <= now() + '48 hours'` |
+| `Allow public to update view count only` | UPDATE | Expiration check only |
+| `Users can delete their own shares` | DELETE | `auth.uid() = user_id` |
+
+**Note:** The `share-result` edge function uses `service_role` which bypasses RLS, ensuring proper validation at the application layer.
+
+#### study_participants Table
+
+| Policy | Command | Who |
+|--------|---------|-----|
+| `Users can view their own study enrollment` | SELECT | Own user_id |
+| `Admins can view all study participants` | SELECT | Users with admin role |
+| `Admins can update study participants` | UPDATE | Users with admin role |
+| `Service role can manage study participants` | ALL | service_role only |
+
+### Authentication Security
+
+- **Leaked Password Protection**: Should be enabled in Supabase Auth settings (prevents use of known-breached passwords)
+- **Auto-confirm email**: Enabled for development (disable in production)
+- **Anonymous signups**: Disabled
+
+### Study Data Anonymization
+
+- Participant `user_id` is nullified 90 days after study completion
+- Only `participant_code` remains for data analysis
+- IP addresses are always hashed (SHA-256) before storage
+- Event properties are filtered through a whitelist before export
+
+---
+
 ## UI Components
 
 | Component | Path | Description |

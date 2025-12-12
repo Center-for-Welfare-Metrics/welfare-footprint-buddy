@@ -5,6 +5,7 @@ import { loadAndProcessPrompt } from "../_shared/prompt-loader.ts";
 import { AIHandler, callAI } from '../_shared/ai-handler.ts';
 import { GeminiProvider } from '../_shared/providers/gemini.ts';
 import type { CacheOptions } from '../_shared/cache-service.ts';
+import { getClientIp, checkIpRateLimit, rateLimitResponse } from "../_shared/ip-rate-limiter.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -128,6 +129,14 @@ const initAIHandler = (apiKey: string) => {
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
+  }
+
+  // IP-based rate limiting: 20 requests per minute
+  const clientIp = getClientIp(req);
+  const rateLimit = checkIpRateLimit(clientIp, 20, 60000);
+  if (!rateLimit.allowed) {
+    console.warn(`[analyze-image] Rate limit exceeded for IP: ${clientIp.substring(0, 8)}...`);
+    return rateLimitResponse(rateLimit.retryAfter);
   }
 
   try {

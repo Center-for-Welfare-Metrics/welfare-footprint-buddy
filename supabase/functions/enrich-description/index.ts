@@ -1,7 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { loadAndProcessPrompt } from "../_shared/prompt-loader.ts";
-import { createLogger, getRequestId, getClientIp, jsonErrorResponse, jsonSuccessResponse } from "../_shared/logger.ts";
+import { createLogger, getRequestId, getClientIp as getClientIpLogger, jsonErrorResponse, jsonSuccessResponse } from "../_shared/logger.ts";
+import { getClientIp, checkIpRateLimit, rateLimitResponse } from "../_shared/ip-rate-limiter.ts";
 
 const logger = createLogger({ functionName: 'enrich-description' });
 
@@ -13,11 +14,19 @@ const corsHeaders = {
 
 serve(async (req) => {
   const requestId = getRequestId(req);
-  const ip = getClientIp(req);
+  const ip = getClientIpLogger(req);
   const reqLogger = logger.withRequest({ requestId, ip });
 
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
+  }
+
+  // IP-based rate limiting: 20 requests per minute
+  const clientIp = getClientIp(req);
+  const rateLimit = checkIpRateLimit(clientIp, 20, 60000);
+  if (!rateLimit.allowed) {
+    reqLogger.warn(`Rate limit exceeded for IP: ${clientIp.substring(0, 8)}...`);
+    return rateLimitResponse(rateLimit.retryAfter);
   }
 
   try {
