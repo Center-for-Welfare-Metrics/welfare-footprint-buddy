@@ -39,7 +39,7 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
-import { getClientIp as getClientIpFromRateLimiter, checkIpRateLimit, rateLimitResponse } from "../_shared/ip-rate-limiter.ts";
+import { getClientIp, checkIpRateLimit, rateLimitResponse } from "../_shared/ip-rate-limiter.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -54,13 +54,6 @@ async function hashIp(ip: string | null): Promise<string | null> {
   const hashBuffer = await crypto.subtle.digest("SHA-256", data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
-}
-
-// Extract client IP from request headers
-function getClientIp(req: Request): string | null {
-  return req.headers.get('x-real-ip') || 
-         req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 
-         null;
 }
 
 // Extract user ID from JWT if present
@@ -87,10 +80,10 @@ serve(async (req) => {
   }
 
   // IP-based rate limiting: 120 requests per minute (analytics is high-volume)
-  const clientIpForRateLimit = getClientIpFromRateLimiter(req);
-  const rateLimit = checkIpRateLimit(clientIpForRateLimit, 120, 60000);
+  const clientIp = getClientIp(req);
+  const rateLimit = checkIpRateLimit(clientIp, 120, 60000);
   if (!rateLimit.allowed) {
-    console.warn(`[log-event] Rate limit exceeded for IP: ${clientIpForRateLimit.substring(0, 8)}...`);
+    console.warn(`[log-event] Rate limit exceeded for IP: ${clientIp.substring(0, 8)}...`);
     return rateLimitResponse(rateLimit.retryAfter);
   }
 
@@ -115,8 +108,7 @@ serve(async (req) => {
       );
     }
 
-    // Extract context from request
-    const clientIp = getClientIp(req);
+    // Extract context from request (clientIp already retrieved above for rate limiting)
     const ipHash = await hashIp(clientIp);
     const userId = getUserIdFromAuth(req);
     const userAgent = req.headers.get('user-agent') || null;
