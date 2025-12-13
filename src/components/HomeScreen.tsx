@@ -5,8 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { User, Info, Camera, PenLine } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import LanguageSelector from "@/components/LanguageSelector";
-import diversePeopleDining from "@/assets/diverse-people-dining-small.png";
-import foodPattern from "@/assets/food-pattern.png";
 import foodWelfareLogo from "@/assets/food-welfare-logo.png";
 
 interface HomeScreenProps {
@@ -27,104 +25,144 @@ const HomeScreen = ({ onStartScan, onDescribeFood }: HomeScreenProps) => {
 
   return (
     <div className="flex flex-col min-h-screen text-center bg-gradient-radial-forest relative overflow-hidden">
-      {/* Decorative background elements */}
+      {/* Subtle texture overlay */}
+      <div className="texture-noise absolute inset-0" />
+      
+      {/* Ambient glow orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
+        <div 
+          className="absolute top-[10%] left-[15%] w-[500px] h-[500px] rounded-full blur-[120px] animate-float-slow"
+          style={{ background: 'radial-gradient(circle, hsl(203 100% 40% / 0.12) 0%, transparent 70%)' }}
+        />
+        <div 
+          className="absolute bottom-[20%] right-[10%] w-[600px] h-[600px] rounded-full blur-[140px] animate-float-slow"
+          style={{ 
+            background: 'radial-gradient(circle, hsl(180 100% 40% / 0.1) 0%, transparent 70%)',
+            animationDelay: '2s' 
+          }}
+        />
+        <div 
+          className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full blur-[160px] animate-glow-pulse"
+          style={{ background: 'radial-gradient(circle, hsl(203 80% 35% / 0.08) 0%, transparent 60%)' }}
+        />
       </div>
 
       {/* Header with Language Selector and Sign In */}
-      <div className="absolute top-3 sm:top-4 right-3 sm:right-4 left-3 sm:left-4 flex items-center justify-between gap-2 sm:gap-4 z-10">
-        <div className="flex-1" />
-        <div className="flex items-center gap-1.5 sm:gap-2">
-          <LanguageSelector />
-        {user ? (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate('/profile')}
-            className="flex items-center gap-1 sm:gap-2 px-1.5 sm:px-2 h-9 hover:bg-background/20 transition-all"
-          >
-            <Avatar className="h-7 w-7 sm:h-8 sm:w-8">
-              <AvatarFallback className="bg-emerald-500 text-gray-900 text-xs font-semibold">
-                {getUserInitials()}
-              </AvatarFallback>
-            </Avatar>
-          </Button>
-        ) : (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate('/auth')}
-            className="h-9 hover:bg-background/20 transition-all"
-          >
-            <User className="mr-1.5 h-4 w-4" />
-            {t('common.signIn')}
-          </Button>
-        )}
+      <header className="absolute top-0 left-0 right-0 z-20">
+        <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
+          <div className="flex-1" />
+          <nav className="flex items-center gap-2 sm:gap-3">
+            <LanguageSelector />
+            {user ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate('/profile')}
+                className="flex items-center gap-2 px-2 h-10 rounded-xl hover:bg-background/15 backdrop-blur-sm transition-all duration-300"
+              >
+                <Avatar className="h-8 w-8 ring-2 ring-primary/30 ring-offset-1 ring-offset-background">
+                  <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-primary-foreground text-xs font-semibold">
+                    {getUserInitials()}
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
+            ) : (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate('/auth')}
+                className="h-10 px-4 rounded-xl hover:bg-background/15 backdrop-blur-sm transition-all duration-300 text-foreground/90 hover:text-foreground"
+              >
+                <User className="mr-2 h-4 w-4" />
+                <span className="font-medium">{t('common.signIn')}</span>
+              </Button>
+            )}
+          </nav>
         </div>
-      </div>
+      </header>
       
       {/* Main Content Area */}
-      <div className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 pb-8 relative z-10 max-w-4xl mx-auto w-full">
-        <header className="mb-12 sm:mb-14 md:mb-16 animate-fade-in space-y-5 sm:space-y-6">
-          {/* Logo */}
-          <div className="flex justify-center mb-8 sm:mb-10 animate-scale-in">
-            <img 
-              src={foodWelfareLogo} 
-              alt="Food Welfare Explorer Logo" 
-              className="w-96 h-96 sm:w-[512px] sm:h-[512px] md:w-[640px] md:h-[640px] lg:w-[768px] lg:h-[768px] object-contain drop-shadow-2xl"
-            />
+      <main className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-8 relative z-10 max-w-4xl mx-auto w-full">
+        <div className="mb-10 sm:mb-12 md:mb-14 space-y-8 sm:space-y-10">
+          {/* Logo with refined animation */}
+          <div className="flex justify-center animate-fade-in-scale">
+            <div className="relative">
+              {/* Glow behind logo */}
+              <div 
+                className="absolute inset-0 blur-3xl opacity-30 scale-75"
+                style={{ background: 'radial-gradient(circle, hsl(203 100% 50% / 0.4) 0%, transparent 70%)' }}
+              />
+              <img 
+                src={foodWelfareLogo} 
+                alt="Food Welfare Explorer Logo" 
+                className="relative w-80 h-80 sm:w-[420px] sm:h-[420px] md:w-[520px] md:h-[520px] lg:w-[600px] lg:h-[600px] object-contain drop-shadow-2xl"
+              />
+            </div>
           </div>
           
-          {/* Subtitle with fade-in animation */}
-          <p className="text-lg sm:text-xl md:text-2xl font-normal text-foreground/95 drop-shadow-md px-2 max-w-[380px] mx-auto leading-relaxed text-center animate-fade-in" style={{ animationDelay: '0.1s' }}>
-            Instant AI-powered insights into choices to improve the welfare impact behind everyday foods.
-          </p>
-          
-          {/* Secondary text with delayed fade-in */}
-          <p className="text-base sm:text-lg font-normal text-foreground/80 drop-shadow-sm px-2 max-w-[360px] mx-auto leading-relaxed text-center animate-fade-in" style={{ animationDelay: '0.2s' }}>
-            Upload a photo or describe your meal to begin exploring.
-          </p>
-        </header>
-        
-        <main className="w-full space-y-5 sm:space-y-6 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-          
-          {/* Primary Action Buttons */}
-          <div className="w-full space-y-4 sm:space-y-5 max-w-md mx-auto px-2">
-            <Button 
-              onClick={onStartScan}
-              className="btn-primary-cta w-full py-7 px-8 text-lg sm:text-xl flex items-center justify-center gap-3 group shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105"
+          {/* Tagline with refined typography */}
+          <div className="space-y-5 sm:space-y-6 max-w-lg mx-auto">
+            <p 
+              className="text-lg sm:text-xl md:text-2xl font-medium text-foreground/95 text-shadow-soft px-4 leading-relaxed tracking-tight animate-fade-in"
+              style={{ animationDelay: '0.15s' }}
             >
-              <Camera className="h-6 w-6 sm:h-7 sm:w-7 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300" />
-              Upload or Take a Photo
-            </Button>
+              Instant AI-powered insights into choices to improve the welfare impact behind everyday foods.
+            </p>
             
-            <Button 
-              onClick={onDescribeFood}
-              variant="secondary"
-              className="w-full py-7 px-8 text-lg sm:text-xl flex items-center justify-center gap-3 group bg-background/15 hover:bg-background/25 border-2 border-border/40 hover:border-border/60 text-foreground shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
+            {/* Decorative divider */}
+            <div 
+              className="divider-glow w-24 mx-auto animate-fade-in"
+              style={{ animationDelay: '0.25s' }}
+            />
+            
+            <p 
+              className="text-base sm:text-lg font-normal text-foreground/70 px-4 max-w-sm mx-auto leading-relaxed animate-fade-in"
+              style={{ animationDelay: '0.3s' }}
             >
-              <PenLine className="h-6 w-6 sm:h-7 sm:w-7 group-hover:scale-110 group-hover:-rotate-12 transition-transform duration-300" />
-              Describe the Food
-            </Button>
+              Upload a photo or describe your meal to begin exploring.
+            </p>
           </div>
-        </main>
-      </div>
+        </div>
+        
+        {/* Primary Action Buttons */}
+        <div 
+          className="w-full space-y-4 max-w-sm mx-auto animate-slide-up"
+          style={{ animationDelay: '0.4s' }}
+        >
+          <Button 
+            onClick={onStartScan}
+            className="btn-primary-cta w-full py-6 sm:py-7 px-6 text-base sm:text-lg flex items-center justify-center gap-3 group"
+          >
+            <Camera className="h-5 w-5 sm:h-6 sm:w-6 group-hover:scale-110 transition-transform duration-300" />
+            <span>Upload or Take a Photo</span>
+          </Button>
+          
+          <Button 
+            onClick={onDescribeFood}
+            className="btn-secondary-elegant w-full py-6 sm:py-7 px-6 text-base sm:text-lg flex items-center justify-center gap-3 group text-foreground/90 hover:text-foreground"
+          >
+            <PenLine className="h-5 w-5 sm:h-6 sm:w-6 group-hover:scale-110 transition-transform duration-300" />
+            <span>Describe the Food</span>
+          </Button>
+        </div>
+      </main>
       
       {/* Footer */}
-      <footer className="w-full py-8 sm:py-10 px-4 sm:px-6 pb-36 sm:pb-44 space-y-5 sm:space-y-6 relative z-10 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-        <p className="text-xs sm:text-sm text-center max-w-3xl mx-auto leading-relaxed opacity-60 hover:opacity-80 transition-opacity" style={{ color: '#B0B8B6' }}>
+      <footer 
+        className="w-full py-8 sm:py-10 px-4 sm:px-6 pb-32 sm:pb-40 space-y-4 relative z-10 animate-fade-in"
+        style={{ animationDelay: '0.5s' }}
+      >
+        <p className="text-xs sm:text-sm text-center max-w-3xl mx-auto leading-relaxed text-muted-foreground/50">
           Prototype — Thanks for helping us test
         </p>
         <Button
           variant="ghost"
           size="sm"
           onClick={() => navigate('/about')}
-          className="text-accent/60 hover:text-accent/90 mx-auto transition-all hover:scale-105"
+          className="text-muted-foreground/40 hover:text-muted-foreground/70 mx-auto transition-all duration-300 hover:bg-background/10 rounded-xl"
         >
           <Info className="mr-2 h-4 w-4" />
-          About this App
+          <span className="font-medium">About this App</span>
         </Button>
       </footer>
     </div>
